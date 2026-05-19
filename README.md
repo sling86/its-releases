@@ -36,15 +36,24 @@ After install, run `its --completions install` to wire tab completion into your 
 
 ### Windows (x64)
 
-Download from the [latest release](https://github.com/sling86/its-releases/releases/latest) and run:
+```powershell
+irm https://github.com/sling86/its-releases/releases/latest/download/install.ps1 | iex
+```
+
+Drops `its.exe` into `%LOCALAPPDATA%\Programs\its` and adds it to your user PATH. No admin rights needed. Useful env knobs (set before piping to `iex`):
+
+- `$env:ITS_INSTALL_DIR = 'C:\tools\its'` — install somewhere else
+- `$env:ITS_VERSION = 'v0.2.24'` — pin a specific version instead of `latest`
+
+Prefer a click-through installer? Download from the [latest release](https://github.com/sling86/its-releases/releases/latest):
 
 | Asset | When to use |
 |-------|-------------|
-| `ItsSetup.exe` | Inno Setup installer — recommended (adds to PATH, registers uninstaller) |
-| `ItsSetup.zip` | Same payload, zipped — for environments that block `.exe` downloads |
-| `its.exe` | Raw compiled binary — drop somewhere on `%PATH%` if you don't want an installer |
+| `ItsSetup.exe` | Inno Setup installer — adds to PATH, registers an uninstaller |
+| `ItsSetup.zip` | Same payload as `ItsSetup.exe`, zipped — for environments that block `.exe` downloads |
+| `its.exe` | Raw compiled binary — drop somewhere on `%PATH%` if you don't want either installer |
 
-Then in a new shell: `its --completions install` for tab completion.
+After install, open a new shell and run `its --completions install` for tab completion.
 
 ## Stable download URLs
 
@@ -57,7 +66,8 @@ These URLs always resolve to the most recent release — pin a version with `/re
 | Windows installer | `https://github.com/sling86/its-releases/releases/latest/download/ItsSetup.exe` |
 | Windows zip | `https://github.com/sling86/its-releases/releases/latest/download/ItsSetup.zip` |
 | Windows raw binary | `https://github.com/sling86/its-releases/releases/latest/download/its.exe` |
-| Install script | `https://github.com/sling86/its-releases/releases/latest/download/install.sh` |
+| Linux install script | `https://github.com/sling86/its-releases/releases/latest/download/install.sh` |
+| Windows install script | `https://github.com/sling86/its-releases/releases/latest/download/install.ps1` |
 
 ## Documentation
 
