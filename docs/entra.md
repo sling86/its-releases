@@ -375,7 +375,7 @@ its entra users revoke-sessions jane.smith@example.com --confirm
 
 | Command | Description |
 |---------|-------------|
-| `its entra groups` | List Entra ID groups. Surfaces the most common fields; pass --json for raw shape. |
+| `its entra groups` | List Entra ID groups. Surfaces the most common fields; pass --json for raw shape. Use --dynamic to narrow to dynamic-membership groups via server-side $filter (auto-fetches all pages). |
 | `its entra groups search <query>` | Search groups by name. Substring match across the most relevant fields; case-insensitive. |
 | `its entra groups get <group_id>` | Get group details. Pass the id (or any natural identifier) as the positional arg. |
 | `its entra groups members <group_id>` | List members of a group. Pass --include-sps (or --all) to also surface service principals, nested groups, and devices — useful for groups like 'Fabric Admin API Service Principals' that the user-only view shows as empty. |
@@ -385,7 +385,7 @@ its entra users revoke-sessions jane.smith@example.com --confirm
 
 #### `its entra groups`
 
-List Entra ID groups. Surfaces the most common fields; pass --json for raw shape.
+List Entra ID groups. Surfaces the most common fields; pass --json for raw shape. Use --dynamic to narrow to dynamic-membership groups via server-side $filter (auto-fetches all pages).
 
 **Flags:**
 
@@ -394,6 +394,7 @@ List Entra ID groups. Surfaces the most common fields; pass --json for raw shape
 | `--top` | `` | Number of results | 50 |
 | `--all` | `` | Fetch all results (overrides --top) | — |
 | `--filter` | `` | OData filter expression | — |
+| `--dynamic` | `` | Only dynamic-membership groups. Server-side $filter (groupTypes/any(t:t eq 'DynamicMembership')); auto-fetches all pages so the result is the true tenant count. | — |
 
 **Examples:**
 

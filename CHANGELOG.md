@@ -15,6 +15,39 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.26] - 2026-05-19
+
+### Fixed
+
+- **`its entra groups list --dynamic` under-reported by ~95%.** The `--dynamic`
+  flag was never declared on the `list` command, so the parser silently
+  dropped it. With `top=50` as the unfiltered default, only the 2 dynamic
+  groups in the first 50-result page surfaced — any audit that piped
+  through `jq 'select(.types | contains(["DynamicMembership"]))'` got a
+  false-clean answer. Real-world impact: Wrike MAAAAAEJ3EJr (Adelina
+  Kolacheva SP access loss on 2026-05-19) — see ctxc 815.
+
+  Live CCD-tenant verification: the same command now returns **85**
+  dynamic groups, including all the previously-missing `SP - CCD - *`
+  security-only ones.
+
+### Added
+
+- **`--dynamic` flag on `its entra groups list`.** Server-side
+  `$filter=groupTypes/any(t:t eq 'DynamicMembership')` (advanced query;
+  sends `$count=true` + `ConsistencyLevel: eventual`), implies fetch-all
+  pagination so the result is the true tenant count rather than a first
+  page. AND-combines with any user-supplied `--filter` for safe
+  composition. Exported `buildGroupListFilter()` helper covers both
+  cases and is unit-tested.
+
+- **Regression test** in `tests/entra-groups.test.ts` — fakes a two-page
+  Graph response containing a security-only dynamic group
+  (`groupTypes: ["DynamicMembership"]` with no `Unified`) and asserts:
+  the filter URL is constructed correctly, `ConsistencyLevel: eventual`
+  is sent, `@odata.nextLink` is followed, and the security-only group
+  survives the round-trip with its `groupTypes` intact.
+
 ## [0.2.25] - 2026-05-19
 
 ### Added
