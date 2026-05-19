@@ -15,6 +15,30 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.25] - 2026-05-19
+
+### Added
+
+- **Windows one-line installer** — `scripts/install.ps1`, uploaded as a
+  release asset whenever a Windows build is published. Pulls
+  `its.exe` to `%LOCALAPPDATA%\Programs\its` and adds it to the user
+  PATH. No admin rights required. Mirrors the Linux flow:
+
+  ```powershell
+  irm https://github.com/sling86/its-releases/releases/latest/download/install.ps1 | iex
+  ```
+
+  Env-knob overrides: `$env:ITS_INSTALL_DIR`, `$env:ITS_VERSION`,
+  `$env:ITS_RELEASE_REPO`.
+
+### Changed
+
+- **`scripts/release.ts`** — auto-generated release notes now show the
+  `irm | iex` one-liner for Windows alongside the `ItsSetup.exe` link.
+- **README + its-releases README** — Windows install section leads with
+  the PowerShell one-liner, demoting the Inno Setup installer to "prefer
+  a click-through installer?" alternative.
+
 ## [0.2.24] - 2026-05-19
 
 ### Changed
