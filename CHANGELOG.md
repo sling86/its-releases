@@ -15,6 +15,17 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.29] - 2026-05-19
+
+### Fixed
+
+- **`its docs serve` sidebar now alphabetises providers** — registry-snapshot
+  was returning the registration order from `src/providers/definitions.ts`,
+  so the sidebar listed `rmm, entra, dokploy, bw, sp, …` instead of
+  `az, bc, bw, cf, ctxc, …`. One-line `providers.sort()` before caching the
+  snapshot. Matches the v0.2.28 ordering already applied to `its --help`
+  and tab-completion menus.
+
 ## [0.2.28] - 2026-05-19
 
 ### Added
