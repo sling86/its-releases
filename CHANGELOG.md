@@ -15,6 +15,22 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.27] - 2026-05-19
+
+### Changed
+
+- **Update-check surface now leads with `install.ps1` on Windows.** Both
+  the exit-time one-line notice (`pickDownloadUrl()` in `core/updates.ts`)
+  and the `its update` printer (`index.ts`) prefer the `irm … | iex`
+  one-liner over the `ItsSetup.exe` click-through installer — same shape
+  as the Linux `curl … install.sh | bash` line. Falls back to
+  `ItsSetup.exe` for releases that pre-date the PowerShell installer
+  (v0.2.24 and earlier), then to the release page URL if neither is
+  present.
+- **`pickDownloadUrl()` is now exported** from `core/updates.ts` so the
+  selector can be unit-tested directly. Six new tests in
+  `tests/updates.test.ts` pin Windows/Linux/unknown-platform behaviour.
+
 ## [0.2.26] - 2026-05-19
 
 ### Fixed
