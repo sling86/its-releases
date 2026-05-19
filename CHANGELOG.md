@@ -15,6 +15,31 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.24] - 2026-05-19
+
+### Changed
+
+- **Licence switched from MIT to a proprietary licence.** Free for personal
+  use and single-organisation internal use. Redistribution,
+  reverse-engineering, and hosting as a service now require explicit
+  permission. See [`LICENSE`](./LICENSE).
+- **README rewritten** to drop the THF-Holdings-specific framing — the CLI
+  is portable across any organisation. Reframed as closed-source with
+  prebuilt binaries published to `sling86/its-releases`. Quick start now
+  shows the binary install (one-line curl / `ItsSetup.exe`) rather than
+  a source clone.
+- **Source-repo links from the public-facing surface now point at
+  `sling86/its-releases`** so visitors of the distribution repo don't hit
+  404s on `sling86/it-cli` (which is private).
+
+### Added
+
+- **`scripts/release.ts` auto-mirrors `docs/`, `CHANGELOG.md`, and
+  `LICENSE`** to `sling86/its-releases` on every release. Uses the
+  workflow's `RELEASE_TOKEN` PAT in CI, falls back to `gh auth token`
+  for local runs, skips with a console note when no token is available.
+  Best-effort — sync failure does not roll back the release.
+
 ## [0.2.23] - 2026-05-19
 
 Combined release — `v0.2.22` was tagged but its CI build failed (audit
