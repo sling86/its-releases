@@ -15,6 +15,39 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.28] - 2026-05-19
+
+### Added
+
+- **`its --version` / `-V` / `its version`** — prints `its <version>` and
+  exits. `--versions` (plural typo) is accepted as an alias.
+- **`its info`** — diagnostic snapshot: version, platform, install dir,
+  `.env` path, audit-log path + size, update-cache state, OS-keychain
+  availability. First-line support runs this before anything else.
+- **`its help`** — noun-form alias for `its --help` (git-style UX).
+- **Banner on default `its`** — the title line now carries the running
+  version (`its v0.2.28 — IT Systems CLI`) followed by a stat line
+  (`18 providers · 570 commands · proprietary licence`). When the cached
+  update check shows a newer release, a one-line `update available …`
+  notice surfaces above Usage so casual users see it without scrolling.
+
+### Changed
+
+- **Providers list in `its --help` is alphabetised** by alias. Registration
+  order in `src/providers/definitions.ts` is left intact (still drives
+  lazy-load priority + shared-credential setup ordering).
+- **Tab-completion menus are alphabetised** end-to-end — providers,
+  global commands, resources, actions, flags.
+
+### Fixed
+
+- **`GLOBAL_FLAGS` in `core/completions.ts` was missing five flags** that
+  the parser already understood: `--dry-run`, `--include-secrets`,
+  `--stdin`, `--unsafe`, `--watch`. Plus `--version`. All now tab-complete
+  on `--<TAB>` after any provider/resource/action.
+- **`globalCommands` completion list was missing** the four meta commands
+  (`help`, `info`, `update`, `version`) — added.
+
 ## [0.2.27] - 2026-05-19
 
 ### Changed
