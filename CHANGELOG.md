@@ -15,6 +15,50 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.31] - 2026-05-20
+
+### Added
+
+- **`its entra apps register <name>`** — bootstrap an Entra app
+  registration end-to-end (application + servicePrincipal + 12-month
+  client secret) in one call. Pairs with `apps add-password <objectId>`
+  for rotation.
+- **`its entra users update --manager <upn|guid>`** and `--clear-manager`
+  wrap the `/users/{id}/manager/$ref` PUT/DELETE so the raw graph-
+  passthrough workaround is no longer required. Manager id is resolved
+  to GUID automatically.
+- **`its wrike leavers complete <id>`** — IT offboarding orchestrator.
+  Resolves the leaver ticket's "Username / Email" field to an Entra UPN,
+  then runs disable → revoke sessions → remove licences → remove from
+  groups → mark Wrike ticket Completed with a status comment. Defaults
+  to dry-run; needs `--confirm` to execute. Skip steps via
+  `--skip disable,sessions,licences,groups,wrike`.
+
+### Fixed
+
+- **`its entra signin summary <upn>`** now resolves UPN→GUID via the
+  v1.0 endpoint before hitting the beta `signInActivity` select, which
+  rejects UPNs with "Get By Key only supports UserId and the key has to
+  be a valid Guid".
+- **`its dokploy webhook check`** short-circuits when the app uses a
+  GitHub App installation — events flow through the App's central
+  callback, not per-repo classic hooks, so the old `listensForPush:false`
+  was a false negative.
+- **`its rmm scripts upload-local`** now actually executes the uploaded
+  script and deletes it afterwards. TRMM's `POST /scripts/` returns a
+  bare JSON string (`"...was added!"`), not an object, so the id lookup
+  was always failing and the run-then-delete chain was being skipped.
+  Recovers the id via a follow-up `/scripts/` list filtered by the
+  unique upload name.
+- **`its rmm agents run`** with non-ASCII PowerShell payloads (em-dash,
+  accented chars, smart quotes) now survives the agent transport. The
+  base64 wrap path is widened to trigger on non-ASCII as well as
+  multi-line, and the wrap writes the temp `.ps1` with a UTF-8 BOM so
+  PS 5.1's default-ANSI reader treats it as UTF-8.
+- **`its rmm agents run --timeout N`** no longer aborts the HTTP client
+  at 30s while the agent is still working. The TRMM `/cmd/` HTTP read
+  timeout is now derived from the agent-side timeout (+30s headroom).
+
 ## [0.2.30] - 2026-05-20
 
 ### Added

@@ -26,6 +26,7 @@ Other providers: [rmm](./rmm.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · 
 - [break-glass](#break-glass)
 - [whoami](#whoami)
 - [doctor](#doctor)
+- [apps](#apps)
 - [graph](#graph)
 
 ## Setup
@@ -129,6 +130,8 @@ Update user properties. Use named flags for common fields, --set k=v,k=v for any
 | `--postalCode` | `` | Postal code | — |
 | `--country` | `` | Country | — |
 | `--usage` | `` | Usage location (e.g. GB) | — |
+| `--manager` | `` | Set manager (UPN or GUID) | — |
+| `--clear-manager` | `` | Remove the manager assignment (top of org) | — |
 | `--set` | `` | Freeform Graph property passthrough, comma-separated key=value pairs (e.g. --set extensionAttribute1=foo,givenName=Bar) | — |
 
 **Examples:**
@@ -1870,6 +1873,50 @@ its entra doctor --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra doctor --watch
+```
+
+---
+
+### apps
+
+> Source: `src/providers/entra/commands/apps.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its entra apps register <name>` | Bootstrap a new Entra app registration end-to-end — creates the application, its service principal, and a 12-month client secret. Returns the appId, objectId, SP id, and the plaintext secret (only shown once). |
+| `its entra apps add-password <app>` | Rotate / add a client secret on an existing app registration. The plaintext secretText is only returned once. |
+
+#### `its entra apps register <name>`
+
+Bootstrap a new Entra app registration end-to-end — creates the application, its service principal, and a 12-month client secret. Returns the appId, objectId, SP id, and the plaintext secret (only shown once).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--redirect-uri` | `` | Web redirect URI. Repeatable — pass multiple --redirect-uri flags or comma-separate. | — |
+| `--audience` | `` | Sign-in audience | single |
+| `--secret-name` | `` | Display name for the client secret | its-cli generated |
+| `--months` | `` | Client secret lifetime in months | 12 |
+| `--no-secret` | `` | Skip generating a client secret | — |
+
+```bash
+its entra apps register <name>
+```
+
+#### `its entra apps add-password <app>`
+
+Rotate / add a client secret on an existing app registration. The plaintext secretText is only returned once.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--name` | `` | Display name for the secret | its-cli generated |
+| `--months` | `` | Lifetime in months | 12 |
+
+```bash
+its entra apps add-password <app>
 ```
 
 ---
