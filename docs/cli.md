@@ -42,12 +42,12 @@ its <provider> <resource> [action] [args] [--flags]
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 50 commands, 15 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 91 commands, 19 resources | [entra.md](./entra.md) |
+| Entra ID | `entra` | 93 commands, 20 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 99 commands, 23 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 43 commands, 10 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 38 commands, 14 resources | [unifi.md](./unifi.md) |
-| Wrike | `wrike` | 47 commands, 12 resources | [wrike.md](./wrike.md) |
+| Wrike | `wrike` | 48 commands, 12 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 23 commands, 10 resources | [az.md](./az.md) |
 | Exchange Online | `exo` | 29 commands, 8 resources | [exo.md](./exo.md) |
 | Intune | `intune` | 40 commands, 15 resources | [intune.md](./intune.md) |
