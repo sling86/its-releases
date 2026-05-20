@@ -15,6 +15,25 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.32] - 2026-05-20
+
+### Added
+
+- **`its entra admin-bootstrap run <upn>`** — unblock an admin who can't
+  sign in for phishing-resistant MFA. Tries TAP first; falls back to a
+  per-policy excludeUsers on the Microsoft-managed phish-resistant-admin
+  CA policy. Always emits a re-inclusion checklist (lesson 320).
+- **`its rmm custom-fields list`** and **`its rmm custom-fields set
+  <agent> <field> <value>`** — read TRMM custom-field definitions and
+  upsert values on agents. Handles the `value` + typed-column duality
+  TRMM requires (ctxc 806). Field accepted by numeric id or exact name.
+- **`its hr drift detect`** — cross-references PeopleHR ↔ Entra and
+  reports field drift (jobTitle, department, displayName, manager) plus
+  PHR-only / Entra-only orphans. Matching uses email + email-prefix +
+  surname-exact-with-first-name-Levenshtein (catches preferred-name
+  pairs like Enric/Enrique, Mike/Michael). Defaults to global PHR scope
+  so cross-company users still match.
+
 ## [0.2.31] - 2026-05-20
 
 ### Added

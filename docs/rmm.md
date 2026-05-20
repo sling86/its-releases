@@ -23,6 +23,7 @@ Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md)
 - [policies](#policies)
 - [diagnostics](#diagnostics)
 - [doctor](#doctor)
+- [custom-fields](#custom-fields)
 
 ## Setup
 
@@ -1095,6 +1096,39 @@ its rmm doctor --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm doctor --watch
+```
+
+---
+
+### custom-fields
+
+> Source: `src/providers/rmm/commands/custom-fields.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its rmm custom-fields` | List TRMM custom field definitions across all models (agent / client / site). |
+| `its rmm custom-fields set <agent> <field> <value>` | Set a custom field value on an agent. Accepts the field by numeric id OR by exact name (looked up against /core/customfields/). Writes both `value` and the typed column TRMM actually reads. |
+
+#### `its rmm custom-fields`
+
+List TRMM custom field definitions across all models (agent / client / site).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--model` | `` | Filter by model | — |
+
+```bash
+its rmm custom-fields
+```
+
+#### `its rmm custom-fields set <agent> <field> <value>`
+
+Set a custom field value on an agent. Accepts the field by numeric id OR by exact name (looked up against /core/customfields/). Writes both `value` and the typed column TRMM actually reads.
+
+```bash
+its rmm custom-fields set <agent> <field> <value>
 ```
 
 ---
