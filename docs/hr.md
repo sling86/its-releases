@@ -8,6 +8,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 ## Contents
 
 - [Setup](#setup)
+- [drift](#drift)
 - [employees](#employees)
 - [starters](#starters)
 - [leavers](#leavers)
@@ -34,8 +35,35 @@ its hr setup --reset   # Re-run setup (overwrite config)
 | `src/providers/hr/types.ts` | TypeScript interfaces |
 | `src/providers/hr/commands.ts` | Command definitions |
 | `src/providers/hr/definition.ts` | definition |
+| `src/providers/hr/drift.ts` | drift |
 
 ## Resources
+
+### drift
+
+> Source: `src/providers/hr/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its hr drift detect` | Detect drift between PeopleHR and Entra ID. Reports field mismatches plus PHR-only / Entra-only orphans. Read-only. |
+
+#### `its hr drift detect`
+
+Detect drift between PeopleHR and Entra ID. Reports field mismatches plus PHR-only / Entra-only orphans. Read-only.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--domain` | `` | Entra UPN domain to audit (e.g. contractcandles.com). Defaults to every domain seen in active Entra users. | — |
+| `--company` | `` | Restrict PHR side to this company (substring match against Company DisplayValue). Default: search globally. | — |
+| `--include-disabled` | `` | Include disabled Entra accounts (default: only enabled). | — |
+
+```bash
+its hr drift detect
+```
+
+---
 
 ### employees
 

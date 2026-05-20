@@ -10,8 +10,8 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [rmm.md](./rmm.md) | Tactical RMM — 50 commands across 15 resources |
-| [entra.md](./entra.md) | Entra ID — 93 commands across 20 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 52 commands across 16 resources |
+| [entra.md](./entra.md) | Entra ID — 94 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 99 commands across 23 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 43 commands across 10 resources |
@@ -24,12 +24,12 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
 | [pa.md](./pa.md) | Power Platform — 10 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
-| [hr.md](./hr.md) | PeopleHR — 7 commands across 3 resources |
+| [hr.md](./hr.md) | PeopleHR — 8 commands across 4 resources |
 | [bc.md](./bc.md) | Business Central — 5 commands across 4 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 
-**18 providers** · **169 resources** · **575 commands**
+**18 providers** · **172 resources** · **579 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -50,6 +50,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [policies](./rmm.md#policies) | list, get, checks, add-check | `src/providers/rmm/commands/policies.ts` |
 | [diagnostics](./rmm.md#diagnostics) | list | `src/providers/rmm/commands/diagnostics.ts` |
 | [doctor](./rmm.md#doctor) | list | `src/providers/rmm/commands/doctor.ts` |
+| [custom-fields](./rmm.md#custom-fields) | list, set | `src/providers/rmm/commands/custom-fields.ts` |
 
 ### [Entra ID](./entra.md)
 
@@ -74,6 +75,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [whoami](./entra.md#whoami) | show | `src/providers/entra/commands/whoami.ts` |
 | [doctor](./entra.md#doctor) | list | `src/providers/entra/commands/doctor.ts` |
 | [apps](./entra.md#apps) | register, add-password | `src/providers/entra/commands/apps.ts` |
+| [admin-bootstrap](./entra.md#admin-bootstrap) | run | `src/providers/entra/commands/admin-bootstrap.ts` |
 | [graph](./entra.md#graph) | get, post, patch, put, delete | — |
 
 ### [Dokploy](./dokploy.md)
@@ -261,6 +263,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
+| [drift](./hr.md#drift) | detect | `src/providers/hr/commands.ts` |
 | [employees](./hr.md#employees) | list, search, get | `src/providers/hr/commands.ts` |
 | [starters](./hr.md#starters) | list, recent | `src/providers/hr/commands.ts` |
 | [leavers](./hr.md#leavers) | list, recent | `src/providers/hr/commands.ts` |
@@ -389,7 +392,10 @@ its
 │   │   ├── checks <policy_id>
 │   │   └── add-check <policy_id>
 │   ├── diagnostics (list) <agent>
-│   └── doctor (list)
+│   ├── doctor (list)
+│   └── custom-fields
+│       ├── (list)
+│       └── set <agent> <field> <value>
 ├── entra
 │   ├── users
 │   │   ├── (list)
@@ -494,6 +500,7 @@ its
 │   ├── apps
 │   │   ├── register <name>
 │   │   └── add-password <app>
+│   ├── admin-bootstrap run <user_id>
 │   └── graph
 │       ├── get <path>
 │       ├── post <path>
@@ -1002,6 +1009,7 @@ its
 │       ├── url
 │       └── request
 ├── hr
+│   ├── drift detect
 │   ├── employees
 │   │   ├── (list)
 │   │   ├── search <query>
@@ -1181,6 +1189,7 @@ src/
 │   │   └── types.ts
 │   ├── entra/
 │   │   ├── commands/
+│   │   │   ├── admin-bootstrap.ts
 │   │   │   ├── apps.ts
 │   │   │   ├── audit.ts
 │   │   │   ├── auth-methods.ts
@@ -1224,6 +1233,7 @@ src/
 │   │   ├── client.ts
 │   │   ├── commands.ts
 │   │   ├── definition.ts
+│   │   ├── drift.ts
 │   │   └── types.ts
 │   ├── intune/
 │   │   ├── commands/
@@ -1280,6 +1290,7 @@ src/
 │   │   │   ├── agents.ts
 │   │   │   ├── alerts.ts
 │   │   │   ├── checks.ts
+│   │   │   ├── custom-fields.ts
 │   │   │   ├── dashboard.ts
 │   │   │   ├── diagnostics.ts
 │   │   │   ├── doctor.ts

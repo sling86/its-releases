@@ -27,6 +27,7 @@ Other providers: [rmm](./rmm.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · 
 - [whoami](#whoami)
 - [doctor](#doctor)
 - [apps](#apps)
+- [admin-bootstrap](#admin-bootstrap)
 - [graph](#graph)
 
 ## Setup
@@ -123,7 +124,7 @@ Update user properties. Use named flags for common fields, --set k=v,k=v for any
 | `--company` | `` | Company name | — |
 | `--office` | `` | Office location | — |
 | `--phone` | `` | Mobile phone | — |
-| `--employeeId` | `` | Employee ID | — |
+| `--employeeId` | `` | Employee ID (PeopleHR EmployeeId) | — |
 | `--streetAddress` | `` | Street address | — |
 | `--city` | `` | City | — |
 | `--state` | `` | State/county | — |
@@ -1917,6 +1918,33 @@ Rotate / add a client secret on an existing app registration. The plaintext secr
 
 ```bash
 its entra apps add-password <app>
+```
+
+---
+
+### admin-bootstrap
+
+> Source: `src/providers/entra/commands/admin-bootstrap.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its entra admin-bootstrap run <user_id>` | Unblock an admin who can't sign in for phishing-resistant MFA. Tries TAP first; falls back to a per-policy excludeUsers on the Microsoft-managed phish-resistant admin policy. Always emits a re-inclusion checklist. |
+
+#### `its entra admin-bootstrap run <user_id>`
+
+Unblock an admin who can't sign in for phishing-resistant MFA. Tries TAP first; falls back to a per-policy excludeUsers on the Microsoft-managed phish-resistant admin policy. Always emits a re-inclusion checklist.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--ttl` | `` | TAP lifetime in minutes (default 60) | 60 |
+| `--one-time` | `` | TAP is single-use | — |
+| `--no-fallback` | `` | Don't exclude from the phish-resistant policy if TAP fails — just report. | — |
+| `--dry-run` | `` | Show the plan without mutating | — |
+
+```bash
+its entra admin-bootstrap run <user_id>
 ```
 
 ---

@@ -41,8 +41,8 @@ its <provider> <resource> [action] [args] [--flags]
 
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
-| Tactical RMM | `rmm` | 50 commands, 15 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 93 commands, 20 resources | [entra.md](./entra.md) |
+| Tactical RMM | `rmm` | 52 commands, 16 resources | [rmm.md](./rmm.md) |
+| Entra ID | `entra` | 94 commands, 21 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 99 commands, 23 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 43 commands, 10 resources | [sp.md](./sp.md) |
@@ -55,7 +55,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |
 | Power Platform | `pa` | 10 commands, 4 resources | [pa.md](./pa.md) |
 | Cloudflare | `cf` | 16 commands, 5 resources | [cf.md](./cf.md) |
-| PeopleHR | `hr` | 7 commands, 3 resources | [hr.md](./hr.md) |
+| PeopleHR | `hr` | 8 commands, 4 resources | [hr.md](./hr.md) |
 | Business Central | `bc` | 5 commands, 4 resources | [bc.md](./bc.md) |
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
