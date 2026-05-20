@@ -16,7 +16,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 43 commands across 10 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 38 commands across 14 resources |
-| [wrike.md](./wrike.md) | Wrike — 45 commands across 11 resources |
+| [wrike.md](./wrike.md) | Wrike — 47 commands across 12 resources |
 | [az.md](./az.md) | Azure CLI — 23 commands across 10 resources |
 | [exo.md](./exo.md) | Exchange Online — 29 commands across 8 resources |
 | [intune.md](./intune.md) | Intune — 40 commands across 15 resources |
@@ -29,7 +29,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 
-**18 providers** · **167 resources** · **570 commands**
+**18 providers** · **168 resources** · **572 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -166,6 +166,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [custom-fields](./wrike.md#custom-fields) | list | `src/providers/wrike/commands/workflows.ts` |
 | [item-types](./wrike.md#item-types) | list | `src/providers/wrike/commands/workflows.ts` |
 | [onboarding](./wrike.md#onboarding) | get | `src/providers/wrike/commands/onboarding.ts` |
+| [leavers](./wrike.md#leavers) | list, get | `src/providers/wrike/commands/leavers.ts` |
 | [dashboard](./wrike.md#dashboard) | list | `src/providers/wrike/commands/dashboard.ts` |
 
 ### [Azure CLI](./az.md)
@@ -804,6 +805,9 @@ its
 │   ├── custom-fields (list)
 │   ├── item-types (list)
 │   ├── onboarding get <permalink>
+│   ├── leavers
+│   │   ├── (list)
+│   │   └── get <idOrPermalink>
 │   └── dashboard (list)
 ├── az
 │   ├── account
@@ -1320,6 +1324,7 @@ src/
 │   │   │   ├── contacts.ts
 │   │   │   ├── dashboard.ts
 │   │   │   ├── index.ts
+│   │   │   ├── leavers.ts
 │   │   │   ├── onboarding.ts
 │   │   │   ├── spaces.ts
 │   │   │   ├── tasks.ts

@@ -1,6 +1,6 @@
 # Wrike (`wrike`)
 
-Wrike project management — IT tickets, tasks, contacts, spaces, folders, workflows, onboarding.
+Wrike project management — IT tickets, tasks, contacts, spaces, folders, workflows, onboarding, leavers.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
 Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md)
@@ -18,6 +18,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [custom-fields](#custom-fields)
 - [item-types](#item-types)
 - [onboarding](#onboarding)
+- [leavers](#leavers)
 - [dashboard](#dashboard)
 
 ## Setup
@@ -942,6 +943,40 @@ its wrike onboarding get <task-id>
 
 # Pipe-friendly output — use with jq / scripts.
 its wrike onboarding get <task-id> --json
+```
+
+---
+
+### leavers
+
+> Source: `src/providers/wrike/commands/leavers.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its wrike leavers` | List IT - Leaver tickets. Defaults to Active; pass --status Completed for closed ones. Surfaces Last Day + days-until-leave. |
+| `its wrike leavers get <idOrPermalink>` | Get full leaver-ticket details with comments. Pass the id (or Wrike permalink) as the positional arg. |
+
+#### `its wrike leavers`
+
+List IT - Leaver tickets. Defaults to Active; pass --status Completed for closed ones. Surfaces Last Day + days-until-leave.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--status` | `-s` | Filter by status (default: Active; 'all' for any) | Active |
+| `--limit` | `-l` | Maximum results | 50 |
+
+```bash
+its wrike leavers
+```
+
+#### `its wrike leavers get <idOrPermalink>`
+
+Get full leaver-ticket details with comments. Pass the id (or Wrike permalink) as the positional arg.
+
+```bash
+its wrike leavers get <idOrPermalink>
 ```
 
 ---

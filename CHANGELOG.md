@@ -15,6 +15,18 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.30] - 2026-05-20
+
+### Added
+
+- **`its wrike leavers`** — new resource for IT - Leaver tickets (custom
+  item type `IEAA6EU6PIAF24TW`). `leavers list` surfaces Last Day +
+  days-until-leave parsed from the form-rendered description, sorted
+  soonest-first. `leavers get <id|permalink>` returns the full ticket
+  with comments and a structured `leaver` block. Backed by `getTickets`
+  extended with an optional `itemTypeId`, so existing `tickets` callers
+  are unchanged.
+
 ## [0.2.29] - 2026-05-19
 
 ### Fixed
