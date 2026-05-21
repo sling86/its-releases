@@ -15,6 +15,20 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.34] - 2026-05-21
+
+### Added
+
+- **`its pa flows set-owner <flow_id> -e <env_id> --owner <upn|guid>`**
+  — wraps Power Automate's `modifyPermissions` admin endpoint (the
+  thing PowerShell's `Set-AdminFlowOwnerRole` calls). Defaults to
+  granting `Owner`; pass `--role CanEdit|CanView` for lower tiers.
+  Pass `--remove <upn|guid>` (mutually exclusive with `--owner`) to
+  revoke a principal. UPNs are resolved to AAD object ids via Entra.
+  Idempotent. Defaults to dry-run-safe; `--confirm` executes.
+  Reclaiming flows from disabled accounts during the licence-reclaim
+  sweep is the driving use case (ctxc 858).
+
 ## [0.2.33] - 2026-05-21
 
 ### Added

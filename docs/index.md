@@ -22,7 +22,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [intune.md](./intune.md) | Intune — 40 commands across 15 resources |
 | [protect.md](./protect.md) | UniFi Protect — 6 commands across 4 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
-| [pa.md](./pa.md) | Power Platform — 10 commands across 4 resources |
+| [pa.md](./pa.md) | Power Platform — 11 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
 | [hr.md](./hr.md) | PeopleHR — 8 commands across 4 resources |
 | [bc.md](./bc.md) | Business Central — 5 commands across 4 resources |
@@ -30,7 +30,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 
-**19 providers** · **175 resources** · **587 commands**
+**19 providers** · **175 resources** · **588 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -247,7 +247,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [environments](./pa.md#environments) | list, get | `src/providers/pa/commands/environments.ts` |
-| [flows](./pa.md#flows) | list, get, stop, start, delete, runs | `src/providers/pa/commands/flows.ts` |
+| [flows](./pa.md#flows) | list, get, stop, start, delete, set-owner, runs | `src/providers/pa/commands/flows.ts` |
 | [apps](./pa.md#apps) | list | `src/providers/pa/commands/apps.ts` |
 | [connections](./pa.md#connections) | list | `src/providers/pa/commands/connections.ts` |
 
@@ -999,6 +999,7 @@ its
 │   │   ├── stop <flow_id>
 │   │   ├── start <flow_id>
 │   │   ├── delete <flow_id>
+│   │   ├── set-owner <flow_id>
 │   │   └── runs <flow_id>
 │   ├── apps (list)
 │   └── connections (list)
