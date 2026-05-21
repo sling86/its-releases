@@ -510,6 +510,7 @@ Create a new task in a folder or project (accepts name or ID).
 |------|-------|-------------|---------|
 | `--title` | `-t` | Task title | — |
 | `--description` | `-d` | Task description | — |
+| `--description-file` | `` | Read description from a UTF-8 file (use for descriptions > ~15KB — Windows command-line cap) | — |
 | `--status` | `-s` | Task status | — |
 | `--importance` | `` | Task importance (High, Normal, Low) | — |
 

@@ -267,6 +267,7 @@ Create a new vault item (login, note, card, or identity). Idempotent on duplicat
 | `--uri` | `` | Login URL | — |
 | `--totp` | `` | TOTP secret or otpauth URI | — |
 | `--notes` | `` | Notes | — |
+| `--notes-file` | `` | Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) | — |
 | `--folder` | `` | Folder name (created if it does not exist) | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
@@ -292,6 +293,7 @@ Update a vault item (all fields are replaced — omitted fields are cleared).
 | `--uri` | `` | Login URL | — |
 | `--totp` | `` | TOTP secret | — |
 | `--notes` | `` | Notes | — |
+| `--notes-file` | `` | Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) | — |
 | `--folder` | `` | Folder name (created if needed) | — |
 | `--confirm` | `` | Confirm the update | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
