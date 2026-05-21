@@ -3,7 +3,7 @@
 Usage, options, and output modes for the `its` CLI. For provider-specific commands, see the provider docs.
 
 [Index](./index.md) · [README](../README.md)
-Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md)
+Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md)
 
 ## Contents
 
@@ -43,7 +43,7 @@ its <provider> <resource> [action] [args] [--flags]
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 52 commands, 16 resources | [rmm.md](./rmm.md) |
 | Entra ID | `entra` | 94 commands, 21 resources | [entra.md](./entra.md) |
-| Dokploy | `dokploy` | 99 commands, 23 resources | [dokploy.md](./dokploy.md) |
+| Dokploy | `dokploy` | 103 commands, 24 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 43 commands, 10 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 38 commands, 14 resources | [unifi.md](./unifi.md) |
@@ -59,6 +59,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Business Central | `bc` | 5 commands, 4 resources | [bc.md](./bc.md) |
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
+| GitHub | `gh` | 4 commands, 2 resources | [gh.md](./gh.md) |
 
 ## Global Options
 

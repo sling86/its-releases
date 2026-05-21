@@ -15,6 +15,44 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.33] - 2026-05-21
+
+### Added
+
+- **`its gh` provider** — new GitHub surface driven by the local `gh`
+  CLI (no PAT required). Initial actions: `branch-protect apply/show`
+  (THF standard block: 1 approving review, dismiss stale, no force
+  push, no delete, conversation resolution), `webhook setup/list`
+  (idempotent webhook creation against a callback URL).
+- **`its dokploy apps bootstrap <name>`** — 8-step meta-orchestrator
+  for a new application. Resolves or creates the project, creates the
+  app, sets the github source, sets the build type, pushes env vars,
+  creates the domain, triggers the first rebuild. Idempotent. Defaults
+  to dry-run-safe with `--dry-run`.
+- **`its dokploy apps cert-status <app>`** — read Traefik `acme.json`
+  for the app's domains and report cert presence / expiry. SSH-backed.
+- **`its dokploy traefik logs [--tail]`** and **`its dokploy traefik
+  acme`** — SSH-backed Traefik diagnostics for cert and proxy
+  debugging.
+
+### Fixed
+
+- **CLI parser** — `--args "-Foo bar"` (and other dash-prefixed
+  values) now parses correctly. Previously the look-ahead treated any
+  `-`-prefixed token as a flag, so `--args` collapsed to boolean
+  `true` and downstream `.split()` blew up. Real flags are `--word`
+  or `-x` (single short letter); anything else is a value (ctxc 703).
+- **`its dokploy apps restart`** — Dokploy has no `application.restart`
+  trpc procedure (the call 404'd). Now composed from `stop + start`
+  sequentially (ctxc 716 #9).
+- **`its dokploy github repos <id>`** — accepts either the `githubId`
+  or the inner `gitProviderId` (auto-resolves via the providers list).
+  The providers output now also surfaces the inner id explicitly so
+  the two are no longer trivially confusable (ctxc 716 #10).
+- **`its bw items create --type note`** — SecureNote payloads now
+  carry the required `secureNote: { type: 0 }` discriminator the BW
+  API rejected with 500 without (ctxc 716 #8).
+
 ## [0.2.32] - 2026-05-20
 
 ### Added
