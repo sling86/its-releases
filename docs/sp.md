@@ -408,6 +408,7 @@ its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm -
 
 | Command | Description |
 |---------|-------------|
+| `its sp files download` | Download a drive item to disk (--out) or pipe binary-safe to stdout. Resolves the pre-signed @microsoft.graph.downloadUrl from item metadata and fetches that — `sp graph get .../content` corrupts binary on the UTF-8 path. |
 | `its sp files upload <siteId>` | Upload a text file. Stream a local file to the resource. |
 | `its sp files folder <siteId>` | Create a folder. Returns the contents of a folder by path. |
 | `its sp files delete <siteId>` | Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
@@ -416,6 +417,34 @@ its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm -
 | `its sp files checkin <siteId>` | Check in a file. Releases the lock after editing. |
 | `its sp files versions <siteId>` | List file version history. Returns version history for a file. |
 | `its sp files restore <siteId>` | Restore a file to a previous version. Restore a soft-deleted item from trash. |
+
+#### `its sp files download`
+
+Download a drive item to disk (--out) or pipe binary-safe to stdout. Resolves the pre-signed @microsoft.graph.downloadUrl from item metadata and fetches that — `sp graph get .../content` corrupts binary on the UTF-8 path.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site ID (with --drive --item|--path) | — |
+| `--user` | `` | User UPN — operate on /users/<upn>/drive | — |
+| `--drive` | `` | Drive ID (with --item or --path) | — |
+| `--item` | `` | Drive item ID | — |
+| `--path` | `` | Item path relative to drive root (e.g. /Folder/file.docx) | — |
+| `--url` | `` | Pre-signed @microsoft.graph.downloadUrl (skips metadata lookup) | — |
+| `--out` | `` | Local file path to write to. Omit to pipe to stdout. | — |
+
+**Examples:**
+
+```bash
+its sp files download --user tony@contractcandles.com --item 01Q3JEFHMUOTAVKHPGWNBJPEDKM376OQH6 --out out.docx
+
+its sp files download --site <siteId> --drive <driveId> --path "/Folder/file.pdf" --out file.pdf
+
+its sp files download --url "https://.../download" --out file.bin
+
+its sp files download --user tony@contractcandles.com --item <id> | sha256sum
+```
 
 #### `its sp files upload <siteId>`
 
@@ -870,6 +899,8 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 |------|-------|-------------|---------|
 | `--beta` | `` | Use /beta instead of /v1.0 | — |
 | `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
+| `--raw` | `` | Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. | — |
+| `--out` | `` | Write the response to this file path instead of stdout. Implies --raw. | — |
 
 **Examples:**
 

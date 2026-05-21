@@ -861,6 +861,8 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 |------|-------|-------------|---------|
 | `--beta` | `` | Use /beta instead of /v1.0 | — |
 | `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
+| `--raw` | `` | Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. | — |
+| `--out` | `` | Write the response to this file path instead of stdout. Implies --raw. | — |
 
 **Examples:**
 
