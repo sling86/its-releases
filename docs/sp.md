@@ -458,6 +458,7 @@ Upload a text file. Stream a local file to the resource.
 | `--path` | `` | Parent path (default /) | / |
 | `--name` | `` | File name | — |
 | `--content` | `` | Text content to upload | — |
+| `--content-file` | `` | Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap) | — |
 
 **Examples:**
 

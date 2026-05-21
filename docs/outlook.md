@@ -231,13 +231,16 @@ Send a new email directly (no draft step). Saves a copy in Sent Items.
 | `--bcc` | `` | Comma-separated BCC recipients | — |
 | `--subject` | `` | Subject line | — |
 | `--body` | `` | Body content | — |
-| `--html` | `` | Treat --body as HTML (default text) | — |
+| `--body-file` | `` | Read body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) | — |
+| `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
 | `--importance` | `` | low|normal|high | normal |
 
 **Examples:**
 
 ```bash
 its outlook mail send --to user@example.com --subject "Hi" --body "Quick note"
+
+its outlook mail send --to user@example.com --subject "Report" --html --body-file report.html
 ```
 
 ---
@@ -267,7 +270,8 @@ Create a draft email (does not send).
 | `--bcc` | `` | BCC recipients | — |
 | `--subject` | `` | Subject line | — |
 | `--body` | `` | Body content | — |
-| `--html` | `` | Treat --body as HTML (default text) | — |
+| `--body-file` | `` | Read body from a UTF-8 file (use this for bodies > ~15KB — Windows command-line cap) | — |
+| `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
 | `--importance` | `` | low|normal|high | normal |
 
 ```bash
@@ -283,6 +287,7 @@ Create a reply draft. By default replies to the sender only; use --all to Reply-
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--comment` | `` | Inline comment prepended to the reply body | — |
+| `--comment-file` | `` | Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) | — |
 | `--all` | `` | Reply to all recipients | — |
 
 ```bash
@@ -299,6 +304,7 @@ Create a forward draft.
 |------|-------|-------------|---------|
 | `--to` | `` | Comma-separated recipients | — |
 | `--comment` | `` | Inline comment prepended to the forwarded body | — |
+| `--comment-file` | `` | Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) | — |
 
 ```bash
 its outlook drafts forward <message_id>
@@ -314,7 +320,8 @@ Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories.
 |------|-------|-------------|---------|
 | `--subject` | `` | Replace subject | — |
 | `--body` | `` | Replace body | — |
-| `--html` | `` | Treat --body as HTML | — |
+| `--body-file` | `` | Read replacement body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) | — |
+| `--html` | `` | Treat --body / --body-file as HTML | — |
 | `--to` | `` | Replace To recipients (comma-separated) | — |
 | `--cc` | `` | Replace CC recipients | — |
 | `--bcc` | `` | Replace BCC recipients | — |
@@ -512,7 +519,8 @@ Create a calendar event. Times default to UTC unless --tz is set.
 | `--tz` | `` | Time zone (default UTC) | — |
 | `--location` | `` | Location display name | — |
 | `--body` | `` | Body content | — |
-| `--html` | `` | Treat --body as HTML | — |
+| `--body-file` | `` | Read body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) | — |
+| `--html` | `` | Treat --body / --body-file as HTML | — |
 | `--attendees` | `` | Comma-separated email addresses (required) | — |
 | `--optional-attendees` | `` | Comma-separated optional attendees | — |
 | `--all-day` | `` | Mark as all-day event | — |
@@ -536,7 +544,8 @@ Update a calendar event (subject, times, location, all-day, online-meeting).
 | `--tz` | `` | Time zone for --start/--end (default UTC) | — |
 | `--location` | `` | Replace location | — |
 | `--body` | `` | Replace body | — |
-| `--html` | `` | Treat --body as HTML | — |
+| `--body-file` | `` | Read replacement body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) | — |
+| `--html` | `` | Treat --body / --body-file as HTML | — |
 | `--all-day` | `` | Set isAllDay | — |
 | `--online` | `` | Toggle isOnlineMeeting | — |
 
@@ -561,6 +570,7 @@ Respond to a meeting invite — accept, decline, or tentatively accept.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--comment` | `` | Reply comment to the organiser | — |
+| `--comment-file` | `` | Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) | — |
 | `--no-response` | `` | Don't send a reply to the organiser | — |
 
 ```bash

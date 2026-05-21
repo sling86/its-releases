@@ -1132,6 +1132,7 @@ Add a mount to an application (--type bind|volume|file). Use --ensure-host-path 
 | `--src` | `` | Source: host path (bind), volume name (volume), or initial content path (file) | — |
 | `--dst` | `` | Mount path inside the container | — |
 | `--content` | `` | Inline file content (--type file) | — |
+| `--content-file` | `` | Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap) | — |
 | `--ensure-host-path` | `` | For --type bind: create the host directory on the swarm node and chown to uid 1000 (avoids 'bind source path does not exist' deploy failures). Requires SSH. | — |
 
 **Examples:**
@@ -1154,6 +1155,7 @@ Update an existing mount. PATCH semantics — only the supplied fields change.
 | `--src` | `` | New source (host path / volume name / file path) | — |
 | `--dst` | `` | New mount path inside the container | — |
 | `--content` | `` | New inline file content (file mounts) | — |
+| `--content-file` | `` | Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap) | — |
 
 **Examples:**
 
