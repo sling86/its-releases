@@ -53,7 +53,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Intune | `intune` | 40 commands, 15 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 6 commands, 4 resources | [protect.md](./protect.md) |
 | Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |
-| Power Platform | `pa` | 10 commands, 4 resources | [pa.md](./pa.md) |
+| Power Platform | `pa` | 11 commands, 4 resources | [pa.md](./pa.md) |
 | Cloudflare | `cf` | 16 commands, 5 resources | [cf.md](./cf.md) |
 | PeopleHR | `hr` | 8 commands, 4 resources | [hr.md](./hr.md) |
 | Business Central | `bc` | 5 commands, 4 resources | [bc.md](./bc.md) |
