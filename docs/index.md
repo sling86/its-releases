@@ -12,7 +12,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [rmm.md](./rmm.md) | Tactical RMM — 52 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 94 commands across 21 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 99 commands across 23 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 103 commands across 24 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 43 commands across 10 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 38 commands across 14 resources |
@@ -28,8 +28,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [bc.md](./bc.md) | Business Central — 5 commands across 4 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
+| [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 
-**18 providers** · **172 resources** · **579 commands**
+**19 providers** · **175 resources** · **587 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -83,7 +84,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [projects](./dokploy.md#projects) | list, get, create, delete | `src/providers/dokploy/commands/projects.ts` |
-| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, health, doctor | `src/providers/dokploy/commands/apps.ts` |
+| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, health, doctor, bootstrap, cert-status | `src/providers/dokploy/commands/apps.ts` |
 | [databases](./dokploy.md#databases) | list, url, get, create, deploy, stop, delete | `src/providers/dokploy/commands/databases.ts` |
 | [deployments](./dokploy.md#deployments) | list, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
 | [domains](./dokploy.md#domains) | list, create, check, delete | `src/providers/dokploy/commands/domains.ts` |
@@ -98,6 +99,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cluster](./dokploy.md#cluster) | join-token | `src/providers/dokploy/commands/nodes.ts` |
 | [containers](./dokploy.md#containers) | list, config, start, stop, restart, kill, remove | `src/providers/dokploy/commands/containers.ts` |
 | [maintenance](./dokploy.md#maintenance) | disk, web, traefik, clean, time | `src/providers/dokploy/commands/maintenance.ts` |
+| [traefik](./dokploy.md#traefik) | logs, acme | `src/providers/dokploy/commands/maintenance.ts` |
 | [github](./dokploy.md#github) | providers, repos, branches | `src/providers/dokploy/commands/github.ts` |
 | [users](./dokploy.md#users) | list, me, invite, remove | `src/providers/dokploy/commands/users.ts` |
 | [orgs](./dokploy.md#orgs) | list, active | `src/providers/dokploy/commands/users.ts` |
@@ -293,6 +295,13 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [search](./docs.md#search) | list | `src/providers/docs/commands.ts` |
 | [show](./docs.md#show) | list | `src/providers/docs/commands.ts` |
 
+### [GitHub](./gh.md)
+
+| Resource | Actions | Source |
+|----------|---------|--------|
+| [branch-protect](./gh.md#branch-protect) | apply, show | — |
+| [webhook](./gh.md#webhook) | setup, list | — |
+
 ## Key Source Files
 
 | File | Purpose |
@@ -327,6 +336,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | `src/providers/bc/client.ts` | Business Central API client |
 | `src/providers/ctxc/client.ts` | ctxc memories API client |
 | `src/providers/docs/client.ts` | Docs UI API client |
+| `src/providers/gh/client.ts` | GitHub API client |
 
 ## Command Tree
 
@@ -535,7 +545,9 @@ its
 │   │   ├── shell <app> [cmd]
 │   │   ├── migrate <app>
 │   │   ├── health
-│   │   └── doctor <app>
+│   │   ├── doctor <app>
+│   │   ├── bootstrap <name>
+│   │   └── cert-status <app>
 │   ├── databases
 │   │   ├── (list)
 │   │   ├── url <id>
@@ -591,6 +603,9 @@ its
 │   │   ├── traefik
 │   │   ├── clean
 │   │   └── time
+│   ├── traefik
+│   │   ├── logs
+│   │   └── acme
 │   ├── github
 │   │   ├── providers
 │   │   ├── repos <githubId>
@@ -1034,12 +1049,19 @@ its
 │       ├── get <id>
 │       ├── (list)
 │       └── stats
-└── docs
-    ├── build (list)
-    ├── serve (list)
-    ├── open (list) <topic>
-    ├── search (list) <query>
-    └── show (list) <topic>
+├── docs
+│   ├── build (list)
+│   ├── serve (list)
+│   ├── open (list) <topic>
+│   ├── search (list) <query>
+│   └── show (list) <topic>
+└── gh
+    ├── branch-protect
+    │   ├── apply <repo>
+    │   └── show <repo>
+    └── webhook
+        ├── setup <repo> <url>
+        └── (list) <repo>
 ```
 
 ## Source Tree
@@ -1229,6 +1251,11 @@ src/
 │   │   ├── definition.ts
 │   │   ├── resolve.ts
 │   │   └── types.ts
+│   ├── gh/
+│   │   ├── commands/
+│   │   │   └── index.ts
+│   │   ├── client.ts
+│   │   └── definition.ts
 │   ├── hr/
 │   │   ├── client.ts
 │   │   ├── commands.ts

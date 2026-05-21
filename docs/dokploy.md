@@ -3,7 +3,7 @@
 Dokploy self-hosted PaaS management — projects, apps, databases, deployments, domains, registries, notifications.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md)
 
 ## Contents
 
@@ -24,6 +24,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp]
 - [cluster](#cluster)
 - [containers](#containers)
 - [maintenance](#maintenance)
+- [traefik](#traefik)
 - [github](#github)
 - [users](#users)
 - [orgs](#orgs)
@@ -170,6 +171,8 @@ its dokploy projects delete <project-id> --confirm
 | `its dokploy apps migrate <app>` | Run a migration command inside the running app container. Defaults to `bun run db:migrate`. Lighter wrapper than `apps shell <id> '<cmd>'` — useful for ad-hoc migrations on apps that don't auto-migrate on boot. |
 | `its dokploy apps health` | Lightweight health sweep across ALL apps — replicas / last deploy / domain reachable. One row per app. Use `apps doctor <id>` for the deep dive on a specific app. |
 | `its dokploy apps doctor <app>` | Run a battery of parallel checks (env, mounts, webhook, replicas, image, healthcheck, recent log scan, last build). One green/red checklist instead of probing five separate commands. |
+| `its dokploy apps bootstrap <name>` | Bootstrap a new Dokploy app end-to-end: resolves or creates the project, creates the application, wires the GitHub source, sets the build type, pushes env vars, creates the domain, and triggers the first deploy. Idempotent — re-running with the same --name skips already-completed steps. Use --dry-run first. |
+| `its dokploy apps cert-status <app>` | Read Traefik acme.json for the app's domains — surfaces certificate state, expiry, last LE error. SSH-backed (reads from the dokploy-traefik container). |
 
 #### `its dokploy apps`
 
@@ -571,6 +574,39 @@ its dokploy apps doctor <app-id>
 
 # Pipe-friendly output — use with jq / scripts.
 its dokploy apps doctor <app-id> --json
+```
+
+#### `its dokploy apps bootstrap <name>`
+
+Bootstrap a new Dokploy app end-to-end: resolves or creates the project, creates the application, wires the GitHub source, sets the build type, pushes env vars, creates the domain, and triggers the first deploy. Idempotent — re-running with the same --name skips already-completed steps. Use --dry-run first.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--repo` | `` | GitHub source as <owner/repo> | — |
+| `--branch` | `` | Git branch (default main) | main |
+| `--domain` | `` | Domain to assign (e.g. app.contractcandles.com) | — |
+| `--port` | `` | Container port the app listens on (default 3000) | 3000 |
+| `--env-file` | `` | Path to .env file to push | — |
+| `--project` | `` | Project name or id (default: same as --name; created if missing) | — |
+| `--github-id` | `` | Dokploy GitHub provider id (default: first provider from `github providers`) | — |
+| `--dockerfile` | `` | Dockerfile path inside the repo (default Dockerfile) | Dockerfile |
+| `--context` | `` | Docker build context (default .) | . |
+| `--build-type` | `` | Build type (default dockerfile) | dockerfile |
+| `--no-deploy` | `` | Skip the final rebuild/deploy step | — |
+| `--dry-run` | `` | Print the plan without sending any mutations | — |
+
+```bash
+its dokploy apps bootstrap <name>
+```
+
+#### `its dokploy apps cert-status <app>`
+
+Read Traefik acme.json for the app's domains — surfaces certificate state, expiry, last LE error. SSH-backed (reads from the dokploy-traefik container).
+
+```bash
+its dokploy apps cert-status <app>
 ```
 
 ---
@@ -1486,6 +1522,39 @@ its dokploy maintenance time --json
 
 ---
 
+### traefik
+
+> Source: `src/providers/dokploy/commands/maintenance.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its dokploy traefik logs` | Tail the dokploy-traefik container logs over SSH. Useful for debugging 502/cert issues at the proxy layer. |
+| `its dokploy traefik acme` | Read the Traefik acme.json from the dokploy-traefik container — surfaces every Let's Encrypt certificate the host knows about. Read-only over SSH. |
+
+#### `its dokploy traefik logs`
+
+Tail the dokploy-traefik container logs over SSH. Useful for debugging 502/cert issues at the proxy layer.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--tail` | `` | Lines to tail (default 200) | 200 |
+
+```bash
+its dokploy traefik logs
+```
+
+#### `its dokploy traefik acme`
+
+Read the Traefik acme.json from the dokploy-traefik container — surfaces every Let's Encrypt certificate the host knows about. Read-only over SSH.
+
+```bash
+its dokploy traefik acme
+```
+
+---
+
 ### github
 
 > Source: `src/providers/dokploy/commands/github.ts`
@@ -1493,7 +1562,7 @@ its dokploy maintenance time --json
 | Command | Description |
 |---------|-------------|
 | `its dokploy github providers` | List GitHub App installations configured in Dokploy |
-| `its dokploy github repos <githubId>` | Repos visible to a GitHub App installation. Useful before saving a github source to confirm Dokploy can see the repo. |
+| `its dokploy github repos <githubId>` | Repos visible to a GitHub App installation. Pass the `githubId` from `github providers` (NOT the inner `gitProviderId` — different IDs). Accepts either and auto-resolves. |
 | `its dokploy github branches <owner> <repo>` | Branches in a GitHub repo (uses the GitHub App, no PAT needed) |
 
 #### `its dokploy github providers`
@@ -1511,7 +1580,7 @@ its dokploy github providers --json
 
 #### `its dokploy github repos <githubId>`
 
-Repos visible to a GitHub App installation. Useful before saving a github source to confirm Dokploy can see the repo.
+Repos visible to a GitHub App installation. Pass the `githubId` from `github providers` (NOT the inner `gitProviderId` — different IDs). Accepts either and auto-resolves.
 
 **Examples:**
 
