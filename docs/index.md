@@ -29,8 +29,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
+| [outlook.md](./outlook.md) | Outlook — 38 commands across 10 resources |
 
-**19 providers** · **175 resources** · **588 commands**
+**20 providers** · **185 resources** · **626 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -302,6 +303,21 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [branch-protect](./gh.md#branch-protect) | apply, show | — |
 | [webhook](./gh.md#webhook) | setup, list | — |
 
+### [Outlook](./outlook.md)
+
+| Resource | Actions | Source |
+|----------|---------|--------|
+| [mail](./outlook.md#mail) | list, get, search, thread, move, copy, read, unread, flag, categorise, delete, send | `src/providers/outlook/commands/mail.ts` |
+| [drafts](./outlook.md#drafts) | create, reply, forward, update, send | `src/providers/outlook/commands/drafts.ts` |
+| [folders](./outlook.md#folders) | list, get, create | `src/providers/outlook/commands/folders.ts` |
+| [attachments](./outlook.md#attachments) | list, get, add | `src/providers/outlook/commands/attachments.ts` |
+| [events](./outlook.md#events) | list, get, create, update, delete, respond, availability | `src/providers/outlook/commands/events.ts` |
+| [settings](./outlook.md#settings) | get | `src/providers/outlook/commands/settings.ts` |
+| [autoreply](./outlook.md#autoreply) | get, set | `src/providers/outlook/commands/settings.ts` |
+| [categories](./outlook.md#categories) | list | `src/providers/outlook/commands/settings.ts` |
+| [rules](./outlook.md#rules) | list, create, delete | `src/providers/outlook/commands/rules.ts` |
+| [contacts](./outlook.md#contacts) | search | `src/providers/outlook/commands/contacts.ts` |
+
 ## Key Source Files
 
 | File | Purpose |
@@ -337,6 +353,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | `src/providers/ctxc/client.ts` | ctxc memories API client |
 | `src/providers/docs/client.ts` | Docs UI API client |
 | `src/providers/gh/client.ts` | GitHub API client |
+| `src/providers/outlook/client.ts` | Outlook API client |
 
 ## Command Tree
 
@@ -1056,13 +1073,59 @@ its
 │   ├── open (list) <topic>
 │   ├── search (list) <query>
 │   └── show (list) <topic>
-└── gh
-    ├── branch-protect
-    │   ├── apply <repo>
-    │   └── show <repo>
-    └── webhook
-        ├── setup <repo> <url>
-        └── (list) <repo>
+├── gh
+│   ├── branch-protect
+│   │   ├── apply <repo>
+│   │   └── show <repo>
+│   └── webhook
+│       ├── setup <repo> <url>
+│       └── (list) <repo>
+└── outlook
+    ├── mail
+    │   ├── (list)
+    │   ├── get <message_id>
+    │   ├── search <query>
+    │   ├── thread <conversation_id>
+    │   ├── move <message_id> <folder_id>
+    │   ├── copy <message_id> <folder_id>
+    │   ├── read <message_id>
+    │   ├── unread <message_id>
+    │   ├── flag <message_id>
+    │   ├── categorise <message_id> <categories>
+    │   ├── delete <message_id>
+    │   └── send
+    ├── drafts
+    │   ├── create
+    │   ├── reply <message_id>
+    │   ├── forward <message_id>
+    │   ├── update <draft_id>
+    │   └── send <draft_id>
+    ├── folders
+    │   ├── (list)
+    │   ├── get <folder_id>
+    │   └── create <name>
+    ├── attachments
+    │   ├── (list) <message_id>
+    │   ├── get <message_id> <attachment_id>
+    │   └── add <message_id>
+    ├── events
+    │   ├── (list)
+    │   ├── get <event_id>
+    │   ├── create
+    │   ├── update <event_id>
+    │   ├── delete <event_id>
+    │   ├── respond <event_id> <response>
+    │   └── availability <schedules>
+    ├── settings get
+    ├── autoreply
+    │   ├── get
+    │   └── set
+    ├── categories (list)
+    ├── rules
+    │   ├── (list)
+    │   ├── create
+    │   └── delete <rule_id>
+    └── contacts search <query>
 ```
 
 ## Source Tree
@@ -1278,6 +1341,21 @@ src/
 │   │   │   └── scripts.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   └── types.ts
+│   ├── outlook/
+│   │   ├── commands/
+│   │   │   ├── attachments.ts
+│   │   │   ├── contacts.ts
+│   │   │   ├── drafts.ts
+│   │   │   ├── events.ts
+│   │   │   ├── folders.ts
+│   │   │   ├── index.ts
+│   │   │   ├── mail.ts
+│   │   │   ├── rules.ts
+│   │   │   └── settings.ts
+│   │   ├── client.ts
+│   │   ├── definition.ts
+│   │   ├── helpers.ts
 │   │   └── types.ts
 │   ├── pa/
 │   │   ├── commands/
