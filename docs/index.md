@@ -29,9 +29,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
-| [outlook.md](./outlook.md) | Outlook — 38 commands across 10 resources |
+| [outlook.md](./outlook.md) | Outlook — 39 commands across 10 resources |
 
-**20 providers** · **185 resources** · **627 commands**
+**20 providers** · **185 resources** · **628 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -310,7 +310,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [mail](./outlook.md#mail) | list, get, search, thread, move, copy, read, unread, flag, categorise, delete, send | `src/providers/outlook/commands/mail.ts` |
 | [drafts](./outlook.md#drafts) | create, reply, forward, update, send | `src/providers/outlook/commands/drafts.ts` |
 | [folders](./outlook.md#folders) | list, get, create | `src/providers/outlook/commands/folders.ts` |
-| [attachments](./outlook.md#attachments) | list, get, add | `src/providers/outlook/commands/attachments.ts` |
+| [attachments](./outlook.md#attachments) | list, get, add, delete | `src/providers/outlook/commands/attachments.ts` |
 | [events](./outlook.md#events) | list, get, create, update, delete, respond, availability | `src/providers/outlook/commands/events.ts` |
 | [settings](./outlook.md#settings) | get | `src/providers/outlook/commands/settings.ts` |
 | [autoreply](./outlook.md#autoreply) | get, set | `src/providers/outlook/commands/settings.ts` |
@@ -1108,7 +1108,8 @@ its
     ├── attachments
     │   ├── (list) <message_id>
     │   ├── get <message_id> <attachment_id>
-    │   └── add <message_id>
+    │   ├── add <message_id>
+    │   └── delete <message_id> <attachment_id>
     ├── events
     │   ├── (list)
     │   ├── get <event_id>

@@ -392,6 +392,7 @@ its outlook folders create <name>
 | `its outlook attachments <message_id>` | List attachments on a message. |
 | `its outlook attachments get <message_id> <attachment_id>` | Get a single attachment (includes contentBytes for fileAttachment). |
 | `its outlook attachments add <message_id>` | Attach a file to a draft message. Pass --file <path> to read from disk, or --content-bytes (base64) directly. |
+| `its outlook attachments delete <message_id> <attachment_id>` | Delete an attachment from a message (typically a draft pre-send). Requires --confirm. |
 
 #### `its outlook attachments <message_id>`
 
@@ -435,6 +436,22 @@ Attach a file to a draft message. Pass --file <path> to read from disk, or --con
 ```bash
 # Pair with body HTML containing `<img src="cid:logo-1">`
 its outlook attachments add <draft_id> --file logo.png --content-type image/png --is-inline --content-id logo-1
+```
+
+#### `its outlook attachments delete <message_id> <attachment_id>`
+
+Delete an attachment from a message (typically a draft pre-send). Requires --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm deletion | — |
+
+**Examples:**
+
+```bash
+its outlook attachments delete <draft_id> <attachment_id> --confirm
 ```
 
 ---
