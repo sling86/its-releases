@@ -427,9 +427,14 @@ Attach a file to a draft message. Pass --file <path> to read from disk, or --con
 | `--name` | `` | Override attachment display name (defaults to basename of --file) | — |
 | `--content-type` | `` | MIME type (default application/octet-stream) | — |
 | `--content-bytes` | `` | Base64-encoded file content (alternative to --file) | — |
+| `--is-inline` | `` | Mark as inline attachment (renders in body via cid: ref, not as paperclip) | — |
+| `--content-id` | `` | Content-ID for cid: targeting in HTML body (e.g. `cid:logo-1` ↔ --content-id logo-1) | — |
+
+**Examples:**
 
 ```bash
-its outlook attachments add <message_id>
+# Pair with body HTML containing `<img src="cid:logo-1">`
+its outlook attachments add <draft_id> --file logo.png --content-type image/png --is-inline --content-id logo-1
 ```
 
 ---
