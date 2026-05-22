@@ -1145,6 +1145,7 @@ src/
 │   │   ├── types.ts
 │   │   └── wizard.ts
 │   ├── audit.ts
+│   ├── auth-scopes.ts
 │   ├── auth.ts
 │   ├── cache.ts
 │   ├── clipboard.ts
