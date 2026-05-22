@@ -18,6 +18,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [categories](#categories)
 - [rules](#rules)
 - [contacts](#contacts)
+- [triage](#triage)
 
 ## Setup
 
@@ -68,7 +69,7 @@ its outlook setup --reset   # Re-run setup (overwrite config)
 | `its outlook mail unread <message_id>` | Mark a message as unread. |
 | `its outlook mail flag <message_id>` | Set follow-up flag status on a message. |
 | `its outlook mail categorise <message_id> <categories>` | Set the category list on a message (replaces existing categories). |
-| `its outlook mail delete <message_id>` | Delete a message (moves to Deleted Items). |
+| `its outlook mail delete [message_id]` | Delete one or more messages (moves to Deleted Items). Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete. |
 | `its outlook mail send` | Send a new email directly (no draft step). Saves a copy in Sent Items. |
 
 #### `its outlook mail`
@@ -87,6 +88,7 @@ List messages from the mailbox. Defaults to Inbox (top 25 by receivedDateTime de
 | `--unread` | `` | Only unread messages | — |
 | `--has-attachments` | `` | Only messages with attachments | — |
 | `--from` | `` | Filter by sender email address (substring match via OData) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
 
@@ -111,6 +113,7 @@ Get a single message including body, recipients, and flags.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--no-body` | `` | Skip the body content (faster, smaller output) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook mail get <message_id>
@@ -125,6 +128,7 @@ Keyword search across the mailbox using Graph $search (KQL syntax).
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--top` | `` | Max results (max 50) | 25 |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
 
@@ -145,6 +149,7 @@ List every message in the same conversation (entire thread).
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--top` | `` | Max messages (max 50) | 50 |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook mail thread <conversation_id>
@@ -154,6 +159,12 @@ its outlook mail thread <conversation_id>
 
 Move a message to another folder.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
 ```bash
 its outlook mail move <message_id> <folder_id>
 ```
@@ -161,6 +172,12 @@ its outlook mail move <message_id> <folder_id>
 #### `its outlook mail copy <message_id> <folder_id>`
 
 Copy a message to another folder.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook mail copy <message_id> <folder_id>
@@ -170,6 +187,12 @@ its outlook mail copy <message_id> <folder_id>
 
 Mark a message as read.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
 ```bash
 its outlook mail read <message_id>
 ```
@@ -177,6 +200,12 @@ its outlook mail read <message_id>
 #### `its outlook mail unread <message_id>`
 
 Mark a message as unread.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook mail unread <message_id>
@@ -191,6 +220,7 @@ Set follow-up flag status on a message.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--status` | `` | Flag status | flagged |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook mail flag <message_id>
@@ -200,22 +230,34 @@ its outlook mail flag <message_id>
 
 Set the category list on a message (replaces existing categories).
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
 ```bash
 its outlook mail categorise <message_id> <categories>
 ```
 
-#### `its outlook mail delete <message_id>`
+#### `its outlook mail delete [message_id]`
 
-Delete a message (moves to Deleted Items).
+Delete one or more messages (moves to Deleted Items). Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--confirm` | `` | Skip safety prompt | — |
+| `--confirm` | `` | Required for bulk (--stdin) deletes | — |
+| `--stdin` | `` | Read newline/JSON list of message ids from stdin | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
 
 ```bash
 its outlook mail delete <message_id>
+
+its outlook mail --filter "from/emailAddress/address eq 'spammer@x'" --json | its outlook mail delete --stdin --confirm
 ```
 
 #### `its outlook mail send`
@@ -234,6 +276,9 @@ Send a new email directly (no draft step). Saves a copy in Sent Items.
 | `--body-file` | `` | Read body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) | — |
 | `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
 | `--importance` | `` | low|normal|high | normal |
+| `--attach` | `` | File to attach. Comma-separated for multiple. `path:cid:<id>` syntax marks an attachment inline with that cid (pair with `<img src="cid:<id>">` in body). | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
 **Examples:**
 
@@ -241,6 +286,8 @@ Send a new email directly (no draft step). Saves a copy in Sent Items.
 its outlook mail send --to user@example.com --subject "Hi" --body "Quick note"
 
 its outlook mail send --to user@example.com --subject "Report" --html --body-file report.html
+
+its outlook mail send --to user@example.com --subject "Welcome" --html --body-file welcome.html --attach "logo.png:cid:logo-1"
 ```
 
 ---
@@ -256,6 +303,7 @@ its outlook mail send --to user@example.com --subject "Report" --html --body-fil
 | `its outlook drafts forward <message_id>` | Create a forward draft. |
 | `its outlook drafts update <draft_id>` | Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories. |
 | `its outlook drafts send <draft_id>` | Send an existing draft. |
+| `its outlook drafts` | List draft messages (convenience for `mail list --folder drafts`). |
 
 #### `its outlook drafts create`
 
@@ -273,6 +321,8 @@ Create a draft email (does not send).
 | `--body-file` | `` | Read body from a UTF-8 file (use this for bodies > ~15KB — Windows command-line cap) | — |
 | `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
 | `--importance` | `` | low|normal|high | normal |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
 ```bash
 its outlook drafts create
@@ -289,6 +339,8 @@ Create a reply draft. By default replies to the sender only; use --all to Reply-
 | `--comment` | `` | Inline comment prepended to the reply body | — |
 | `--comment-file` | `` | Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) | — |
 | `--all` | `` | Reply to all recipients | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
 ```bash
 its outlook drafts reply <message_id>
@@ -305,6 +357,8 @@ Create a forward draft.
 | `--to` | `` | Comma-separated recipients | — |
 | `--comment` | `` | Inline comment prepended to the forwarded body | — |
 | `--comment-file` | `` | Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
 ```bash
 its outlook drafts forward <message_id>
@@ -327,6 +381,8 @@ Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories.
 | `--bcc` | `` | Replace BCC recipients | — |
 | `--importance` | `` | low|normal|high | — |
 | `--categories` | `` | Replace categories (comma-separated) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
 ```bash
 its outlook drafts update <draft_id>
@@ -336,8 +392,30 @@ its outlook drafts update <draft_id>
 
 Send an existing draft.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
 ```bash
 its outlook drafts send <draft_id>
+```
+
+#### `its outlook drafts`
+
+List draft messages (convenience for `mail list --folder drafts`).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--top` | `` | Number of drafts (max 50) | 25 |
+| `--skip` | `` | Skip first N (pagination) | 0 |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+```bash
+its outlook drafts
 ```
 
 ---
@@ -361,6 +439,7 @@ List mail folders with counts (totalItemCount, unreadItemCount).
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--top` | `` | Max folders (default 50, max 100) | 50 |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook folders
@@ -369,6 +448,12 @@ its outlook folders
 #### `its outlook folders get <folder_id>`
 
 Get a single mail folder by ID or well-known name (inbox, sentitems, drafts, deleteditems, archive).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook folders get <folder_id>
@@ -383,6 +468,7 @@ Create a new mail folder (optionally nested under a parent).
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--parent` | `` | Parent folder ID (omit for top-level) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook folders create <name>
@@ -397,30 +483,42 @@ its outlook folders create <name>
 | Command | Description |
 |---------|-------------|
 | `its outlook attachments <message_id>` | List attachments on a message. |
-| `its outlook attachments get <message_id> <attachment_id>` | Get a single attachment (includes contentBytes for fileAttachment). |
+| `its outlook attachments get <message_id> [attachment_id]` | Get a single attachment (includes contentBytes for fileAttachment). Pass --save-all <dir> to dump every attachment on the message instead of one. |
 | `its outlook attachments add <message_id>` | Attach a file to a draft message. Pass --file <path> to read from disk, or --content-bytes (base64) directly. |
-| `its outlook attachments delete <message_id> <attachment_id>` | Delete an attachment from a message (typically a draft pre-send). Requires --confirm. |
+| `its outlook attachments delete <message_id> [attachment_id]` | Delete attachment(s) from a message. Single: pass <message_id> <attachment_id>. Bulk: pass <message_id> and pipe `attachments list --json` to stdin with --stdin. |
 
 #### `its outlook attachments <message_id>`
 
 List attachments on a message.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
 ```bash
 its outlook attachments <message_id>
 ```
 
-#### `its outlook attachments get <message_id> <attachment_id>`
+#### `its outlook attachments get <message_id> [attachment_id]`
 
-Get a single attachment (includes contentBytes for fileAttachment).
+Get a single attachment (includes contentBytes for fileAttachment). Pass --save-all <dir> to dump every attachment on the message instead of one.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--save` | `` | Write contentBytes to this local path (decoded) | — |
+| `--save` | `` | Write contentBytes of the single attachment to this local path (decoded) | — |
+| `--save-all` | `` | Save every attachment on the message into this directory (created if missing) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
 
 ```bash
-its outlook attachments get <message_id> <attachment_id>
+its outlook attachments get <message_id> <attachment_id> --save invoice.pdf
+
+its outlook attachments get <message_id> --save-all ./out
 ```
 
 #### `its outlook attachments add <message_id>`
@@ -437,6 +535,7 @@ Attach a file to a draft message. Pass --file <path> to read from disk, or --con
 | `--content-bytes` | `` | Base64-encoded file content (alternative to --file) | — |
 | `--is-inline` | `` | Mark as inline attachment (renders in body via cid: ref, not as paperclip) | — |
 | `--content-id` | `` | Content-ID for cid: targeting in HTML body (e.g. `cid:logo-1` ↔ --content-id logo-1) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
 
@@ -445,20 +544,24 @@ Attach a file to a draft message. Pass --file <path> to read from disk, or --con
 its outlook attachments add <draft_id> --file logo.png --content-type image/png --is-inline --content-id logo-1
 ```
 
-#### `its outlook attachments delete <message_id> <attachment_id>`
+#### `its outlook attachments delete <message_id> [attachment_id]`
 
-Delete an attachment from a message (typically a draft pre-send). Requires --confirm.
+Delete attachment(s) from a message. Single: pass <message_id> <attachment_id>. Bulk: pass <message_id> and pipe `attachments list --json` to stdin with --stdin.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--confirm` | `` | Confirm deletion | — |
+| `--confirm` | `` | Required for bulk (--stdin) deletes | — |
+| `--stdin` | `` | Read newline/JSON list of attachment ids from stdin | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
 
 ```bash
-its outlook attachments delete <draft_id> <attachment_id> --confirm
+its outlook attachments delete <message_id> <attachment_id> --confirm
+
+its outlook attachments <message_id> --json | its outlook attachments delete <message_id> --stdin --confirm
 ```
 
 ---
@@ -488,6 +591,7 @@ List calendar events between two dates (calendarView — includes expanded recur
 | `--start` | `` | Start ISO date/datetime (default: today) | — |
 | `--end` | `` | End ISO date/datetime (default: 7 days from start) | — |
 | `--top` | `` | Max events (default 50, max 100) | 50 |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
 
@@ -500,6 +604,12 @@ its outlook events --start 2026-05-25 --end 2026-06-01
 #### `its outlook events get <event_id>`
 
 Get a single calendar event by ID.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook events get <event_id>
@@ -525,6 +635,8 @@ Create a calendar event. Times default to UTC unless --tz is set.
 | `--optional-attendees` | `` | Comma-separated optional attendees | — |
 | `--all-day` | `` | Mark as all-day event | — |
 | `--online` | `` | Create Teams meeting link | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
 ```bash
 its outlook events create
@@ -548,6 +660,8 @@ Update a calendar event (subject, times, location, all-day, online-meeting).
 | `--html` | `` | Treat --body / --body-file as HTML | — |
 | `--all-day` | `` | Set isAllDay | — |
 | `--online` | `` | Toggle isOnlineMeeting | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
 ```bash
 its outlook events update <event_id>
@@ -556,6 +670,12 @@ its outlook events update <event_id>
 #### `its outlook events delete <event_id>`
 
 Delete a calendar event.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook events delete <event_id>
@@ -572,6 +692,8 @@ Respond to a meeting invite — accept, decline, or tentatively accept.
 | `--comment` | `` | Reply comment to the organiser | — |
 | `--comment-file` | `` | Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) | — |
 | `--no-response` | `` | Don't send a reply to the organiser | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
 ```bash
 its outlook events respond <event_id> <response>
@@ -588,6 +710,7 @@ Check free/busy across one or more mailboxes between two times.
 | `--start` | `` | Start ISO datetime | — |
 | `--end` | `` | End ISO datetime | — |
 | `--interval` | `` | View interval in minutes (default 30) | 30 |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
 
@@ -609,6 +732,12 @@ its outlook events availability "a@b.com,c@d.com" --start 2026-05-21T09:00:00Z -
 
 Get full mailbox settings (time zone, locale, working hours, auto-reply state).
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
 ```bash
 its outlook settings get
 ```
@@ -627,6 +756,12 @@ its outlook settings get
 #### `its outlook autoreply get`
 
 Get current automatic reply (out-of-office) settings.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook autoreply get
@@ -647,6 +782,7 @@ Configure automatic reply. Use --status to toggle disabled/alwaysEnabled/schedul
 | `--start` | `` | Scheduled start (ISO datetime) | — |
 | `--end` | `` | Scheduled end (ISO datetime) | — |
 | `--tz` | `` | Time zone for --start/--end (default UTC) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
 
@@ -670,6 +806,12 @@ its outlook autoreply set --status scheduled --start 2026-05-25T09:00:00 --end 2
 
 List master categories (named colour labels available for `mail categorise`).
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
 ```bash
 its outlook categories
 ```
@@ -690,6 +832,12 @@ its outlook categories
 
 List inbox message rules.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
 ```bash
 its outlook rules
 ```
@@ -707,6 +855,7 @@ Create an inbox rule. Conditions + actions take raw JSON (Graph schema). See htt
 | `--disabled` | `` | Create in disabled state | — |
 | `--conditions` | `` | Conditions JSON (e.g. '{"fromAddresses":[{"emailAddress":{"address":"x@y"}}]}') | — |
 | `--actions` | `` | Actions JSON (e.g. '{"moveToFolder":"<folderId>"}') | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook rules create
@@ -715,6 +864,12 @@ its outlook rules create
 #### `its outlook rules delete <rule_id>`
 
 Delete an inbox rule.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook rules delete <rule_id>
@@ -739,9 +894,40 @@ Search the /people graph for matching contacts and frequent collaborators.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--top` | `` | Max results (default 10, max 25) | 10 |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
 its outlook contacts search <query>
+```
+
+---
+
+### triage
+
+> Source: `src/providers/outlook/commands/triage.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its outlook triage` | Triage the unread inbox — buckets messages into ACTION REQUIRED / FYI / NOISE with a one-line recommendation. Read-only; no mutations. |
+
+#### `its outlook triage`
+
+Triage the unread inbox — buckets messages into ACTION REQUIRED / FYI / NOISE with a one-line recommendation. Read-only; no mutations.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--top` | `` | Max unread messages to scan (default 25, max 50) | 25 |
+| `--include-read` | `` | Also include read messages (default: unread only) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook triage
+
+its outlook triage --top 50
 ```
 
 ---

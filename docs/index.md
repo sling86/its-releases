@@ -29,9 +29,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
-| [outlook.md](./outlook.md) | Outlook — 39 commands across 10 resources |
+| [outlook.md](./outlook.md) | Outlook — 41 commands across 11 resources |
 
-**20 providers** · **185 resources** · **628 commands**
+**20 providers** · **186 resources** · **630 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -308,7 +308,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [mail](./outlook.md#mail) | list, get, search, thread, move, copy, read, unread, flag, categorise, delete, send | `src/providers/outlook/commands/mail.ts` |
-| [drafts](./outlook.md#drafts) | create, reply, forward, update, send | `src/providers/outlook/commands/drafts.ts` |
+| [drafts](./outlook.md#drafts) | create, reply, forward, update, send, list | `src/providers/outlook/commands/drafts.ts` |
 | [folders](./outlook.md#folders) | list, get, create | `src/providers/outlook/commands/folders.ts` |
 | [attachments](./outlook.md#attachments) | list, get, add, delete | `src/providers/outlook/commands/attachments.ts` |
 | [events](./outlook.md#events) | list, get, create, update, delete, respond, availability | `src/providers/outlook/commands/events.ts` |
@@ -317,6 +317,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [categories](./outlook.md#categories) | list | `src/providers/outlook/commands/settings.ts` |
 | [rules](./outlook.md#rules) | list, create, delete | `src/providers/outlook/commands/rules.ts` |
 | [contacts](./outlook.md#contacts) | search | `src/providers/outlook/commands/contacts.ts` |
+| [triage](./outlook.md#triage) | list | `src/providers/outlook/commands/triage.ts` |
 
 ## Key Source Files
 
@@ -1093,23 +1094,24 @@ its
     │   ├── unread <message_id>
     │   ├── flag <message_id>
     │   ├── categorise <message_id> <categories>
-    │   ├── delete <message_id>
+    │   ├── delete [message_id]
     │   └── send
     ├── drafts
     │   ├── create
     │   ├── reply <message_id>
     │   ├── forward <message_id>
     │   ├── update <draft_id>
-    │   └── send <draft_id>
+    │   ├── send <draft_id>
+    │   └── (list)
     ├── folders
     │   ├── (list)
     │   ├── get <folder_id>
     │   └── create <name>
     ├── attachments
     │   ├── (list) <message_id>
-    │   ├── get <message_id> <attachment_id>
+    │   ├── get <message_id> [attachment_id]
     │   ├── add <message_id>
-    │   └── delete <message_id> <attachment_id>
+    │   └── delete <message_id> [attachment_id]
     ├── events
     │   ├── (list)
     │   ├── get <event_id>
@@ -1127,7 +1129,8 @@ its
     │   ├── (list)
     │   ├── create
     │   └── delete <rule_id>
-    └── contacts search <query>
+    ├── contacts search <query>
+    └── triage (list)
 ```
 
 ## Source Tree
@@ -1355,7 +1358,8 @@ src/
 │   │   │   ├── index.ts
 │   │   │   ├── mail.ts
 │   │   │   ├── rules.ts
-│   │   │   └── settings.ts
+│   │   │   ├── settings.ts
+│   │   │   └── triage.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── helpers.ts

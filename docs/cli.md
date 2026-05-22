@@ -60,7 +60,7 @@ its <provider> <resource> [action] [args] [--flags]
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
 | GitHub | `gh` | 4 commands, 2 resources | [gh.md](./gh.md) |
-| Outlook | `outlook` | 39 commands, 10 resources | [outlook.md](./outlook.md) |
+| Outlook | `outlook` | 41 commands, 11 resources | [outlook.md](./outlook.md) |
 
 ## Global Options
 
