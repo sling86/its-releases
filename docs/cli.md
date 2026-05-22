@@ -76,6 +76,7 @@ its <provider> <resource> [action] [args] [--flags]
 | `--fields a,b,c` | Select columns — works in all output modes (partial names OK) |
 | `--limit N` | Limit output to N rows (server-side where supported) |
 | `--count` | Show only the row count |
+| `--auth auto\|delegated\|app` | OAuth mode for Graph providers. `auto` (default) tries delegated then falls back to app-only; `delegated` errors if no delegated token; `app` forces SP context |
 | `--no-cache` | Bypass response cache |
 | `--max-chars N` | Character budget (AI mode only) |
 | `--no-colour` | Disable ANSI colours |
