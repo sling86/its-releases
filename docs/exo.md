@@ -181,6 +181,8 @@ its exo groups remove-member "All Staff" jane.smith@example.com --json
 | `its exo mailboxes forwarding <mailbox>` | Show forwarding configuration for a mailbox. Audit pass — find mailboxes with forwarding configured. |
 | `its exo mailboxes user-access <user>` | List all shared mailboxes a user has FullAccess to (scans all 400+ shared mailboxes, may take up to 5 minutes) |
 | `its exo mailboxes set-forwarding <mailbox> <target>` | Configure mailbox forwarding. Set a mailbox forward. --confirm required. |
+| `its exo mailboxes set-type <mailbox> <type>` | Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared. |
+| `its exo mailboxes set-visibility <mailbox>` | Hide or show a mailbox in the global address list (GAL). Pass exactly one of --hide / --show. |
 
 #### `its exo mailboxes`
 
@@ -338,6 +340,29 @@ its exo mailboxes set-forwarding jane.smith@example.com --to "external@vendor.co
 its exo mailboxes set-forwarding jane.smith@example.com --to "external@vendor.com" --keep --json
 ```
 
+#### `its exo mailboxes set-type <mailbox> <type>`
+
+Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared.
+
+```bash
+its exo mailboxes set-type <mailbox> <type>
+```
+
+#### `its exo mailboxes set-visibility <mailbox>`
+
+Hide or show a mailbox in the global address list (GAL). Pass exactly one of --hide / --show.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--hide` | `` | Hide from the GAL | — |
+| `--show` | `` | Show in the GAL | — |
+
+```bash
+its exo mailboxes set-visibility <mailbox>
+```
+
 ---
 
 ### rules
@@ -401,6 +426,8 @@ its exo domains --watch
 |---------|-------------|
 | `its exo trace` | Search message trace (last N days). Surfaces the most common fields; pass --json for raw shape. |
 | `its exo trace detail <trace-id> <recipient>` | Get hop-by-hop detail for a traced message. Single mailbox detail incl. quotas + rules. |
+| `its exo trace historical` | Submit a historical message-trace search (Start-HistoricalSearch) for the 11–90 day window that `trace list` (10-day cap) can't reach. Async — returns a JobId; poll with `trace historical-status <jobId>`. |
+| `its exo trace historical-status <job-id>` | Poll a historical search job (Get-HistoricalSearch). FileUrl is populated once Status is Done. |
 
 #### `its exo trace`
 
@@ -437,6 +464,31 @@ its exo trace detail <msg-id>
 
 # Pipe-friendly output — use with jq / scripts.
 its exo trace detail <msg-id> --json
+```
+
+#### `its exo trace historical`
+
+Submit a historical message-trace search (Start-HistoricalSearch) for the 11–90 day window that `trace list` (10-day cap) can't reach. Async — returns a JobId; poll with `trace historical-status <jobId>`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--sender` | `-s` | Sender email address | — |
+| `--recipient` | `-r` | Recipient email address | — |
+| `--days` | `-d` | Days back to search (max 90) | 30 |
+| `--notify` | `` | Email address to notify when the CSV is ready (required by EXO) | — |
+
+```bash
+its exo trace historical
+```
+
+#### `its exo trace historical-status <job-id>`
+
+Poll a historical search job (Get-HistoricalSearch). FileUrl is populated once Status is Done.
+
+```bash
+its exo trace historical-status <job-id>
 ```
 
 ---

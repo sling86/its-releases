@@ -79,6 +79,10 @@ its entra setup --reset   # Re-run setup (overwrite config)
 | `its entra users stale` | Find users with no recent successful sign-in — candidates for offboarding/clean-up. Defaults to enabled accounts with `lastSuccessfulSignInDateTime` older than 90 days; pass --days, --include-disabled, --include-guests to widen. |
 | `its entra users disable <id>` | Disable a user account (requires --confirm). Pass --revoke-sessions to also kill active refresh tokens + cookies — recommended during offboarding so the user is forced out of M365 immediately. |
 | `its entra users revoke-sessions <id>` | Revoke all sign-in sessions for a user (POST /users/{id}/revokeSignInSessions). Forces re-auth on all clients without disabling the account. |
+| `its entra users set-password <id>` | Set a user's password (requires --confirm). The calling principal needs Password Administrator / User Administrator — app-only User.ReadWrite.All returns 403. Add --force-change to require a reset at next sign-in. |
+| `its entra users delete <id>` | Soft-delete a user (requires --confirm). Recoverable for 30 days via directory/deletedItems. |
+| `its entra users transfer <id>` | Internal transfer (Company A→B): rename UPN + swap primary SMTP (optionally keep old as alias) + set company / department / manager in one pass. Requires --confirm. Cloud-only accounts (proxyAddresses must be Entra-writable). |
+| `its entra users reinstate <id>` | Reverse a recent offboarding (requires --confirm): re-enable the account, optionally reset the password, and replay the directory audit log from the last N minutes to re-add removed group memberships. Licence removals are reported (re-assign manually). |
 
 #### `its entra users`
 
@@ -371,6 +375,72 @@ its entra users revoke-sessions jane.smith@example.com
 its entra users revoke-sessions jane.smith@example.com --confirm
 ```
 
+#### `its entra users set-password <id>`
+
+Set a user's password (requires --confirm). The calling principal needs Password Administrator / User Administrator — app-only User.ReadWrite.All returns 403. Add --force-change to require a reset at next sign-in.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--password` | `` | New password | — |
+| `--force-change` | `` | Force a password change at next sign-in | — |
+| `--confirm` | `` | Confirm the password set | — |
+
+```bash
+its entra users set-password <id>
+```
+
+#### `its entra users delete <id>`
+
+Soft-delete a user (requires --confirm). Recoverable for 30 days via directory/deletedItems.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm the deletion | — |
+
+```bash
+its entra users delete <id>
+```
+
+#### `its entra users transfer <id>`
+
+Internal transfer (Company A→B): rename UPN + swap primary SMTP (optionally keep old as alias) + set company / department / manager in one pass. Requires --confirm. Cloud-only accounts (proxyAddresses must be Entra-writable).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--new-upn` | `` | New userPrincipalName (also becomes primary SMTP) | — |
+| `--new-company` | `` | New companyName | — |
+| `--new-department` | `` | New department | — |
+| `--new-manager` | `` | New manager (UPN or GUID) | — |
+| `--keep-old-smtp-as-alias` | `` | Keep the old primary SMTP as a secondary alias | — |
+| `--confirm` | `` | Confirm the transfer | — |
+
+```bash
+its entra users transfer <id>
+```
+
+#### `its entra users reinstate <id>`
+
+Reverse a recent offboarding (requires --confirm): re-enable the account, optionally reset the password, and replay the directory audit log from the last N minutes to re-add removed group memberships. Licence removals are reported (re-assign manually).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--from-audit-minutes` | `` | Audit window to replay group re-adds from (default 60) | 60 |
+| `--password` | `` | Also set a new password | — |
+| `--force-change` | `` | Force password change at next sign-in (with --password) | — |
+| `--confirm` | `` | Confirm the reinstate | — |
+
+```bash
+its entra users reinstate <id>
+```
+
 ---
 
 ### groups
@@ -530,7 +600,7 @@ its entra groups remove-member <group-id> --user jane.smith@example.com --confir
 | Command | Description |
 |---------|-------------|
 | `its entra licences` | List all subscribed SKUs/licences. Available column gets a ⚠ marker when fewer than 10% of seats remain (or none) — useful for catching exhaustion before the next assign request fails. |
-| `its entra licences assign <user_id>` | Assign a licence to a user. Idempotent — assigning twice is a no-op. |
+| `its entra licences assign <user_id>` | Assign one or more licences to a user. Pass --sku as a comma-separated list to assign several atomically in a single Graph call (parallel single-assigns trip 409 Directory_ConcurrencyViolation). Idempotent. |
 | `its entra licences remove <user_id>` | Remove a licence from a user (requires --confirm). Permanent — use --confirm. |
 | `its entra licences users <sku_id>` | List users assigned a specific licence SKU. List by resource membership; use --json for the raw shape. |
 | `its entra licences unlicensed` | Find enabled users with no licence assignments. Read-only — useful for billing audits. |
@@ -564,17 +634,21 @@ its entra licences --watch
 
 #### `its entra licences assign <user_id>`
 
-Assign a licence to a user. Idempotent — assigning twice is a no-op.
+Assign one or more licences to a user. Pass --sku as a comma-separated list to assign several atomically in a single Graph call (parallel single-assigns trip 409 Directory_ConcurrencyViolation). Idempotent.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--sku` | `` | SKU ID (GUID) | — |
+| `--sku` | `` | SKU ID (GUID), or comma-separated list of GUIDs | — |
 
 **Examples:**
 
 ```bash
+its entra licences assign jane@x.com --sku <guid>
+
+its entra licences assign jane@x.com --sku <guid1>,<guid2>,<guid3>
+
 its entra licences assign jane.smith@example.com --sku SPB
 
 # Some SKUs require usageLocation — set it inline.

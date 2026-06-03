@@ -15,6 +15,42 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.44] - 2026-06-03
+
+### Added
+
+- **`its trust-cert <url>`** (+ `list` / `remove <host>`, `--replace`) and a
+  global **`--trust-cert`** flag — trust-on-first-use (TOFU) TLS certificate
+  pinning for self-signed hosts (UniFi, UniFi Protect, self-hosted controllers).
+  Shows the full certificate (subject / issuer / validity / SANs / SHA-256) and
+  prompts before remembering it. A pinned cert is the sole trust anchor, so a
+  changed certificate fails verification and must be re-trusted.
+- **Multi-vault Bitwarden** — `its bw vaults create <name>` captures each vault's
+  own host, account and master password; `--vault <name>` routes any command to
+  that profile with its own session.
+
+### Changed
+
+- **TLS is now verified by default** across every provider. UniFi Network and
+  UniFi Protect previously accepted any certificate — they now require a one-time
+  `its trust-cert`. `UNIFI_TLS_VERIFY=false` remains as an explicit legacy escape.
+
+### Security
+
+- **Exchange Online** — PowerShell enum parameters (`-AccessRights`,
+  `-RecipientTypeDetails`, `-Type`, `-AutoReplyState`) are now allow-list
+  validated, closing a command-injection vector via `--rights` / `--type`.
+- **Help UI** — the browser WebSocket bridge is now read-only; mutations issued
+  from the docs UI are refused (fail-closed allow-list).
+- Plus the 2026-06 audit follow-ups: secret-redaction leak fixes, `0600` perms on
+  token/cache/history files, `Retry-After` clamping, Dokploy SSH argument
+  quoting, UniFi retry caps, and more.
+
+### Fixed
+
+- `its bw vaults create` no longer reuses the default vault's master password
+  when creating a profile for a different host/account.
+
 ## [0.2.34] - 2026-05-21
 
 ### Added

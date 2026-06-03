@@ -955,7 +955,7 @@ its wrike onboarding get <task-id> --json
 | Command | Description |
 |---------|-------------|
 | `its wrike leavers` | List IT - Leaver tickets. Defaults to Active; pass --status Completed for closed ones. Surfaces Last Day + days-until-leave. |
-| `its wrike leavers complete <idOrPermalink>` | Orchestrate the IT offboarding flow for a leaver ticket — disable the Entra account, revoke sessions, remove licences and groups, then mark the Wrike ticket Completed with a status comment. Destructive — needs --confirm. Use --dry-run first. |
+| `its wrike leavers complete <idOrPermalink>` | Orchestrate the IT offboarding flow for a leaver ticket — disable + revoke sessions, clear manager, set extensionAttribute13=Leaver, convert mailbox to shared + GAL-hide, remove licences and groups, then mark the Wrike ticket Completed (only on full success). The status comment is returned as a draft — never posted directly, per wrike-comment-approval. Destructive — needs --confirm. Use --dry-run first. |
 | `its wrike leavers get <idOrPermalink>` | Get full leaver-ticket details with comments. Pass the id (or Wrike permalink) as the positional arg. |
 
 #### `its wrike leavers`
@@ -975,7 +975,7 @@ its wrike leavers
 
 #### `its wrike leavers complete <idOrPermalink>`
 
-Orchestrate the IT offboarding flow for a leaver ticket — disable the Entra account, revoke sessions, remove licences and groups, then mark the Wrike ticket Completed with a status comment. Destructive — needs --confirm. Use --dry-run first.
+Orchestrate the IT offboarding flow for a leaver ticket — disable + revoke sessions, clear manager, set extensionAttribute13=Leaver, convert mailbox to shared + GAL-hide, remove licences and groups, then mark the Wrike ticket Completed (only on full success). The status comment is returned as a draft — never posted directly, per wrike-comment-approval. Destructive — needs --confirm. Use --dry-run first.
 
 **Flags:**
 
@@ -984,7 +984,7 @@ Orchestrate the IT offboarding flow for a leaver ticket — disable the Entra ac
 | `--confirm` | `` | Required to execute mutations — otherwise dry-run | — |
 | `--dry-run` | `` | Print the plan without running anything | — |
 | `--user` | `` | Override the resolved Entra UPN (skip ticket → user lookup) | — |
-| `--skip` | `` | Comma-separated steps to skip (disable, sessions, licences, groups, wrike) | — |
+| `--skip` | `` | Comma-separated steps to skip (disable, sessions, manager, ext13, mailbox, licences, groups, wrike) | — |
 
 ```bash
 its wrike leavers complete <idOrPermalink>

@@ -61,6 +61,7 @@ its outlook setup --reset   # Re-run setup (overwrite config)
 |---------|-------------|
 | `its outlook mail` | List messages from the mailbox. Defaults to Inbox (top 25 by receivedDateTime desc). Use --folder for a specific folder, --filter for OData expressions, --search to switch to keyword search. |
 | `its outlook mail get <message_id>` | Get a single message including body, recipients, and flags. |
+| `its outlook mail headers <message_id>` | Show a message's internet headers + parsed antispam verdict (SCL/SFV/CAT/BCL + spf/dkim/dmarc/compauth). The 'why did this land in Junk' tool. Add --all for every raw header. |
 | `its outlook mail search <query>` | Keyword search across the mailbox using Graph $search (KQL syntax). |
 | `its outlook mail thread <conversation_id>` | List every message in the same conversation (entire thread). |
 | `its outlook mail move <message_id> <folder_id>` | Move a message to another folder. |
@@ -117,6 +118,21 @@ Get a single message including body, recipients, and flags.
 
 ```bash
 its outlook mail get <message_id>
+```
+
+#### `its outlook mail headers <message_id>`
+
+Show a message's internet headers + parsed antispam verdict (SCL/SFV/CAT/BCL + spf/dkim/dmarc/compauth). The 'why did this land in Junk' tool. Add --all for every raw header.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--all` | `` | Show every raw internet header, not just the antispam summary | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+```bash
+its outlook mail headers <message_id>
 ```
 
 #### `its outlook mail search <query>`

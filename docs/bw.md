@@ -716,7 +716,7 @@ its bw session list --watch
 | Command | Description |
 |---------|-------------|
 | `its bw vaults` | List configured vault profiles. Surfaces the most common fields; pass --json for raw shape. |
-| `its bw vaults create <name>` | Save the current default vault (or custom credentials) as a named profile |
+| `its bw vaults create <name>` | Save a named vault profile — its own host, account and master password (use for a second vault on a different server) |
 | `its bw vaults delete <name>` | Delete a named vault profile (local config only — does NOT touch the actual vault or its data) |
 
 #### `its bw vaults`
@@ -737,7 +737,7 @@ its bw vaults --watch
 
 #### `its bw vaults create <name>`
 
-Save the current default vault (or custom credentials) as a named profile.
+Save a named vault profile — its own host, account and master password (use for a second vault on a different server).
 
 **Flags:**
 
