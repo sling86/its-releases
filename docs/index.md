@@ -11,14 +11,14 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [rmm.md](./rmm.md) | Tactical RMM — 52 commands across 16 resources |
-| [entra.md](./entra.md) | Entra ID — 94 commands across 21 resources |
+| [entra.md](./entra.md) | Entra ID — 98 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 103 commands across 24 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 44 commands across 10 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 38 commands across 14 resources |
 | [wrike.md](./wrike.md) | Wrike — 48 commands across 12 resources |
 | [az.md](./az.md) | Azure CLI — 23 commands across 10 resources |
-| [exo.md](./exo.md) | Exchange Online — 29 commands across 8 resources |
+| [exo.md](./exo.md) | Exchange Online — 33 commands across 8 resources |
 | [intune.md](./intune.md) | Intune — 40 commands across 15 resources |
 | [protect.md](./protect.md) | UniFi Protect — 6 commands across 4 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
@@ -29,9 +29,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
-| [outlook.md](./outlook.md) | Outlook — 41 commands across 11 resources |
+| [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 
-**20 providers** · **186 resources** · **630 commands**
+**20 providers** · **186 resources** · **639 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -58,7 +58,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [users](./entra.md#users) | list, update, search, get, groups, chain, licences, invite, create, enable, bootstrap-admin, stale, disable, revoke-sessions | `src/providers/entra/commands/users.ts` |
+| [users](./entra.md#users) | list, update, search, get, groups, chain, licences, invite, create, enable, bootstrap-admin, stale, disable, revoke-sessions, set-password, delete, transfer, reinstate | `src/providers/entra/commands/users.ts` |
 | [groups](./entra.md#groups) | list, search, get, members, create, add-member, remove-member | `src/providers/entra/commands/groups.ts` |
 | [licences](./entra.md#licences) | list, assign, remove, users, unlicensed, audit, waste | `src/providers/entra/commands/licences.ts` |
 | [roles](./entra.md#roles) | list, members, assign, remove, assignments | `src/providers/entra/commands/roles.ts` |
@@ -195,10 +195,10 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [groups](./exo.md#groups) | list, get, members, create, delete, add-member, remove-member | `src/providers/exo/commands/groups.ts` |
-| [mailboxes](./exo.md#mailboxes) | list, get, stats, create, permissions, add-permission, remove-permission, forwarding, user-access, set-forwarding | `src/providers/exo/commands/mailboxes.ts` |
+| [mailboxes](./exo.md#mailboxes) | list, get, stats, create, permissions, add-permission, remove-permission, forwarding, user-access, set-forwarding, set-type, set-visibility | `src/providers/exo/commands/mailboxes.ts` |
 | [rules](./exo.md#rules) | list | `src/providers/exo/commands/rules.ts` |
 | [domains](./exo.md#domains) | list | `src/providers/exo/commands/domains.ts` |
-| [trace](./exo.md#trace) | list, detail | `src/providers/exo/commands/trace.ts` |
+| [trace](./exo.md#trace) | list, detail, historical, historical-status | `src/providers/exo/commands/trace.ts` |
 | [autoreply](./exo.md#autoreply) | get, enable, disable | `src/providers/exo/commands/autoreply.ts` |
 | [recipients](./exo.md#recipients) | search, send-as, add-send-as, remove-send-as | `src/providers/exo/commands/recipients.ts` |
 | [forwarding](./exo.md#forwarding) | check | `src/providers/exo/commands/forwarding.ts` |
@@ -307,7 +307,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [mail](./outlook.md#mail) | list, get, search, thread, move, copy, read, unread, flag, categorise, delete, send | `src/providers/outlook/commands/mail.ts` |
+| [mail](./outlook.md#mail) | list, get, headers, search, thread, move, copy, read, unread, flag, categorise, delete, send | `src/providers/outlook/commands/mail.ts` |
 | [drafts](./outlook.md#drafts) | create, reply, forward, update, send, list | `src/providers/outlook/commands/drafts.ts` |
 | [folders](./outlook.md#folders) | list, get, create | `src/providers/outlook/commands/folders.ts` |
 | [attachments](./outlook.md#attachments) | list, get, add, delete | `src/providers/outlook/commands/attachments.ts` |
@@ -439,7 +439,11 @@ its
 │   │   ├── bootstrap-admin <id>
 │   │   ├── stale
 │   │   ├── disable <id>
-│   │   └── revoke-sessions <id>
+│   │   ├── revoke-sessions <id>
+│   │   ├── set-password <id>
+│   │   ├── delete <id>
+│   │   ├── transfer <id>
+│   │   └── reinstate <id>
 │   ├── groups
 │   │   ├── (list)
 │   │   ├── search <query>
@@ -905,12 +909,16 @@ its
 │   │   ├── remove-permission <mailbox> <user>
 │   │   ├── forwarding <mailbox>
 │   │   ├── user-access <user>
-│   │   └── set-forwarding <mailbox> <target>
+│   │   ├── set-forwarding <mailbox> <target>
+│   │   ├── set-type <mailbox> <type>
+│   │   └── set-visibility <mailbox>
 │   ├── rules (list)
 │   ├── domains (list)
 │   ├── trace
 │   │   ├── (list)
-│   │   └── detail <trace-id> <recipient>
+│   │   ├── detail <trace-id> <recipient>
+│   │   ├── historical
+│   │   └── historical-status <job-id>
 │   ├── autoreply
 │   │   ├── get <mailbox>
 │   │   ├── enable <mailbox>
@@ -1086,6 +1094,7 @@ its
     ├── mail
     │   ├── (list)
     │   ├── get <message_id>
+    │   ├── headers <message_id>
     │   ├── search <query>
     │   ├── thread <conversation_id>
     │   ├── move <message_id> <folder_id>
@@ -1164,6 +1173,7 @@ src/
 │   ├── secrets.ts
 │   ├── session.ts
 │   ├── shell-dry-run.ts
+│   ├── trusted-certs.ts
 │   ├── types.ts
 │   └── updates.ts
 ├── help-ui/
@@ -1470,5 +1480,7 @@ src/
 │   └── registry.ts
 ├── cli.ts
 ├── config.ts
-└── index.ts
+├── index.ts
+├── tui-history.ts
+└── tui.ts
 ```

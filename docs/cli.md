@@ -42,14 +42,14 @@ its <provider> <resource> [action] [args] [--flags]
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 52 commands, 16 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 94 commands, 21 resources | [entra.md](./entra.md) |
+| Entra ID | `entra` | 98 commands, 21 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 103 commands, 24 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 44 commands, 10 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 38 commands, 14 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 48 commands, 12 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 23 commands, 10 resources | [az.md](./az.md) |
-| Exchange Online | `exo` | 29 commands, 8 resources | [exo.md](./exo.md) |
+| Exchange Online | `exo` | 33 commands, 8 resources | [exo.md](./exo.md) |
 | Intune | `intune` | 40 commands, 15 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 6 commands, 4 resources | [protect.md](./protect.md) |
 | Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |
@@ -60,7 +60,7 @@ its <provider> <resource> [action] [args] [--flags]
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
 | GitHub | `gh` | 4 commands, 2 resources | [gh.md](./gh.md) |
-| Outlook | `outlook` | 41 commands, 11 resources | [outlook.md](./outlook.md) |
+| Outlook | `outlook` | 42 commands, 11 resources | [outlook.md](./outlook.md) |
 
 ## Global Options
 
