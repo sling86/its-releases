@@ -15,6 +15,21 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.49] - 2026-06-04
+
+### Added
+
+- **`its entra groups edit-rule <id>`** — edit a dynamic group's
+  `membershipRule` (closes the ctxc 1052 gap; previously needed a raw
+  `graph patch`). `--add-upn` appends an `or (user.userPrincipalName -eq …)`
+  exception (grants a user who doesn't match the rule — OR clauses only ADD, so
+  existing members are never dropped); `--remove-upn` strips one; `--set-rule`
+  replaces the whole rule. `--confirm` required; without it, prints a
+  current→new diff. Guards: refuses non-dynamic groups, no-ops when the UPN is
+  already present, and (on `--add-upn`) refuses a UPN that doesn't resolve
+  unless `--force`. Note: Graph membershipRule writes are eventually consistent
+  — an immediate re-read may show the old rule for a few seconds.
+
 ## [0.2.48] - 2026-06-04
 
 ### Added

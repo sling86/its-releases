@@ -456,6 +456,7 @@ its entra users reinstate <id>
 | `its entra groups create` | Create a new security group. Idempotent on duplicate names — use update/edit to mutate an existing record. |
 | `its entra groups add-member <group_id>` | Add a user to a group. Refuses dynamic-membership groups (ctxc 41) — Graph accepts the call but the dynamic engine immediately overrides. Also refuses if the candidate is disabled / a leaver / has an active namesake (lesson 326 — Adam picked the wrong Steve/Colette/Nick). Pass --force to override either guard. |
 | `its entra groups remove-member <group_id>` | Remove a user from a group (requires --confirm). Refuses dynamic-membership groups (ctxc 41); pass --force to override. |
+| `its entra groups edit-rule <group_id>` | Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants a user who doesn't match the rule); --remove-upn strips one; --set-rule replaces the whole rule. add/remove never drop existing members. --confirm required; without it, prints the current→new diff (ctxc 1052). |
 
 #### `its entra groups`
 
@@ -589,6 +590,24 @@ its entra groups remove-member <group-id> --user jane.smith@example.com --confir
 
 # Pipe-friendly output — use with jq / scripts.
 its entra groups remove-member <group-id> --user jane.smith@example.com --confirm --json
+```
+
+#### `its entra groups edit-rule <group_id>`
+
+Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants a user who doesn't match the rule); --remove-upn strips one; --set-rule replaces the whole rule. add/remove never drop existing members. --confirm required; without it, prints the current→new diff (ctxc 1052).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--add-upn` | `` | Append `or (user.userPrincipalName -eq "<upn>")` to the rule | — |
+| `--remove-upn` | `` | Strip the OR exception for this UPN from the rule | — |
+| `--set-rule` | `` | Replace the ENTIRE membershipRule (re-evaluates the whole group) | — |
+| `--confirm` | `` | Apply the change | — |
+| `--force` | `` | Skip the --add-upn existence check (allow a UPN that doesn't resolve) | — |
+
+```bash
+its entra groups edit-rule <group_id>
 ```
 
 ---
