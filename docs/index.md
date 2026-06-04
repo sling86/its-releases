@@ -10,7 +10,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [rmm.md](./rmm.md) | Tactical RMM — 52 commands across 16 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 53 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 98 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 108 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
@@ -31,7 +31,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 
-**20 providers** · **187 resources** · **645 commands**
+**20 providers** · **187 resources** · **646 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -49,7 +49,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [scripts](./rmm.md#scripts) | list, get, run, upload-local, delete, upsert | `src/providers/rmm/commands/scripts.ts` |
 | [checks](./rmm.md#checks) | list, create, delete | `src/providers/rmm/commands/checks.ts` |
 | [tasks](./rmm.md#tasks) | list, create, delete | `src/providers/rmm/commands/tasks.ts` |
-| [policies](./rmm.md#policies) | list, get, checks, add-check | `src/providers/rmm/commands/policies.ts` |
+| [policies](./rmm.md#policies) | list, get, checks, add-check, patch-policy | `src/providers/rmm/commands/policies.ts` |
 | [diagnostics](./rmm.md#diagnostics) | list | `src/providers/rmm/commands/diagnostics.ts` |
 | [doctor](./rmm.md#doctor) | list | `src/providers/rmm/commands/doctor.ts` |
 | [custom-fields](./rmm.md#custom-fields) | list, set | `src/providers/rmm/commands/custom-fields.ts` |
@@ -419,7 +419,8 @@ its
 │   │   ├── (list)
 │   │   ├── get <policy_id>
 │   │   ├── checks <policy_id>
-│   │   └── add-check <policy_id>
+│   │   ├── add-check <policy_id>
+│   │   └── patch-policy <policy_id>
 │   ├── diagnostics (list) <agent>
 │   ├── doctor (list)
 │   └── custom-fields
