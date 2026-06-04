@@ -15,6 +15,21 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.46] - 2026-06-04
+
+### Added
+
+- **`its dokploy environments`** — manage a project's **environment-level shared
+  env vars** (the `${{project.VAR}}` model), alongside the existing app-level
+  `its dokploy env`:
+  - `its dokploy environments <projectId>` — list environments (id, name,
+    default, shared-var count).
+  - `its dokploy environments env <environmentId>` — show shared vars; keys
+    visible, values redacted unless `--show-values`.
+  - `its dokploy environments push|pull <environmentId> -f <file>` — upload /
+    download the shared env file.
+  - `its dokploy environments set <environmentId> KEY=value …` — set single vars.
+
 ## [0.2.45] - 2026-06-04
 
 ### Fixed
