@@ -412,6 +412,7 @@ its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm -
 | `its sp files upload <siteId>` | Upload a text file. Stream a local file to the resource. |
 | `its sp files folder <siteId>` | Create a folder. Returns the contents of a folder by path. |
 | `its sp files delete <siteId>` | Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
+| `its sp files share <siteId>` | Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked). |
 | `its sp files move <siteId>` | Move or rename a file. Move an item between folders. --confirm required. |
 | `its sp files checkout <siteId>` | Check out a file for editing. Locks the item against concurrent edits. |
 | `its sp files checkin <siteId>` | Check in a file. Releases the lock after editing. |
@@ -506,6 +507,23 @@ Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Aud
 
 ```bash
 its sp files delete <site-id> --path "Shared Documents/old.docx" --confirm
+```
+
+#### `its sp files share <siteId>`
+
+Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--drive` | `` | Drive ID | — |
+| `--item` | `` | Item ID | — |
+| `--type` | `` | Link type | view |
+| `--scope` | `` | Link scope | organization |
+
+```bash
+its sp files share <siteId>
 ```
 
 #### `its sp files move <siteId>`

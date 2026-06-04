@@ -45,7 +45,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Entra ID | `entra` | 98 commands, 21 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 108 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
-| SharePoint | `sp` | 44 commands, 10 resources | [sp.md](./sp.md) |
+| SharePoint | `sp` | 45 commands, 10 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 38 commands, 14 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 48 commands, 12 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 23 commands, 10 resources | [az.md](./az.md) |

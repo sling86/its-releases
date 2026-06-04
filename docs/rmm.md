@@ -769,6 +769,7 @@ Execute a saved RMM script on the target agent. Streams stdout/stderr back; use 
 | `--script` | `` | Script ID | — |
 | `--args` | `` | Script arguments (comma-separated) | — |
 | `--timeout` | `` | Timeout in seconds | 120 |
+| `--raw` | `` | Print the script's raw stdout (and stderr) directly, instead of JSON-wrapped output with escaped \r\n | — |
 
 **Examples:**
 
@@ -913,7 +914,7 @@ its rmm checks delete <check-id> --confirm
 | Command | Description |
 |---------|-------------|
 | `its rmm tasks <agent>` | Recurring task schedule attached to one agent — script + interval + next-run. |
-| `its rmm tasks create <agent_id>` | Schedule a script to run on an agent at a fixed cadence. Use --interval seconds; default is daily. |
+| `its rmm tasks create <agent>` | Create an automated task that runs a script on an agent. Default is a manual task (run on demand); add --daily-time HH:MM for a daily schedule (+ --weekdays to limit days). Resolves the agent by id/hostname/username, including offline agents. |
 | `its rmm tasks delete` | Remove a scheduled task from an agent. Destructive — needs --confirm. |
 
 #### `its rmm tasks <agent>`
@@ -931,15 +932,21 @@ its rmm tasks OFFICE-PC-01 --json
 its rmm tasks OFFICE-PC-01 --watch
 ```
 
-#### `its rmm tasks create <agent_id>`
+#### `its rmm tasks create <agent>`
 
-Schedule a script to run on an agent at a fixed cadence. Use --interval seconds; default is daily.
+Create an automated task that runs a script on an agent. Default is a manual task (run on demand); add --daily-time HH:MM for a daily schedule (+ --weekdays to limit days). Resolves the agent by id/hostname/username, including offline agents.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--script` | `` | Script ID for the task | — |
+| `--script` | `` | Script ID to run | — |
+| `--name` | `` | Task name (default: derived from the script ID) | — |
+| `--args` | `` | Script arguments (comma-separated, e.g. -Mode,Notify) | — |
+| `--timeout` | `` | Per-run timeout in seconds (default 90) | 90 |
+| `--daily-time` | `` | Run daily at HH:MM (24h) — turns this into a scheduled task | — |
+| `--weekdays` | `` | With --daily-time: restrict to these days (mon,tue,wed,thu,fri,sat,sun); default every day | — |
+| `--run-asap` | `` | Run as soon as possible if a scheduled run was missed | — |
 
 **Examples:**
 
