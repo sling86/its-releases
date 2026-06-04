@@ -12,7 +12,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [rmm.md](./rmm.md) | Tactical RMM — 52 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 98 commands across 21 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 103 commands across 24 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 108 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 44 commands across 10 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 38 commands across 14 resources |
@@ -31,7 +31,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 
-**20 providers** · **186 resources** · **639 commands**
+**20 providers** · **187 resources** · **644 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -90,6 +90,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [deployments](./dokploy.md#deployments) | list, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
 | [domains](./dokploy.md#domains) | list, create, check, delete | `src/providers/dokploy/commands/domains.ts` |
 | [env](./dokploy.md#env) | list, push, set, pull | `src/providers/dokploy/commands/env.ts` |
+| [environments](./dokploy.md#environments) | list, env, push, pull, set | `src/providers/dokploy/commands/environments.ts` |
 | [registries](./dokploy.md#registries) | list | `src/providers/dokploy/commands/infrastructure.ts` |
 | [destinations](./dokploy.md#destinations) | list | `src/providers/dokploy/commands/infrastructure.ts` |
 | [notifications](./dokploy.md#notifications) | list | `src/providers/dokploy/commands/infrastructure.ts` |
@@ -592,6 +593,12 @@ its
 │   │   ├── push <applicationId>
 │   │   ├── set <applicationId> <pairs>
 │   │   └── pull <applicationId>
+│   ├── environments
+│   │   ├── (list) <projectId>
+│   │   ├── env <environmentId>
+│   │   ├── push <environmentId>
+│   │   ├── pull <environmentId>
+│   │   └── set <environmentId> <pairs>
 │   ├── registries (list)
 │   ├── destinations (list)
 │   ├── notifications (list)
@@ -1274,6 +1281,7 @@ src/
 │   │   │   ├── deployments.ts
 │   │   │   ├── domains.ts
 │   │   │   ├── env.ts
+│   │   │   ├── environments.ts
 │   │   │   ├── git.ts
 │   │   │   ├── github.ts
 │   │   │   ├── index.ts

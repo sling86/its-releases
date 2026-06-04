@@ -43,7 +43,7 @@ its <provider> <resource> [action] [args] [--flags]
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 52 commands, 16 resources | [rmm.md](./rmm.md) |
 | Entra ID | `entra` | 98 commands, 21 resources | [entra.md](./entra.md) |
-| Dokploy | `dokploy` | 103 commands, 24 resources | [dokploy.md](./dokploy.md) |
+| Dokploy | `dokploy` | 108 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 44 commands, 10 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 38 commands, 14 resources | [unifi.md](./unifi.md) |

@@ -14,6 +14,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp]
 - [deployments](#deployments)
 - [domains](#domains)
 - [env](#env)
+- [environments](#environments)
 - [registries](#registries)
 - [destinations](#destinations)
 - [notifications](#notifications)
@@ -984,6 +985,78 @@ its dokploy env pull <app-id> --file .env.local
 
 # Pipe-friendly output — use with jq / scripts.
 its dokploy env pull <app-id> --file .env.local --json
+```
+
+---
+
+### environments
+
+> Source: `src/providers/dokploy/commands/environments.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its dokploy environments <projectId>` | List a project's environments with their environmentId, name and shared-variable count. Pass the projectId. |
+| `its dokploy environments env <environmentId>` | Show an environment's SHARED env vars. Keys are visible by default; values are redacted unless --show-values. Pass the environmentId (from `its dokploy environments <projectId>`). |
+| `its dokploy environments push <environmentId>` | Push an env file as an environment's SHARED env vars (replaces all). Upload local state to the upstream. |
+| `its dokploy environments pull <environmentId>` | Pull an environment's SHARED env vars to a local file. Download upstream state to local. |
+| `its dokploy environments set <environmentId> <pairs>` | Set one or more SHARED env vars (KEY=value) on an environment without affecting the others. |
+
+#### `its dokploy environments <projectId>`
+
+List a project's environments with their environmentId, name and shared-variable count. Pass the projectId.
+
+```bash
+its dokploy environments <projectId>
+```
+
+#### `its dokploy environments env <environmentId>`
+
+Show an environment's SHARED env vars. Keys are visible by default; values are redacted unless --show-values. Pass the environmentId (from `its dokploy environments <projectId>`).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--show-values` | `` | Show actual values (otherwise redacted as ***) | — |
+
+```bash
+its dokploy environments env <environmentId>
+```
+
+#### `its dokploy environments push <environmentId>`
+
+Push an env file as an environment's SHARED env vars (replaces all). Upload local state to the upstream.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--file` | `-f` | Path to env file | .env |
+
+```bash
+its dokploy environments push <environmentId>
+```
+
+#### `its dokploy environments pull <environmentId>`
+
+Pull an environment's SHARED env vars to a local file. Download upstream state to local.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--file` | `-f` | Output file path | .env |
+
+```bash
+its dokploy environments pull <environmentId>
+```
+
+#### `its dokploy environments set <environmentId> <pairs>`
+
+Set one or more SHARED env vars (KEY=value) on an environment without affecting the others.
+
+```bash
+its dokploy environments set <environmentId> <pairs>
 ```
 
 ---
