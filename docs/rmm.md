@@ -986,6 +986,7 @@ its rmm tasks delete --task <task-id> --confirm
 | `its rmm policies get <policy_id>` | Policy detail — included checks, tasks, target agents/sites. |
 | `its rmm policies checks <policy_id>` | List checks attached to a policy (uses the asymmetric `/automation/policies/<id>/checks/` GET route — see ctxc 588) |
 | `its rmm policies add-check <policy_id>` | Add a script-check to a policy. Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first (ctxc 588). |
+| `its rmm policies patch-policy <policy_id>` | Edit a policy's Windows Update schedule + per-severity approvals (WinUpdatePolicy). Partial update — only the flags you pass change. --confirm required: applies to EVERY agent under the policy. |
 
 #### `its rmm policies`
 
@@ -1050,6 +1051,30 @@ its rmm policies add-check <policy-id> --script <script-id>
 
 # Pipe-friendly output — use with jq / scripts.
 its rmm policies add-check <policy-id> --script <script-id> --json
+```
+
+#### `its rmm policies patch-policy <policy_id>`
+
+Edit a policy's Windows Update schedule + per-severity approvals (WinUpdatePolicy). Partial update — only the flags you pass change. --confirm required: applies to EVERY agent under the policy.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--run-time-hour` | `` | Install hour 0–23 (hour-only — no minutes) | — |
+| `--frequency` | `` | Schedule frequency (daily = daily/weekly + --days) | — |
+| `--days` | `` | Weekdays for daily/weekly schedule, e.g. mon,wed,fri (run_time_days) | — |
+| `--day-of-month` | `` | Day of month 1–31 for monthly schedule (run_time_day) | — |
+| `--reboot` | `` | Reboot after install | — |
+| `--critical` | `` | Critical updates | — |
+| `--important` | `` | Important updates | — |
+| `--moderate` | `` | Moderate updates | — |
+| `--low` | `` | Low updates | — |
+| `--other` | `` | Other updates | — |
+| `--confirm` | `` | Apply — affects every agent under the policy | — |
+
+```bash
+its rmm policies patch-policy <policy_id>
 ```
 
 ---

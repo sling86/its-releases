@@ -15,6 +15,24 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.48] - 2026-06-04
+
+### Added
+
+- **`its rmm policies patch-policy <id>`** — edit a policy's Windows Update
+  schedule + per-severity approvals (the WinUpdatePolicy). Flags:
+  `--run-time-hour 0-23`, `--frequency daily|monthly|inherit`, `--days
+  mon,wed,fri` (weekly), `--day-of-month 1-31` (monthly), `--reboot
+  never|required|always|inherit`, and per-severity
+  `--critical|--important|--moderate|--low|--other approve|manual|ignore|inherit`.
+  Partial update — only the flags you pass change. `--confirm` required (affects
+  every agent under the policy); without it, prints a current→new diff.
+  - Correct route is **`PUT /automation/patchpolicy/<winupdatepolicy_pk>/`**
+    (the WinUpdatePolicy id, inlined on the policy LIST). The previously assumed
+    `PUT /winupdate/<pk>/` is a different route (per-KB update records) and 404s.
+    Falls back to `POST /automation/patchpolicy/` when the policy has no
+    WinUpdatePolicy yet.
+
 ## [0.2.47] - 2026-06-04
 
 ### Added
