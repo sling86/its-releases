@@ -15,6 +15,29 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.47] - 2026-06-04
+
+### Added
+
+- **`its sp files share`** — create a sharing link (Graph `createLink`) for a
+  file/folder and return its URL. `--type view|edit`, `--scope
+  organisation|anonymous` (anonymous may be tenant-blocked).
+- **`its rmm scripts run --raw`** — emit the script's real stdout verbatim
+  (status line on stderr) so output can be piped/parsed without unescaping a
+  JSON-wrapped string; exits with the script's return code.
+
+### Fixed
+
+- **`its rmm tasks create`** — was broken (missing the required `name`) and
+  incomplete. Now builds the full task in a single TRMM POST with an `actions[]`
+  payload and supports manual / `--daily-time HH:MM` / `--weekdays mon,wed,fri`
+  (bitmask) schedules, plus `--script`, `--name`, `--args`, `--timeout`,
+  `--run-asap`. Resolves agents by id / hostname / username, incl. offline.
+- **`its rmm checks list <agent>`** — now reads the per-agent
+  `/agents/<id>/checks/` route which carries each check's live result
+  (status / last-run / more-info); the previous `/checks/?agent_id=` route only
+  returned policy-inherited definitions with empty results (ctxc 1048).
+
 ## [0.2.46] - 2026-06-04
 
 ### Added

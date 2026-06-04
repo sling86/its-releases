@@ -14,7 +14,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [entra.md](./entra.md) | Entra ID — 98 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 108 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
-| [sp.md](./sp.md) | SharePoint — 44 commands across 10 resources |
+| [sp.md](./sp.md) | SharePoint — 45 commands across 10 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 38 commands across 14 resources |
 | [wrike.md](./wrike.md) | Wrike — 48 commands across 12 resources |
 | [az.md](./az.md) | Azure CLI — 23 commands across 10 resources |
@@ -31,7 +31,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 
-**20 providers** · **187 resources** · **644 commands**
+**20 providers** · **187 resources** · **645 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -132,7 +132,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [sites](./sp.md#sites) | list, get, search, root, subsites, structure | `src/providers/sp/commands/sites.ts` |
 | [drives](./sp.md#drives) | list, root, folder, get | `src/providers/sp/commands/drives.ts` |
 | [lists](./sp.md#lists) | list, get, columns, items, create-item, update-item, delete-item | `src/providers/sp/commands/lists.ts` |
-| [files](./sp.md#files) | download, upload, folder, delete, move, checkout, checkin, versions, restore | `src/providers/sp/commands/files.ts` |
+| [files](./sp.md#files) | download, upload, folder, delete, share, move, checkout, checkin, versions, restore | `src/providers/sp/commands/files.ts` |
 | [search](./sp.md#search) | list | `src/providers/sp/commands/search.ts` |
 | [permissions](./sp.md#permissions) | list, item, share, grant-app, remove | `src/providers/sp/commands/permissions.ts` |
 | [groups](./sp.md#groups) | list, members, add-member, remove-member | `src/providers/sp/commands/groups.ts` |
@@ -413,7 +413,7 @@ its
 │   │   └── delete [agent_id]
 │   ├── tasks
 │   │   ├── (list) <agent>
-│   │   ├── create <agent_id>
+│   │   ├── create <agent>
 │   │   └── delete
 │   ├── policies
 │   │   ├── (list)
@@ -738,6 +738,7 @@ its
 │   │   ├── upload <siteId>
 │   │   ├── folder <siteId>
 │   │   ├── delete <siteId>
+│   │   ├── share <siteId>
 │   │   ├── move <siteId>
 │   │   ├── checkout <siteId>
 │   │   ├── checkin <siteId>
