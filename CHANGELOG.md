@@ -15,6 +15,24 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.45] - 2026-06-04
+
+### Fixed
+
+- **Bitwarden** — items using cipher-key encryption no longer show
+  `[decryption failed]`; their fields now decrypt with the per-cipher key. This
+  also unblocks `items update` / `delete` / rename on those items (the update
+  path previously read undecryptable values and failed).
+- **Bitwarden** — `its bw password <query>` resolves an exact item ID, then an
+  exact (case-insensitive) name, before falling back to a substring match.
+  Previously it took the first substring hit (wrong item) and could not resolve
+  by ID.
+
+### Changed
+
+- CI release workflow bumped to Node24 action majors (checkout v6,
+  upload-artifact v7, download-artifact v8).
+
 ## [0.2.44] - 2026-06-03
 
 ### Added
