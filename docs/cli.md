@@ -41,8 +41,8 @@ its <provider> <resource> [action] [args] [--flags]
 
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
-| Tactical RMM | `rmm` | 53 commands, 16 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 99 commands, 21 resources | [entra.md](./entra.md) |
+| Tactical RMM | `rmm` | 55 commands, 16 resources | [rmm.md](./rmm.md) |
+| Entra ID | `entra` | 100 commands, 21 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 108 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 45 commands, 10 resources | [sp.md](./sp.md) |

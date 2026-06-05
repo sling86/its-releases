@@ -377,6 +377,8 @@ its rmm clients --watch
 | Command | Description |
 |---------|-------------|
 | `its rmm sites` | All RMM sites across every client. Site IDs feed --site filters on agent commands. |
+| `its rmm sites create` | Create a site under a client (POST /clients/sites/). Idempotent — skips if a site of that name already exists for the client. |
+| `its rmm sites delete <site_id>` | Delete a site by ID (DELETE /clients/sites/{id}/). Fails if the site still has agents. --confirm required. |
 
 #### `its rmm sites`
 
@@ -392,6 +394,35 @@ its rmm sites --client "Head Office"
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm sites --watch
+```
+
+#### `its rmm sites create`
+
+Create a site under a client (POST /clients/sites/). Idempotent — skips if a site of that name already exists for the client.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--client` | `` | Client name or ID | — |
+| `--name` | `` | New site name | — |
+
+```bash
+its rmm sites create
+```
+
+#### `its rmm sites delete <site_id>`
+
+Delete a site by ID (DELETE /clients/sites/{id}/). Fails if the site still has agents. --confirm required.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm deletion | — |
+
+```bash
+its rmm sites delete <site_id>
 ```
 
 ---

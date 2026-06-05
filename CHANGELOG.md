@@ -15,6 +15,18 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.50] - 2026-06-05
+
+### Added
+
+- **`its entra groups audit-rules [group_id]`** — scan dynamic groups'
+  `membershipRule`s for dead user exceptions: hardcoded
+  `userPrincipalName`/`objectId`/`mail -eq` clauses whose account no longer
+  exists (`missing`) or is disabled (`disabled` — a leaver still pinned). No
+  arg scans every dynamic group (one paged Graph query); pass a group ID to
+  scan one. `--all` also lists refs that resolve OK. Output is sorted dead-first
+  and suggests the `edit-rule --remove-upn` fix. Read-only.
+
 ## [0.2.49] - 2026-06-04
 
 ### Added

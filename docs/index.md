@@ -10,8 +10,8 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [rmm.md](./rmm.md) | Tactical RMM — 53 commands across 16 resources |
-| [entra.md](./entra.md) | Entra ID — 99 commands across 21 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 55 commands across 16 resources |
+| [entra.md](./entra.md) | Entra ID — 100 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 108 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 45 commands across 10 resources |
@@ -31,7 +31,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 
-**20 providers** · **187 resources** · **647 commands**
+**20 providers** · **187 resources** · **650 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -40,7 +40,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [agents](./rmm.md#agents) | list, stale, search, get, ping, reboot, remove, run, history, notes, pending, wake, edit, refresh | `src/providers/rmm/commands/agents.ts` |
 | [dashboard](./rmm.md#dashboard) | list | `src/providers/rmm/commands/dashboard.ts` |
 | [clients](./rmm.md#clients) | list | `src/providers/rmm/commands/dashboard.ts` |
-| [sites](./rmm.md#sites) | list | `src/providers/rmm/commands/dashboard.ts` |
+| [sites](./rmm.md#sites) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
 | [processes](./rmm.md#processes) | list, top, kill | `src/providers/rmm/commands/processes.ts` |
 | [services](./rmm.md#services) | list, get, control, enable, disable | `src/providers/rmm/commands/services.ts` |
 | [updates](./rmm.md#updates) | list, scan, install | `src/providers/rmm/commands/updates.ts` |
@@ -59,7 +59,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [users](./entra.md#users) | list, update, search, get, groups, chain, licences, invite, create, enable, bootstrap-admin, stale, disable, revoke-sessions, set-password, delete, transfer, reinstate | `src/providers/entra/commands/users.ts` |
-| [groups](./entra.md#groups) | list, search, get, members, create, add-member, remove-member, edit-rule | `src/providers/entra/commands/groups.ts` |
+| [groups](./entra.md#groups) | list, search, get, members, create, add-member, remove-member, edit-rule, audit-rules | `src/providers/entra/commands/groups.ts` |
 | [licences](./entra.md#licences) | list, assign, remove, users, unlicensed, audit, waste | `src/providers/entra/commands/licences.ts` |
 | [roles](./entra.md#roles) | list, members, assign, remove, assignments | `src/providers/entra/commands/roles.ts` |
 | [signin](./entra.md#signin) | list, summary, explain, suspicious | `src/providers/entra/commands/signin.ts` |
@@ -379,7 +379,10 @@ its
 │   │   └── refresh <agent>
 │   ├── dashboard (list)
 │   ├── clients (list)
-│   ├── sites (list)
+│   ├── sites
+│   │   ├── (list)
+│   │   ├── create
+│   │   └── delete <site_id>
 │   ├── processes
 │   │   ├── (list) <agent>
 │   │   ├── top <agent>
@@ -454,7 +457,8 @@ its
 │   │   ├── create
 │   │   ├── add-member <group_id>
 │   │   ├── remove-member <group_id>
-│   │   └── edit-rule <group_id>
+│   │   ├── edit-rule <group_id>
+│   │   └── audit-rules [group_id]
 │   ├── licences
 │   │   ├── (list)
 │   │   ├── assign <user_id>

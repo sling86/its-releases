@@ -457,6 +457,7 @@ its entra users reinstate <id>
 | `its entra groups add-member <group_id>` | Add a user to a group. Refuses dynamic-membership groups (ctxc 41) — Graph accepts the call but the dynamic engine immediately overrides. Also refuses if the candidate is disabled / a leaver / has an active namesake (lesson 326 — Adam picked the wrong Steve/Colette/Nick). Pass --force to override either guard. |
 | `its entra groups remove-member <group_id>` | Remove a user from a group (requires --confirm). Refuses dynamic-membership groups (ctxc 41); pass --force to override. |
 | `its entra groups edit-rule <group_id>` | Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants a user who doesn't match the rule); --remove-upn strips one; --set-rule replaces the whole rule. add/remove never drop existing members. --confirm required; without it, prints the current→new diff (ctxc 1052). |
+| `its entra groups audit-rules [group_id]` | Scan dynamic groups' membershipRules for dead user exceptions — hardcoded userPrincipalName/objectId/mail clauses whose account no longer exists (missing) or is disabled (a leaver still pinned). Pass a group ID to scan one; default scans all dynamic groups. --all also lists the OK refs. |
 
 #### `its entra groups`
 
@@ -608,6 +609,20 @@ Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants
 
 ```bash
 its entra groups edit-rule <group_id>
+```
+
+#### `its entra groups audit-rules [group_id]`
+
+Scan dynamic groups' membershipRules for dead user exceptions — hardcoded userPrincipalName/objectId/mail clauses whose account no longer exists (missing) or is disabled (a leaver still pinned). Pass a group ID to scan one; default scans all dynamic groups. --all also lists the OK refs.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--all` | `` | Include refs that resolve OK, not just dead/disabled | — |
+
+```bash
+its entra groups audit-rules [group_id]
 ```
 
 ---
