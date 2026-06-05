@@ -10,7 +10,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [rmm.md](./rmm.md) | Tactical RMM — 55 commands across 16 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 57 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 100 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 108 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
@@ -31,7 +31,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 
-**20 providers** · **187 resources** · **650 commands**
+**20 providers** · **187 resources** · **652 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -39,7 +39,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [agents](./rmm.md#agents) | list, stale, search, get, ping, reboot, remove, run, history, notes, pending, wake, edit, refresh | `src/providers/rmm/commands/agents.ts` |
 | [dashboard](./rmm.md#dashboard) | list | `src/providers/rmm/commands/dashboard.ts` |
-| [clients](./rmm.md#clients) | list | `src/providers/rmm/commands/dashboard.ts` |
+| [clients](./rmm.md#clients) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
 | [sites](./rmm.md#sites) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
 | [processes](./rmm.md#processes) | list, top, kill | `src/providers/rmm/commands/processes.ts` |
 | [services](./rmm.md#services) | list, get, control, enable, disable | `src/providers/rmm/commands/services.ts` |
@@ -378,7 +378,10 @@ its
 │   │   ├── edit <agent>
 │   │   └── refresh <agent>
 │   ├── dashboard (list)
-│   ├── clients (list)
+│   ├── clients
+│   │   ├── (list)
+│   │   ├── create
+│   │   └── delete <client>
 │   ├── sites
 │   │   ├── (list)
 │   │   ├── create

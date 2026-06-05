@@ -352,6 +352,8 @@ its rmm dashboard --watch
 | Command | Description |
 |---------|-------------|
 | `its rmm clients` | Top-level RMM client list with each client's sites flattened into one row. Use IDs from here as --client filter values elsewhere. |
+| `its rmm clients create` | Create a client (POST /clients/). TRMM also creates its first site in the same call — pass --site for its name (default 'Default'). Idempotent — skips if a client of that name already exists. |
+| `its rmm clients delete <client>` | Delete a client by ID or name (DELETE /clients/{id}/). --confirm required. If the client still has agents, pass --move-to-site <siteId> to reassign them first (TRMM refuses otherwise). |
 
 #### `its rmm clients`
 
@@ -368,6 +370,36 @@ its rmm clients --json
 its rmm clients --watch
 ```
 
+#### `its rmm clients create`
+
+Create a client (POST /clients/). TRMM also creates its first site in the same call — pass --site for its name (default 'Default'). Idempotent — skips if a client of that name already exists.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--name` | `` | New client name | — |
+| `--site` | `` | Name of the client's initial site (default 'Default') | Default |
+
+```bash
+its rmm clients create
+```
+
+#### `its rmm clients delete <client>`
+
+Delete a client by ID or name (DELETE /clients/{id}/). --confirm required. If the client still has agents, pass --move-to-site <siteId> to reassign them first (TRMM refuses otherwise).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm deletion | — |
+| `--move-to-site` | `` | Site ID to move this client's agents to before deleting | — |
+
+```bash
+its rmm clients delete <client>
+```
+
 ---
 
 ### sites
@@ -376,13 +408,13 @@ its rmm clients --watch
 
 | Command | Description |
 |---------|-------------|
-| `its rmm sites` | All RMM sites across every client. Site IDs feed --site filters on agent commands. |
+| `its rmm sites` | All RMM sites across every client, with per-site agent_count. Site IDs feed --site filters on agent commands. |
 | `its rmm sites create` | Create a site under a client (POST /clients/sites/). Idempotent — skips if a site of that name already exists for the client. |
 | `its rmm sites delete <site_id>` | Delete a site by ID (DELETE /clients/sites/{id}/). Fails if the site still has agents. --confirm required. |
 
 #### `its rmm sites`
 
-All RMM sites across every client. Site IDs feed --site filters on agent commands.
+All RMM sites across every client, with per-site agent_count. Site IDs feed --site filters on agent commands.
 
 **Examples:**
 
