@@ -15,6 +15,28 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.51] - 2026-06-05
+
+### Added
+
+- **`its rmm clients create --name <n> [--site <s>]`** — create a client (TRMM
+  creates its first site in the same call; `--site` names it, default
+  `Default`). Idempotent.
+- **`its rmm clients delete <id|name> --confirm [--move-to-site <id>]`** — delete
+  a client; if it still has agents, `--move-to-site` reassigns them first (TRMM
+  refuses otherwise, now surfaced with a clear message).
+- **`its rmm sites list`** now shows a per-site **`agents`** (agent_count) column,
+  sourced from `/clients/` (the flat sites route omits it).
+
+### Fixed
+
+- **`its rmm agents`** list now populates the **client** and **site** columns
+  (and makes `--client`/`--site` filters work) — the list endpoint returns these
+  as `site_name`/`client_name`, which were not mapped, so the columns were blank.
+- **`its rmm sites delete`** now returns a clear message for the two expected
+  400s — "a client must keep ≥1 site" and "site still has agents" — instead of
+  the raw API error.
+
 ## [0.2.50] - 2026-06-05
 
 ### Added
@@ -26,6 +48,9 @@ _Nothing yet._
   arg scans every dynamic group (one paged Graph query); pass a group ID to
   scan one. `--all` also lists refs that resolve OK. Output is sorted dead-first
   and suggests the `edit-rule --remove-upn` fix. Read-only.
+- **`its rmm sites create` / `its rmm sites delete <site_id>`** — manage RMM
+  sites under a client (create is idempotent; delete needs `--confirm` and
+  fails if the site still has agents).
 
 ## [0.2.49] - 2026-06-04
 
