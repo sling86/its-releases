@@ -12,7 +12,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [rmm.md](./rmm.md) | Tactical RMM — 57 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 100 commands across 21 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 108 commands across 25 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 113 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 45 commands across 10 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 38 commands across 14 resources |
@@ -31,7 +31,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 
-**20 providers** · **187 resources** · **652 commands**
+**20 providers** · **187 resources** · **657 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -85,11 +85,11 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [projects](./dokploy.md#projects) | list, get, create, delete | `src/providers/dokploy/commands/projects.ts` |
-| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, health, doctor, bootstrap, cert-status | `src/providers/dokploy/commands/apps.ts` |
+| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, env-runtime, apply-env, health, doctor, bootstrap, cert-status | `src/providers/dokploy/commands/apps.ts` |
 | [databases](./dokploy.md#databases) | list, url, get, create, deploy, stop, delete | `src/providers/dokploy/commands/databases.ts` |
 | [deployments](./dokploy.md#deployments) | list, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
 | [domains](./dokploy.md#domains) | list, create, check, delete | `src/providers/dokploy/commands/domains.ts` |
-| [env](./dokploy.md#env) | list, push, set, pull | `src/providers/dokploy/commands/env.ts` |
+| [env](./dokploy.md#env) | list, push, set, unset, pull | `src/providers/dokploy/commands/env.ts` |
 | [environments](./dokploy.md#environments) | list, env, push, pull, set | `src/providers/dokploy/commands/environments.ts` |
 | [registries](./dokploy.md#registries) | list | `src/providers/dokploy/commands/infrastructure.ts` |
 | [destinations](./dokploy.md#destinations) | list | `src/providers/dokploy/commands/infrastructure.ts` |
@@ -106,7 +106,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [users](./dokploy.md#users) | list, me, invite, remove | `src/providers/dokploy/commands/users.ts` |
 | [orgs](./dokploy.md#orgs) | list, active | `src/providers/dokploy/commands/users.ts` |
 | [compose](./dokploy.md#compose) | get, services, config, deploy, stop, redeploy, delete | `src/providers/dokploy/commands/compose.ts` |
-| [backup](./dokploy.md#backup) | get, files, run, delete | `src/providers/dokploy/commands/backup.ts` |
+| [backup](./dokploy.md#backup) | create, get, update, files, run, delete | `src/providers/dokploy/commands/backup.ts` |
 | [schedule](./dokploy.md#schedule) | list, get, run, delete | `src/providers/dokploy/commands/schedule.ts` |
 | [git](./dokploy.md#git) | list, setup, delete | `src/providers/dokploy/commands/git.ts` |
 
@@ -576,6 +576,8 @@ its
 │   │   ├── clone <source> <newName>
 │   │   ├── shell <app> [cmd]
 │   │   ├── migrate <app>
+│   │   ├── env-runtime <app>
+│   │   ├── apply-env <app>
 │   │   ├── health
 │   │   ├── doctor <app>
 │   │   ├── bootstrap <name>
@@ -601,6 +603,7 @@ its
 │   │   ├── (list) <applicationId>
 │   │   ├── push <applicationId>
 │   │   ├── set <applicationId> <pairs>
+│   │   ├── unset <applicationId> <keys>
 │   │   └── pull <applicationId>
 │   ├── environments
 │   │   ├── (list) <projectId>
@@ -665,7 +668,9 @@ its
 │   │   ├── redeploy <composeId>
 │   │   └── delete <composeId>
 │   ├── backup
+│   │   ├── create
 │   │   ├── get <backupId>
+│   │   ├── update <backupId>
 │   │   ├── files <destinationId>
 │   │   ├── run <backupId>
 │   │   └── delete <backupId>
@@ -1306,6 +1311,7 @@ src/
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── resolve.ts
+│   │   ├── runtime.ts
 │   │   ├── ssh.ts
 │   │   └── types.ts
 │   ├── entra/
