@@ -15,6 +15,41 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.52] - 2026-06-15
+
+### Added
+
+- **`its dokploy apps env-runtime <app> [--show-values] [--diff]`** — read the env
+  vars actually present in the running container (via `docker exec printenv`),
+  the ground truth versus the saved record. `--diff` flags vars saved in the
+  record but missing from the container (the un-applied / Swarm-freeze case) and
+  runtime-only vars. Values redacted by default.
+- **`its dokploy apps apply-env <app>`** — make a saved env change actually reach
+  the container. On Docker Swarm a plain `redeploy` does **not** converge
+  env-only changes; this stops the app (removes the swarm service), redeploys so
+  Dokploy recreates it from the current env, then **verifies** every saved var is
+  live. Brief outage.
+- **`its dokploy env set <app> … --deploy`** and **`its dokploy env unset <app>
+  <KEY…> [--deploy]`** — `--deploy` saves then recreates the swarm service and
+  verifies the change landed. A plain `set`/`unset` now warns that the change is
+  record-only until applied.
+
+### Fixed
+
+- **`its dokploy env set` no longer silently fails to reach Swarm containers.**
+  Root cause was a Dokploy 0.29.x Docker Swarm convergence bug: `saveEnvironment`
+  persisted correctly but an in-place `service.update` rolled back to the
+  creation-time spec, so vars added after creation never reached the container
+  (Dokploy issues #4232 / #2150). The new `--deploy` / `apply-env` recreate path
+  is the reliable apply route, and `env-runtime --diff` makes the drift visible.
+
+### Security
+
+- **Env writes now reject redaction-masked values.** `saveEnvironment` and the
+  shared-env writer refuse any value of `***` (the display mask), preventing the
+  footgun where pasting redacted `env`/`environments env` output back into a
+  `push`/`set` overwrites real secrets.
+
 ## [0.2.51] - 2026-06-05
 
 ### Added
