@@ -12,14 +12,14 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [rmm.md](./rmm.md) | Tactical RMM — 57 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 100 commands across 21 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 113 commands across 25 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 114 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
-| [sp.md](./sp.md) | SharePoint — 45 commands across 10 resources |
-| [unifi.md](./unifi.md) | UniFi Network — 38 commands across 14 resources |
+| [sp.md](./sp.md) | SharePoint — 46 commands across 11 resources |
+| [unifi.md](./unifi.md) | UniFi Network — 40 commands across 16 resources |
 | [wrike.md](./wrike.md) | Wrike — 48 commands across 12 resources |
-| [az.md](./az.md) | Azure CLI — 23 commands across 10 resources |
-| [exo.md](./exo.md) | Exchange Online — 33 commands across 8 resources |
-| [intune.md](./intune.md) | Intune — 40 commands across 15 resources |
+| [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
+| [exo.md](./exo.md) | Exchange Online — 35 commands across 8 resources |
+| [intune.md](./intune.md) | Intune — 41 commands across 16 resources |
 | [protect.md](./protect.md) | UniFi Protect — 6 commands across 4 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
 | [pa.md](./pa.md) | Power Platform — 11 commands across 4 resources |
@@ -30,8 +30,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
+| [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 
-**20 providers** · **187 resources** · **657 commands**
+**21 providers** · **194 resources** · **668 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -85,7 +86,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [projects](./dokploy.md#projects) | list, get, create, delete | `src/providers/dokploy/commands/projects.ts` |
-| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, env-runtime, apply-env, health, doctor, bootstrap, cert-status | `src/providers/dokploy/commands/apps.ts` |
+| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, env-runtime, apply-env, health, env-drift, doctor, bootstrap, cert-status | `src/providers/dokploy/commands/apps.ts` |
 | [databases](./dokploy.md#databases) | list, url, get, create, deploy, stop, delete | `src/providers/dokploy/commands/databases.ts` |
 | [deployments](./dokploy.md#deployments) | list, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
 | [domains](./dokploy.md#domains) | list, create, check, delete | `src/providers/dokploy/commands/domains.ts` |
@@ -136,6 +137,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [search](./sp.md#search) | list | `src/providers/sp/commands/search.ts` |
 | [permissions](./sp.md#permissions) | list, item, share, grant-app, remove | `src/providers/sp/commands/permissions.ts` |
 | [groups](./sp.md#groups) | list, members, add-member, remove-member | `src/providers/sp/commands/groups.ts` |
+| [recycle-bin](./sp.md#recycle-bin) | list | `src/providers/sp/commands/recycle-bin.ts` |
 | [pages](./sp.md#pages) | list, get | `src/providers/sp/commands/pages.ts` |
 | [dashboard](./sp.md#dashboard) | list | `src/providers/sp/commands/dashboard.ts` |
 | [graph](./sp.md#graph) | get, post, patch, put, delete | — |
@@ -151,8 +153,10 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [networks](./unifi.md#networks) | list | `src/providers/unifi/commands/networks.ts` |
 | [wlans](./unifi.md#wlans) | list, toggle, password | `src/providers/unifi/commands/networks.ts` |
 | [firewall](./unifi.md#firewall) | list, groups | `src/providers/unifi/commands/networks.ts` |
-| [ports](./unifi.md#ports) | list | `src/providers/unifi/commands/networks.ts` |
 | [routes](./unifi.md#routes) | list | `src/providers/unifi/commands/networks.ts` |
+| [portforwards](./unifi.md#portforwards) | list | `src/providers/unifi/commands/portforwards.ts` |
+| [port-forwards](./unifi.md#port-forwards) | list | `src/providers/unifi/commands/portforwards.ts` |
+| [ports](./unifi.md#ports) | list | `src/providers/unifi/commands/portforwards.ts` |
 | [events](./unifi.md#events) | list | `src/providers/unifi/commands/events.ts` |
 | [alarms](./unifi.md#alarms) | list, count, archive | `src/providers/unifi/commands/events.ts` |
 | [rogue](./unifi.md#rogue) | list | `src/providers/unifi/commands/events.ts` |
@@ -190,6 +194,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [vnet](./az.md#vnet) | list, get | `src/providers/az/commands/network.ts` |
 | [webapp](./az.md#webapp) | list, get, restart | `src/providers/az/commands/webapp.ts` |
 | [cost](./az.md#cost) | summary | `src/providers/az/commands/cost.ts` |
+| [advisor](./az.md#advisor) | list | `src/providers/az/commands/advisor.ts` |
 
 ### [Exchange Online](./exo.md)
 
@@ -197,7 +202,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [groups](./exo.md#groups) | list, get, members, create, delete, add-member, remove-member | `src/providers/exo/commands/groups.ts` |
 | [mailboxes](./exo.md#mailboxes) | list, get, stats, create, permissions, add-permission, remove-permission, forwarding, user-access, set-forwarding, set-type, set-visibility | `src/providers/exo/commands/mailboxes.ts` |
-| [rules](./exo.md#rules) | list | `src/providers/exo/commands/rules.ts` |
+| [rules](./exo.md#rules) | list, get, audit | `src/providers/exo/commands/rules.ts` |
 | [domains](./exo.md#domains) | list | `src/providers/exo/commands/domains.ts` |
 | [trace](./exo.md#trace) | list, detail, historical, historical-status | `src/providers/exo/commands/trace.ts` |
 | [autoreply](./exo.md#autoreply) | get, enable, disable | `src/providers/exo/commands/autoreply.ts` |
@@ -209,6 +214,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [devices](./intune.md#devices) | list, get, search, sync, noncompliant | `src/providers/intune/commands/devices.ts` |
+| [compliance](./intune.md#compliance) | why | `src/providers/intune/commands/compliance.ts` |
 | [apps](./intune.md#apps) | list, get, required | `src/providers/intune/commands/apps.ts` |
 | [scripts](./intune.md#scripts) | list, get, status | `src/providers/intune/commands/scripts.ts` |
 | [remediations](./intune.md#remediations) | list, get, status | `src/providers/intune/commands/remediations.ts` |
@@ -320,6 +326,13 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [contacts](./outlook.md#contacts) | search | `src/providers/outlook/commands/contacts.ts` |
 | [triage](./outlook.md#triage) | list | `src/providers/outlook/commands/triage.ts` |
 
+### [Microsoft 365 Health](./m365.md)
+
+| Resource | Actions | Source |
+|----------|---------|--------|
+| [health](./m365.md#health) | overview, issues | `src/providers/m365health/commands/health.ts` |
+| [messages](./m365.md#messages) | list | `src/providers/m365health/commands/health.ts` |
+
 ## Key Source Files
 
 | File | Purpose |
@@ -356,6 +369,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | `src/providers/docs/client.ts` | Docs UI API client |
 | `src/providers/gh/client.ts` | GitHub API client |
 | `src/providers/outlook/client.ts` | Outlook API client |
+| `src/providers/m365health/client.ts` | Microsoft 365 Health API client |
 
 ## Command Tree
 
@@ -579,6 +593,7 @@ its
 │   │   ├── env-runtime <app>
 │   │   ├── apply-env <app>
 │   │   ├── health
+│   │   ├── env-drift
 │   │   ├── doctor <app>
 │   │   ├── bootstrap <name>
 │   │   └── cert-status <app>
@@ -770,6 +785,7 @@ its
 │   │   ├── members <site> <group>
 │   │   ├── add-member <site> <group> <principal>
 │   │   └── remove-member <site> <group> <principal>
+│   ├── recycle-bin (list) <site>
 │   ├── pages
 │   │   ├── (list) <siteId>
 │   │   └── get <siteId>
@@ -814,8 +830,10 @@ its
 │   ├── firewall
 │   │   ├── (list)
 │   │   └── groups
-│   ├── ports (list)
 │   ├── routes (list)
+│   ├── portforwards (list)
+│   ├── port-forwards (list)
+│   ├── ports (list)
 │   ├── events (list)
 │   ├── alarms
 │   │   ├── (list)
@@ -911,7 +929,8 @@ its
 │   │   ├── (list)
 │   │   ├── get <name>
 │   │   └── restart <name>
-│   └── cost summary
+│   ├── cost summary
+│   └── advisor (list)
 ├── exo
 │   ├── groups
 │   │   ├── (list)
@@ -934,7 +953,10 @@ its
 │   │   ├── set-forwarding <mailbox> <target>
 │   │   ├── set-type <mailbox> <type>
 │   │   └── set-visibility <mailbox>
-│   ├── rules (list)
+│   ├── rules
+│   │   ├── (list)
+│   │   ├── get <name>
+│   │   └── audit
 │   ├── domains (list)
 │   ├── trace
 │   │   ├── (list)
@@ -958,6 +980,7 @@ its
 │   │   ├── search <query>
 │   │   ├── sync <id>
 │   │   └── noncompliant
+│   ├── compliance why <device>
 │   ├── apps
 │   │   ├── (list)
 │   │   ├── get <id>
@@ -1112,56 +1135,61 @@ its
 │   └── webhook
 │       ├── setup <repo> <url>
 │       └── (list) <repo>
-└── outlook
-    ├── mail
-    │   ├── (list)
-    │   ├── get <message_id>
-    │   ├── headers <message_id>
-    │   ├── search <query>
-    │   ├── thread <conversation_id>
-    │   ├── move <message_id> <folder_id>
-    │   ├── copy <message_id> <folder_id>
-    │   ├── read <message_id>
-    │   ├── unread <message_id>
-    │   ├── flag <message_id>
-    │   ├── categorise <message_id> <categories>
-    │   ├── delete [message_id]
-    │   └── send
-    ├── drafts
-    │   ├── create
-    │   ├── reply <message_id>
-    │   ├── forward <message_id>
-    │   ├── update <draft_id>
-    │   ├── send <draft_id>
-    │   └── (list)
-    ├── folders
-    │   ├── (list)
-    │   ├── get <folder_id>
-    │   └── create <name>
-    ├── attachments
-    │   ├── (list) <message_id>
-    │   ├── get <message_id> [attachment_id]
-    │   ├── add <message_id>
-    │   └── delete <message_id> [attachment_id]
-    ├── events
-    │   ├── (list)
-    │   ├── get <event_id>
-    │   ├── create
-    │   ├── update <event_id>
-    │   ├── delete <event_id>
-    │   ├── respond <event_id> <response>
-    │   └── availability <schedules>
-    ├── settings get
-    ├── autoreply
-    │   ├── get
-    │   └── set
-    ├── categories (list)
-    ├── rules
-    │   ├── (list)
-    │   ├── create
-    │   └── delete <rule_id>
-    ├── contacts search <query>
-    └── triage (list)
+├── outlook
+│   ├── mail
+│   │   ├── (list)
+│   │   ├── get <message_id>
+│   │   ├── headers <message_id>
+│   │   ├── search <query>
+│   │   ├── thread <conversation_id>
+│   │   ├── move <message_id> <folder_id>
+│   │   ├── copy <message_id> <folder_id>
+│   │   ├── read <message_id>
+│   │   ├── unread <message_id>
+│   │   ├── flag <message_id>
+│   │   ├── categorise <message_id> <categories>
+│   │   ├── delete [message_id]
+│   │   └── send
+│   ├── drafts
+│   │   ├── create
+│   │   ├── reply <message_id>
+│   │   ├── forward <message_id>
+│   │   ├── update <draft_id>
+│   │   ├── send <draft_id>
+│   │   └── (list)
+│   ├── folders
+│   │   ├── (list)
+│   │   ├── get <folder_id>
+│   │   └── create <name>
+│   ├── attachments
+│   │   ├── (list) <message_id>
+│   │   ├── get <message_id> [attachment_id]
+│   │   ├── add <message_id>
+│   │   └── delete <message_id> [attachment_id]
+│   ├── events
+│   │   ├── (list)
+│   │   ├── get <event_id>
+│   │   ├── create
+│   │   ├── update <event_id>
+│   │   ├── delete <event_id>
+│   │   ├── respond <event_id> <response>
+│   │   └── availability <schedules>
+│   ├── settings get
+│   ├── autoreply
+│   │   ├── get
+│   │   └── set
+│   ├── categories (list)
+│   ├── rules
+│   │   ├── (list)
+│   │   ├── create
+│   │   └── delete <rule_id>
+│   ├── contacts search <query>
+│   └── triage (list)
+└── m365
+    ├── health
+    │   ├── overview
+    │   └── issues
+    └── messages (list)
 ```
 
 ## Source Tree
@@ -1241,6 +1269,7 @@ src/
 │   ├── az/
 │   │   ├── commands/
 │   │   │   ├── account.ts
+│   │   │   ├── advisor.ts
 │   │   │   ├── cost.ts
 │   │   │   ├── index.ts
 │   │   │   ├── keyvault.ts
@@ -1371,6 +1400,7 @@ src/
 │   │   ├── commands/
 │   │   │   ├── apps.ts
 │   │   │   ├── autopilot.ts
+│   │   │   ├── compliance.ts
 │   │   │   ├── coverage.ts
 │   │   │   ├── devices.ts
 │   │   │   ├── doctor.ts
@@ -1380,6 +1410,13 @@ src/
 │   │   │   ├── policies.ts
 │   │   │   ├── remediations.ts
 │   │   │   └── scripts.ts
+│   │   ├── client.ts
+│   │   ├── definition.ts
+│   │   └── types.ts
+│   ├── m365health/
+│   │   ├── commands/
+│   │   │   ├── health.ts
+│   │   │   └── index.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   └── types.ts
@@ -1465,6 +1502,7 @@ src/
 │   │   │   ├── lists.ts
 │   │   │   ├── pages.ts
 │   │   │   ├── permissions.ts
+│   │   │   ├── recycle-bin.ts
 │   │   │   ├── search.ts
 │   │   │   └── sites.ts
 │   │   ├── client.ts
@@ -1478,6 +1516,7 @@ src/
 │   │   │   ├── events.ts
 │   │   │   ├── index.ts
 │   │   │   ├── networks.ts
+│   │   │   ├── portforwards.ts
 │   │   │   ├── sites.ts
 │   │   │   └── vouchers.ts
 │   │   ├── client.ts

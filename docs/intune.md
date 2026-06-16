@@ -3,12 +3,13 @@
 Microsoft Intune device management — managed devices, apps, platform scripts, remediations, compliance policies, ESP, Autopilot.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
 
 ## Contents
 
 - [Setup](#setup)
 - [devices](#devices)
+- [compliance](#compliance)
 - [apps](#apps)
 - [scripts](#scripts)
 - [remediations](#remediations)
@@ -136,6 +137,36 @@ its intune devices noncompliant
 
 # Pipe-friendly output — use with jq / scripts.
 its intune devices noncompliant --json
+```
+
+---
+
+### compliance
+
+> Source: `src/providers/intune/commands/compliance.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its intune compliance why <device>` | Explain why a device is non-compliant — lists every failing compliance setting (policy, setting, state, error). Resolve the device by id or name. |
+
+#### `its intune compliance why <device>`
+
+Explain why a device is non-compliant — lists every failing compliance setting (policy, setting, state, error). Resolve the device by id or name.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--all` | `` | Show every reported setting, not just the failing ones | — |
+
+**Examples:**
+
+```bash
+its intune compliance why LAPTOP-042
+
+its intune compliance why 12345678-90ab-cdef-1234-567890abcdef
+
+its intune compliance why LAPTOP-042 --all
 ```
 
 ---

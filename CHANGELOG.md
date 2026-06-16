@@ -15,6 +15,59 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.53] - 2026-06-16
+
+### Added
+
+- **New provider `m365health` (`m365`)** — Microsoft 365 service health, reusing
+  the shared Graph app-only creds: `m365 health overview` (per-service status),
+  `m365 health issues [--service] [--active]` (incidents/advisories), and
+  `m365 messages list [--days N]` (message-centre posts). Needs
+  `ServiceHealth.Read.All` + `ServiceMessage.Read.All`.
+- **`its rmm agents`** now surfaces `boot_time` + a humanised `uptime` column,
+  plus a `--rebooted-since <ISO|7d|24h|30m>` filter.
+- **`its dokploy apps env-drift [--project] [--drift-only]`** — fleet sweep
+  comparing each app's saved env record against its live runtime env (the
+  generalised Swarm env-freeze detector).
+- **`its exo rules audit`** and **`rules get <name>`** — dump transport-rule
+  conditions/actions and flag mail-exfiltration verbs (RedirectMessageTo,
+  BlindCopyTo, AddToRecipients, CopyTo).
+- **`its intune compliance why <device>`** — per-device failing-compliance-setting
+  drilldown.
+- **`its unifi portforwards list`** (alias `port-forwards`/`ports`) — WAN
+  port-forward rules with the `source` ("any" = open to the internet) column.
+- **`its az advisor list [--category]`** — Azure Advisor cost/security/reliability/
+  performance recommendations.
+- **`its bw items create`/`update` custom fields** — `--field name=value` (text),
+  `--field-hidden name=value` (hidden), and `--field-remove name` (update only);
+  comma-separated for multiple. `update` upserts by name and preserves everything
+  omitted.
+
+### Fixed
+
+- **Help-UI mutation gate.** `POST /api/result` had no read-only enforcement — the
+  WebSocket-bridge hardening had missed its in-process twin, so a mutation could
+  run via the REST path. Now fail-closed (403) like the bridge.
+- **`its dokploy env push` empty-wipe guard.** Refuses to push an empty/all-comment
+  file (which wholesale-replaced an app's env with nothing — unrecoverable) without
+  `--force`.
+- **Secret redaction now catches camelCase keys.** `accessToken`, `refreshToken`,
+  `sharedSecret`, `preSharedKey`, `buildSecrets` etc. were slipping through the
+  redactor (e.g. via `graph get` passthroughs); the key pattern now matches at
+  word/camelCase boundaries.
+- **`its exo` destructive mutations now enforce `--confirm`** (fail-closed) — six
+  commands documented it but never checked it.
+- **`its sp recycle-bin list <site>`** — `listRecycleBin` was paging the wrong Graph
+  collection (OneDrive bundles); now uses the classic SP REST recycle bin, with
+  corrected item-type labels.
+- **`its m365 health`** classifies service status case-insensitively (the Graph wire
+  format casing is inconsistent).
+
+### Changed
+
+- Dokploy `shellQuote` (an SSH-injection guard) is now single-sourced from `ssh.ts`
+  rather than duplicated across three files.
+
 ## [0.2.52] - 2026-06-15
 
 ### Added

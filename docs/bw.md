@@ -3,7 +3,7 @@
 Bitwarden vault — search items, get passwords, browse folders.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
 
 ## Contents
 
@@ -103,7 +103,7 @@ With a session active, prefer `-c` over `--unsafe` when Claude is the one runnin
 | `its bw items recent` | List recently modified vault items. Returns the N most recently modified items. |
 | `its bw items favourites` | List favourite vault items. Items the user has starred. |
 | `its bw items create <name>` | Create a new vault item (login, note, card, or identity). Idempotent on duplicate names — use update/edit to mutate an existing record. |
-| `its bw items update <id>` | Update a vault item (all fields are replaced — omitted fields are cleared) |
+| `its bw items update <id>` | Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. Use --field-remove to drop a custom field. |
 | `its bw items move <id>` | Move vault items to a folder. Move an item between folders. --confirm required. |
 | `its bw items delete <id>` | Move a vault item to trash (soft-delete, recoverable). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
 | `its bw items restore <id>` | Restore a vault item from the trash. Restore a soft-deleted item from trash. |
@@ -269,11 +269,18 @@ Create a new vault item (login, note, card, or identity). Idempotent on duplicat
 | `--notes` | `` | Notes | — |
 | `--notes-file` | `` | Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) | — |
 | `--folder` | `` | Folder name (created if it does not exist) | — |
+| `--field` | `` | Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. | — |
+| `--field-hidden` | `` | Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
 **Examples:**
 
 ```bash
+its bw items create "Router" --username admin --password "s3cret"
+
+# Text + hidden custom fields. Multiple via comma: --field a=1,b=2
+its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
+
 its bw items create "Server admin" --username admin --password "P@ssw0rd" --url https://server.example.com
 
 its bw items create "API keys" --type note --notes "stuff"
@@ -281,7 +288,7 @@ its bw items create "API keys" --type note --notes "stuff"
 
 #### `its bw items update <id>`
 
-Update a vault item (all fields are replaced — omitted fields are cleared).
+Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. Use --field-remove to drop a custom field.
 
 **Flags:**
 
@@ -295,12 +302,20 @@ Update a vault item (all fields are replaced — omitted fields are cleared).
 | `--notes` | `` | Notes | — |
 | `--notes-file` | `` | Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) | — |
 | `--folder` | `` | Folder name (created if needed) | — |
+| `--field` | `` | Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. | — |
+| `--field-hidden` | `` | Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). | — |
+| `--field-remove` | `` | Custom field name(s) to remove — comma-separated (e.g. --field-remove old_ip,legacy_token). | — |
 | `--confirm` | `` | Confirm the update | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
 **Examples:**
 
 ```bash
+# Upserts by name; password/notes/other fields untouched.
+its bw items update <id> --field lan_ip=10.0.0.2 --confirm
+
+its bw items update <id> --field-remove lan_ip --confirm
+
 its bw items update <item-id> --password "NewP@ss"
 
 # Pipe-friendly output — use with jq / scripts.
