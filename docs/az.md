@@ -3,7 +3,7 @@
 Azure CLI — subscriptions, VMs, storage, Key Vault, networking, web apps, costs.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
 
 ## Contents
 
@@ -18,6 +18,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [vnet](#vnet)
 - [webapp](#webapp)
 - [cost](#cost)
+- [advisor](#advisor)
 
 ## Setup
 
@@ -602,6 +603,40 @@ its az cost summary --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its az cost summary --watch
+```
+
+---
+
+### advisor
+
+> Source: `src/providers/az/commands/advisor.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its az advisor` | List Azure Advisor recommendations — surfaces cost, security, reliability and performance waste. Pass --json for raw shape. |
+
+#### `its az advisor`
+
+List Azure Advisor recommendations — surfaces cost, security, reliability and performance waste. Pass --json for raw shape.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--category` | `-c` | Filter by recommendation category | — |
+| `--subscription` | `-s` | Subscription name or ID | — |
+
+**Examples:**
+
+```bash
+# All Advisor recommendations for the current subscription
+its az advisor list
+
+# Cost-saving recommendations only
+its az advisor list --category Cost
+
+# Security recommendations as raw JSON
+its az advisor list --category Security --json
 ```
 
 ---

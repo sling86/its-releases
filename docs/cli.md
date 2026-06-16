@@ -3,7 +3,7 @@
 Usage, options, and output modes for the `its` CLI. For provider-specific commands, see the provider docs.
 
 [Index](./index.md) · [README](../README.md)
-Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md)
+Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
 
 ## Contents
 
@@ -43,14 +43,14 @@ its <provider> <resource> [action] [args] [--flags]
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 57 commands, 16 resources | [rmm.md](./rmm.md) |
 | Entra ID | `entra` | 100 commands, 21 resources | [entra.md](./entra.md) |
-| Dokploy | `dokploy` | 113 commands, 25 resources | [dokploy.md](./dokploy.md) |
+| Dokploy | `dokploy` | 114 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
-| SharePoint | `sp` | 45 commands, 10 resources | [sp.md](./sp.md) |
-| UniFi Network | `unifi` | 38 commands, 14 resources | [unifi.md](./unifi.md) |
+| SharePoint | `sp` | 46 commands, 11 resources | [sp.md](./sp.md) |
+| UniFi Network | `unifi` | 40 commands, 16 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 48 commands, 12 resources | [wrike.md](./wrike.md) |
-| Azure CLI | `az` | 23 commands, 10 resources | [az.md](./az.md) |
-| Exchange Online | `exo` | 33 commands, 8 resources | [exo.md](./exo.md) |
-| Intune | `intune` | 40 commands, 15 resources | [intune.md](./intune.md) |
+| Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
+| Exchange Online | `exo` | 35 commands, 8 resources | [exo.md](./exo.md) |
+| Intune | `intune` | 41 commands, 16 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 6 commands, 4 resources | [protect.md](./protect.md) |
 | Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |
 | Power Platform | `pa` | 11 commands, 4 resources | [pa.md](./pa.md) |
@@ -61,6 +61,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
 | GitHub | `gh` | 4 commands, 2 resources | [gh.md](./gh.md) |
 | Outlook | `outlook` | 42 commands, 11 resources | [outlook.md](./outlook.md) |
+| Microsoft 365 Health | `m365` | 3 commands, 2 resources | [m365.md](./m365.md) |
 
 ## Global Options
 

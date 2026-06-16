@@ -3,7 +3,7 @@
 Dokploy self-hosted PaaS management — projects, apps, databases, deployments, domains, registries, notifications.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
 
 ## Contents
 
@@ -174,6 +174,7 @@ its dokploy projects delete <project-id> --confirm
 | `its dokploy apps env-runtime <app>` | Read the env vars actually present in the running container (via docker exec) — the ground truth, not the saved record. Use this to catch the Swarm bug where saved vars never reach the container (ctxc 1549). Keys shown; values redacted unless --show-values. Pass --diff to compare against the saved record. |
 | `its dokploy apps apply-env <app>` | Make the saved env actually reach the container. On Docker Swarm a plain redeploy does NOT converge env-only changes (ctxc 1549) — this stops the app (removes the swarm service), redeploys so Dokploy recreates it from the current env, then verifies every saved var is live. Causes a brief outage. |
 | `its dokploy apps health` | Lightweight health sweep across ALL apps — replicas / last deploy / domain reachable. One row per app. Use `apps doctor <id>` for the deep dive on a specific app. |
+| `its dokploy apps env-drift` | Fleet sweep comparing each app's SAVED env record against its LIVE runtime env (via docker exec printenv). Flags apps where saved vars never reached the container — the generalised Swarm env-freeze bug (ctxc 1549). One row per app. Fix a flagged app with `its dokploy apps apply-env <id>`. |
 | `its dokploy apps doctor <app>` | Run a battery of parallel checks (env, mounts, webhook, replicas, image, healthcheck, recent log scan, last build). One green/red checklist instead of probing five separate commands. |
 | `its dokploy apps bootstrap <name>` | Bootstrap a new Dokploy app end-to-end: resolves or creates the project, creates the application, wires the GitHub source, sets the build type, pushes env vars, creates the domain, and triggers the first deploy. Idempotent — re-running with the same --name skips already-completed steps. Use --dry-run first. |
 | `its dokploy apps cert-status <app>` | Read Traefik acme.json for the app's domains — surfaces certificate state, expiry, last LE error. SSH-backed (reads from the dokploy-traefik container). |
@@ -589,6 +590,27 @@ its dokploy apps health <app-id> --json
 its dokploy apps health <app-id> --watch
 ```
 
+#### `its dokploy apps env-drift`
+
+Fleet sweep comparing each app's SAVED env record against its LIVE runtime env (via docker exec printenv). Flags apps where saved vars never reached the container — the generalised Swarm env-freeze bug (ctxc 1549). One row per app. Fix a flagged app with `its dokploy apps apply-env <id>`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--project` | `-p` | Filter by project name | — |
+| `--drift-only` | `` | Show only apps where the record and container diverge | — |
+
+**Examples:**
+
+```bash
+its dokploy apps env-drift
+
+its dokploy apps env-drift --project ccd-platform
+
+its dokploy apps env-drift --drift-only
+```
+
 #### `its dokploy apps doctor <app>`
 
 Run a battery of parallel checks (env, mounts, webhook, replicas, image, healthcheck, recent log scan, last build). One green/red checklist instead of probing five separate commands.
@@ -978,6 +1000,7 @@ Push an env file to an application. Upload local state to the upstream.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--file` | `-f` | Path to env file | .env |
+| `--force` | `` | Allow pushing an empty file (wipes ALL env on the app). Required because Dokploy keeps no env history — an accidental empty push is unrecoverable. | — |
 
 **Examples:**
 

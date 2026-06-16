@@ -3,7 +3,7 @@
 UniFi Network controller — devices, clients, WLANs, networks, firewall, events, alarms, vouchers.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
 
 ## Contents
 
@@ -15,8 +15,10 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [networks](#networks)
 - [wlans](#wlans)
 - [firewall](#firewall)
-- [ports](#ports)
 - [routes](#routes)
+- [portforwards](#portforwards)
+- [port-forwards](#port-forwards)
+- [ports](#ports)
 - [events](#events)
 - [alarms](#alarms)
 - [rogue](#rogue)
@@ -695,38 +697,6 @@ its unifi firewall groups --json
 
 ---
 
-### ports
-
-> Source: `src/providers/unifi/commands/networks.ts`
-
-| Command | Description |
-|---------|-------------|
-| `its unifi ports` | List port forwarding rules. Surfaces the most common fields; pass --json for raw shape. |
-
-#### `its unifi ports`
-
-List port forwarding rules. Surfaces the most common fields; pass --json for raw shape.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
-
-**Examples:**
-
-```bash
-its unifi ports
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi ports --json
-
-# Re-runs every 10s — handy for dashboards or incident response.
-its unifi ports --watch
-```
-
----
-
 ### routes
 
 > Source: `src/providers/unifi/commands/networks.ts`
@@ -755,6 +725,119 @@ its unifi routes --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi routes --watch
+```
+
+---
+
+### portforwards
+
+> Source: `src/providers/unifi/commands/portforwards.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its unifi portforwards` | List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape. |
+
+#### `its unifi portforwards`
+
+List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site name override | — |
+
+**Examples:**
+
+```bash
+its unifi portforwards
+
+# Same command under the hyphenated resource name.
+its unifi port-forwards
+
+# Scope to a specific site.
+its unifi portforwards --site t7kq3dcp
+
+# Raw rule shape including WAN interface and logging.
+its unifi portforwards --json
+```
+
+---
+
+### port-forwards
+
+> Source: `src/providers/unifi/commands/portforwards.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its unifi port-forwards` | List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape. |
+
+#### `its unifi port-forwards`
+
+List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site name override | — |
+
+**Examples:**
+
+```bash
+its unifi portforwards
+
+# Same command under the hyphenated resource name.
+its unifi port-forwards
+
+# Scope to a specific site.
+its unifi portforwards --site t7kq3dcp
+
+# Raw rule shape including WAN interface and logging.
+its unifi portforwards --json
+```
+
+---
+
+### ports
+
+> Source: `src/providers/unifi/commands/portforwards.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its unifi ports` | List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape. |
+
+#### `its unifi ports`
+
+List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site name override | — |
+
+**Examples:**
+
+```bash
+its unifi portforwards
+
+# Same command under the hyphenated resource name.
+its unifi port-forwards
+
+# Scope to a specific site.
+its unifi portforwards --site t7kq3dcp
+
+# Raw rule shape including WAN interface and logging.
+its unifi portforwards --json
+
+its unifi ports
+
+# Pipe-friendly output — use with jq / scripts.
+its unifi ports --json
+
+# Re-runs every 10s — handy for dashboards or incident response.
+its unifi ports --watch
 ```
 
 ---

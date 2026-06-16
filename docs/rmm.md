@@ -3,7 +3,7 @@
 Tactical RMM endpoint management — agents, alerts, software, services, updates, scripts, checks, tasks, policies.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md)
+Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
 
 ## Contents
 
@@ -86,6 +86,7 @@ List all RMM agents with status, hostname, OS, site. Surfaces the most common fi
 | `--type` | `-t` | Filter by type | — |
 | `--client` | `-c` | Filter by client name | — |
 | `--site` | `` | Filter by site name | — |
+| `--rebooted-since` | `` | Only agents whose last boot is more recent than this — ISO timestamp or relative span (7d, 24h, 30m) | — |
 
 **Examples:**
 
@@ -98,6 +99,12 @@ its rmm agents --status offline
 
 # Filter by site (case-insensitive substring)
 its rmm agents --site "fernhurst"
+
+# Agents that booted within the last 24 hours
+its rmm agents --rebooted-since 24h
+
+# Agents booted on or after a given date
+its rmm agents --rebooted-since 2026-06-14
 
 # Full JSON for scripting
 its rmm agents --json

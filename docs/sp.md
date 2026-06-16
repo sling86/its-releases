@@ -3,7 +3,7 @@
 SharePoint Online — sites, document libraries, lists, files, search, permissions, pages.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
 
 ## Contents
 
@@ -15,6 +15,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [search](#search)
 - [permissions](#permissions)
 - [groups](#groups)
+- [recycle-bin](#recycle-bin)
 - [pages](#pages)
 - [dashboard](#dashboard)
 - [graph](#graph)
@@ -821,6 +822,28 @@ Remove a member from an SP site group. Destructive — use --confirm.
 
 ```bash
 its sp groups remove-member <site> <group> <principal>
+```
+
+---
+
+### recycle-bin
+
+> Source: `src/providers/sp/commands/recycle-bin.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its sp recycle-bin <site>` | List the site recycle bin. Reads classic SP REST (/_api/web/RecycleBin) — Graph's /drives surface has no recycle-bin sub-resource. Pass the site id or web URL as the positional arg. |
+
+#### `its sp recycle-bin <site>`
+
+List the site recycle bin. Reads classic SP REST (/_api/web/RecycleBin) — Graph's /drives surface has no recycle-bin sub-resource. Pass the site id or web URL as the positional arg.
+
+**Examples:**
+
+```bash
+its sp recycle-bin list <siteId>
+
+its sp recycle-bin list https://contractcandles.sharepoint.com/sites/IT
 ```
 
 ---
