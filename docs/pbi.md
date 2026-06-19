@@ -11,7 +11,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [workspaces](#workspaces)
 - [reports](#reports)
 - [apps](#apps)
-- [licenses](#licenses)
+- [licences](#licences)
 - [activity](#activity)
 - [my](#my)
 
@@ -35,7 +35,7 @@ Uses the same service principal as `entra`. Authenticates against the Power BI a
 
 **Tenant setup required:** the SP must be granted read-only Power BI admin API access. In the Power BI Admin Portal → Tenant settings, enable **Service principals can use Fabric admin APIs** (and the legacy **Service principals can use read-only admin APIs** if still present) and add the SP to the permitted security group. Without this, all `pbi` calls return 401.
 
-`pbi licenses` queries Microsoft Graph `/subscribedSkus` (not the Power BI API) so it works as long as the SP has `Organization.Read.All` on Graph (which `entra` already needs).
+`pbi licences` queries Microsoft Graph `/subscribedSkus` (not the Power BI API) so it works as long as the SP has `Organization.Read.All` on Graph (which `entra` already needs).
 
 ### Source Files
 
@@ -253,28 +253,28 @@ its pbi apps --watch
 
 ---
 
-### licenses
+### licences
 
-> Source: `src/providers/pbi/commands/licenses.ts`
+> Source: `src/providers/pbi/commands/licences.ts`
 
 | Command | Description |
 |---------|-------------|
-| `its pbi licenses` | List Power BI licence SKUs with consumption. Surfaces the most common fields; pass --json for raw shape. |
+| `its pbi licences` | List Power BI licence SKUs with consumption. Surfaces the most common fields; pass --json for raw shape. |
 
-#### `its pbi licenses`
+#### `its pbi licences`
 
 List Power BI licence SKUs with consumption. Surfaces the most common fields; pass --json for raw shape.
 
 **Examples:**
 
 ```bash
-its pbi licenses
+its pbi licences
 
 # Surfaces all PBI SKUs + assigned counts.
-its pbi licenses --json
+its pbi licences --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
-its pbi licenses --watch
+its pbi licences --watch
 ```
 
 ---
