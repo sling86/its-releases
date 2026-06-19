@@ -968,6 +968,8 @@ its dokploy domains delete <domain-id> --confirm
 | `its dokploy env set <applicationId> <pairs>` | Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. |
 | `its dokploy env unset <applicationId> <keys>` | Remove one or more env vars by key, preserving all others. The inverse of `env set`. Record-only unless --deploy is passed. |
 | `its dokploy env pull <applicationId>` | Pull env vars from an application to a local file. Download upstream state to local. |
+| `its dokploy env copy <srcApp> <dstApp>` | Securely copy env vars from one app to another. Reads the REAL values from <srcApp> and writes them to <dstApp> — the values NEVER touch stdout, JSON, or the transcript. The safe way to move secrets like GITHUB_APP_* between staging and prod. Pick keys with --keys K1,K2 or take everything with --all. Honours the redaction-mask guard (won't copy a masked value). |
+| `its dokploy env reveal <applicationId> <key>` | Read ONE secret value to a 0600 file or the OS clipboard — never to stdout. For when a human genuinely needs a single value (e.g. paste into a GUI) without it landing in shell history or the transcript. stdout shows only `wrote <KEY> (<n> bytes) to <sink>`. Exactly one sink required. PEM values arrive single-line `\n`-escaped — unescape with `.replace(/\n/g,"\n")`. |
 
 #### `its dokploy env <applicationId>`
 
@@ -1001,6 +1003,7 @@ Push an env file to an application. Upload local state to the upstream.
 |------|-------|-------------|---------|
 | `--file` | `-f` | Path to env file | .env |
 | `--force` | `` | Allow pushing an empty file (wipes ALL env on the app). Required because Dokploy keeps no env history — an accidental empty push is unrecoverable. | — |
+| `--force-mask` | `` | Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets (ctxc 1705). | — |
 
 **Examples:**
 
@@ -1020,6 +1023,7 @@ Set one or more env vars (KEY=value) without affecting others. NB: a plain set u
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--deploy` | `` | After saving, recreate the swarm service (stop + deploy) and verify the new vars reached the container. Causes a brief outage. Without this, the change only lands in the record. | — |
+| `--force-mask` | `` | Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets (ctxc 1705). | — |
 
 **Examples:**
 
@@ -1061,6 +1065,39 @@ its dokploy env pull <app-id> --file .env.local
 
 # Pipe-friendly output — use with jq / scripts.
 its dokploy env pull <app-id> --file .env.local --json
+```
+
+#### `its dokploy env copy <srcApp> <dstApp>`
+
+Securely copy env vars from one app to another. Reads the REAL values from <srcApp> and writes them to <dstApp> — the values NEVER touch stdout, JSON, or the transcript. The safe way to move secrets like GITHUB_APP_* between staging and prod. Pick keys with --keys K1,K2 or take everything with --all. Honours the redaction-mask guard (won't copy a masked value).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--keys` | `` | Comma-separated list of keys to copy (e.g. K1,K2,K3) | — |
+| `--all` | `` | Copy every key from the source app | — |
+| `--deploy` | `` | After writing, recreate the destination's swarm service so the new vars go live. Causes a brief outage on the destination. | — |
+| `--force-mask` | `` | Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets (ctxc 1705). | — |
+
+```bash
+its dokploy env copy <srcApp> <dstApp>
+```
+
+#### `its dokploy env reveal <applicationId> <key>`
+
+Read ONE secret value to a 0600 file or the OS clipboard — never to stdout. For when a human genuinely needs a single value (e.g. paste into a GUI) without it landing in shell history or the transcript. stdout shows only `wrote <KEY> (<n> bytes) to <sink>`. Exactly one sink required. PEM values arrive single-line `\n`-escaped — unescape with `.replace(/\n/g,"\n")`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--to-file` | `` | Write the value to this path (created 0600 / owner-only) | — |
+| `--to-clipboard` | `` | Copy the value to the OS clipboard instead of a file | — |
+| `--clear-after` | `` | Seconds before the clipboard is wiped (0 disables). Only meaningful with --to-clipboard. | 30 |
+
+```bash
+its dokploy env reveal <applicationId> <key>
 ```
 
 ---

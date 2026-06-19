@@ -15,6 +15,37 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.54] - 2026-06-19
+
+### Added
+
+- **`--ai` lossless columnar compaction** — uniform object arrays (Graph
+  entity lists, RMM agents, Wrike tickets, etc.) are emitted as
+  `{_fmt:"cols",consts,fields,rows}`: field names stated once, columns with a
+  single value across all rows factored into `consts`. Lossless and still
+  valid JSON; 16–70% smaller on real payloads. `--ai | --stdin` pipelines are
+  unaffected — the envelope is rehydrated transparently.
+- **`its rmm` checks + fleet** — typed `policies add-check`, `checks`
+  create/edit/results plus a fleet failing-sweep, `fleet patch-report`, and
+  `checks run-now`. Agents list gained `boot_time` + humanised `uptime` and a
+  `--rebooted-since` filter.
+- **`its unifi clients list --json`** now exposes `sw_mac` / `sw_port`.
+
+### Changed
+
+- **`its dokploy`** env handling hardened against secret-clobber, with secure
+  copy/reveal (#20).
+
+### Fixed
+
+- **`--ai` truncation bug** — the old char-based `maxChars` cut JSON mid-token
+  (producing invalid JSON) and silently dropped rows past the cut. It now
+  drops whole rows and records the count in `_truncated`.
+- **`its rmm checks run`** — corrected endpoint, dropped the broken `eventlog`
+  type (live-verified).
+- **`its bw`** — redact TOTP seed in output, honour `--copy` in the `totp`
+  table.
+
 ## [0.2.53] - 2026-06-16
 
 ### Added

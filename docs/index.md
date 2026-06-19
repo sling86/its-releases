@@ -10,9 +10,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [rmm.md](./rmm.md) | Tactical RMM — 57 commands across 16 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 63 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 100 commands across 21 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 114 commands across 25 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 46 commands across 11 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 40 commands across 16 resources |
@@ -32,23 +32,23 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 
-**21 providers** · **194 resources** · **668 commands**
+**21 providers** · **194 resources** · **676 commands**
 
 ### [Tactical RMM](./rmm.md)
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [agents](./rmm.md#agents) | list, stale, search, get, ping, reboot, remove, run, history, notes, pending, wake, edit, refresh | `src/providers/rmm/commands/agents.ts` |
+| [agents](./rmm.md#agents) | list, stale, search, get, ping, reboot, remove, prune, run, history, notes, pending, wake, edit, refresh | `src/providers/rmm/commands/agents.ts` |
 | [dashboard](./rmm.md#dashboard) | list | `src/providers/rmm/commands/dashboard.ts` |
 | [clients](./rmm.md#clients) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
 | [sites](./rmm.md#sites) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
 | [processes](./rmm.md#processes) | list, top, kill | `src/providers/rmm/commands/processes.ts` |
 | [services](./rmm.md#services) | list, get, control, enable, disable | `src/providers/rmm/commands/services.ts` |
-| [updates](./rmm.md#updates) | list, scan, install | `src/providers/rmm/commands/updates.ts` |
+| [updates](./rmm.md#updates) | report, list, scan, install | `src/providers/rmm/commands/updates.ts` |
 | [software](./rmm.md#software) | list, search | `src/providers/rmm/commands/software.ts` |
 | [alerts](./rmm.md#alerts) | list, get | `src/providers/rmm/commands/alerts.ts` |
 | [scripts](./rmm.md#scripts) | list, get, run, upload-local, delete, upsert | `src/providers/rmm/commands/scripts.ts` |
-| [checks](./rmm.md#checks) | list, create, delete | `src/providers/rmm/commands/checks.ts` |
+| [checks](./rmm.md#checks) | list, failing, results, run, create, edit, delete | `src/providers/rmm/commands/checks.ts` |
 | [tasks](./rmm.md#tasks) | list, create, delete | `src/providers/rmm/commands/tasks.ts` |
 | [policies](./rmm.md#policies) | list, get, checks, add-check, patch-policy | `src/providers/rmm/commands/policies.ts` |
 | [diagnostics](./rmm.md#diagnostics) | list | `src/providers/rmm/commands/diagnostics.ts` |
@@ -90,7 +90,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [databases](./dokploy.md#databases) | list, url, get, create, deploy, stop, delete | `src/providers/dokploy/commands/databases.ts` |
 | [deployments](./dokploy.md#deployments) | list, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
 | [domains](./dokploy.md#domains) | list, create, check, delete | `src/providers/dokploy/commands/domains.ts` |
-| [env](./dokploy.md#env) | list, push, set, unset, pull | `src/providers/dokploy/commands/env.ts` |
+| [env](./dokploy.md#env) | list, push, set, unset, pull, copy, reveal | `src/providers/dokploy/commands/env.ts` |
 | [environments](./dokploy.md#environments) | list, env, push, pull, set | `src/providers/dokploy/commands/environments.ts` |
 | [registries](./dokploy.md#registries) | list | `src/providers/dokploy/commands/infrastructure.ts` |
 | [destinations](./dokploy.md#destinations) | list | `src/providers/dokploy/commands/infrastructure.ts` |
@@ -246,7 +246,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [workspaces](./pbi.md#workspaces) | list, members, add-user, update-user, remove-user | `src/providers/pbi/commands/workspaces.ts` |
 | [reports](./pbi.md#reports) | list, search, url | `src/providers/pbi/commands/reports.ts` |
 | [apps](./pbi.md#apps) | list | `src/providers/pbi/commands/apps.ts` |
-| [licenses](./pbi.md#licenses) | list | `src/providers/pbi/commands/licenses.ts` |
+| [licences](./pbi.md#licences) | list | `src/providers/pbi/commands/licences.ts` |
 | [activity](./pbi.md#activity) | list | `src/providers/pbi/commands/activity.ts` |
 | [my](./pbi.md#my) | login, logout, whoami, workspaces, reports, datasets, add-workspace-user, update-workspace-user, remove-workspace-user, refresh | `src/providers/pbi/commands/my.ts` |
 
@@ -384,6 +384,7 @@ its
 │   │   ├── ping <agent>
 │   │   ├── reboot <agent>
 │   │   ├── remove <agent>
+│   │   ├── prune
 │   │   ├── run <agent>
 │   │   ├── history <agent>
 │   │   ├── notes <agent>
@@ -411,6 +412,7 @@ its
 │   │   ├── enable <agent>
 │   │   └── disable <agent>
 │   ├── updates
+│   │   ├── report
 │   │   ├── (list) <agent>
 │   │   ├── scan <agent>
 │   │   └── install <agent_id>
@@ -423,13 +425,17 @@ its
 │   ├── scripts
 │   │   ├── (list)
 │   │   ├── get <script_id>
-│   │   ├── run <agent>
+│   │   ├── run [agent]
 │   │   ├── upload-local <agent> <path>
 │   │   ├── delete <script_id>
 │   │   └── upsert <name> <path>
 │   ├── checks
 │   │   ├── (list) <agent>
+│   │   ├── failing
+│   │   ├── results <agent>
+│   │   ├── run <agent>
 │   │   ├── create <agent>
+│   │   ├── edit <agent>
 │   │   └── delete [agent_id]
 │   ├── tasks
 │   │   ├── (list) <agent>
@@ -619,7 +625,9 @@ its
 │   │   ├── push <applicationId>
 │   │   ├── set <applicationId> <pairs>
 │   │   ├── unset <applicationId> <keys>
-│   │   └── pull <applicationId>
+│   │   ├── pull <applicationId>
+│   │   ├── copy <srcApp> <dstApp>
+│   │   └── reveal <applicationId> <key>
 │   ├── environments
 │   │   ├── (list) <projectId>
 │   │   ├── env <environmentId>
@@ -1048,7 +1056,7 @@ its
 │   │   ├── search <query>
 │   │   └── url <report_id>
 │   ├── apps (list)
-│   ├── licenses (list)
+│   ├── licences (list)
 │   ├── activity (list)
 │   └── my
 │       ├── login
@@ -1451,7 +1459,7 @@ src/
 │   │   │   ├── activity.ts
 │   │   │   ├── apps.ts
 │   │   │   ├── index.ts
-│   │   │   ├── licenses.ts
+│   │   │   ├── licences.ts
 │   │   │   ├── my.ts
 │   │   │   ├── reports.ts
 │   │   │   └── workspaces.ts
