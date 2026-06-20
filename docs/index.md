@@ -10,7 +10,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [rmm.md](./rmm.md) | Tactical RMM — 63 commands across 16 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 65 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 100 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
@@ -32,7 +32,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 
-**21 providers** · **194 resources** · **676 commands**
+**21 providers** · **194 resources** · **678 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -44,7 +44,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [sites](./rmm.md#sites) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
 | [processes](./rmm.md#processes) | list, top, kill | `src/providers/rmm/commands/processes.ts` |
 | [services](./rmm.md#services) | list, get, control, enable, disable | `src/providers/rmm/commands/services.ts` |
-| [updates](./rmm.md#updates) | report, list, scan, install | `src/providers/rmm/commands/updates.ts` |
+| [updates](./rmm.md#updates) | report, list, scan, install, approve, defer | `src/providers/rmm/commands/updates.ts` |
 | [software](./rmm.md#software) | list, search | `src/providers/rmm/commands/software.ts` |
 | [alerts](./rmm.md#alerts) | list, get | `src/providers/rmm/commands/alerts.ts` |
 | [scripts](./rmm.md#scripts) | list, get, run, upload-local, delete, upsert | `src/providers/rmm/commands/scripts.ts` |
@@ -414,8 +414,10 @@ its
 │   ├── updates
 │   │   ├── report
 │   │   ├── (list) <agent>
-│   │   ├── scan <agent>
-│   │   └── install <agent_id>
+│   │   ├── scan [agent]
+│   │   ├── install [agent]
+│   │   ├── approve <agent>
+│   │   └── defer <agent>
 │   ├── software
 │   │   ├── (list) <agent>
 │   │   └── search <query>

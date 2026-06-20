@@ -964,11 +964,11 @@ its dokploy domains delete <domain-id> --confirm
 | Command | Description |
 |---------|-------------|
 | `its dokploy env <applicationId>` | Show environment variables for an application. Keys are visible by default; values are redacted unless --show-values is set. |
-| `its dokploy env push <applicationId>` | Push an env file to an application. Upload local state to the upstream. |
-| `its dokploy env set <applicationId> <pairs>` | Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. |
-| `its dokploy env unset <applicationId> <keys>` | Remove one or more env vars by key, preserving all others. The inverse of `env set`. Record-only unless --deploy is passed. |
+| `its dokploy env push <applicationId>` | Push an env file to an application. Upload local state to the upstream. Pass --dry-run to preview which keys would be written (no values, nothing saved). |
+| `its dokploy env set <applicationId> <pairs>` | Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. Pass --dry-run to preview which keys would change (no values, nothing saved). |
+| `its dokploy env unset <applicationId> <keys>` | Remove one or more env vars by key, preserving all others. The inverse of `env set`. Record-only unless --deploy is passed. Pass --dry-run to preview which keys would be removed (nothing saved). |
 | `its dokploy env pull <applicationId>` | Pull env vars from an application to a local file. Download upstream state to local. |
-| `its dokploy env copy <srcApp> <dstApp>` | Securely copy env vars from one app to another. Reads the REAL values from <srcApp> and writes them to <dstApp> — the values NEVER touch stdout, JSON, or the transcript. The safe way to move secrets like GITHUB_APP_* between staging and prod. Pick keys with --keys K1,K2 or take everything with --all. Honours the redaction-mask guard (won't copy a masked value). |
+| `its dokploy env copy <srcApp> <dstApp>` | Securely copy env vars from one app to another. Reads the REAL values from <srcApp> and writes them to <dstApp> — the values NEVER touch stdout, JSON, or the transcript. The safe way to move secrets like GITHUB_APP_* between staging and prod. Pick keys with --keys K1,K2 or take everything with --all. Honours the redaction-mask guard (won't copy a masked value). Pass --dry-run to preview the set/unchanged/skipped classification without writing. |
 | `its dokploy env reveal <applicationId> <key>` | Read ONE secret value to a 0600 file or the OS clipboard — never to stdout. For when a human genuinely needs a single value (e.g. paste into a GUI) without it landing in shell history or the transcript. stdout shows only `wrote <KEY> (<n> bytes) to <sink>`. Exactly one sink required. PEM values arrive single-line `\n`-escaped — unescape with `.replace(/\n/g,"\n")`. |
 
 #### `its dokploy env <applicationId>`
@@ -995,7 +995,7 @@ its dokploy env <app-id> --watch
 
 #### `its dokploy env push <applicationId>`
 
-Push an env file to an application. Upload local state to the upstream.
+Push an env file to an application. Upload local state to the upstream. Pass --dry-run to preview which keys would be written (no values, nothing saved).
 
 **Flags:**
 
@@ -1016,7 +1016,7 @@ its dokploy env push <app-id> --file .env.production --json
 
 #### `its dokploy env set <applicationId> <pairs>`
 
-Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later.
+Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. Pass --dry-run to preview which keys would change (no values, nothing saved).
 
 **Flags:**
 
@@ -1036,7 +1036,7 @@ its dokploy env set <app-id> --key DEBUG --value "true" --json
 
 #### `its dokploy env unset <applicationId> <keys>`
 
-Remove one or more env vars by key, preserving all others. The inverse of `env set`. Record-only unless --deploy is passed.
+Remove one or more env vars by key, preserving all others. The inverse of `env set`. Record-only unless --deploy is passed. Pass --dry-run to preview which keys would be removed (nothing saved).
 
 **Flags:**
 
@@ -1069,7 +1069,7 @@ its dokploy env pull <app-id> --file .env.local --json
 
 #### `its dokploy env copy <srcApp> <dstApp>`
 
-Securely copy env vars from one app to another. Reads the REAL values from <srcApp> and writes them to <dstApp> — the values NEVER touch stdout, JSON, or the transcript. The safe way to move secrets like GITHUB_APP_* between staging and prod. Pick keys with --keys K1,K2 or take everything with --all. Honours the redaction-mask guard (won't copy a masked value).
+Securely copy env vars from one app to another. Reads the REAL values from <srcApp> and writes them to <dstApp> — the values NEVER touch stdout, JSON, or the transcript. The safe way to move secrets like GITHUB_APP_* between staging and prod. Pick keys with --keys K1,K2 or take everything with --all. Honours the redaction-mask guard (won't copy a masked value). Pass --dry-run to preview the set/unchanged/skipped classification without writing.
 
 **Flags:**
 
@@ -1145,6 +1145,7 @@ Push an env file as an environment's SHARED env vars (replaces all). Upload loca
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--file` | `-f` | Path to env file | .env |
+| `--force` | `` | Allow pushing an empty file (wipes ALL shared env on the environment). Required because Dokploy keeps no env history — an accidental empty push is unrecoverable. | — |
 
 ```bash
 its dokploy environments push <environmentId>

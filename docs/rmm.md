@@ -669,14 +669,16 @@ its rmm services disable OFFICE-PC-01 --service spooler --confirm --json
 
 | Command | Description |
 |---------|-------------|
-| `its rmm updates report` | Fleet Windows-Update compliance — fans out across agents and lists those with pending updates, most-behind first (counts critical/important separately). Narrow with --client/--site; --all also lists fully-patched agents. One API call per agent, so it's slower than a single-agent query. |
-| `its rmm updates <agent>` | Windows Update queue — pending, installed, failed. Returns KB number + classification + size. |
-| `its rmm updates scan <agent>` | Force the agent to re-scan Microsoft Update. Use after a long offline period or to refresh the pending list. |
-| `its rmm updates install <agent_id>` | Install pending Windows updates on an agent (requires --confirm) |
+| `its rmm updates report` | Fleet Windows-Update compliance — fans out across agents and lists those with pending updates, most-critical-then-most-behind first, with separate critical/important columns. Narrow with --client/--site; --all also lists fully-patched agents. Pipe --csv/--json to export. One API call per agent, so it's slower than a single-agent query. |
+| `its rmm updates <agent>` | Windows Update queue — pending, installed, failed. Shows KB, severity, install state, and the per-KB approval action (approve/ignore/nothing) — only `approve` updates get installed. |
+| `its rmm updates scan [agent]` | Force a re-scan of Microsoft Update. Single agent, or fan out across a client/site/all-online to refresh the pending list before an `updates report`. |
+| `its rmm updates install [agent]` | Install APPROVED pending Windows updates (TRMM installs only updates with action=approve — approve them first with `its rmm updates approve`). Single agent, or fan out across a client/site/all-online — both require --confirm (fan-out previews the targets without it). Single-agent install no-ops with a hint if nothing is approved. Reboot-after-install is controlled by the agent's patch policy (see `its rmm policies patch-policy`), not this command. |
+| `its rmm updates approve <agent>` | Approve pending Windows updates so `updates install` will install them — TRMM installs ONLY approved updates, so an unapproved box is a no-op install. Target one --kb KB5034441 or --all-pending (the latter needs --confirm). |
+| `its rmm updates defer <agent>` | Defer (ignore) pending Windows updates so install skips them. Target one --kb KB5034441 or --all-pending (the latter needs --confirm). Re-approve later with `updates approve`. |
 
 #### `its rmm updates report`
 
-Fleet Windows-Update compliance — fans out across agents and lists those with pending updates, most-behind first (counts critical/important separately). Narrow with --client/--site; --all also lists fully-patched agents. One API call per agent, so it's slower than a single-agent query.
+Fleet Windows-Update compliance — fans out across agents and lists those with pending updates, most-critical-then-most-behind first, with separate critical/important columns. Narrow with --client/--site; --all also lists fully-patched agents. Pipe --csv/--json to export. One API call per agent, so it's slower than a single-agent query.
 
 **Flags:**
 
@@ -700,7 +702,7 @@ its rmm updates report --all
 
 #### `its rmm updates <agent>`
 
-Windows Update queue — pending, installed, failed. Returns KB number + classification + size.
+Windows Update queue — pending, installed, failed. Shows KB, severity, install state, and the per-KB approval action (approve/ignore/nothing) — only `approve` updates get installed.
 
 **Examples:**
 
@@ -714,36 +716,107 @@ its rmm updates OFFICE-PC-01 --json
 its rmm updates OFFICE-PC-01 --watch
 ```
 
-#### `its rmm updates scan <agent>`
+#### `its rmm updates scan [agent]`
 
-Force the agent to re-scan Microsoft Update. Use after a long offline period or to refresh the pending list.
+Force a re-scan of Microsoft Update. Single agent, or fan out across a client/site/all-online to refresh the pending list before an `updates report`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--all-online` | `` | Fan out to every online agent | — |
+| `--client` | `` | Fan out to online agents in this client (substring) | — |
+| `--site` | `` | Fan out to online agents in this site (substring) | — |
+| `--policy` | `` | Fan out to online agents under this automation policy id | — |
+| `--confirm` | `` | Required to execute a fan-out (preview without it) | — |
 
 **Examples:**
 
 ```bash
+its rmm updates scan OFFICE-PC
+
+# List the online agents a fan-out scan would hit
+its rmm updates scan --client "Candle Retail"
+
+its rmm updates scan --client "Candle Retail" --confirm
+
 its rmm updates scan OFFICE-PC-01
 
 # Useful in scheduled checks.
 its rmm updates scan OFFICE-PC-01 --json
 ```
 
-#### `its rmm updates install <agent_id>`
+#### `its rmm updates install [agent]`
 
-Install pending Windows updates on an agent (requires --confirm).
+Install APPROVED pending Windows updates (TRMM installs only updates with action=approve — approve them first with `its rmm updates approve`). Single agent, or fan out across a client/site/all-online — both require --confirm (fan-out previews the targets without it). Single-agent install no-ops with a hint if nothing is approved. Reboot-after-install is controlled by the agent's patch policy (see `its rmm policies patch-policy`), not this command.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--confirm` | `` | Confirm the installation | — |
+| `--all-online` | `` | Fan out to every online agent | — |
+| `--client` | `` | Fan out to online agents in this client (substring) | — |
+| `--site` | `` | Fan out to online agents in this site (substring) | — |
+| `--policy` | `` | Fan out to online agents under this automation policy id | — |
+| `--confirm` | `` | Required to execute a fan-out (preview without it) | — |
 
 **Examples:**
 
 ```bash
+its rmm updates install OFFICE-PC --confirm
+
+# List the online agents a fan-out install would hit (no install without --confirm)
+its rmm updates install --client "Candle Retail"
+
+its rmm updates install --client "Candle Retail" --confirm
+
 its rmm updates install OFFICE-PC-01 --confirm
 
-# Reboots the agent automatically when updates finish.
-its rmm updates install OFFICE-PC-01 --confirm --reboot
+# List the online agents a fan-out install would hit (no install without --confirm).
+its rmm updates install --client "Candle Retail"
+
+# Queue an install on every online agent in the client. Reboot-after-install is set on the agent's patch policy, not here.
+its rmm updates install --client "Candle Retail" --confirm
+```
+
+#### `its rmm updates approve <agent>`
+
+Approve pending Windows updates so `updates install` will install them — TRMM installs ONLY approved updates, so an unapproved box is a no-op install. Target one --kb KB5034441 or --all-pending (the latter needs --confirm).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--kb` | `` | KB to act on (e.g. KB5034441 or 5034441) | — |
+| `--all-pending` | `` | Act on every not-yet-installed update | — |
+| `--confirm` | `` | Required for --all-pending | — |
+
+**Examples:**
+
+```bash
+its rmm updates approve OFFICE-PC --kb KB5034441
+
+its rmm updates approve OFFICE-PC --all-pending --confirm
+```
+
+#### `its rmm updates defer <agent>`
+
+Defer (ignore) pending Windows updates so install skips them. Target one --kb KB5034441 or --all-pending (the latter needs --confirm). Re-approve later with `updates approve`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--kb` | `` | KB to act on (e.g. KB5034441 or 5034441) | — |
+| `--all-pending` | `` | Act on every not-yet-installed update | — |
+| `--confirm` | `` | Required for --all-pending | — |
+
+**Examples:**
+
+```bash
+its rmm updates defer OFFICE-PC --kb KB5034441
+
+its rmm updates defer OFFICE-PC --all-pending --confirm
 ```
 
 ---
@@ -991,8 +1064,8 @@ its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1 --json
 | `its rmm checks <agent>` | Scheduled health checks attached to one agent. Includes last-run result + cadence. |
 | `its rmm checks failing` | Fleet-wide failing-checks sweep — fans out across online agents and surfaces every check currently failing, worst-first. The fast 'what's red across the estate right now' view. Narrow with --client/--site. |
 | `its rmm checks results <agent>` | Drill into one check's live result on an agent — status, last run, fail count, return code, and captured stdout/stderr. Pass --check <id> (find it via `its rmm checks <agent>`). |
-| `its rmm checks run <agent>` | Force all of an agent's checks to run now (TRMM /runchecks/) instead of waiting for the next scheduled cycle. Returns immediately; fresh results land on the agent's next check-in. |
-| `its rmm checks create <agent>` | Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/winsvc/eventlog/script (defaults to script when --script is given). Tune alerting with --severity, --fails, --interval. |
+| `its rmm checks run <agent>` | Force all of an agent's checks to run now (POST /checks/<agent>/run/) instead of waiting for the next scheduled cycle. Returns immediately; fresh results land on the agent's next check-in. |
+| `its rmm checks create <agent>` | Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Tune alerting with --severity, --fails, --interval. |
 | `its rmm checks edit <agent>` | Retune an existing check without delete+recreate — change interval, severity, fail-count, or thresholds. PUT is partial, so only the flags you pass change. |
 | `its rmm checks delete [agent_id]` | Remove a scheduled check from an agent. Destructive — needs --confirm. |
 
@@ -1050,7 +1123,7 @@ its rmm checks results OFFICE-PC --check 7
 
 #### `its rmm checks run <agent>`
 
-Force all of an agent's checks to run now (TRMM /runchecks/) instead of waiting for the next scheduled cycle. Returns immediately; fresh results land on the agent's next check-in.
+Force all of an agent's checks to run now (POST /checks/<agent>/run/) instead of waiting for the next scheduled cycle. Returns immediately; fresh results land on the agent's next check-in.
 
 **Examples:**
 
@@ -1061,7 +1134,7 @@ its rmm checks run OFFICE-PC
 
 #### `its rmm checks create <agent>`
 
-Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/winsvc/eventlog/script (defaults to script when --script is given). Tune alerting with --severity, --fails, --interval.
+Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Tune alerting with --severity, --fails, --interval.
 
 **Flags:**
 
@@ -1117,6 +1190,8 @@ Retune an existing check without delete+recreate — change interval, severity, 
 | `--interval` | `` | Run interval seconds | — |
 | `--error` | `` | Error threshold % (diskspace/cpuload/memory) | — |
 | `--warning` | `` | Warning threshold % (diskspace/cpuload/memory) | — |
+| `--timeout` | `` | Script check: timeout seconds | — |
+| `--args` | `` | Script check: comma-separated script args (replaces existing) | — |
 
 **Examples:**
 
@@ -1125,6 +1200,9 @@ Retune an existing check without delete+recreate — change interval, severity, 
 its rmm checks edit OFFICE-PC --check 7 --warning 60 --error 80
 
 its rmm checks edit OFFICE-PC --check 7 --severity warning --fails 3
+
+# Change a script check's timeout + args
+its rmm checks edit OFFICE-PC --check 7 --timeout 300 --args -Verbose,-Force
 ```
 
 #### `its rmm checks delete [agent_id]`
@@ -1224,7 +1302,7 @@ its rmm tasks delete --task <task-id> --confirm
 | `its rmm policies` | RMM automation policies — packages of checks + scheduled tasks applied across clients/sites. |
 | `its rmm policies get <policy_id>` | Policy detail — included checks, tasks, target agents/sites. |
 | `its rmm policies checks <policy_id>` | List checks attached to a policy (uses the asymmetric `/automation/policies/<id>/checks/` GET route — see ctxc 588) |
-| `its rmm policies add-check <policy_id>` | Add a check to a policy (applies to every agent under it). --type: diskspace/cpuload/memory/ping/winsvc/eventlog/script (defaults to script when --script is given). Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first (ctxc 588). |
+| `its rmm policies add-check <policy_id>` | Add a check to a policy (applies to every agent under it). --type: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first (ctxc 588). |
 | `its rmm policies patch-policy <policy_id>` | Edit a policy's Windows Update schedule + per-severity approvals (WinUpdatePolicy). Partial update — only the flags you pass change. --confirm required: applies to EVERY agent under the policy. |
 
 #### `its rmm policies`
@@ -1271,7 +1349,7 @@ its rmm policies checks <policy-id> --json
 
 #### `its rmm policies add-check <policy_id>`
 
-Add a check to a policy (applies to every agent under it). --type: diskspace/cpuload/memory/ping/winsvc/eventlog/script (defaults to script when --script is given). Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first (ctxc 588).
+Add a check to a policy (applies to every agent under it). --type: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first (ctxc 588).
 
 **Flags:**
 
