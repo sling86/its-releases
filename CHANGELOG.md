@@ -15,6 +15,45 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.55] - 2026-06-20
+
+### Added
+
+- **`its rmm updates approve` / `defer`** — per-KB Windows-Update approval, the
+  missing half of the patch workflow. TRMM installs **only** updates with
+  `action="approve"`, so an unapproved box was a silent no-op install. Target a
+  single `--kb KB5034441` (matched by digits, so `5034441` works too) or
+  `--all-pending` (needs `--confirm`; previews otherwise). Verified against live
+  TRMM. `updates install` now pre-checks for approved updates and points you at
+  `approve` instead of no-opping; `updates list` shows the per-KB `action`
+  column.
+- **`its rmm updates install` / `scan` fleet fan-out** — `--all-online` /
+  `--client` / `--site` / `--policy` (online agents, preview-then-`--confirm`,
+  batched), mirroring `scripts run`.
+- **`its rmm updates report`** now splits pending into separate `critical` /
+  `important` columns and sorts most-critical first.
+- **`--ai-flat`** — AI mode without the columnar envelope (plain row objects),
+  for consumers that don't decode `{_fmt:"cols"}`. The columnar decoder
+  (`expandColumnar`) is now exported, and the envelope carries a `_v` format
+  version. The columnar format is documented in `docs/cli.md`.
+- **`its rmm checks edit`** can now retune script-check `--timeout` / `--args`.
+- **`its dokploy env`** push/set/unset/copy gained `--dry-run` — a value-safe
+  preview (key names + action, never values) that writes nothing.
+
+### Fixed
+
+- **`its dokploy environments push`** — added the empty-file wipe guard
+  (`--force` required to push 0 vars) that the app-level `env push` already had.
+- Removed stale `eventlog` check-type mentions from help/docs and the bogus
+  `updates install --reboot` example (the flag never existed; reboot-after-install
+  is a patch-policy setting).
+
+### Security
+
+- **`--dry-run` no longer leaks secrets** — the request-body preview now masks
+  secret values embedded in `KEY=value` string fields (e.g. a dokploy env body),
+  which the field-name redactor couldn't see. Honours `--unsafe`.
+
 ## [0.2.54] - 2026-06-19
 
 ### Added

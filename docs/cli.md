@@ -41,7 +41,7 @@ its <provider> <resource> [action] [args] [--flags]
 
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
-| Tactical RMM | `rmm` | 63 commands, 16 resources | [rmm.md](./rmm.md) |
+| Tactical RMM | `rmm` | 65 commands, 16 resources | [rmm.md](./rmm.md) |
 | Entra ID | `entra` | 100 commands, 21 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 116 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
@@ -67,7 +67,8 @@ its <provider> <resource> [action] [args] [--flags]
 
 | Flag | Description |
 |------|-------------|
-| `--ai`, `--compact` | Minimal JSON output for AI piping |
+| `--ai`, `--compact` | Minimal JSON for AI piping. Arrays of 5+ rows are compacted into a lossless columnar envelope (see Output Modes) |
+| `--ai-flat` | Like `--ai` but plain row objects — skips the columnar envelope, for consumers that don't decode it |
 | `--json` | Full raw JSON output |
 | `--csv` | CSV output |
 | `--tsv` | TSV output |
@@ -118,15 +119,30 @@ its exo groups --fields name,email --csv > groups.csv
 | Mode | When | Description |
 |------|------|-------------|
 | Human | Default in TTY | Summary line + formatted table |
-| AI | `--ai` or non-TTY pipe | Minified JSON, respects `--max-chars` |
+| AI | `--ai` or non-TTY pipe | Minified JSON, respects `--max-chars`. Uniform arrays of 5+ rows become a columnar envelope (below) |
+| AI (flat) | `--ai-flat` | Minified JSON of plain row objects — no columnar envelope |
 | JSON | `--json` | Pretty-printed full JSON |
 
 ```bash
 its rmm agents                 # Human-readable table
 its rmm agents --json          # Full JSON
-its rmm agents --ai            # Compact JSON for AI piping
+its rmm agents --ai            # Compact (columnar) JSON for AI piping
+its rmm agents --ai-flat       # Compact JSON, plain rows (no envelope)
 its rmm agents --ai | ai "which agents are offline?"
 ```
+
+### Columnar `--ai` format
+
+To save tokens, `--ai` rewrites a uniform array of 5+ objects into a lossless columnar envelope: field names are stated once, each row becomes a positional array, and any column with one value across every row is factored into `consts`.
+
+```json
+{ "_fmt": "cols", "_v": 1, "consts": { "os": "Windows 11" }, "fields": ["hostname", "status"], "rows": [["PC-A", "online"], ["PC-B", "offline"]] }
+```
+
+- `_fmt` is always `"cols"`; `_v` is the format version (bumped on any breaking shape change).
+- Rehydrate by merging `consts` with `fields`-zipped `rows`. The `its` CLI does this automatically for `… --ai | its … --stdin`.
+- Over `--max-chars`, trailing rows are dropped and a `_truncated` count is added — the output stays valid JSON.
+- If your consumer can't decode the envelope, use `--ai-flat` to get plain row objects instead.
 
 ## Setup
 
