@@ -95,6 +95,7 @@ List users from the Entra ID directory. Defaults to first 50 — use --all to pa
 | `--top` | `` | Number of results (max 100) | 50 |
 | `--all` | `` | Fetch all results (overrides --top) | — |
 | `--filter` | `` | OData filter expression | — |
+| `--search` | `` | Fuzzy substring match across displayName, mail, and UPN (Graph $search) | — |
 | `--enabled` | `` | Only show enabled accounts | — |
 | `--domain` | `` | Filter by UPN domain (e.g. contractcandles.com) — server-side endsWith match | — |
 
@@ -110,6 +111,9 @@ its entra users --all
 its entra users --enabled
 
 its entra users --domain contractcandles.com
+
+# Fuzzy match on name, mail, UPN
+its entra users --search smith
 
 its entra users --fields displayName,upn,jobTitle
 ```

@@ -15,11 +15,11 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 46 commands across 11 resources |
-| [unifi.md](./unifi.md) | UniFi Network — 40 commands across 16 resources |
+| [unifi.md](./unifi.md) | UniFi Network — 41 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 48 commands across 12 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
-| [exo.md](./exo.md) | Exchange Online — 35 commands across 8 resources |
-| [intune.md](./intune.md) | Intune — 41 commands across 16 resources |
+| [exo.md](./exo.md) | Exchange Online — 40 commands across 9 resources |
+| [intune.md](./intune.md) | Intune — 42 commands across 17 resources |
 | [protect.md](./protect.md) | UniFi Protect — 6 commands across 4 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
 | [pa.md](./pa.md) | Power Platform — 11 commands across 4 resources |
@@ -32,7 +32,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 
-**21 providers** · **194 resources** · **678 commands**
+**21 providers** · **197 resources** · **685 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -162,6 +162,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [rogue](./unifi.md#rogue) | list | `src/providers/unifi/commands/events.ts` |
 | [vouchers](./unifi.md#vouchers) | list, create, revoke | `src/providers/unifi/commands/vouchers.ts` |
 | [dashboard](./unifi.md#dashboard) | list | `src/providers/unifi/commands/dashboard.ts` |
+| [audit](./unifi.md#audit) | list | `src/providers/unifi/commands/audit.ts` |
 
 ### [Wrike](./wrike.md)
 
@@ -204,6 +205,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [mailboxes](./exo.md#mailboxes) | list, get, stats, create, permissions, add-permission, remove-permission, forwarding, user-access, set-forwarding, set-type, set-visibility | `src/providers/exo/commands/mailboxes.ts` |
 | [rules](./exo.md#rules) | list, get, audit | `src/providers/exo/commands/rules.ts` |
 | [domains](./exo.md#domains) | list | `src/providers/exo/commands/domains.ts` |
+| [dkim](./exo.md#dkim) | list, get, rotate, enable, disable | `src/providers/exo/commands/dkim.ts` |
 | [trace](./exo.md#trace) | list, detail, historical, historical-status | `src/providers/exo/commands/trace.ts` |
 | [autoreply](./exo.md#autoreply) | get, enable, disable | `src/providers/exo/commands/autoreply.ts` |
 | [recipients](./exo.md#recipients) | search, send-as, add-send-as, remove-send-as | `src/providers/exo/commands/recipients.ts` |
@@ -222,6 +224,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [esp](./intune.md#esp) | list, get, update | `src/providers/intune/commands/esp.ts` |
 | [autopilot](./intune.md#autopilot) | list, devices, tag | `src/providers/intune/commands/autopilot.ts` |
 | [group](./intune.md#group) | find | `src/providers/intune/commands/lookup.ts` |
+| [assignments](./intune.md#assignments) | audit | `src/providers/intune/commands/assignments.ts` |
 | [settings](./intune.md#settings) | list, get | — |
 | [intents](./intune.md#intents) | list, get | `src/providers/intune/commands/lookup.ts` |
 | [updates](./intune.md#updates) | list, get | `src/providers/intune/commands/coverage.ts` |
@@ -854,7 +857,8 @@ its
 │   │   ├── (list)
 │   │   ├── create
 │   │   └── revoke <id>
-│   └── dashboard (list)
+│   ├── dashboard (list)
+│   └── audit (list)
 ├── wrike
 │   ├── tickets
 │   │   ├── (list)
@@ -968,6 +972,12 @@ its
 │   │   ├── get <name>
 │   │   └── audit
 │   ├── domains (list)
+│   ├── dkim
+│   │   ├── (list)
+│   │   ├── get <domain>
+│   │   ├── rotate <domain>
+│   │   ├── enable <domain>
+│   │   └── disable <domain>
 │   ├── trace
 │   │   ├── (list)
 │   │   ├── detail <trace-id> <recipient>
@@ -1016,6 +1026,7 @@ its
 │   │   ├── devices
 │   │   └── tag <serial> [tag]
 │   ├── group find <groupId>
+│   ├── assignments audit
 │   ├── settings
 │   │   ├── (list)
 │   │   └── get <id>
@@ -1383,6 +1394,7 @@ src/
 │   ├── exo/
 │   │   ├── commands/
 │   │   │   ├── autoreply.ts
+│   │   │   ├── dkim.ts
 │   │   │   ├── domains.ts
 │   │   │   ├── forwarding.ts
 │   │   │   ├── groups.ts
@@ -1409,6 +1421,7 @@ src/
 │   ├── intune/
 │   │   ├── commands/
 │   │   │   ├── apps.ts
+│   │   │   ├── assignments.ts
 │   │   │   ├── autopilot.ts
 │   │   │   ├── compliance.ts
 │   │   │   ├── coverage.ts
@@ -1420,6 +1433,7 @@ src/
 │   │   │   ├── policies.ts
 │   │   │   ├── remediations.ts
 │   │   │   └── scripts.ts
+│   │   ├── assignments.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   └── types.ts
@@ -1520,6 +1534,7 @@ src/
 │   │   └── types.ts
 │   ├── unifi/
 │   │   ├── commands/
+│   │   │   ├── audit.ts
 │   │   │   ├── clients.ts
 │   │   │   ├── dashboard.ts
 │   │   │   ├── devices.ts
@@ -1529,6 +1544,7 @@ src/
 │   │   │   ├── portforwards.ts
 │   │   │   ├── sites.ts
 │   │   │   └── vouchers.ts
+│   │   ├── audit.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   └── types.ts
@@ -1551,6 +1567,7 @@ src/
 │   ├── base.ts
 │   ├── definitions.ts
 │   └── registry.ts
+├── bootstrap.ts
 ├── cli.ts
 ├── config.ts
 ├── index.ts

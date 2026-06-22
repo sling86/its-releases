@@ -12,6 +12,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [mailboxes](#mailboxes)
 - [rules](#rules)
 - [domains](#domains)
+- [dkim](#dkim)
 - [trace](#trace)
 - [autoreply](#autoreply)
 - [recipients](#recipients)
@@ -474,6 +475,85 @@ its exo domains --watch
 
 ---
 
+### dkim
+
+> Source: `src/providers/exo/commands/dkim.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its exo dkim` | List DKIM signing config for every domain. Pass --json for raw shape. |
+| `its exo dkim get <domain>` | Get DKIM signing config for a domain (Enabled, Status, selector key sizes, RotateOnDate). |
+| `its exo dkim rotate <domain>` | Rotate the DKIM signing key for a domain (Rotate-DkimSigningConfig). Mutation — requires --confirm. |
+| `its exo dkim enable <domain>` | Enable DKIM signing for a domain (Set-DkimSigningConfig). Mutation — requires --confirm. |
+| `its exo dkim disable <domain>` | Disable DKIM signing for a domain (Set-DkimSigningConfig). Mutation — requires --confirm. |
+
+#### `its exo dkim`
+
+List DKIM signing config for every domain. Pass --json for raw shape.
+
+```bash
+its exo dkim
+```
+
+#### `its exo dkim get <domain>`
+
+Get DKIM signing config for a domain (Enabled, Status, selector key sizes, RotateOnDate).
+
+```bash
+its exo dkim get <domain>
+```
+
+#### `its exo dkim rotate <domain>`
+
+Rotate the DKIM signing key for a domain (Rotate-DkimSigningConfig). Mutation — requires --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to perform the key rotation | — |
+| `--key-size` | `` | Key size in bits | 2048 |
+
+**Examples:**
+
+```bash
+its exo dkim rotate contractcandles.com --confirm
+```
+
+#### `its exo dkim enable <domain>`
+
+Enable DKIM signing for a domain (Set-DkimSigningConfig). Mutation — requires --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to change the signing state | — |
+
+**Examples:**
+
+```bash
+its exo dkim enable contractcandles.com --confirm
+```
+
+#### `its exo dkim disable <domain>`
+
+Disable DKIM signing for a domain (Set-DkimSigningConfig). Mutation — requires --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to change the signing state | — |
+
+**Examples:**
+
+```bash
+its exo dkim disable contractcandles.com --confirm
+```
+
+---
+
 ### trace
 
 > Source: `src/providers/exo/commands/trace.ts`
@@ -481,7 +561,7 @@ its exo domains --watch
 | Command | Description |
 |---------|-------------|
 | `its exo trace` | Search message trace (last N days). Surfaces the most common fields; pass --json for raw shape. |
-| `its exo trace detail <trace-id> <recipient>` | Get hop-by-hop detail for a traced message. Single mailbox detail incl. quotas + rules. |
+| `its exo trace detail <trace-id> <recipient>` | Get hop-by-hop detail for a traced message (Get-MessageTraceDetailV2). Surfaces the FAIL reason from each hop's Data blob; --json keeps the raw Data XML. |
 | `its exo trace historical` | Submit a historical message-trace search (Start-HistoricalSearch) for the 11–90 day window that `trace list` (10-day cap) can't reach. Async — returns a JobId; poll with `trace historical-status <jobId>`. |
 | `its exo trace historical-status <job-id>` | Poll a historical search job (Get-HistoricalSearch). FileUrl is populated once Status is Done. |
 
@@ -511,7 +591,13 @@ its exo trace --sender jane.smith@example.com --since 24h --watch
 
 #### `its exo trace detail <trace-id> <recipient>`
 
-Get hop-by-hop detail for a traced message. Single mailbox detail incl. quotas + rules.
+Get hop-by-hop detail for a traced message (Get-MessageTraceDetailV2). Surfaces the FAIL reason from each hop's Data blob; --json keeps the raw Data XML.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--days` | `-d` | Days back to search (max 10 per query) | 10 |
 
 **Examples:**
 

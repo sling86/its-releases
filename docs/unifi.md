@@ -24,6 +24,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [rogue](#rogue)
 - [vouchers](#vouchers)
 - [dashboard](#dashboard)
+- [audit](#audit)
 
 ## Setup
 
@@ -51,6 +52,7 @@ Most commands accept `--site <name>` to override the default site. Use `its unif
 | `src/providers/unifi/client.ts` | API client methods |
 | `src/providers/unifi/types.ts` | TypeScript interfaces |
 | `src/providers/unifi/commands/` | Command definitions (split by resource) |
+| `src/providers/unifi/audit.ts` | audit |
 | `src/providers/unifi/definition.ts` | definition |
 
 ## Resources
@@ -1088,6 +1090,30 @@ its unifi dashboard --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi dashboard --watch
+```
+
+---
+
+### audit
+
+> Source: `src/providers/unifi/commands/audit.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its unifi audit` | Audit RF and firewall/VLAN posture — co-channel overlap, unisolated VLANs, insecure WiFi defaults |
+
+#### `its unifi audit`
+
+Audit RF and firewall/VLAN posture — co-channel overlap, unisolated VLANs, insecure WiFi defaults.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site name override | — |
+
+```bash
+its unifi audit
 ```
 
 ---
