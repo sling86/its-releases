@@ -1239,7 +1239,6 @@ src/
 │   ├── logger.ts
 │   ├── long-args.ts
 │   ├── output.ts
-│   ├── parallel.ts
 │   ├── secrets-audit.ts
 │   ├── secrets.ts
 │   ├── session.ts
@@ -1534,6 +1533,7 @@ src/
 │   │   └── types.ts
 │   ├── unifi/
 │   │   ├── commands/
+│   │   │   ├── _shared.ts
 │   │   │   ├── audit.ts
 │   │   │   ├── clients.ts
 │   │   │   ├── dashboard.ts

@@ -15,6 +15,18 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.57] - 2026-06-22
+
+### Changed
+
+- **Internal cleanup, no behaviour change** (from an over-engineering audit):
+  removed ~1080 lines of dead code and 14 unreferenced one-off ops scripts,
+  dropped two unused runtime deps (`zod`, `smol-toml` — runtime deps are now
+  just `@leeoniya/ufuzzy` + `keytar`), swapped a hand-rolled UTF-16→base64 loop
+  for `Buffer`, and de-duplicated repeated UniFi (`formatUptime`,
+  `DEVICE_STATES`, `warnEmptyDefaultSite`) and RMM (`AGENT_ARG`) helpers into
+  shared modules. Command output is unchanged.
+
 ## [0.2.56] - 2026-06-22
 
 ### Added
