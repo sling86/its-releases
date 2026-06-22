@@ -46,11 +46,11 @@ its <provider> <resource> [action] [args] [--flags]
 | Dokploy | `dokploy` | 116 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 46 commands, 11 resources | [sp.md](./sp.md) |
-| UniFi Network | `unifi` | 40 commands, 16 resources | [unifi.md](./unifi.md) |
+| UniFi Network | `unifi` | 41 commands, 17 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 48 commands, 12 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
-| Exchange Online | `exo` | 35 commands, 8 resources | [exo.md](./exo.md) |
-| Intune | `intune` | 41 commands, 16 resources | [intune.md](./intune.md) |
+| Exchange Online | `exo` | 40 commands, 9 resources | [exo.md](./exo.md) |
+| Intune | `intune` | 42 commands, 17 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 6 commands, 4 resources | [protect.md](./protect.md) |
 | Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |
 | Power Platform | `pa` | 11 commands, 4 resources | [pa.md](./pa.md) |

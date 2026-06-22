@@ -15,6 +15,38 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.56] - 2026-06-22
+
+### Added
+
+- **`its exo dkim`** — DKIM signing-config management, no more dropping to raw
+  PowerShell. `dkim list` / `dkim get <domain>` surface Enabled, Status,
+  selector key sizes and RotateOnDate; `dkim rotate <domain> --key-size
+  {1024|2048}`, `dkim enable` / `dkim disable` mutate via Set/Rotate and require
+  `--confirm`. `--json` keeps the raw shape.
+
+### Fixed
+
+- **`its exo trace detail`** — migrated off the deprecated
+  `Get-MessageTraceDetail` (hard-errors since 2025-09-01) to
+  `Get-MessageTraceDetailV2`. Spans a `--days` window (default 10, the V2
+  per-query max) so it reaches anything `trace list` surfaced, and surfaces the
+  per-hop failure Reason parsed from the Data blob; `--json` keeps the raw XML.
+- **`its entra users list --search`** — the flag was never declared, so the
+  parser silently dropped it and returned the full unfiltered list. Now wired to
+  a Graph `$search` over displayName / mail / userPrincipalName, and combines
+  with `--filter` / `--enabled`.
+
+### Security
+
+- **Bitwarden hidden custom fields and live TOTP codes are now redacted by
+  default.** The global scrubber matches secret-looking field names and PEM/JWT
+  value shapes, but a hidden field's `value` key and a TOTP `code` slipped
+  through and printed in piped/AI output. Hidden fields (`bw items get`) are now
+  masked in every mode; TOTP codes (`bw items totp`) are masked whenever output
+  isn't an interactive terminal. Both honour the audit-logged `--include-secrets`
+  opt-out; use `--copy` to hand a secret to a human without printing it.
+
 ## [0.2.55] - 2026-06-20
 
 ### Added

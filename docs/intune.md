@@ -17,6 +17,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [esp](#esp)
 - [autopilot](#autopilot)
 - [group](#group)
+- [assignments](#assignments)
 - [settings](#settings)
 - [intents](#intents)
 - [updates](#updates)
@@ -50,6 +51,7 @@ Intune reuses the same Graph API credentials as the Entra provider — no additi
 | `src/providers/intune/client.ts` | API client methods |
 | `src/providers/intune/types.ts` | TypeScript interfaces |
 | `src/providers/intune/commands/` | Command definitions (split by resource) |
+| `src/providers/intune/assignments.ts` | assignments |
 | `src/providers/intune/definition.ts` | definition |
 
 ## Resources
@@ -584,6 +586,37 @@ its intune group find "All Devices"
 
 # Pipe-friendly output — use with jq / scripts.
 its intune group find "All Devices" --json
+```
+
+---
+
+### assignments
+
+> Source: `src/providers/intune/commands/assignments.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its intune assignments audit` | Audit Intune assignments — per-target matrix (which configs/compliance/apps hit each group) plus orphan resources with no assignment. Rows show group GUIDs (names aren't resolved cross-provider). |
+
+#### `its intune assignments audit`
+
+Audit Intune assignments — per-target matrix (which configs/compliance/apps hit each group) plus orphan resources with no assignment. Rows show group GUIDs (names aren't resolved cross-provider).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--top` | `` | Number of each resource type to fetch (default 100) | 100 |
+| `--all` | `` | Fetch up to 1000 of each resource type (overrides --top) | — |
+
+**Examples:**
+
+```bash
+its intune assignments audit
+
+its intune assignments audit --json
+
+its intune assignments audit --all
 ```
 
 ---

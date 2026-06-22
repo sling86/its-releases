@@ -538,8 +538,8 @@ Get the password for an item by search query. Surfaces the most common fields; p
 **Examples:**
 
 ```bash
-# Print the password (mask if shared terminal)
-its bw password "server-login"
+# Print the password (redacted by default; reveal is audit-logged)
+its bw password "server-login" --include-secrets
 
 # Copy to clipboard, auto-clear after 30s
 its bw password "server-login" --copy
