@@ -15,10 +15,10 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 46 commands across 11 resources |
-| [unifi.md](./unifi.md) | UniFi Network — 41 commands across 17 resources |
+| [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 48 commands across 12 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
-| [exo.md](./exo.md) | Exchange Online — 40 commands across 9 resources |
+| [exo.md](./exo.md) | Exchange Online — 42 commands across 9 resources |
 | [intune.md](./intune.md) | Intune — 42 commands across 17 resources |
 | [protect.md](./protect.md) | UniFi Protect — 6 commands across 4 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
@@ -32,7 +32,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 
-**21 providers** · **197 resources** · **685 commands**
+**21 providers** · **197 resources** · **689 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -154,8 +154,8 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [wlans](./unifi.md#wlans) | list, toggle, password | `src/providers/unifi/commands/networks.ts` |
 | [firewall](./unifi.md#firewall) | list, groups | `src/providers/unifi/commands/networks.ts` |
 | [routes](./unifi.md#routes) | list | `src/providers/unifi/commands/networks.ts` |
-| [portforwards](./unifi.md#portforwards) | list | `src/providers/unifi/commands/portforwards.ts` |
-| [port-forwards](./unifi.md#port-forwards) | list | `src/providers/unifi/commands/portforwards.ts` |
+| [portforwards](./unifi.md#portforwards) | list, toggle | `src/providers/unifi/commands/portforwards.ts` |
+| [port-forwards](./unifi.md#port-forwards) | list, toggle | `src/providers/unifi/commands/portforwards.ts` |
 | [ports](./unifi.md#ports) | list | `src/providers/unifi/commands/portforwards.ts` |
 | [events](./unifi.md#events) | list | `src/providers/unifi/commands/events.ts` |
 | [alarms](./unifi.md#alarms) | list, count, archive | `src/providers/unifi/commands/events.ts` |
@@ -203,7 +203,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [groups](./exo.md#groups) | list, get, members, create, delete, add-member, remove-member | `src/providers/exo/commands/groups.ts` |
 | [mailboxes](./exo.md#mailboxes) | list, get, stats, create, permissions, add-permission, remove-permission, forwarding, user-access, set-forwarding, set-type, set-visibility | `src/providers/exo/commands/mailboxes.ts` |
-| [rules](./exo.md#rules) | list, get, audit | `src/providers/exo/commands/rules.ts` |
+| [rules](./exo.md#rules) | list, get, audit, disable, enable | `src/providers/exo/commands/rules.ts` |
 | [domains](./exo.md#domains) | list | `src/providers/exo/commands/domains.ts` |
 | [dkim](./exo.md#dkim) | list, get, rotate, enable, disable | `src/providers/exo/commands/dkim.ts` |
 | [trace](./exo.md#trace) | list, detail, historical, historical-status | `src/providers/exo/commands/trace.ts` |
@@ -844,8 +844,12 @@ its
 │   │   ├── (list)
 │   │   └── groups
 │   ├── routes (list)
-│   ├── portforwards (list)
-│   ├── port-forwards (list)
+│   ├── portforwards
+│   │   ├── (list)
+│   │   └── toggle <id>
+│   ├── port-forwards
+│   │   ├── (list)
+│   │   └── toggle <id>
 │   ├── ports (list)
 │   ├── events (list)
 │   ├── alarms
@@ -970,7 +974,9 @@ its
 │   ├── rules
 │   │   ├── (list)
 │   │   ├── get <name>
-│   │   └── audit
+│   │   ├── audit
+│   │   ├── disable <name>
+│   │   └── enable <name>
 │   ├── domains (list)
 │   ├── dkim
 │   │   ├── (list)

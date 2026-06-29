@@ -405,6 +405,8 @@ its exo mailboxes set-visibility <mailbox>
 | `its exo rules` | List mail flow (transport) rules. Surfaces the most common fields; pass --json for raw shape. |
 | `its exo rules get <name>` | Get one transport rule's full condition/action shape (Get-TransportRule). Flags mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo) if present. |
 | `its exo rules audit` | Audit every transport rule for mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo, AddToRecipients, CopyTo). A silent redirect/blind-copy to an external address is a classic data-exfiltration tripwire — review every flagged rule. |
+| `its exo rules disable <name>` | Disable a transport rule (Disable-TransportRule) — remediate a flagged mail-exfiltration rule. Reversible with `rules enable`. Changes org mail flow — use --confirm. |
+| `its exo rules enable <name>` | Enable a transport rule (Enable-TransportRule). Reversible with `rules disable`. Changes org mail flow — use --confirm. |
 
 #### `its exo rules`
 
@@ -445,6 +447,38 @@ Audit every transport rule for mail-exfiltration verbs (RedirectMessageTo, Blind
 its exo rules audit
 
 its exo rules audit --json
+```
+
+#### `its exo rules disable <name>`
+
+Disable a transport rule (Disable-TransportRule) — remediate a flagged mail-exfiltration rule. Reversible with `rules enable`. Changes org mail flow — use --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm disabling the rule | — |
+
+**Examples:**
+
+```bash
+its exo rules disable "Evil redirect" --confirm
+```
+
+#### `its exo rules enable <name>`
+
+Enable a transport rule (Enable-TransportRule). Reversible with `rules disable`. Changes org mail flow — use --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm enabling the rule | — |
+
+**Examples:**
+
+```bash
+its exo rules enable "Block external forward" --confirm
 ```
 
 ---

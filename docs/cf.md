@@ -136,6 +136,7 @@ Purge zone cache (everything, or specific URLs with --file).
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--file` | `` | URL to purge (repeat for multiple). Omit to purge everything. | — |
+| `--confirm` | `` | Confirm purging the entire zone cache (not needed with --file) | — |
 
 **Examples:**
 
@@ -265,6 +266,7 @@ Delete a DNS record. Permanent — use --confirm. Audit trail (if the upstream s
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--zone` | `-z` | Zone domain or id | — |
+| `--confirm` | `` | Confirm deletion | — |
 
 **Examples:**
 

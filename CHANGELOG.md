@@ -15,6 +15,38 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.58] - 2026-06-29
+
+### Added
+
+- **`its exo rules enable/disable <id>`** — toggle Exchange Online transport
+  rules without dropping to raw PowerShell (Enable/Disable-TransportRule),
+  `--confirm` required.
+- **`its unifi portforwards toggle <id> --enable|--disable`** — close (or
+  reopen) an internet-exposed WAN port-forward, `--confirm` required.
+
+### Fixed
+
+- **Destructive commands now enforce `--confirm` (safety).** Several commands
+  advertised `--confirm` in their description but the handler never read it, so
+  they acted on first call; `entra ca delete` had no confirm flag at all (could
+  delete the org-MFA Conditional Access policy). Added guards to 12 handlers:
+  dokploy apps/projects/domains/databases delete + mounts remove, entra ca
+  delete + tap revoke, cf dns delete + zones purge, pa flows delete, outlook
+  events/rules delete.
+- **Confirm-honesty stragglers:** `unifi wlans password` now guards (PSK
+  rotation disconnects all SSID clients); `sp files move` dropped its false
+  `--confirm` claim (the move is reversible).
+- **Unknown flags warn instead of silently dropping** — undeclared non-global
+  flags emit a stderr warning rather than being ignored.
+- **Silent-truncation pagination:** `sp drives root --all`, `wrike tasks list`
+  and `wrike projects tasks` now follow pagination instead of returning only
+  the first page; capped results say so in the summary.
+- **`intune assignments audit`** resolves group GUIDs to names via Graph.
+- **`bw items totp`** is no longer cached (was a 60s TTL against a 30s code).
+- **Config/secrets labels:** `config show` lists env vars by provider; Outlook
+  secret labels and `.env.example` break-glass UPNs filled in.
+
 ## [0.2.57] - 2026-06-22
 
 ### Changed

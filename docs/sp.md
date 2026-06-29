@@ -414,7 +414,7 @@ its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm -
 | `its sp files folder <siteId>` | Create a folder. Returns the contents of a folder by path. |
 | `its sp files delete <siteId>` | Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
 | `its sp files share <siteId>` | Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked). |
-| `its sp files move <siteId>` | Move or rename a file. Move an item between folders. --confirm required. |
+| `its sp files move <siteId>` | Move or rename a file. Move an item between folders (reversible). |
 | `its sp files checkout <siteId>` | Check out a file for editing. Locks the item against concurrent edits. |
 | `its sp files checkin <siteId>` | Check in a file. Releases the lock after editing. |
 | `its sp files versions <siteId>` | List file version history. Returns version history for a file. |
@@ -529,7 +529,7 @@ its sp files share <siteId>
 
 #### `its sp files move <siteId>`
 
-Move or rename a file. Move an item between folders. --confirm required.
+Move or rename a file. Move an item between folders (reversible).
 
 **Flags:**
 
