@@ -596,11 +596,11 @@ its intune group find "All Devices" --json
 
 | Command | Description |
 |---------|-------------|
-| `its intune assignments audit` | Audit Intune assignments — per-target matrix (which configs/compliance/apps hit each group) plus orphan resources with no assignment. Rows show group GUIDs (names aren't resolved cross-provider). |
+| `its intune assignments audit` | Audit Intune assignments — per-target matrix (which configs/compliance/apps hit each group) plus orphan resources with no assignment. Group GUIDs are resolved to display names. |
 
 #### `its intune assignments audit`
 
-Audit Intune assignments — per-target matrix (which configs/compliance/apps hit each group) plus orphan resources with no assignment. Rows show group GUIDs (names aren't resolved cross-provider).
+Audit Intune assignments — per-target matrix (which configs/compliance/apps hit each group) plus orphan resources with no assignment. Group GUIDs are resolved to display names.
 
 **Flags:**
 

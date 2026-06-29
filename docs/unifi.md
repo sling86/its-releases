@@ -580,7 +580,7 @@ its unifi networks --watch
 |---------|-------------|
 | `its unifi wlans` | List WiFi SSIDs. Surfaces the most common fields; pass --json for raw shape. |
 | `its unifi wlans toggle <wlan_id>` | Enable or disable a WiFi SSID. Toggle a boolean state; idempotent. |
-| `its unifi wlans password <wlan_id>` | Update WiFi password for an SSID. Rotate a PSK / passphrase. --confirm required. |
+| `its unifi wlans password <wlan_id>` | Update WiFi password for an SSID. Rotate a PSK / passphrase. Disconnects every client on the SSID — use --confirm. |
 
 #### `its unifi wlans`
 
@@ -627,7 +627,7 @@ its unifi wlans toggle <wlan-id> --enable
 
 #### `its unifi wlans password <wlan_id>`
 
-Update WiFi password for an SSID. Rotate a PSK / passphrase. --confirm required.
+Update WiFi password for an SSID. Rotate a PSK / passphrase. Disconnects every client on the SSID — use --confirm.
 
 **Flags:**
 
@@ -635,6 +635,7 @@ Update WiFi password for an SSID. Rotate a PSK / passphrase. --confirm required.
 |------|-------|-------------|---------|
 | `--passphrase` | `` | New WiFi passphrase | — |
 | `--site` | `` | Site name override | — |
+| `--confirm` | `` | Confirm the PSK rotation | — |
 
 **Examples:**
 
@@ -738,6 +739,7 @@ its unifi routes --watch
 | Command | Description |
 |---------|-------------|
 | `its unifi portforwards` | List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape. |
+| `its unifi portforwards toggle <id>` | Enable or disable a WAN port-forward rule — close an internet-exposed forward. Pass --enable or --disable. |
 
 #### `its unifi portforwards`
 
@@ -764,6 +766,25 @@ its unifi portforwards --site t7kq3dcp
 its unifi portforwards --json
 ```
 
+#### `its unifi portforwards toggle <id>`
+
+Enable or disable a WAN port-forward rule — close an internet-exposed forward. Pass --enable or --disable.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--enable` | `` | Enable the rule | — |
+| `--disable` | `` | Disable the rule (close the forward) | — |
+| `--site` | `` | Site name override | — |
+| `--confirm` | `` | Confirm the change | — |
+
+**Examples:**
+
+```bash
+its unifi portforwards toggle <id> --disable --confirm
+```
+
 ---
 
 ### port-forwards
@@ -773,6 +794,7 @@ its unifi portforwards --json
 | Command | Description |
 |---------|-------------|
 | `its unifi port-forwards` | List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape. |
+| `its unifi port-forwards toggle <id>` | Enable or disable a WAN port-forward rule — close an internet-exposed forward. Pass --enable or --disable. |
 
 #### `its unifi port-forwards`
 
@@ -797,6 +819,25 @@ its unifi portforwards --site t7kq3dcp
 
 # Raw rule shape including WAN interface and logging.
 its unifi portforwards --json
+```
+
+#### `its unifi port-forwards toggle <id>`
+
+Enable or disable a WAN port-forward rule — close an internet-exposed forward. Pass --enable or --disable.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--enable` | `` | Enable the rule | — |
+| `--disable` | `` | Disable the rule (close the forward) | — |
+| `--site` | `` | Site name override | — |
+| `--confirm` | `` | Confirm the change | — |
+
+**Examples:**
+
+```bash
+its unifi portforwards toggle <id> --disable --confirm
 ```
 
 ---

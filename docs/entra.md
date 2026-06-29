@@ -1010,6 +1010,12 @@ its entra tap --watch
 
 Revoke a Temporary Access Pass. Reverse an assignment. --confirm where required.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm revocation | — |
+
 **Examples:**
 
 ```bash
@@ -1156,6 +1162,7 @@ Delete a Conditional Access policy by id or displayName. Permanent — use --con
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--dry-run` | `` | Print the DELETE request without sending | — |
+| `--confirm` | `` | Confirm deletion | — |
 
 **Examples:**
 

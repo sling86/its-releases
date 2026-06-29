@@ -692,6 +692,7 @@ Delete a calendar event.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--confirm` | `` | Confirm deletion | — |
 
 ```bash
 its outlook events delete <event_id>
@@ -886,6 +887,7 @@ Delete an inbox rule.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+| `--confirm` | `` | Confirm deletion | — |
 
 ```bash
 its outlook rules delete <rule_id>
