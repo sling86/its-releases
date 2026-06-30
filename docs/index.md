@@ -10,7 +10,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [rmm.md](./rmm.md) | Tactical RMM — 65 commands across 16 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 68 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 100 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
@@ -31,8 +31,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
+| [teams.md](./teams.md) | Teams — 3 commands across 2 resources |
 
-**21 providers** · **197 resources** · **689 commands**
+**22 providers** · **199 resources** · **695 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -46,7 +47,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [services](./rmm.md#services) | list, get, control, enable, disable | `src/providers/rmm/commands/services.ts` |
 | [updates](./rmm.md#updates) | report, list, scan, install, approve, defer | `src/providers/rmm/commands/updates.ts` |
 | [software](./rmm.md#software) | list, search | `src/providers/rmm/commands/software.ts` |
-| [alerts](./rmm.md#alerts) | list, get | `src/providers/rmm/commands/alerts.ts` |
+| [alerts](./rmm.md#alerts) | list, get, resolve, snooze, unsnooze | `src/providers/rmm/commands/alerts.ts` |
 | [scripts](./rmm.md#scripts) | list, get, run, upload-local, delete, upsert | `src/providers/rmm/commands/scripts.ts` |
 | [checks](./rmm.md#checks) | list, failing, results, run, create, edit, delete | `src/providers/rmm/commands/checks.ts` |
 | [tasks](./rmm.md#tasks) | list, create, delete | `src/providers/rmm/commands/tasks.ts` |
@@ -336,6 +337,13 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [health](./m365.md#health) | overview, issues | `src/providers/m365health/commands/health.ts` |
 | [messages](./m365.md#messages) | list | `src/providers/m365health/commands/health.ts` |
 
+### [Teams](./teams.md)
+
+| Resource | Actions | Source |
+|----------|---------|--------|
+| [chats](./teams.md#chats) | list, messages | `src/providers/teams/commands/chats.ts` |
+| [presence](./teams.md#presence) | get | `src/providers/teams/commands/chats.ts` |
+
 ## Key Source Files
 
 | File | Purpose |
@@ -373,6 +381,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | `src/providers/gh/client.ts` | GitHub API client |
 | `src/providers/outlook/client.ts` | Outlook API client |
 | `src/providers/m365health/client.ts` | Microsoft 365 Health API client |
+| `src/providers/teams/client.ts` | Teams API client |
 
 ## Command Tree
 
@@ -426,7 +435,10 @@ its
 │   │   └── search <query>
 │   ├── alerts
 │   │   ├── (list)
-│   │   └── get <alert_id>
+│   │   ├── get <alert_id>
+│   │   ├── resolve <alert_id>
+│   │   ├── snooze <alert_id>
+│   │   └── unsnooze <alert_id>
 │   ├── scripts
 │   │   ├── (list)
 │   │   ├── get <script_id>
@@ -1212,11 +1224,16 @@ its
 │   │   └── delete <rule_id>
 │   ├── contacts search <query>
 │   └── triage (list)
-└── m365
-    ├── health
-    │   ├── overview
-    │   └── issues
-    └── messages (list)
+├── m365
+│   ├── health
+│   │   ├── overview
+│   │   └── issues
+│   └── messages (list)
+└── teams
+    ├── chats
+    │   ├── (list)
+    │   └── messages <chat_id>
+    └── presence get
 ```
 
 ## Source Tree
@@ -1231,6 +1248,7 @@ src/
 │   │   ├── types.ts
 │   │   └── wizard.ts
 │   ├── audit.ts
+│   ├── auth-map.ts
 │   ├── auth-scopes.ts
 │   ├── auth.ts
 │   ├── cache.ts
@@ -1534,6 +1552,13 @@ src/
 │   │   │   ├── recycle-bin.ts
 │   │   │   ├── search.ts
 │   │   │   └── sites.ts
+│   │   ├── client.ts
+│   │   ├── definition.ts
+│   │   └── types.ts
+│   ├── teams/
+│   │   ├── commands/
+│   │   │   ├── chats.ts
+│   │   │   └── index.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   └── types.ts

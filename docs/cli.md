@@ -3,7 +3,7 @@
 Usage, options, and output modes for the `its` CLI. For provider-specific commands, see the provider docs.
 
 [Index](./index.md) · [README](../README.md)
-Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
+Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -41,7 +41,7 @@ its <provider> <resource> [action] [args] [--flags]
 
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
-| Tactical RMM | `rmm` | 65 commands, 16 resources | [rmm.md](./rmm.md) |
+| Tactical RMM | `rmm` | 68 commands, 16 resources | [rmm.md](./rmm.md) |
 | Entra ID | `entra` | 100 commands, 21 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 116 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
@@ -62,6 +62,7 @@ its <provider> <resource> [action] [args] [--flags]
 | GitHub | `gh` | 4 commands, 2 resources | [gh.md](./gh.md) |
 | Outlook | `outlook` | 42 commands, 11 resources | [outlook.md](./outlook.md) |
 | Microsoft 365 Health | `m365` | 3 commands, 2 resources | [m365.md](./m365.md) |
+| Teams | `teams` | 3 commands, 2 resources | [teams.md](./teams.md) |
 
 ## Global Options
 
@@ -79,6 +80,7 @@ its <provider> <resource> [action] [args] [--flags]
 | `--limit N` | Limit output to N rows (server-side where supported) |
 | `--count` | Show only the row count |
 | `--auth auto\|delegated\|app` | OAuth mode for Graph providers. `auto` (default) tries delegated then falls back to app-only; `delegated` errors if no delegated token; `app` forces SP context |
+| `--profile <name>` | Force a delegated identity for one call, overriding the provider→profile map (see `its auth use`) |
 | `--no-cache` | Bypass response cache |
 | `--max-chars N` | Character budget (AI mode only) |
 | `--no-colour` | Disable ANSI colours |

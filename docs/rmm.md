@@ -3,7 +3,7 @@
 Tactical RMM endpoint management — agents, alerts, software, services, updates, scripts, checks, tasks, policies.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
+Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -870,6 +870,9 @@ its rmm software search "Adobe"
 |---------|-------------|
 | `its rmm alerts` | Active and resolved alerts across the fleet. Filter by --severity info|warning|error or --resolved. |
 | `its rmm alerts get <alert_id>` | Alert detail — full message, source check, snooze state, agent it fired on. |
+| `its rmm alerts resolve <alert_id>` | Mark an alert resolved (clears it from the active dashboard). Needs --confirm. |
+| `its rmm alerts snooze <alert_id>` | Suppress an alert for N days (default 1). Needs --confirm. |
+| `its rmm alerts unsnooze <alert_id>` | Lift a snooze early so the alert can fire again. Needs --confirm. |
 
 #### `its rmm alerts`
 
@@ -904,6 +907,49 @@ its rmm alerts get <alert-id>
 
 # Pipe-friendly output — use with jq / scripts.
 its rmm alerts get <alert-id> --json
+```
+
+#### `its rmm alerts resolve <alert_id>`
+
+Mark an alert resolved (clears it from the active dashboard). Needs --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm the resolve | — |
+
+```bash
+its rmm alerts resolve <alert_id>
+```
+
+#### `its rmm alerts snooze <alert_id>`
+
+Suppress an alert for N days (default 1). Needs --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--days` | `` | Days to snooze for | 1 |
+| `--confirm` | `` | Confirm the snooze | — |
+
+```bash
+its rmm alerts snooze <alert_id>
+```
+
+#### `its rmm alerts unsnooze <alert_id>`
+
+Lift a snooze early so the alert can fire again. Needs --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm the unsnooze | — |
+
+```bash
+its rmm alerts unsnooze <alert_id>
 ```
 
 ---

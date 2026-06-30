@@ -15,6 +15,31 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.59] - 2026-06-30
+
+### Added
+
+- **Multiple delegated identities (auth profiles).** Run some providers as one
+  signed-in account and others as another — e.g. `entra`/`intune`/`sp` as an
+  admin account, `teams`/`outlook` as your own user, no per-call flags.
+  `its auth login --profile <name>` signs into a named slot; `its auth use
+  <profile> --default | --provider a,b,c` maps providers to it (stored in
+  `~/.its/auth-map.json`); `its auth status` lists every profile + the map;
+  `--profile <name>` forces an identity for a single call. No map = unchanged
+  single-identity behaviour.
+- **`its teams`** — Microsoft Teams for the signed-in user (delegated-only, runs
+  as you via `its auth login`): `teams chats` lists your recent 1:1/group/meeting
+  chats, `teams chats messages <id>` reads a conversation, `teams presence` shows
+  your availability. Needs `Chat.Read` + `Presence.Read` on the Graph app reg.
+- **`its rmm alerts resolve|snooze|unsnooze <id>`** — clear, suppress (for
+  `--days`, default 1) or un-suppress a Tactical RMM alert. All `--confirm`-gated;
+  each re-fetches the alert afterwards to report the resulting state.
+
+### Changed
+
+- Removed dead `getAuthMode` export and un-exported the internal `ClipCommand`
+  type (over-engineering audit cleanup).
+
 ## [0.2.58] - 2026-06-29
 
 ### Added
