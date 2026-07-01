@@ -15,6 +15,29 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.60] - 2026-07-01
+
+### Added
+
+- **`its wrike auth login|logout|status`** — Wrike OAuth2 sign-in as an
+  alternative to a manually-pasted permanent `WRIKE_TOKEN`. Opens a browser,
+  catches the redirect on `localhost:8730` (register that exact URI on a Wrike
+  app at Apps & Integrations > API), and persists a rotating refresh token to
+  `~/.its/tokens/wrike.json`. Set `WRIKE_CLIENT_ID` + `WRIKE_CLIENT_SECRET`,
+  then `its wrike auth login`. The client is delegated-first with static
+  `WRIKE_TOKEN` fallback; if both are set, OAuth wins. Refresh clears the
+  session only on a genuine `invalid_grant` (transient 429/408/5xx keep it).
+- **Setup-wizard quality-of-life** (all providers): a requirement can declare a
+  `settingsUrl` that the wizard auto-opens in the browser before prompting;
+  pasted secrets are sanitised (stray `Bearer ` prefix / wrapping quotes
+  stripped); a `SetupConfig.errorHints` map turns a failed connection test into
+  a corrective hint. Wired for `cf` (401/403 + token page) and `rmm` (401/403).
+
+### Changed
+
+- `WRIKE_CLIENT_SECRET` is now stored in the OS keychain (added to
+  `SECRET_KEYS`).
+
 ## [0.2.59] - 2026-06-30
 
 ### Added

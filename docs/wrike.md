@@ -20,6 +20,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [onboarding](#onboarding)
 - [leavers](#leavers)
 - [dashboard](#dashboard)
+- [auth](#auth)
 
 ## Setup
 
@@ -33,7 +34,9 @@ its wrike setup --reset   # Re-run setup (overwrite config)
 
 | Variable | Description |
 |----------|-------------|
-| `WRIKE_TOKEN` | Wrike permanent access token (Apps & Integrations > API) |
+| `WRIKE_CLIENT_ID` | Wrike OAuth app client id — enables `its wrike auth login` (redirect URI http://localhost:8730) |
+| `WRIKE_CLIENT_SECRET` | Wrike OAuth app client secret |
+| `WRIKE_TOKEN` | Wrike permanent access token (Apps & Integrations > API) — fallback if not using OAuth |
 
 ### Source Files
 
@@ -42,6 +45,7 @@ its wrike setup --reset   # Re-run setup (overwrite config)
 | `src/providers/wrike/client.ts` | API client methods |
 | `src/providers/wrike/types.ts` | TypeScript interfaces |
 | `src/providers/wrike/commands/` | Command definitions (split by resource) |
+| `src/providers/wrike/auth.ts` | auth |
 | `src/providers/wrike/definition.ts` | definition |
 
 ## Resources
@@ -1023,6 +1027,42 @@ its wrike dashboard --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike dashboard --watch
+```
+
+---
+
+### auth
+
+> Source: `src/providers/wrike/commands/auth.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its wrike auth login` | Sign in to Wrike via OAuth (browser). Requires WRIKE_CLIENT_ID/WRIKE_CLIENT_SECRET from a Wrike app registration — run `its wrike setup` first. |
+| `its wrike auth logout` | Clear the persisted Wrike OAuth token. |
+| `its wrike auth status` | Show Wrike OAuth sign-in state. |
+
+#### `its wrike auth login`
+
+Sign in to Wrike via OAuth (browser). Requires WRIKE_CLIENT_ID/WRIKE_CLIENT_SECRET from a Wrike app registration — run `its wrike setup` first.
+
+```bash
+its wrike auth login
+```
+
+#### `its wrike auth logout`
+
+Clear the persisted Wrike OAuth token.
+
+```bash
+its wrike auth logout
+```
+
+#### `its wrike auth status`
+
+Show Wrike OAuth sign-in state.
+
+```bash
+its wrike auth status
 ```
 
 ---
