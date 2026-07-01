@@ -15,6 +15,30 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.61] - 2026-07-01
+
+### Fixed
+
+- **`its entra` no longer requires a CLIENT_SECRET.** Delegated auth
+  (`its auth login`) needs only `TENANT_ID` + `CLIENT_ID`; the secret is now
+  optional and used only for app-only/unattended (SP) mode. Previously
+  `isConfigured`, the setup wizard and `createEntraClient()` all hard-required
+  the secret, so a signed-in user was still told to run setup and entra
+  wouldn't run without a secret. `entra setup` now marks CLIENT_SECRET optional.
+- **Stale "new version available" notice after updating.** The update check
+  froze its verdict into `~/.its/update-check.json` and trusted the cached
+  boolean for 24h, so the nag persisted after an upgrade. It now re-derives the
+  verdict against the running binary at read time (and the exit-time notice no
+  longer prints a blank download URL).
+- **Setup hint wording.** Four messages said `its setup entra` (which doesn't
+  parse); corrected to the canonical `its entra setup`.
+
+### Changed
+
+- `its auth login` failures now map common AADSTS codes to actionable hints
+  (public-client-flows off, redirect-URI mismatch, consent needed) and, on a
+  5-minute timeout, suggest `--device-code`.
+
 ## [0.2.60] - 2026-07-01
 
 ### Added
