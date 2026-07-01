@@ -47,7 +47,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 46 commands, 11 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 43 commands, 17 resources | [unifi.md](./unifi.md) |
-| Wrike | `wrike` | 48 commands, 12 resources | [wrike.md](./wrike.md) |
+| Wrike | `wrike` | 51 commands, 13 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
 | Exchange Online | `exo` | 42 commands, 9 resources | [exo.md](./exo.md) |
 | Intune | `intune` | 42 commands, 17 resources | [intune.md](./intune.md) |

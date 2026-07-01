@@ -16,7 +16,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 46 commands across 11 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
-| [wrike.md](./wrike.md) | Wrike — 48 commands across 12 resources |
+| [wrike.md](./wrike.md) | Wrike — 51 commands across 13 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
 | [exo.md](./exo.md) | Exchange Online — 42 commands across 9 resources |
 | [intune.md](./intune.md) | Intune — 42 commands across 17 resources |
@@ -33,7 +33,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 3 commands across 2 resources |
 
-**22 providers** · **199 resources** · **695 commands**
+**22 providers** · **200 resources** · **698 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -181,6 +181,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [onboarding](./wrike.md#onboarding) | get | `src/providers/wrike/commands/onboarding.ts` |
 | [leavers](./wrike.md#leavers) | list, complete, get | `src/providers/wrike/commands/leavers.ts` |
 | [dashboard](./wrike.md#dashboard) | list | `src/providers/wrike/commands/dashboard.ts` |
+| [auth](./wrike.md#auth) | login, logout, status | `src/providers/wrike/commands/auth.ts` |
 
 ### [Azure CLI](./az.md)
 
@@ -928,7 +929,11 @@ its
 │   │   ├── (list)
 │   │   ├── complete <idOrPermalink>
 │   │   └── get <idOrPermalink>
-│   └── dashboard (list)
+│   ├── dashboard (list)
+│   └── auth
+│       ├── login
+│       ├── logout
+│       └── status
 ├── az
 │   ├── account
 │   │   ├── (list)
@@ -1581,6 +1586,7 @@ src/
 │   │   └── types.ts
 │   ├── wrike/
 │   │   ├── commands/
+│   │   │   ├── auth.ts
 │   │   │   ├── comment-body.ts
 │   │   │   ├── contacts.ts
 │   │   │   ├── dashboard.ts
@@ -1591,6 +1597,7 @@ src/
 │   │   │   ├── tasks.ts
 │   │   │   ├── tickets.ts
 │   │   │   └── workflows.ts
+│   │   ├── auth.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   └── types.ts
