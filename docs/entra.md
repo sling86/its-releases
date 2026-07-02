@@ -53,6 +53,8 @@ its entra setup --reset   # Re-run setup (overwrite config)
 | `src/providers/entra/client.ts` | API client methods |
 | `src/providers/entra/types.ts` | TypeScript interfaces |
 | `src/providers/entra/commands/` | Command definitions (split by resource) |
+| `src/providers/entra/apps-audit.ts` | apps audit |
+| `src/providers/entra/apps-manifest.ts` | apps manifest |
 | `src/providers/entra/auth-methods.ts` | auth methods |
 | `src/providers/entra/definition.ts` | definition |
 | `src/providers/entra/sku-names.ts` | sku names |
@@ -2005,6 +2007,12 @@ its entra doctor --watch
 |---------|-------------|
 | `its entra apps register <name>` | Bootstrap a new Entra app registration end-to-end — creates the application, its service principal, and a 12-month client secret. Returns the appId, objectId, SP id, and the plaintext secret (only shown once). |
 | `its entra apps add-password <app>` | Rotate / add a client secret on an existing app registration. The plaintext secretText is only returned once. |
+| `its entra apps secrets` | Credential expiry dashboard — every client secret and certificate across all app registrations, with days-left and a status of EXPIRED, expiring (within --warn-days), long-lived (>2y), or ok. |
+| `its entra apps rotate <app>` | Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key) and/or Bitwarden (--bw). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). |
+| `its entra apps plan` | Diff the apps manifest against live tenant state — read-only. Shows what apply would create or grant (+), change (~), plus warnings (!) and manual steps (✋). Declaration (requiredResourceAccess) and grant (appRoleAssignments / delegated consent) are diffed separately. Manifest resolution: --manifest > ITS_APPS_MANIFEST > manifest/entra-apps.jsonc (cwd-relative). |
+| `its entra apps apply` | Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever removed. Per app: create app → create SP → refetch → add owners → one coalesced requiredResourceAccess PATCH → redirect/public-client PATCHes → app-role grants → delegated scope-union grants. Needs Graph permissions Application.ReadWrite.All + AppRoleAssignment.ReadWrite.All + DelegatedPermissionGrant.ReadWrite.All — easiest run as an admin via --auth az, or a delegated admin sign-in (its auth login). Use --dry-run for a write-free preview. |
+| `its entra apps export <appIds>` | Reverse-map live app registrations into manifest fragments — declared permission GUIDs resolve back to value names via each resource SP (unresolved ids stay as raw GUIDs with a note), owners become UPNs, redirect URIs keep their web/publicClient buckets. Paste the output into the manifest's "apps" array. Never dumps the tenant — pass explicit appIds. |
+| `its entra apps audit` | Security-posture audit across all app registrations — god-apps (app-role grant counts near the ~40-role token roles-claim overflow that broke Intune), expired and long-lived secrets, credential-less and secret-only apps, ownerless apps, stale sign-in activity (beta report, degrades gracefully), and apps missing from the manifest (when one is readable). Unused-grants is out of scope — no per-permission usage signal exists without premium logs. |
 
 #### `its entra apps register <name>`
 
@@ -2037,6 +2045,99 @@ Rotate / add a client secret on an existing app registration. The plaintext secr
 
 ```bash
 its entra apps add-password <app>
+```
+
+#### `its entra apps secrets`
+
+Credential expiry dashboard — every client secret and certificate across all app registrations, with days-left and a status of EXPIRED, expiring (within --warn-days), long-lived (>2y), or ok.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--warn-days` | `` | Flag credentials expiring within this many days | 30 |
+| `--expiring` | `` | Only show EXPIRED and expiring credentials | — |
+
+```bash
+its entra apps secrets
+```
+
+#### `its entra apps rotate <app>`
+
+Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key) and/or Bitwarden (--bw). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--name` | `` | Display name for the new secret (default its-rotated-YYYY-MM) | — |
+| `--months` | `` | Lifetime in months | 12 |
+| `--env-key` | `` | Store the secret in the OS keychain under this env var name (must be a known secret key, e.g. CLIENT_SECRET) | — |
+| `--bw` | `` | Upsert a "<app> - <secret name>" login item in the Bitwarden Infrastructure folder | — |
+| `--prune-expired` | `` | Also remove credentials that had already expired before this rotation (prompts per credential unless --confirm) | — |
+| `--confirm` | `` | Skip the interactive confirmation | — |
+
+```bash
+its entra apps rotate <app>
+```
+
+#### `its entra apps plan`
+
+Diff the apps manifest against live tenant state — read-only. Shows what apply would create or grant (+), change (~), plus warnings (!) and manual steps (✋). Declaration (requiredResourceAccess) and grant (appRoleAssignments / delegated consent) are diffed separately. Manifest resolution: --manifest > ITS_APPS_MANIFEST > manifest/entra-apps.jsonc (cwd-relative).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--manifest` | `` | Path to the JSONC apps manifest | — |
+| `--app` | `` | Only plan one manifest entry (by name or appId) | — |
+| `--exit-code` | `` | Exit 1 when there is actionable drift (CI guard) | — |
+| `--changes-only` | `` | Hide manual-step and report-only rows — show only actionable changes and warnings | — |
+
+```bash
+its entra apps plan
+```
+
+#### `its entra apps apply`
+
+Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever removed. Per app: create app → create SP → refetch → add owners → one coalesced requiredResourceAccess PATCH → redirect/public-client PATCHes → app-role grants → delegated scope-union grants. Needs Graph permissions Application.ReadWrite.All + AppRoleAssignment.ReadWrite.All + DelegatedPermissionGrant.ReadWrite.All — easiest run as an admin via --auth az, or a delegated admin sign-in (its auth login). Use --dry-run for a write-free preview.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--manifest` | `` | Path to the JSONC apps manifest | — |
+| `--app` | `` | Only apply one manifest entry (by name or appId) | — |
+| `--confirm` | `` | Skip the interactive confirmation | — |
+
+```bash
+its entra apps apply
+```
+
+#### `its entra apps export <appIds>`
+
+Reverse-map live app registrations into manifest fragments — declared permission GUIDs resolve back to value names via each resource SP (unresolved ids stay as raw GUIDs with a note), owners become UPNs, redirect URIs keep their web/publicClient buckets. Paste the output into the manifest's "apps" array. Never dumps the tenant — pass explicit appIds.
+
+```bash
+its entra apps export <appIds>
+```
+
+#### `its entra apps audit`
+
+Security-posture audit across all app registrations — god-apps (app-role grant counts near the ~40-role token roles-claim overflow that broke Intune), expired and long-lived secrets, credential-less and secret-only apps, ownerless apps, stale sign-in activity (beta report, degrades gracefully), and apps missing from the manifest (when one is readable). Unused-grants is out of scope — no per-permission usage signal exists without premium logs.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--god-threshold` | `` | App-role grant count above which an app is critical | 25 |
+| `--stale-days` | `` | Days without a sign-in before an app counts as stale | 90 |
+| `--max-secret-months` | `` | Flag secrets whose lifetime exceeds this many months | 24 |
+| `--manifest` | `` | Path to the JSONC apps manifest for the not-in-manifest check | — |
+| `--severity` | `` | Only show findings at or above this severity | — |
+
+```bash
+its entra apps audit
 ```
 
 ---
