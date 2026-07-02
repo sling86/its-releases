@@ -15,6 +15,40 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.3.0] - 2026-07-02
+
+### Added
+
+- **auth**: `--auth az` token broker — any provider can run with the
+  operator's Azure CLI identity (`az account get-access-token`), covering
+  privileged one-shot ops without widening app consents. `its auth doctor`
+  reports az install/login/tenant state
+- **entra**: `apps secrets` — credential expiry dashboard across every app
+  registration (EXPIRED / expiring / long-lived markers, `--warn-days`,
+  `--expiring`)
+- **entra**: `apps rotate <app>` — mint a new client secret (additive) and
+  store it in the OS keychain (`--env-key`) and/or Bitwarden (`--bw`);
+  refuses to mint with no sink; fingerprint-only output;
+  `--prune-expired` removes dead credentials with per-item confirmation
+
+- **entra**: declarative app manifest (`manifest/entra-apps.jsonc`) with
+  `apps plan` / `apps apply` / `apps export` — terraform-style drift
+  detection for app registrations, checking **declarations and grants
+  separately** (the class of failure where a permission is consented in
+  the portal but never granted on the token, or vice versa).
+  Additive-only: nothing is ever removed; extras surface as warnings
+- **entra**: `apps audit` — app-registration posture audit: god-app
+  detection (app-role count vs token roles-claim overflow),
+  expired/long-lived credentials, ownerless and stale apps (sign-in
+  activity, gracefully degrading), manifest coverage
+
+### Changed
+
+- **bc**: `environments list` now uses the Admin Centre API
+  (`admin/v2.24/applications/environments`) — richer output (friendly
+  name, version, status) and the documented app-only surface;
+  `environments/v1.2` rejects app-only tokens
+
 ## [0.2.62] - 2026-07-02
 
 ### Added

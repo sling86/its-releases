@@ -11,7 +11,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [rmm.md](./rmm.md) | Tactical RMM — 68 commands across 16 resources |
-| [entra.md](./entra.md) | Entra ID — 100 commands across 21 resources |
+| [entra.md](./entra.md) | Entra ID — 106 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
 | [sp.md](./sp.md) | SharePoint — 46 commands across 11 resources |
@@ -33,7 +33,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 3 commands across 2 resources |
 
-**22 providers** · **202 resources** · **700 commands**
+**22 providers** · **202 resources** · **706 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -78,7 +78,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [break-glass](./entra.md#break-glass) | audit | `src/providers/entra/commands/break-glass.ts` |
 | [whoami](./entra.md#whoami) | show | `src/providers/entra/commands/whoami.ts` |
 | [doctor](./entra.md#doctor) | list | `src/providers/entra/commands/doctor.ts` |
-| [apps](./entra.md#apps) | register, add-password | `src/providers/entra/commands/apps.ts` |
+| [apps](./entra.md#apps) | register, add-password, secrets, rotate, plan, apply, export, audit | `src/providers/entra/commands/apps.ts` |
 | [admin-bootstrap](./entra.md#admin-bootstrap) | run | `src/providers/entra/commands/admin-bootstrap.ts` |
 | [graph](./entra.md#graph) | get, post, patch, put, delete | — |
 
@@ -581,7 +581,13 @@ its
 │   ├── doctor (list)
 │   ├── apps
 │   │   ├── register <name>
-│   │   └── add-password <app>
+│   │   ├── add-password <app>
+│   │   ├── secrets
+│   │   ├── rotate <app>
+│   │   ├── plan
+│   │   ├── apply
+│   │   ├── export <appIds>
+│   │   └── audit
 │   ├── admin-bootstrap run <user_id>
 │   └── graph
 │       ├── get <path>
@@ -1260,6 +1266,7 @@ src/
 │   ├── auth-map.ts
 │   ├── auth-scopes.ts
 │   ├── auth.ts
+│   ├── az-broker.ts
 │   ├── cache.ts
 │   ├── clipboard.ts
 │   ├── completions.ts
@@ -1399,6 +1406,8 @@ src/
 │   ├── entra/
 │   │   ├── commands/
 │   │   │   ├── admin-bootstrap.ts
+│   │   │   ├── apps-audit.ts
+│   │   │   ├── apps-manifest.ts
 │   │   │   ├── apps.ts
 │   │   │   ├── audit.ts
 │   │   │   ├── auth-methods.ts
@@ -1418,6 +1427,8 @@ src/
 │   │   │   ├── users.ts
 │   │   │   ├── whoami.ts
 │   │   │   └── xtenant.ts
+│   │   ├── apps-audit.ts
+│   │   ├── apps-manifest.ts
 │   │   ├── auth-methods.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
