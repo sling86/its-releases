@@ -25,7 +25,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [pa.md](./pa.md) | Power Platform — 11 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
 | [hr.md](./hr.md) | PeopleHR — 8 commands across 4 resources |
-| [bc.md](./bc.md) | Business Central — 5 commands across 4 resources |
+| [bc.md](./bc.md) | Business Central — 7 commands across 6 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
@@ -33,7 +33,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 3 commands across 2 resources |
 
-**22 providers** · **200 resources** · **698 commands**
+**22 providers** · **202 resources** · **700 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -288,6 +288,8 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [companies](./bc.md#companies) | list, get | `src/providers/bc/commands.ts` |
+| [environments](./bc.md#environments) | list | `src/providers/bc/commands.ts` |
+| [entities](./bc.md#entities) | list | `src/providers/bc/commands.ts` |
 | [query](./bc.md#query) | get | `src/providers/bc/commands.ts` |
 | [record](./bc.md#record) | get | `src/providers/bc/commands.ts` |
 | [health](./bc.md#health) | get | `src/providers/bc/commands.ts` |
@@ -1156,6 +1158,8 @@ its
 │   ├── companies
 │   │   ├── (list)
 │   │   └── get <nameOrId>
+│   ├── environments (list)
+│   ├── entities (list)
 │   ├── query get <entity>
 │   ├── record get <entity> <id>
 │   └── health get

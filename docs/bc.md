@@ -1,6 +1,6 @@
 # Business Central (`bc`)
 
-Business Central (Dynamics 365) — tenant-level companies list, multi-company entity queries via OData, record get. Reuses Entra app credentials (TENANT_ID/CLIENT_ID/CLIENT_SECRET) but requires Business Central API permission granted and an ApplicationUser with a Permission Set inside each BC company..
+Business Central (Dynamics 365) — tenant-level companies list, multi-company entity queries via OData, record get. Uses a dedicated BC app registration (BC_CLIENT_ID/BC_CLIENT_SECRET) or falls back to the shared Entra credentials (TENANT_ID/CLIENT_ID/CLIENT_SECRET); either app needs the Business Central API permission granted and an ApplicationUser with a Permission Set inside each BC company..
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
 Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
@@ -9,6 +9,8 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 
 - [Setup](#setup)
 - [companies](#companies)
+- [environments](#environments)
+- [entities](#entities)
 - [query](#query)
 - [record](#record)
 - [health](#health)
@@ -26,8 +28,10 @@ its bc setup --reset   # Re-run setup (overwrite config)
 | Variable | Description |
 |----------|-------------|
 | `TENANT_ID` | Entra tenant ID (shared) |
-| `CLIENT_ID` | Entra app client ID (shared) |
-| `CLIENT_SECRET` | Entra app client secret (shared) |
+| `BC_CLIENT_ID` | Dedicated BC app client ID (falls back to CLIENT_ID) |
+| `BC_CLIENT_SECRET` | Dedicated BC app client secret (falls back to CLIENT_SECRET) |
+| `CLIENT_ID` | Shared Entra app client ID (fallback) |
+| `CLIENT_SECRET` | Shared Entra app client secret (fallback) |
 | `BC_ENVIRONMENT` | BC environment name (default: Production) |
 
 In addition to the Entra app permissions, Business Central requires the app registration to be granted `https://api.businesscentral.dynamics.com/.default` API permission AND registered as an ApplicationUser inside each BC company with a Permission Set (SUPER for full access). See Microsoft docs: 'Use service-to-service authentication with Business Central'.
@@ -56,6 +60,12 @@ In addition to the Entra app permissions, Business Central requires the app regi
 
 List all BC companies visible to the service principal. Surfaces the most common fields; pass --json for raw shape.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+
 **Examples:**
 
 ```bash
@@ -72,6 +82,12 @@ its bc companies --watch
 
 Resolve a company by name/id/partial match. Pass the id (or any natural identifier) as the positional arg.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+
 **Examples:**
 
 ```bash
@@ -79,6 +95,49 @@ its bc companies get "Head Office"
 
 # Pipe-friendly output — use with jq / scripts.
 its bc companies get "Head Office" --json
+```
+
+---
+
+### environments
+
+> Source: `src/providers/bc/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bc environments` | List all BC environments (Production/Sandbox) on the tenant |
+
+#### `its bc environments`
+
+List all BC environments (Production/Sandbox) on the tenant.
+
+```bash
+its bc environments
+```
+
+---
+
+### entities
+
+> Source: `src/providers/bc/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bc entities` | List entity sets exposed by the BC API (OData service document) |
+
+#### `its bc entities`
+
+List entity sets exposed by the BC API (OData service document).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--api` | `` | Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) | — |
+
+```bash
+its bc entities
 ```
 
 ---
@@ -104,6 +163,9 @@ Query any BC entity — OData passthrough with filter/top/select.
 | `--top` | `` | Max records (default 50) | 50 |
 | `--select` | `` | $select fields (comma-separated) | — |
 | `--orderby` | `` | $orderby expression | — |
+| `--all` | `` | Fetch all pages (up to 10000 records; overrides --top) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--api` | `` | Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) | — |
 
 **Examples:**
 
@@ -133,6 +195,8 @@ Get a single BC record by entity + ID. Pass the id (or any natural identifier) a
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--company` | `` | Company name/id (default: first company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--api` | `` | Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) | — |
 
 **Examples:**
 
@@ -156,6 +220,12 @@ its bc record get items <item-id> --json
 #### `its bc health get`
 
 Probe BC connectivity (lists companies). Pass the id (or any natural identifier) as the positional arg.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
 
 **Examples:**
 
