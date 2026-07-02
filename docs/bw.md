@@ -264,6 +264,7 @@ Create a new vault item (login, note, card, or identity). Idempotent on duplicat
 | `--type` | `` | Item type: login (default), note, card, identity | — |
 | `--username` | `` | Login username | — |
 | `--password` | `` | Login password | — |
+| `--password-file` | `` | Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) | — |
 | `--uri` | `` | Login URL | — |
 | `--totp` | `` | TOTP secret or otpauth URI | — |
 | `--notes` | `` | Notes | — |
@@ -297,6 +298,7 @@ Update a vault item. Preserve-by-default: only the flags you pass change — eve
 | `--name` | `` | New name | — |
 | `--username` | `` | Login username | — |
 | `--password` | `` | Login password | — |
+| `--password-file` | `` | Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) | — |
 | `--uri` | `` | Login URL | — |
 | `--totp` | `` | TOTP secret | — |
 | `--notes` | `` | Notes | — |

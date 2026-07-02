@@ -15,6 +15,40 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.2.62] - 2026-07-02
+
+### Added
+
+- **bc**: multi-environment support — `--env <name>` on every command
+  overrides `BC_ENVIRONMENT` per call; companies cache is keyed per
+  environment + API route
+- **bc**: `bc environments list` — all environments on the tenant via
+  `environments/v1.2`, with a BC Admin Centre authorisation hint on
+  BC-level 401s
+- **bc**: `bc entities list` — queryable entity sets from the OData
+  service document
+- **bc**: `bc query` follows `@odata.nextLink` across pages (20-page
+  budget, stderr warning on truncation); `--all` fetches up to 10000
+  records
+- **bc**: `--api <publisher>/<group>/<version>` targets custom API
+  pages (e.g. platformSync) instead of the standard v2.0 API
+- **bc**: dedicated app registration support — `BC_CLIENT_ID` /
+  `BC_CLIENT_SECRET` (keychain-backed) with fallback to the shared
+  Entra credentials, mirroring the SharePoint override pattern
+
+### Fixed
+
+- **bw**: `items search` no longer prints hidden (type 1) custom-field
+  values in clear text — masked like `items get`, revealed only with
+  `--include-secrets`
+- **bw**: `items create`/`update` accept `--password-file` so the
+  secret never appears on the command line or in shell history
+- **bc**: `--top` now rejects `0`, non-numeric and bare values instead
+  of silently falling back to 50
+- **cache**: command-declared flags that shadow output-flag names
+  (e.g. `bc query --filter`) now key the cache — different values no
+  longer share a cache entry in TUI/watch mode
+
 ## [0.2.61] - 2026-07-01
 
 ### Fixed

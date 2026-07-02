@@ -56,7 +56,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Power Platform | `pa` | 11 commands, 4 resources | [pa.md](./pa.md) |
 | Cloudflare | `cf` | 16 commands, 5 resources | [cf.md](./cf.md) |
 | PeopleHR | `hr` | 8 commands, 4 resources | [hr.md](./hr.md) |
-| Business Central | `bc` | 5 commands, 4 resources | [bc.md](./bc.md) |
+| Business Central | `bc` | 7 commands, 6 resources | [bc.md](./bc.md) |
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
 | GitHub | `gh` | 4 commands, 2 resources | [gh.md](./gh.md) |
