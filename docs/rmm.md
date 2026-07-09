@@ -267,7 +267,8 @@ Command + script execution history for one agent. Shows time, type, exit status,
 ```bash
 its rmm agents history OFFICE-PC-01
 
-its rmm agents history OFFICE-PC-01 --days 7
+# No --days flag — the endpoint returns full history; pipe to jq/ai to narrow by time.
+its rmm agents history OFFICE-PC-01 --json
 ```
 
 #### `its rmm agents notes <agent>`
@@ -304,8 +305,8 @@ Send a magic packet via another online agent on the same LAN. Doesn't work acros
 ```bash
 its rmm agents wake OFFICE-PC-01
 
-# Disambiguates when the hostname exists at multiple sites.
-its rmm agents wake OFFICE-PC-01 --site "Head Office"
+# No --site flag — duplicate hostnames auto-resolve to the online/most-recent match, or pass the UUID directly.
+its rmm agents wake c3e5f1a7-...
 ```
 
 #### `its rmm agents edit <agent>`
@@ -452,8 +453,8 @@ All RMM sites across every client, with per-site agent_count. Site IDs feed --si
 ```bash
 its rmm sites
 
-# Only sites belonging to a named client.
-its rmm sites --client "Head Office"
+# Only sites belonging to a named client (global --filter col=val — no dedicated --client flag).
+its rmm sites --filter "client=Head Office"
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm sites --watch
@@ -498,7 +499,7 @@ its rmm sites delete <site_id>
 |---------|-------------|
 | `its rmm processes <agent>` | Live process snapshot from the agent — sorted by CPU%, top 50. Use `processes top` instead when you only want the heavy hitters. |
 | `its rmm processes top <agent>` | Top processes by CPU usage (live snapshot via PowerShell) |
-| `its rmm processes kill <agent_id>` | Terminate a process by PID. Destructive — needs --confirm. Use `processes list` first to find the PID. |
+| `its rmm processes kill <agent>` | Terminate a process by PID. Destructive — needs --confirm. Use `processes list` first to find the PID. |
 
 #### `its rmm processes <agent>`
 
@@ -509,7 +510,7 @@ Live process snapshot from the agent — sorted by CPU%, top 50. Use `processes 
 ```bash
 its rmm processes OFFICE-PC-01
 
-its rmm processes OFFICE-PC-01 --name "chrome"
+its rmm processes OFFICE-PC-01 --filter name=chrome
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm processes OFFICE-PC-01 --watch
@@ -535,7 +536,7 @@ its rmm processes top OFFICE-PC-01
 its rmm processes top OFFICE-PC-01 --json
 ```
 
-#### `its rmm processes kill <agent_id>`
+#### `its rmm processes kill <agent>`
 
 Terminate a process by PID. Destructive — needs --confirm. Use `processes list` first to find the PID.
 
@@ -551,7 +552,8 @@ Terminate a process by PID. Destructive — needs --confirm. Use `processes list
 ```bash
 its rmm processes kill OFFICE-PC-01 --pid 1234 --confirm
 
-its rmm processes kill OFFICE-PC-01 --name "notepad" --confirm
+# No --name on kill — find the PID first, then its rmm processes kill <agent> --pid <pid> --confirm.
+its rmm processes OFFICE-PC-01 --filter name=notepad
 ```
 
 ---
@@ -577,10 +579,10 @@ Windows / Linux service inventory for one agent. Filter with --status running|st
 ```bash
 its rmm services OFFICE-PC-01
 
-its rmm services OFFICE-PC-01 --status running
+its rmm services OFFICE-PC-01 --filter status=running
 
 # Quickly spot services that should be running.
-its rmm services OFFICE-PC-01 --status stopped
+its rmm services OFFICE-PC-01 --filter status=stopped
 ```
 
 #### `its rmm services get <agent>`
@@ -596,10 +598,10 @@ Service detail — startup type, dependencies, current state, last exit code.
 **Examples:**
 
 ```bash
-its rmm services get OFFICE-PC-01 --service spooler
+its rmm services get OFFICE-PC-01 --name spooler
 
 # Pipe-friendly output — use with jq / scripts.
-its rmm services get OFFICE-PC-01 --service spooler --json
+its rmm services get OFFICE-PC-01 --name spooler --json
 ```
 
 #### `its rmm services control <agent>`
@@ -617,9 +619,9 @@ Control a service (start/stop/restart). Stop requires --confirm.
 **Examples:**
 
 ```bash
-its rmm services control OFFICE-PC-01 --service spooler --action restart
+its rmm services control OFFICE-PC-01 --name spooler --action restart
 
-its rmm services control OFFICE-PC-01 --service spooler --action start
+its rmm services control OFFICE-PC-01 --name spooler --action start
 ```
 
 #### `its rmm services enable <agent>`
@@ -635,10 +637,10 @@ Set startup type to Automatic and start the service if stopped. Idempotent.
 **Examples:**
 
 ```bash
-its rmm services enable OFFICE-PC-01 --service spooler
+its rmm services enable OFFICE-PC-01 --name spooler
 
 # Pipe-friendly output — use with jq / scripts.
-its rmm services enable OFFICE-PC-01 --service spooler --json
+its rmm services enable OFFICE-PC-01 --name spooler --json
 ```
 
 #### `its rmm services disable <agent>`
@@ -655,10 +657,10 @@ Set a service startup type to Disabled (requires --confirm).
 **Examples:**
 
 ```bash
-its rmm services disable OFFICE-PC-01 --service spooler --confirm
+its rmm services disable OFFICE-PC-01 --name spooler --confirm
 
 # Pipe-friendly output — use with jq / scripts.
-its rmm services disable OFFICE-PC-01 --service spooler --confirm --json
+its rmm services disable OFFICE-PC-01 --name spooler --confirm --json
 ```
 
 ---
@@ -888,9 +890,11 @@ Active and resolved alerts across the fleet. Filter by --severity info|warning|e
 **Examples:**
 
 ```bash
-its rmm alerts --status active
+# Unresolved alerts are shown by default.
+its rmm alerts
 
-its rmm alerts --client "Head Office"
+# Include resolved alerts (hidden by default).
+its rmm alerts --resolved
 
 # Severity: information | warning | error.
 its rmm alerts --severity error
@@ -963,7 +967,7 @@ its rmm alerts unsnooze <alert_id>
 | `its rmm scripts` | All saved automation scripts in the RMM script library. Returns name, shell, category, default timeout. |
 | `its rmm scripts get <script_id>` | Script detail — body, default args, category, hash, last edited timestamp. |
 | `its rmm scripts run [agent]` | Execute a saved RMM script on a target agent, or fan it out across a fleet with --all-online/--client/--site/--policy (online agents only). Streams stdout/stderr back; use --timeout for long-running jobs (default 120s). Fan-out previews the target list and needs --confirm to execute. |
-| `its rmm scripts upload-local <agent> <path>` | Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc D:/it-scripts/... invocations (Fix-DymoPrinter, Invoke-CorruptionCheck, Get-ShutdownDiagnostics). Pass --keep to leave the script registered. |
+| `its rmm scripts upload-local <agent> <path>` | Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc D:/it/it-scripts/... invocations (Fix-DymoPrinter, Invoke-CorruptionCheck, Get-ShutdownDiagnostics). Pass --keep to leave the script registered. |
 | `its rmm scripts delete <script_id>` | Permanently remove a script from the library. Destructive — needs --confirm. |
 | `its rmm scripts upsert <name> <path>` | Idempotently push a local script to TRMM by name — creates if missing, updates if present (PUT). Works around the TRMM POST /scripts/ quirk where the response is a plain string, not the created object — we re-list to resolve the new ID. |
 
@@ -1039,7 +1043,7 @@ its rmm scripts run OFFICE-PC-01 --script "Long Audit" --timeout 600
 
 #### `its rmm scripts upload-local <agent> <path>`
 
-Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc D:/it-scripts/... invocations (Fix-DymoPrinter, Invoke-CorruptionCheck, Get-ShutdownDiagnostics). Pass --keep to leave the script registered.
+Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc D:/it/it-scripts/... invocations (Fix-DymoPrinter, Invoke-CorruptionCheck, Get-ShutdownDiagnostics). Pass --keep to leave the script registered.
 
 **Flags:**
 
@@ -1314,10 +1318,10 @@ Create an automated task that runs a script on an agent. Default is a manual tas
 **Examples:**
 
 ```bash
-its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --cron "0 3 * * 0"
+its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun
 
 # Pipe-friendly output — use with jq / scripts.
-its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --cron "0 3 * * 0" --json
+its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun --json
 ```
 
 #### `its rmm tasks delete`

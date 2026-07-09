@@ -92,10 +92,10 @@ Switch active subscription. Single-value write; idempotent on no-op.
 **Examples:**
 
 ```bash
-its az account set --subscription <sub-id>
+its az account set <sub-id>
 
 # Subscription display name is accepted in place of GUID.
-its az account set --subscription "Production"
+its az account set "Production"
 ```
 
 ---
@@ -208,7 +208,7 @@ List virtual machines with power state. Surfaces the most common fields; pass --
 ```bash
 its az vm
 
-its az vm --status running
+its az vm --filter powerState=running
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its az vm --watch
@@ -249,8 +249,8 @@ Start a VM. Start the resource. Idempotent.
 ```bash
 its az vm start my-vm --rg my-rg
 
-# Return immediately; don't block for boot.
-its az vm start my-vm --rg my-rg --no-wait
+# Handler throws without --confirm — the only other flag vm start declares.
+its az vm start my-vm --rg my-rg --confirm
 ```
 
 #### `its az vm stop <name>`
@@ -385,10 +385,10 @@ List secret names in a Key Vault. List vault secret names (values aren't returne
 **Examples:**
 
 ```bash
-its az keyvault secrets --vault my-kv
+its az keyvault secrets my-kv
 
 # Use with jq to diff against another vault.
-its az keyvault secrets --vault my-kv --json
+its az keyvault secrets my-kv --json
 ```
 
 ---

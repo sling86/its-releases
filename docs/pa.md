@@ -122,12 +122,12 @@ List Power Automate cloud flows. Defaults to all environments — use --environm
 **Examples:**
 
 ```bash
-its pa flows --env <env-id>
+its pa flows --environment <env-id>
 
-its pa flows --env <env-id> --status error
+its pa flows --environment <env-id> --state Suspended
 
 # Re-runs every 10s — handy for dashboards or incident response.
-its pa flows --env <env-id> --watch
+its pa flows --environment <env-id> --watch
 ```
 
 #### `its pa flows get <flow_id>`
@@ -143,10 +143,10 @@ Show flow details (definition, triggers, actions). Pass the id (or any natural i
 **Examples:**
 
 ```bash
-its pa flows get <flow-id> --env <env-id>
+its pa flows get <flow-id> --environment <env-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its pa flows get <flow-id> --env <env-id> --json
+its pa flows get <flow-id> --environment <env-id> --json
 ```
 
 #### `its pa flows stop <flow_id>`
@@ -162,7 +162,7 @@ Turn a flow off (admin). Stop the resource. Use --confirm if the action is destr
 **Examples:**
 
 ```bash
-its pa flows stop <flow-id> --env <env-id>
+its pa flows stop <flow-id> --environment <env-id>
 ```
 
 #### `its pa flows start <flow_id>`
@@ -178,10 +178,10 @@ Turn a flow on (admin). Start the resource. Idempotent.
 **Examples:**
 
 ```bash
-its pa flows start <flow-id> --env <env-id>
+its pa flows start <flow-id> --environment <env-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its pa flows start <flow-id> --env <env-id> --json
+its pa flows start <flow-id> --environment <env-id> --json
 ```
 
 #### `its pa flows delete <flow_id>`
@@ -198,7 +198,7 @@ Delete a flow (admin). Permanent — use --confirm. Audit trail (if the upstream
 **Examples:**
 
 ```bash
-its pa flows delete <flow-id> --env <env-id> --confirm
+its pa flows delete <flow-id> --environment <env-id> --confirm
 ```
 
 #### `its pa flows set-owner <flow_id>`
@@ -233,10 +233,10 @@ List recent runs for a flow. Returns historical run records.
 **Examples:**
 
 ```bash
-its pa flows runs <flow-id> --env <env-id>
+its pa flows runs <flow-id> --environment <env-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its pa flows runs <flow-id> --env <env-id> --json
+its pa flows runs <flow-id> --environment <env-id> --json
 ```
 
 ---
@@ -262,13 +262,13 @@ List Power Apps canvas apps. Defaults to all envs — scope with --environment <
 **Examples:**
 
 ```bash
-its pa apps --env <env-id>
+its pa apps --environment <env-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its pa apps --env <env-id> --json
+its pa apps --environment <env-id> --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
-its pa apps --env <env-id> --watch
+its pa apps --environment <env-id> --watch
 ```
 
 ---
@@ -294,13 +294,13 @@ List connections in an environment. Surfaces the most common fields; pass --json
 **Examples:**
 
 ```bash
-its pa connections --env <env-id>
+its pa connections --environment <env-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its pa connections --env <env-id> --json
+its pa connections --environment <env-id> --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
-its pa connections --env <env-id> --watch
+its pa connections --environment <env-id> --watch
 ```
 
 ---

@@ -426,7 +426,7 @@ Show container logs for an application via Dokploy API (no SSH). Pass --follow t
 ```bash
 its dokploy apps logs <app-id>
 
-its dokploy apps logs <app-id> --lines 200
+its dokploy apps logs <app-id> --tail 200
 ```
 
 #### `its dokploy apps monitoring <app>`
@@ -1028,10 +1028,10 @@ Set one or more env vars (KEY=value) without affecting others. NB: a plain set u
 **Examples:**
 
 ```bash
-its dokploy env set <app-id> --key DEBUG --value "true"
+its dokploy env set <app-id> DEBUG=true
 
 # Pipe-friendly output — use with jq / scripts.
-its dokploy env set <app-id> --key DEBUG --value "true" --json
+its dokploy env set <app-id> DEBUG=true --json
 ```
 
 #### `its dokploy env unset <applicationId> <keys>`
@@ -1325,10 +1325,10 @@ Add a mount to an application (--type bind|volume|file). Use --ensure-host-path 
 **Examples:**
 
 ```bash
-its dokploy mounts add <app-id> --type bind --host /data --container /app/data
+its dokploy mounts add <app-id> --type bind --src /data --dst /app/data
 
 # Pipe-friendly output — use with jq / scripts.
-its dokploy mounts add <app-id> --type bind --host /data --container /app/data --json
+its dokploy mounts add <app-id> --type bind --src /data --dst /app/data --json
 ```
 
 #### `its dokploy mounts update <mountId>`
@@ -1347,10 +1347,10 @@ Update an existing mount. PATCH semantics — only the supplied fields change.
 **Examples:**
 
 ```bash
-its dokploy mounts update <mount-id> --host "/data" --container "/app/data"
+its dokploy mounts update <mount-id> --src "/data" --dst "/app/data"
 
 # Pipe-friendly output — use with jq / scripts.
-its dokploy mounts update <mount-id> --host "/data" --container "/app/data" --json
+its dokploy mounts update <mount-id> --src "/data" --dst "/app/data" --json
 ```
 
 #### `its dokploy mounts remove <mountId>`
@@ -1539,8 +1539,8 @@ its dokploy cluster join-token --role manager
 | `its dokploy containers start <containerId>` | Start a container by ID (not app name). Lower-level than `apps start` — operates on a single container without re-deploying. |
 | `its dokploy containers stop <containerId>` | Stop a container by ID (not app name). Lower-level than `apps stop` — operates on a single container without re-deploying. |
 | `its dokploy containers restart <containerId>` | Restart a container by ID (not app name). Lower-level than `apps restart` — operates on a single container without re-deploying. |
-| `its dokploy containers kill <containerId>` | Kill a container by ID (not app name). Lower-level than `apps kill` — operates on a single container without re-deploying. |
-| `its dokploy containers remove <containerId>` | Remove a container by ID (not app name). Lower-level than `apps stop` — operates on a single container without re-deploying. |
+| `its dokploy containers kill <containerId>` | Kill a container by ID (not app name). Lower-level than `apps kill` — operates on a single container without re-deploying. Destructive — needs --confirm. |
+| `its dokploy containers remove <containerId>` | Remove a container by ID (not app name). Lower-level than `apps stop` — operates on a single container without re-deploying. Destructive — needs --confirm. |
 
 #### `its dokploy containers`
 
@@ -1610,7 +1610,13 @@ its dokploy containers restart <container-id> --json
 
 #### `its dokploy containers kill <containerId>`
 
-Kill a container by ID (not app name). Lower-level than `apps kill` — operates on a single container without re-deploying.
+Kill a container by ID (not app name). Lower-level than `apps kill` — operates on a single container without re-deploying. Destructive — needs --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm this destructive action | — |
 
 **Examples:**
 
@@ -1620,7 +1626,13 @@ its dokploy containers kill <container-id> --confirm
 
 #### `its dokploy containers remove <containerId>`
 
-Remove a container by ID (not app name). Lower-level than `apps stop` — operates on a single container without re-deploying.
+Remove a container by ID (not app name). Lower-level than `apps stop` — operates on a single container without re-deploying. Destructive — needs --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm this destructive action | — |
 
 **Examples:**
 

@@ -90,7 +90,7 @@ Create a push-event webhook on <owner/repo> pointing at <url>. Idempotent — ba
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--secret` | `` | Webhook secret (defaults to a stable string per URL) | — |
+| `--secret` | `` | Webhook secret (defaults to a random secret, printed once - save it) | — |
 | `--events` | `` | Comma-separated events (default: push) | push |
 
 ```bash

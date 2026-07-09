@@ -60,7 +60,7 @@ Uses the same service principal as `entra`. Authenticates against the Power BI a
 | `its pbi workspaces members <workspace_id>` | List users/groups with access to a workspace. Returns direct members; nested groups aren't expanded. |
 | `its pbi workspaces add-user <workspace_id>` | Add a user/group/app to a workspace (admin). Add a primary user; idempotent. |
 | `its pbi workspaces update-user <workspace_id>` | Update a user's access right on a workspace. Change the primary user. |
-| `its pbi workspaces remove-user <workspace_id>` | Remove a user/group/app from a workspace (admin). Reverse of add-user. |
+| `its pbi workspaces remove-user <workspace_id>` | Remove a user/group/app from a workspace (admin, requires --confirm). Reverse of add-user. |
 
 #### `its pbi workspaces`
 
@@ -112,10 +112,10 @@ Add a user/group/app to a workspace (admin). Add a primary user; idempotent.
 **Examples:**
 
 ```bash
-its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --role Member
+its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member
 
 # Pipe-friendly output — use with jq / scripts.
-its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --role Member --json
+its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member --json
 ```
 
 #### `its pbi workspaces update-user <workspace_id>`
@@ -133,21 +133,22 @@ Update a user's access right on a workspace. Change the primary user.
 **Examples:**
 
 ```bash
-its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --role Admin
+its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin
 
 # Pipe-friendly output — use with jq / scripts.
-its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --role Admin --json
+its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin --json
 ```
 
 #### `its pbi workspaces remove-user <workspace_id>`
 
-Remove a user/group/app from a workspace (admin). Reverse of add-user.
+Remove a user/group/app from a workspace (admin, requires --confirm). Reverse of add-user.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--user` | `` | User UPN, group ID, or app ID to remove | — |
+| `--confirm` | `` | Confirm the removal | — |
 
 **Examples:**
 
@@ -329,7 +330,7 @@ its pbi activity --since 24h --watch
 | `its pbi my datasets` | List Power BI datasets accessible to the signed-in user |
 | `its pbi my add-workspace-user <workspace_id>` | Add a user/group/app to a workspace using the signed-in user's permissions (sidesteps SP admin-API restrictions when you're a workspace admin) |
 | `its pbi my update-workspace-user <workspace_id>` | Update a user's access right on a workspace using the signed-in user's permissions |
-| `its pbi my remove-workspace-user <workspace_id>` | Remove a user/group/app from a workspace using the signed-in user's permissions |
+| `its pbi my remove-workspace-user <workspace_id>` | Remove a user/group/app from a workspace using the signed-in user's permissions (requires --confirm) |
 | `its pbi my refresh <dataset_id>` | Trigger a refresh of a dataset owned by the signed-in user. Force the provider to re-pull state from the upstream API. |
 
 #### `its pbi my login`
@@ -438,10 +439,10 @@ Add a user/group/app to a workspace using the signed-in user's permissions (side
 **Examples:**
 
 ```bash
-its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --role Member
+its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member
 
 # Pipe-friendly output — use with jq / scripts.
-its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --role Member --json
+its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member --json
 ```
 
 #### `its pbi my update-workspace-user <workspace_id>`
@@ -459,21 +460,22 @@ Update a user's access right on a workspace using the signed-in user's permissio
 **Examples:**
 
 ```bash
-its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --role Admin
+its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin
 
 # Pipe-friendly output — use with jq / scripts.
-its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --role Admin --json
+its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin --json
 ```
 
 #### `its pbi my remove-workspace-user <workspace_id>`
 
-Remove a user/group/app from a workspace using the signed-in user's permissions.
+Remove a user/group/app from a workspace using the signed-in user's permissions (requires --confirm).
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--user` | `` | User UPN, group ID, or app ID to remove | — |
+| `--confirm` | `` | Confirm the removal | — |
 
 **Examples:**
 

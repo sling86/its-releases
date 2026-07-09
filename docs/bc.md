@@ -170,10 +170,10 @@ Query any BC entity — OData passthrough with filter/top/select.
 **Examples:**
 
 ```bash
-its bc query get --company <company-id> --entity items
+its bc query get items --company <company-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its bc query get --company <company-id> --entity items --json
+its bc query get items --company <company-id> --json
 ```
 
 ---

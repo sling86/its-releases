@@ -122,10 +122,10 @@ Create a new distribution group. Idempotent on duplicate names — use update/ed
 **Examples:**
 
 ```bash
-its exo groups create "Marketing Team" --type Distribution --primary-smtp marketing@example.com
+its exo groups create "Marketing Team" --type distribution --alias marketing
 
 # Pipe-friendly output — use with jq / scripts.
-its exo groups create "Marketing Team" --type Distribution --primary-smtp marketing@example.com --json
+its exo groups create "Marketing Team" --type distribution --alias marketing --json
 ```
 
 #### `its exo groups delete <group>`
@@ -153,10 +153,10 @@ Add a member to a distribution group. Idempotent — already-a-member is a no-op
 **Examples:**
 
 ```bash
-its exo groups add-member "All Staff" --user jane.smith@example.com
+its exo groups add-member "All Staff" jane.smith@example.com
 
 # Pipe-friendly output — use with jq / scripts.
-its exo groups add-member "All Staff" --user jane.smith@example.com --json
+its exo groups add-member "All Staff" jane.smith@example.com --json
 ```
 
 #### `its exo groups remove-member <group> <member>`
@@ -254,10 +254,10 @@ Create a shared mailbox. Idempotent on duplicate names — use update/edit to mu
 **Examples:**
 
 ```bash
-its exo mailboxes create --shared --upn support@example.com --name "Support"
+its exo mailboxes create "Support" support
 
 # Pipe-friendly output — use with jq / scripts.
-its exo mailboxes create --shared --upn support@example.com --name "Support" --json
+its exo mailboxes create "Support" support --json
 ```
 
 #### `its exo mailboxes permissions <mailbox>`
@@ -286,10 +286,10 @@ Grant mailbox access to a user. Grant a new permission. Idempotent.
 **Examples:**
 
 ```bash
-its exo mailboxes add-permission shared@example.com --user jane.smith@example.com --rights FullAccess
+its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess
 
 # Pipe-friendly output — use with jq / scripts.
-its exo mailboxes add-permission shared@example.com --user jane.smith@example.com --rights FullAccess --json
+its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess --json
 ```
 
 #### `its exo mailboxes remove-permission <mailbox> <user>`
@@ -357,10 +357,10 @@ Configure mailbox forwarding. Set a mailbox forward. --confirm required.
 ```bash
 its exo mailboxes set-forwarding jo@thf.co.uk manager@thf.co.uk --confirm
 
-its exo mailboxes set-forwarding jane.smith@example.com --to "external@vendor.com" --keep
+its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy
 
 # Pipe-friendly output — use with jq / scripts.
-its exo mailboxes set-forwarding jane.smith@example.com --to "external@vendor.com" --keep --json
+its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy --json
 ```
 
 #### `its exo mailboxes set-type <mailbox> <type>`
@@ -615,12 +615,12 @@ Search message trace (last N days). Surfaces the most common fields; pass --json
 **Examples:**
 
 ```bash
-its exo trace --sender jane.smith@example.com --since 24h
+its exo trace --sender jane.smith@example.com --days 1
 
-its exo trace --recipient external@vendor.com --since 7d
+its exo trace --recipient external@vendor.com --days 7
 
 # Re-runs every 10s — handy for dashboards or incident response.
-its exo trace --sender jane.smith@example.com --since 24h --watch
+its exo trace --sender jane.smith@example.com --days 1 --watch
 ```
 
 #### `its exo trace detail <trace-id> <recipient>`

@@ -271,7 +271,7 @@ Delete a DNS record. Permanent — use --confirm. Audit trail (if the upstream s
 **Examples:**
 
 ```bash
-its cf dns delete --zone example.com --name www --confirm
+its cf dns delete <record-id> --zone example.com --confirm
 ```
 
 ---

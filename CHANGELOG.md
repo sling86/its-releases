@@ -15,6 +15,73 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.4.0] - 2026-07-09
+
+### Breaking
+
+- **Dokploy container commands now require `DOKPLOY_SSH_HOST`.** The SSH host
+  was previously hardcoded; `apps shell`, `apps logs`, `apps migrate`,
+  `traefik logs`, `maintenance` and `mounts` now read `DOKPLOY_SSH_HOST` and
+  fail closed with a clear error if it is unset. Set it to your Dokploy host
+  (`user@host`, a bare host, or a `~/.ssh/config` alias) in `~/.its/.env` or
+  `.env.local`. See `.env.example`.
+- **`entra break-glass audit` and the `its digest` break-glass tile now
+  require `ENTRA_BG01_UPN` / `ENTRA_BG02_UPN`** (or `--bg01` / `--bg02` for the
+  audit). Previously defaulted to hardcoded accounts; the audit now errors when
+  unset and the digest silently omits the break-glass line.
+- **Destructive commands now require `--confirm`.** `outlook mail delete <id>`,
+  `dokploy containers kill|remove`, `pbi workspaces remove-user`, `pbi my
+  remove-workspace-user`, and `entra authmethods enable|disable|patch`
+  (tenant-wide MFA policy) now refuse to run without `--confirm` — matching the
+  rest of the CLI. Preview with `--dry-run` where supported.
+
+### Added
+
+- **`its setup`** (no provider) — a configuration overview: which providers are
+  set up, the exact `its <provider> setup` command for each gap, and the
+  "one `auth login` lights up entra/intune/sp/pbi/bc" hint. No network. `its
+  status` gains a **Next step** column pointing unconfigured providers at their
+  setup command.
+- **Secret-redaction discoverability hint** — when output masking hides a value
+  you now get a one-line stderr nudge to re-run the same command with
+  `--include-secrets` (audit-logged). Covers Bitwarden hidden fields and live
+  TOTP codes too. Surfaced in the skill reference and per-command help.
+
+### Changed
+
+- Removed hardcoded infrastructure values (SSH host, break-glass UPNs, tenant
+  names in comments) so the CLI carries no site-specific data — all such values
+  come from the environment.
+- **intune**: `settings|intents|appconfig|appprotection|updates get` now render
+  a property/value table in human mode (the body was previously visible only via
+  `--json`). Setup now checks the ReadWrite scopes the mutating commands need,
+  so `setup --check` no longer reports healthy while writes 403.
+- **m365**: command results now carry the registered alias `m365` (was the
+  internal `m365health`).
+
+### Fixed
+
+- **help**: corrected 163 example commands across every provider whose flags or
+  positionals didn't match the real command definition — these ship into the
+  AI-facing reference, so they were teaching wrong invocations. A validator test
+  now fails CI on any future drift.
+- **pbi**: workspace user add/update now sends `groupUserAccessRight` — the
+  requested access right was silently never applied.
+- **rmm**: `processes kill` resolves a hostname/username to an agent id like its
+  sibling commands (previously 404'd on anything but a raw agent id).
+- **gh**: `webhook setup` mints a random per-call secret and returns it once,
+  instead of a guessable owner/repo string reused across hooks.
+- **dokploy**: `domains create --https false` now creates an HTTP-only domain
+  (the flag was declared but ignored, always forcing HTTPS).
+- **hr**: the employee cache is keyed by `--leavers`, so leavers no longer bleed
+  into active-directory listings within the cache window.
+- **docs**: `docs show --json` (and other machine modes) returns valid JSON —
+  previously it wrote raw ANSI plus a duplicated key-value payload.
+- **ctxc**: `memories recall "<topic>"` uses the positional topic (it was
+  silently dropped, giving an unfiltered recall).
+- **unifi**: the help-UI mutation gate no longer treats `wlans password` (a PSK
+  rotation) as read-only.
+
 ## [0.3.0] - 2026-07-02
 
 ### Added

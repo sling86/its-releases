@@ -234,10 +234,10 @@ Get file or folder details. Pass the id (or any natural identifier) as the posit
 **Examples:**
 
 ```bash
-its sp drives get <site-id> --path "Shared Documents/report.pdf"
+its sp drives get <site-id> --drive <drive-id> --item <item-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its sp drives get <site-id> --path "Shared Documents/report.pdf" --json
+its sp drives get <site-id> --drive <drive-id> --item <item-id> --json
 ```
 
 ---
@@ -465,10 +465,10 @@ Upload a text file. Stream a local file to the resource.
 **Examples:**
 
 ```bash
-its sp files upload <site-id> --path "Shared Documents/report.pdf" --file ./report.pdf
+its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf
 
 # Pipe-friendly output — use with jq / scripts.
-its sp files upload <site-id> --path "Shared Documents/report.pdf" --file ./report.pdf --json
+its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf --json
 ```
 
 #### `its sp files folder <siteId>`
@@ -486,10 +486,10 @@ Create a folder. Returns the contents of a folder by path.
 **Examples:**
 
 ```bash
-its sp files folder <site-id> --path "Shared Documents"
+its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder"
 
 # Pipe-friendly output — use with jq / scripts.
-its sp files folder <site-id> --path "Shared Documents" --json
+its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder" --json
 ```
 
 #### `its sp files delete <siteId>`
@@ -507,7 +507,7 @@ Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Aud
 **Examples:**
 
 ```bash
-its sp files delete <site-id> --path "Shared Documents/old.docx" --confirm
+its sp files delete <site-id> --drive <drive-id> --item <item-id> --confirm
 ```
 
 #### `its sp files share <siteId>`
@@ -543,10 +543,10 @@ Move or rename a file. Move an item between folders (reversible).
 **Examples:**
 
 ```bash
-its sp files move <site-id> --from "Shared Documents/old.docx" --to "Shared Documents/new.docx"
+its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its sp files move <site-id> --from "Shared Documents/old.docx" --to "Shared Documents/new.docx" --json
+its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id> --json
 ```
 
 #### `its sp files checkout <siteId>`
@@ -563,10 +563,10 @@ Check out a file for editing. Locks the item against concurrent edits.
 **Examples:**
 
 ```bash
-its sp files checkout <site-id> --path "Shared Documents/draft.docx"
+its sp files checkout <site-id> --drive <drive-id> --item <item-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its sp files checkout <site-id> --path "Shared Documents/draft.docx" --json
+its sp files checkout <site-id> --drive <drive-id> --item <item-id> --json
 ```
 
 #### `its sp files checkin <siteId>`
@@ -585,10 +585,10 @@ Check in a file. Releases the lock after editing.
 **Examples:**
 
 ```bash
-its sp files checkin <site-id> --path "Shared Documents/draft.docx" --comment "v2"
+its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2"
 
 # Pipe-friendly output — use with jq / scripts.
-its sp files checkin <site-id> --path "Shared Documents/draft.docx" --comment "v2" --json
+its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2" --json
 ```
 
 #### `its sp files versions <siteId>`
@@ -732,10 +732,10 @@ Create a sharing link. Creates a sharing link / direct grant.
 **Examples:**
 
 ```bash
-its sp permissions share --item <item-id> --user jane.smith@example.com --role read
+its sp permissions share <site-id> --item <item-id> --type view --scope organization
 
 # Pipe-friendly output — use with jq / scripts.
-its sp permissions share --item <item-id> --user jane.smith@example.com --role read --json
+its sp permissions share <site-id> --item <item-id> --type view --scope organization --json
 ```
 
 #### `its sp permissions grant-app <siteId>`
@@ -770,7 +770,7 @@ Remove a sharing permission. Permanent — use --confirm.
 **Examples:**
 
 ```bash
-its sp permissions remove <site-id> --item <item-id> --perm <perm-id> --confirm
+its sp permissions remove <site-id> --drive <drive-id> --item <item-id> --permission <permission-id> --confirm
 ```
 
 ---
@@ -1030,7 +1030,7 @@ Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
-its sp graph delete "/sites/<site-id>/lists/<list-id>" --confirm
+its sp graph delete "/sites/<site-id>/lists/<list-id>"
 ```
 
 ---

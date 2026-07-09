@@ -94,7 +94,7 @@ List IT support tickets. Surfaces the most common fields; pass --json for raw sh
 ```bash
 its wrike tickets
 
-its wrike tickets --importance High
+its wrike tickets --priority High
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike tickets --watch
@@ -226,10 +226,10 @@ Add an assignee to a ticket. Idempotent — assigning twice is a no-op.
 **Examples:**
 
 ```bash
-its wrike tickets assign <task-id> --user jane.smith@example.com
+its wrike tickets assign <task-id> <user-id>
 
 # Pipe-friendly output — use with jq / scripts.
-its wrike tickets assign <task-id> --user jane.smith@example.com --json
+its wrike tickets assign <task-id> <user-id> --json
 ```
 
 #### `its wrike tickets update-title <taskId> <title>`
@@ -265,10 +265,10 @@ Change ticket status. Move the task to a different workflow stage.
 **Examples:**
 
 ```bash
-its wrike tickets update-status <task-id> --status "Completed"
+its wrike tickets update-status <task-id> "Completed"
 
 # Pipe-friendly output — use with jq / scripts.
-its wrike tickets update-status <task-id> --status "Completed" --json
+its wrike tickets update-status <task-id> "Completed" --json
 ```
 
 #### `its wrike tickets update-description <taskId> [text]`
@@ -311,10 +311,10 @@ Add a comment to a ticket. Prefer --markdown (bold/italic/links/bullets + plain 
 **Examples:**
 
 ```bash
-its wrike tickets add-comment <task-id> --text "Replicated, escalating"
+its wrike tickets add-comment <task-id> "Replicated, escalating"
 
 # Pipe-friendly output — use with jq / scripts.
-its wrike tickets add-comment <task-id> --text "Replicated, escalating" --json
+its wrike tickets add-comment <task-id> "Replicated, escalating" --json
 ```
 
 #### `its wrike tickets update-comment <commentId> [text]`
@@ -334,10 +334,10 @@ Replace the body of an existing comment. Same formatting rules as add-comment (-
 **Examples:**
 
 ```bash
-its wrike tickets update-comment <comment-id> --text "fixed typo"
+its wrike tickets update-comment <comment-id> "fixed typo"
 
 # Pipe-friendly output — use with jq / scripts.
-its wrike tickets update-comment <comment-id> --text "fixed typo" --json
+its wrike tickets update-comment <comment-id> "fixed typo" --json
 ```
 
 #### `its wrike tickets delete-comment <commentId>`
@@ -409,10 +409,10 @@ Download an attachment from a ticket. Stream the resource to a local file.
 **Examples:**
 
 ```bash
-its wrike tickets download <task-id> <attachment-id> --out ./screenshot.png
+its wrike tickets download <task-id> <attachment-id> --output ./screenshot.png
 
 # Pipe-friendly output — use with jq / scripts.
-its wrike tickets download <task-id> <attachment-id> --out ./screenshot.png --json
+its wrike tickets download <task-id> <attachment-id> --output ./screenshot.png --json
 ```
 
 #### `its wrike tickets attach <taskId> <filePath>`
@@ -422,10 +422,10 @@ Attach a file to a ticket. Upload a local file as an attachment.
 **Examples:**
 
 ```bash
-its wrike tickets attach <task-id> --file ./screenshot.png
+its wrike tickets attach <task-id> ./screenshot.png
 
 # Pipe-friendly output — use with jq / scripts.
-its wrike tickets attach <task-id> --file ./screenshot.png --json
+its wrike tickets attach <task-id> ./screenshot.png --json
 ```
 
 ---
