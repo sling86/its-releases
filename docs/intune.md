@@ -559,10 +559,10 @@ Set group tag on an Autopilot device. Set or clear a tag value.
 **Examples:**
 
 ```bash
-its intune autopilot tag <serial> --tag "Office-Standard"
+its intune autopilot tag <serial> "Office-Standard"
 
 # Pipe-friendly output — use with jq / scripts.
-its intune autopilot tag <serial> --tag "Office-Standard" --json
+its intune autopilot tag <serial> "Office-Standard" --json
 ```
 
 ---
@@ -1014,7 +1014,7 @@ Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
-its intune graph delete "/deviceManagement/managedDevices/<id>" --confirm
+its intune graph delete "/deviceManagement/managedDevices/<id>"
 ```
 
 ---

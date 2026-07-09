@@ -143,12 +143,12 @@ List recent Protect events (motion, smart detections). Surfaces the most common 
 **Examples:**
 
 ```bash
-its protect events --since 1h
+its protect events --hours 1
 
-its protect events --camera <camera-id> --since 24h
+its protect events --filter camera=<camera-name> --hours 24
 
 # Re-runs every 10s — handy for dashboards or incident response.
-its protect events --since 1h --watch
+its protect events --hours 1 --watch
 ```
 
 ---

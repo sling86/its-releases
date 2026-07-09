@@ -513,10 +513,10 @@ Authorise a guest WiFi client. Permits a guest network device.
 **Examples:**
 
 ```bash
-its unifi guests authorise <mac> --duration 1440
+its unifi guests authorise <mac> --minutes 1440
 
 # Pipe-friendly output — use with jq / scripts.
-its unifi guests authorise <mac> --duration 1440 --json
+its unifi guests authorise <mac> --minutes 1440 --json
 ```
 
 #### `its unifi guests unauthorise <mac>`
@@ -640,10 +640,10 @@ Update WiFi password for an SSID. Rotate a PSK / passphrase. Disconnects every c
 **Examples:**
 
 ```bash
-its unifi wlans password <wlan-id> --password "new-password"
+its unifi wlans password <wlan-id> --passphrase "new-password" --confirm
 
 # Pipe-friendly output — use with jq / scripts.
-its unifi wlans password <wlan-id> --password "new-password" --json
+its unifi wlans password <wlan-id> --passphrase "new-password" --confirm --json
 ```
 
 ---
@@ -908,13 +908,13 @@ List recent events. Surfaces the most common fields; pass --json for raw shape.
 **Examples:**
 
 ```bash
-its unifi events --since 1h
+its unifi events --hours 1
 
 # Pipe-friendly output — use with jq / scripts.
-its unifi events --since 1h --json
+its unifi events --hours 1 --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
-its unifi events --since 1h --watch
+its unifi events --hours 1 --watch
 ```
 
 ---
@@ -1075,10 +1075,10 @@ Create guest WiFi vouchers. Idempotent on duplicate names — use update/edit to
 **Examples:**
 
 ```bash
-its unifi vouchers create --duration 1440 --count 5
+its unifi vouchers create --minutes 1440 --count 5
 
 # Pipe-friendly output — use with jq / scripts.
-its unifi vouchers create --duration 1440 --count 5 --json
+its unifi vouchers create --minutes 1440 --count 5 --json
 ```
 
 #### `its unifi vouchers revoke <id>`

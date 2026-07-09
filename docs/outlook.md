@@ -264,14 +264,14 @@ Delete one or more messages (moves to Deleted Items). Pass a single id positiona
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--confirm` | `` | Required for bulk (--stdin) deletes | — |
+| `--confirm` | `` | Required for every delete (single and bulk) | — |
 | `--stdin` | `` | Read newline/JSON list of message ids from stdin | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
 
 ```bash
-its outlook mail delete <message_id>
+its outlook mail delete <message_id> --confirm
 
 its outlook mail --filter "from/emailAddress/address eq 'spammer@x'" --json | its outlook mail delete --stdin --confirm
 ```

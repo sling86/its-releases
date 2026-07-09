@@ -127,7 +127,7 @@ List all vault items. Surfaces the most common fields; pass --json for raw shape
 ```bash
 its bw items
 
-its bw items --collection "Servers"
+its bw items --folder "Servers"
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw items --watch
@@ -282,7 +282,7 @@ its bw items create "Router" --username admin --password "s3cret"
 # Text + hidden custom fields. Multiple via comma: --field a=1,b=2
 its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
 
-its bw items create "Server admin" --username admin --password "P@ssw0rd" --url https://server.example.com
+its bw items create "Server admin" --username admin --password "P@ssw0rd" --uri https://server.example.com
 
 its bw items create "API keys" --type note --notes "stuff"
 ```
@@ -318,10 +318,10 @@ its bw items update <id> --field lan_ip=10.0.0.2 --confirm
 
 its bw items update <id> --field-remove lan_ip --confirm
 
-its bw items update <item-id> --password "NewP@ss"
+its bw items update <item-id> --password "NewP@ss" --confirm
 
 # Pipe-friendly output — use with jq / scripts.
-its bw items update <item-id> --password "NewP@ss" --json
+its bw items update <item-id> --password "NewP@ss" --confirm --json
 ```
 
 #### `its bw items move <id>`
@@ -339,10 +339,10 @@ Move vault items to a folder. Move an item between folders. --confirm required.
 **Examples:**
 
 ```bash
-its bw items move <item-id> --folder "Servers"
+its bw items move <item-id> --folder "Servers" --confirm
 
 # Pipe-friendly output — use with jq / scripts.
-its bw items move <item-id> --folder "Servers" --json
+its bw items move <item-id> --folder "Servers" --confirm --json
 ```
 
 #### `its bw items delete <id>`
@@ -377,10 +377,10 @@ Restore a vault item from the trash. Restore a soft-deleted item from trash.
 **Examples:**
 
 ```bash
-its bw items restore <item-id>
+its bw items restore <item-id> --confirm
 
 # Pipe-friendly output — use with jq / scripts.
-its bw items restore <item-id> --json
+its bw items restore <item-id> --confirm --json
 ```
 
 #### `its bw items purge <id>`
@@ -399,7 +399,7 @@ PERMANENTLY delete a vault item. This CANNOT be undone.
 
 ```bash
 # CANNOT be undone
-its bw items purge <item-id> --confirm
+its bw items purge <item-id> --confirm --yes-permanently-delete
 ```
 
 ---

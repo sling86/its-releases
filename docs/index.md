@@ -419,7 +419,7 @@ its
 │   ├── processes
 │   │   ├── (list) <agent>
 │   │   ├── top <agent>
-│   │   └── kill <agent_id>
+│   │   └── kill <agent>
 │   ├── services
 │   │   ├── (list) <agent>
 │   │   ├── get <agent>

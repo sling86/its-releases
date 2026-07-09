@@ -272,10 +272,10 @@ Create a new user. Idempotent on duplicate names — use update/edit to mutate a
 **Examples:**
 
 ```bash
-its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --force-change
+its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!"
 
 # Pipe-friendly output — use with jq / scripts.
-its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --force-change --json
+its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --json
 ```
 
 #### `its entra users enable <id>`
@@ -358,7 +358,7 @@ Disable a user account (requires --confirm). Pass --revoke-sessions to also kill
 its entra users disable jane.smith@example.com --confirm
 
 # Disable account + force re-auth on every existing session.
-its entra users disable jane.smith@example.com --revoke --confirm
+its entra users disable jane.smith@example.com --revoke-sessions --confirm
 ```
 
 #### `its entra users revoke-sessions <id>`
@@ -691,8 +691,8 @@ its entra licences assign jane@x.com --sku <guid1>,<guid2>,<guid3>
 
 its entra licences assign jane.smith@example.com --sku SPB
 
-# Some SKUs require usageLocation — set it inline.
-its entra licences assign jane.smith@example.com --sku SPB --location GB
+# assign has no --location flag — set usageLocation first via its entra users update <id> --usage GB. Comma-separated --sku assigns several SKUs in one atomic Graph call.
+its entra licences assign jane.smith@example.com --sku SPB,ENTERPRISEPACK
 ```
 
 #### `its entra licences remove <user_id>`
@@ -711,8 +711,8 @@ Remove a licence from a user (requires --confirm). Permanent — use --confirm.
 ```bash
 its entra licences remove jane.smith@example.com --sku SPB --confirm
 
-# Strips every assigned SKU — used in offboarding.
-its entra licences remove jane.smith@example.com --all --confirm
+# licences remove has no --all flag (only a single --sku at a time) — onboarding convert-mailbox strips every assigned SKU (and disables the account) in one call, used in offboarding.
+its entra onboarding convert-mailbox jane.smith@example.com --confirm
 ```
 
 #### `its entra licences users <sku_id>`
@@ -722,9 +722,9 @@ List users assigned a specific licence SKU. List by resource membership; use --j
 **Examples:**
 
 ```bash
-its entra licences users --sku SPB
+its entra licences users SPB
 
-its entra licences users --sku SPB --json
+its entra licences users SPB --json
 ```
 
 #### `its entra licences unlicensed`
@@ -988,7 +988,7 @@ Create a Temporary Access Pass for a user (does not work for B2B guests).
 ```bash
 its entra tap create jane.smith@example.com
 
-its entra tap create jane.smith@example.com --lifetime 480 --usable-once false
+its entra tap create jane.smith@example.com --ttl 8h
 ```
 
 #### `its entra tap <user_id>`
@@ -1186,10 +1186,10 @@ Add a user to a CA policy's excludeUsers — atomic mutation, no need to rebuild
 
 ```bash
 # Use sparingly — re-include the user once the trip-cause is cleared.
-its entra ca exclude-user <policy-id> --user jane.smith@example.com
+its entra ca exclude-user <policy-id> jane.smith@example.com
 
 # Policy can be addressed by exact displayName instead of id.
-its entra ca exclude-user "Require MFA for admins" --user jane.smith@example.com
+its entra ca exclude-user "Require MFA for admins" jane.smith@example.com
 ```
 
 #### `its entra ca unexclude-user <id_or_name> <user>`
@@ -1295,6 +1295,7 @@ Enable a method tenant-wide (sets state=enabled on the method configuration). Pa
 |------|-------|-------------|---------|
 | `--target` | `` | Optional include target — group ID or 'all_users'. Adds a default include target if specified. | — |
 | `--dry-run` | `` | Print the PATCH request without sending | — |
+| `--confirm` | `` | Confirm this tenant-wide policy change | — |
 
 **Examples:**
 
@@ -1314,6 +1315,7 @@ Disable a method tenant-wide (state=disabled). Switch to inactive state. Idempot
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--dry-run` | `` | Print the PATCH request without sending | — |
+| `--confirm` | `` | Confirm this tenant-wide policy change | — |
 
 **Examples:**
 
@@ -1334,6 +1336,7 @@ Patch a method configuration with a custom body (inline or @path/to/file.json).
 |------|-------|-------------|---------|
 | `--body` | `` | Inline JSON or @path/to/body.json — the PATCH body for the method config | — |
 | `--dry-run` | `` | Print the PATCH request without sending | — |
+| `--confirm` | `` | Confirm this tenant-wide policy change | — |
 
 **Examples:**
 
@@ -1622,12 +1625,12 @@ List directory audit logs. Surfaces the most common fields; pass --json for raw 
 **Examples:**
 
 ```bash
-its entra audit --since 24h
+its entra audit --filter "activityDateTime ge 2024-01-01T00:00:00Z"
 
-its entra audit --user jane.smith@example.com
+its entra audit --target <user-id>
 
 # Re-runs every 10s — handy for dashboards or incident response.
-its entra audit --since 24h --watch
+its entra audit --filter "activityDateTime ge 2024-01-01T00:00:00Z" --watch
 ```
 
 ---
@@ -1837,10 +1840,10 @@ Copy group memberships from one user to another. Idempotent — already-shared g
 **Examples:**
 
 ```bash
-its entra onboarding copy-groups --from peer@example.com --to jane.smith@example.com
+its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com
 
 # Pipe-friendly output — use with jq / scripts.
-its entra onboarding copy-groups --from peer@example.com --to jane.smith@example.com --json
+its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com --json
 ```
 
 #### `its entra onboarding convert-mailbox <user_id>`
@@ -1918,11 +1921,11 @@ its entra offboarding run jane.smith@example.com --confirm --json
 
 | Command | Description |
 |---------|-------------|
-| `its entra break-glass audit` | Audit THF break-glass accounts (BG01 + BG02) — GA role, CA exclusions, sign-in hygiene, password age, FIDO2. Non-zero exit on any gap. Override UPNs with ENTRA_BG01_UPN / ENTRA_BG02_UPN. |
+| `its entra break-glass audit` | Audit your two break-glass accounts (BG01 password + BG02 FIDO2) — GA role, CA exclusions, sign-in hygiene, password age, FIDO2. Non-zero exit on any gap. Set the UPNs via ENTRA_BG01_UPN / ENTRA_BG02_UPN (or --bg01/--bg02). |
 
 #### `its entra break-glass audit`
 
-Audit THF break-glass accounts (BG01 + BG02) — GA role, CA exclusions, sign-in hygiene, password age, FIDO2. Non-zero exit on any gap. Override UPNs with ENTRA_BG01_UPN / ENTRA_BG02_UPN.
+Audit your two break-glass accounts (BG01 password + BG02 FIDO2) — GA role, CA exclusions, sign-in hygiene, password age, FIDO2. Non-zero exit on any gap. Set the UPNs via ENTRA_BG01_UPN / ENTRA_BG02_UPN (or --bg01/--bg02).
 
 **Flags:**
 
@@ -2277,7 +2280,8 @@ Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
-its entra graph delete "/users/<id>" --confirm
+# Raw Graph passthrough — this command has no --confirm guard (unlike typed delete commands such as users delete / ca delete). Double-check the path before running; there is no dry-run.
+its entra graph delete "/users/<id>"
 ```
 
 ---
