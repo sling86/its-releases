@@ -549,9 +549,6 @@ its bw password "server-login" --copy
 # Print password (mask in shared terminals)
 its bw password "server-login"
 
-# Copy to clipboard, auto-clear after 30s
-its bw password "server-login" --copy
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw password "server-login" --watch
 ```

@@ -106,10 +106,6 @@ its cf zones
 
 its cf zones --name example.com
 
-its cf zones
-
-its cf zones --name example.com
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its cf zones --watch
 ```
@@ -178,10 +174,6 @@ its cf dns --zone example.com
 its cf dns --zone example.com --type A
 
 its cf dns --zone example.com --name www
-
-its cf dns --zone example.com
-
-its cf dns --zone example.com --type A
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its cf dns --zone example.com --watch

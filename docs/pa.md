@@ -102,6 +102,7 @@ its pa environments get <env-id> --json
 |---------|-------------|
 | `its pa flows` | List Power Automate cloud flows. Defaults to all environments — use --environment <id> to scope |
 | `its pa flows get <flow_id>` | Show flow details (definition, triggers, actions). Pass the id (or any natural identifier) as the positional arg. |
+| `its pa flows permissions <flow_id>` | List a flow's owners/co-owners (ACL entries). Each entry's `aclId` is the id used to remove it — not the principal's object id. |
 | `its pa flows stop <flow_id>` | Turn a flow off (admin). Stop the resource. Use --confirm if the action is destructive. |
 | `its pa flows start <flow_id>` | Turn a flow on (admin). Start the resource. Idempotent. |
 | `its pa flows delete <flow_id>` | Delete a flow (admin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
@@ -147,6 +148,20 @@ its pa flows get <flow-id> --environment <env-id>
 
 # Pipe-friendly output — use with jq / scripts.
 its pa flows get <flow-id> --environment <env-id> --json
+```
+
+#### `its pa flows permissions <flow_id>`
+
+List a flow's owners/co-owners (ACL entries). Each entry's `aclId` is the id used to remove it — not the principal's object id.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--environment` | `-e` | Environment id (required) | — |
+
+```bash
+its pa flows permissions <flow_id>
 ```
 
 #### `its pa flows stop <flow_id>`

@@ -139,7 +139,7 @@ its az groups --watch
 | Command | Description |
 |---------|-------------|
 | `its az resources` | List Azure resources. Surfaces the most common fields; pass --json for raw shape. |
-| `its az resources get <id>` | Show resource detail by ID. Pass the id (or any natural identifier) as the positional arg. |
+| `its az resources get <id>` | Show resource detail by ID. Requires the full Azure resource ID (/subscriptions/.../resourceGroups/.../providers/...) as the positional arg — copy it from `az resources` output. |
 
 #### `its az resources`
 
@@ -166,7 +166,7 @@ its az resources --watch
 
 #### `its az resources get <id>`
 
-Show resource detail by ID. Pass the id (or any natural identifier) as the positional arg.
+Show resource detail by ID. Requires the full Azure resource ID (/subscriptions/.../resourceGroups/.../providers/...) as the positional arg — copy it from `az resources` output.
 
 **Examples:**
 

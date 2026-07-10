@@ -15,6 +15,31 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.4.1] - 2026-07-10
+
+### Added
+
+- Five read-only commands that had client methods but no CLI surface:
+  `pa flows permissions`, `rmm agents eventlog`, `protect cameras snapshot`,
+  `sp sites storage`, `sp drives recent`.
+- **unifi**: `devices get` now surfaces the device uplink and a compact
+  per-port table (idx, name, up, poe, uplink).
+- Per-command and top-level help now document the `--stdin`, `--dry-run`,
+  `--auth` and `--profile` global flags.
+
+### Fixed
+
+- **pa**: removing a flow permission resolves the ACL entry id first — the
+  delete path needs the entry's own `name`, not the principal id (was 404ing
+  with "Cannot find connection acl with name permissions").
+- Corrected misleading command descriptions (rmm `agents run` timeout, az
+  `resources get`, wrike `tickets active`, hr `employees get`, protect
+  `cameras offline`, bc `health get`) and the dokploy `containers stop`
+  "stoped" summary typo.
+- **generate-docs**: no longer emits phantom `client.ts`/`types.ts` source rows
+  for providers that lack them, dedups examples, and avoids a doubled full stop
+  on descriptions already ending in punctuation.
+
 ## [0.4.0] - 2026-07-09
 
 ### Breaking

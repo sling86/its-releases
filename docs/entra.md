@@ -662,12 +662,6 @@ its entra licences --filter available=0
 
 its entra licences --json
 
-# All SKUs with consumed/available counts
-its entra licences
-
-# Compact view for piping to billing / capacity scripts.
-its entra licences --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra licences --watch
 ```

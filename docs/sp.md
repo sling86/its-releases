@@ -61,6 +61,7 @@ SharePoint can use dedicated credentials (`SP_CLIENT_ID`/`SP_CLIENT_SECRET`) or 
 | `its sp sites root` | Get the root site. Returns the document library root. |
 | `its sp sites subsites <siteId>` | List child sites. Returns child sites of the given site. |
 | `its sp sites structure <siteId>` | Get site structure (drives, lists, subsites). Walks the site hierarchy + drives. |
+| `its sp sites storage [siteId]` | Storage usage per site and drive (used/total). Defaults to all sites (up to 100); pass one or more site ids to scope. |
 
 #### `its sp sites`
 
@@ -150,6 +151,14 @@ its sp sites structure <site-id>
 its sp sites structure <site-id> --json
 ```
 
+#### `its sp sites storage [siteId]`
+
+Storage usage per site and drive (used/total). Defaults to all sites (up to 100); pass one or more site ids to scope.
+
+```bash
+its sp sites storage [siteId]
+```
+
 ---
 
 ### drives
@@ -162,6 +171,7 @@ its sp sites structure <site-id> --json
 | `its sp drives root <siteId>` | List files at document library root. Returns the document library root. |
 | `its sp drives folder <siteId>` | List folder contents. Returns the contents of a folder by path. |
 | `its sp drives get <siteId>` | Get file or folder details. Pass the id (or any natural identifier) as the positional arg. |
+| `its sp drives recent <siteId>` | Recently modified items in a drive over the last N days (delta query). Requires --drive. |
 
 #### `its sp drives <siteId>`
 
@@ -238,6 +248,21 @@ its sp drives get <site-id> --drive <drive-id> --item <item-id>
 
 # Pipe-friendly output — use with jq / scripts.
 its sp drives get <site-id> --drive <drive-id> --item <item-id> --json
+```
+
+#### `its sp drives recent <siteId>`
+
+Recently modified items in a drive over the last N days (delta query). Requires --drive.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--drive` | `` | Drive ID (from `its sp drives <siteId>`) | — |
+| `--days` | `` | Look-back window in days | 7 |
+
+```bash
+its sp drives recent <siteId>
 ```
 
 ---
