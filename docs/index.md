@@ -10,19 +10,19 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [rmm.md](./rmm.md) | Tactical RMM — 68 commands across 16 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 69 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 106 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
-| [sp.md](./sp.md) | SharePoint — 46 commands across 11 resources |
+| [sp.md](./sp.md) | SharePoint — 48 commands across 11 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 51 commands across 13 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
 | [exo.md](./exo.md) | Exchange Online — 42 commands across 9 resources |
 | [intune.md](./intune.md) | Intune — 42 commands across 17 resources |
-| [protect.md](./protect.md) | UniFi Protect — 6 commands across 4 resources |
+| [protect.md](./protect.md) | UniFi Protect — 7 commands across 4 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
-| [pa.md](./pa.md) | Power Platform — 11 commands across 4 resources |
+| [pa.md](./pa.md) | Power Platform — 12 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
 | [hr.md](./hr.md) | PeopleHR — 8 commands across 4 resources |
 | [bc.md](./bc.md) | Business Central — 7 commands across 6 resources |
@@ -33,13 +33,13 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 3 commands across 2 resources |
 
-**22 providers** · **202 resources** · **706 commands**
+**22 providers** · **202 resources** · **711 commands**
 
 ### [Tactical RMM](./rmm.md)
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [agents](./rmm.md#agents) | list, stale, search, get, ping, reboot, remove, prune, run, history, notes, pending, wake, edit, refresh | `src/providers/rmm/commands/agents.ts` |
+| [agents](./rmm.md#agents) | list, stale, search, get, ping, reboot, remove, prune, run, history, notes, pending, wake, edit, refresh, eventlog | `src/providers/rmm/commands/agents.ts` |
 | [dashboard](./rmm.md#dashboard) | list | `src/providers/rmm/commands/dashboard.ts` |
 | [clients](./rmm.md#clients) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
 | [sites](./rmm.md#sites) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
@@ -131,8 +131,8 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [sites](./sp.md#sites) | list, get, search, root, subsites, structure | `src/providers/sp/commands/sites.ts` |
-| [drives](./sp.md#drives) | list, root, folder, get | `src/providers/sp/commands/drives.ts` |
+| [sites](./sp.md#sites) | list, get, search, root, subsites, structure, storage | `src/providers/sp/commands/sites.ts` |
+| [drives](./sp.md#drives) | list, root, folder, get, recent | `src/providers/sp/commands/drives.ts` |
 | [lists](./sp.md#lists) | list, get, columns, items, create-item, update-item, delete-item | `src/providers/sp/commands/lists.ts` |
 | [files](./sp.md#files) | download, upload, folder, delete, share, move, checkout, checkin, versions, restore | `src/providers/sp/commands/files.ts` |
 | [search](./sp.md#search) | list | `src/providers/sp/commands/search.ts` |
@@ -239,7 +239,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [cameras](./protect.md#cameras) | list, get, offline | `src/providers/protect/commands/cameras.ts` |
+| [cameras](./protect.md#cameras) | list, get, offline, snapshot | `src/providers/protect/commands/cameras.ts` |
 | [nvr](./protect.md#nvr) | list | `src/providers/protect/commands/nvr.ts` |
 | [events](./protect.md#events) | list | `src/providers/protect/commands/events.ts` |
 | [dashboard](./protect.md#dashboard) | list | `src/providers/protect/commands/dashboard.ts` |
@@ -260,7 +260,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [environments](./pa.md#environments) | list, get | `src/providers/pa/commands/environments.ts` |
-| [flows](./pa.md#flows) | list, get, stop, start, delete, set-owner, runs | `src/providers/pa/commands/flows.ts` |
+| [flows](./pa.md#flows) | list, get, permissions, stop, start, delete, set-owner, runs | `src/providers/pa/commands/flows.ts` |
 | [apps](./pa.md#apps) | list | `src/providers/pa/commands/apps.ts` |
 | [connections](./pa.md#connections) | list | `src/providers/pa/commands/connections.ts` |
 
@@ -406,7 +406,8 @@ its
 │   │   ├── pending <agent>
 │   │   ├── wake <agent>
 │   │   ├── edit <agent>
-│   │   └── refresh <agent>
+│   │   ├── refresh <agent>
+│   │   └── eventlog <agent>
 │   ├── dashboard (list)
 │   ├── clients
 │   │   ├── (list)
@@ -782,12 +783,14 @@ its
 │   │   ├── search <query>
 │   │   ├── root
 │   │   ├── subsites <siteId>
-│   │   └── structure <siteId>
+│   │   ├── structure <siteId>
+│   │   └── storage [siteId]
 │   ├── drives
 │   │   ├── (list) <siteId>
 │   │   ├── root <siteId>
 │   │   ├── folder <siteId>
-│   │   └── get <siteId>
+│   │   ├── get <siteId>
+│   │   └── recent <siteId>
 │   ├── lists
 │   │   ├── (list) <siteId>
 │   │   ├── get <siteId>
@@ -1084,7 +1087,8 @@ its
 │   ├── cameras
 │   │   ├── (list)
 │   │   ├── get <id>
-│   │   └── offline
+│   │   ├── offline
+│   │   └── snapshot <camera_id>
 │   ├── nvr (list)
 │   ├── events (list)
 │   └── dashboard (list)
@@ -1120,6 +1124,7 @@ its
 │   ├── flows
 │   │   ├── (list)
 │   │   ├── get <flow_id>
+│   │   ├── permissions <flow_id>
 │   │   ├── stop <flow_id>
 │   │   ├── start <flow_id>
 │   │   ├── delete <flow_id>

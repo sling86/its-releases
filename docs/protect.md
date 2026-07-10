@@ -48,7 +48,8 @@ its protect setup --reset   # Re-run setup (overwrite config)
 |---------|-------------|
 | `its protect cameras` | List all Protect cameras with status. Surfaces the most common fields; pass --json for raw shape. |
 | `its protect cameras get <id>` | Get camera details. Pass the id (or any natural identifier) as the positional arg. |
-| `its protect cameras offline` | List disconnected/offline cameras. Returns recently-disconnected clients. |
+| `its protect cameras offline` | List disconnected/offline cameras — those whose state is not CONNECTED. |
+| `its protect cameras snapshot <camera_id>` | Get the full-resolution snapshot URL for a camera (authenticated endpoint). Pass the camera id from `cameras list`. |
 
 #### `its protect cameras`
 
@@ -81,7 +82,7 @@ its protect cameras get <camera-id> --json
 
 #### `its protect cameras offline`
 
-List disconnected/offline cameras. Returns recently-disconnected clients.
+List disconnected/offline cameras — those whose state is not CONNECTED.
 
 **Examples:**
 
@@ -90,6 +91,21 @@ its protect cameras offline
 
 # Pipe-friendly output — use with jq / scripts.
 its protect cameras offline --json
+```
+
+#### `its protect cameras snapshot <camera_id>`
+
+Get the full-resolution snapshot URL for a camera (authenticated endpoint). Pass the camera id from `cameras list`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--width` | `` | Snapshot width in px | 1920 |
+| `--height` | `` | Snapshot height in px | 1080 |
+
+```bash
+its protect cameras snapshot <camera_id>
 ```
 
 ---

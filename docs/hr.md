@@ -1,6 +1,6 @@
 # PeopleHR (`hr`)
 
-PeopleHR — bulk employee directory, upcoming and recent starters/leavers. THF tenant key is bulk-read scoped (single-record endpoints return Access Denied), so lookups go through the bulk list + client-side filter..
+PeopleHR — bulk employee directory, upcoming and recent starters/leavers. THF tenant key is bulk-read scoped (single-record endpoints return Access Denied), so lookups go through the bulk list + client-side filter.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
 Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
@@ -73,7 +73,7 @@ its hr drift detect
 |---------|-------------|
 | `its hr employees` | List all employees. Surfaces the most common fields; pass --json for raw shape. |
 | `its hr employees search <query>` | Search employees by name/email/role/department/location. Substring match across the most relevant fields; case-insensitive. |
-| `its hr employees get <email>` | Get employee details by email (client-side filter). Pass the id (or any natural identifier) as the positional arg. |
+| `its hr employees get <email>` | Get employee details by email (client-side filter). Match is exact on email address — not a fuzzy/name lookup. |
 
 #### `its hr employees`
 
@@ -118,7 +118,7 @@ its hr employees search "jane" --json
 
 #### `its hr employees get <email>`
 
-Get employee details by email (client-side filter). Pass the id (or any natural identifier) as the positional arg.
+Get employee details by email (client-side filter). Match is exact on email address — not a fuzzy/name lookup.
 
 **Examples:**
 

@@ -1,6 +1,6 @@
 # Business Central (`bc`)
 
-Business Central (Dynamics 365) — tenant-level companies list, multi-company entity queries via OData, record get. Uses a dedicated BC app registration (BC_CLIENT_ID/BC_CLIENT_SECRET) or falls back to the shared Entra credentials (TENANT_ID/CLIENT_ID/CLIENT_SECRET); either app needs the Business Central API permission granted and an ApplicationUser with a Permission Set inside each BC company..
+Business Central (Dynamics 365) — tenant-level companies list, multi-company entity queries via OData, record get. Uses a dedicated BC app registration (BC_CLIENT_ID/BC_CLIENT_SECRET) or falls back to the shared Entra credentials (TENANT_ID/CLIENT_ID/CLIENT_SECRET); either app needs the Business Central API permission granted and an ApplicationUser with a Permission Set inside each BC company.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
 Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
@@ -215,11 +215,11 @@ its bc record get items <item-id> --json
 
 | Command | Description |
 |---------|-------------|
-| `its bc health get` | Probe BC connectivity (lists companies). Pass the id (or any natural identifier) as the positional arg. |
+| `its bc health get` | Probe BC connectivity by listing companies. Takes no positional argument; use --env to target a non-default environment. |
 
 #### `its bc health get`
 
-Probe BC connectivity (lists companies). Pass the id (or any natural identifier) as the positional arg.
+Probe BC connectivity by listing companies. Takes no positional argument; use --env to target a non-default environment.
 
 **Flags:**
 

@@ -67,13 +67,14 @@ its rmm setup --reset   # Re-run setup (overwrite config)
 | `its rmm agents reboot <agent>` | Reboot the agent's host OS. Destructive — needs --confirm. Returns immediately; the host may take 1-3 minutes to come back. |
 | `its rmm agents remove <agent>` | Permanently delete the agent record from RMM. Doesn't uninstall the local agent service — pair with the RMM uninstall script if the device is being decommissioned. |
 | `its rmm agents prune` | Bulk-remove stale agent records last seen before a threshold (and never-seen agents). Destructive — previews the target list by default and needs --confirm to delete. Doesn't uninstall the local agent service. Pair with `agents stale` to inspect first. |
-| `its rmm agents run <agent>` | Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 90s. |
+| `its rmm agents run <agent>` | Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 30s. |
 | `its rmm agents history <agent>` | Command + script execution history for one agent. Shows time, type, exit status, who ran it, and the truncated payload. |
 | `its rmm agents notes <agent>` | Free-form notes attached to the agent — common workflow is documenting incident actions or device peculiarities. |
 | `its rmm agents pending <agent>` | Queued reboots, script runs, and update installs that the agent hasn't picked up yet. Useful when a command seems to have stalled. |
 | `its rmm agents wake <agent>` | Send a magic packet via another online agent on the same LAN. Doesn't work across VLANs / VPN — agent must be on a network with a reachable RMM peer. |
 | `its rmm agents edit <agent>` | Reassign an agent's client/site or update description (PUT /agents/{id}/) |
 | `its rmm agents refresh <agent>` | Trigger a WMI/sysinfo refresh on an agent — repopulates hardware fields (serial, model, etc.) |
+| `its rmm agents eventlog <agent>` | Read a Windows event log (Application, System, or Security) from an agent over the last N days. |
 
 #### `its rmm agents`
 
@@ -236,7 +237,7 @@ its rmm agents prune --older-than 6w --confirm
 
 #### `its rmm agents run <agent>`
 
-Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 90s.
+Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 30s.
 
 **Flags:**
 
@@ -343,6 +344,21 @@ its rmm agents refresh OFFICE-PC-01
 its rmm agents refresh OFFICE-PC-01 --json
 ```
 
+#### `its rmm agents eventlog <agent>`
+
+Read a Windows event log (Application, System, or Security) from an agent over the last N days.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--type` | `` | Log type | Application |
+| `--days` | `` | Look-back window in days | 7 |
+
+```bash
+its rmm agents eventlog <agent>
+```
+
 ---
 
 ### dashboard
@@ -365,13 +381,7 @@ its rmm dashboard
 
 its rmm dashboard --json
 
-# Counts by site, status, OS — single-screen fleet health view.
-its rmm dashboard
-
 # Re-runs every 10s — handy for incident-response screens.
-its rmm dashboard --watch
-
-# Re-runs every 10s — handy for dashboards or incident response.
 its rmm dashboard --watch
 ```
 
@@ -773,12 +783,6 @@ its rmm updates install --client "Candle Retail"
 its rmm updates install --client "Candle Retail" --confirm
 
 its rmm updates install OFFICE-PC-01 --confirm
-
-# List the online agents a fan-out install would hit (no install without --confirm).
-its rmm updates install --client "Candle Retail"
-
-# Queue an install on every online agent in the client. Reboot-after-install is set on the agent's patch policy, not here.
-its rmm updates install --client "Candle Retail" --confirm
 ```
 
 #### `its rmm updates approve <agent>`

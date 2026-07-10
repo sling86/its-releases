@@ -58,7 +58,7 @@ its wrike setup --reset   # Re-run setup (overwrite config)
 |---------|-------------|
 | `its wrike tickets` | List IT support tickets. Surfaces the most common fields; pass --json for raw shape. |
 | `its wrike tickets stats` | Ticket analytics — median resolve time, backlog, bus-factor risk by assignee |
-| `its wrike tickets active` | List active IT tickets. Returns whichever record the API key currently targets. |
+| `its wrike tickets active` | List active IT tickets — those not in a completed/cancelled state. |
 | `its wrike tickets mine` | List tickets assigned to you (reads ITS_USER_EMAIL or --email) |
 | `its wrike tickets get <idOrPermalink>` | Get full ticket details with comments. Pass the id (or any natural identifier) as the positional arg. |
 | `its wrike tickets search <query>` | Search IT/BC support tickets by title. Substring match across the most relevant fields; case-insensitive. |
@@ -121,7 +121,7 @@ its wrike tickets stats --json
 
 #### `its wrike tickets active`
 
-List active IT tickets. Returns whichever record the API key currently targets.
+List active IT tickets — those not in a completed/cancelled state.
 
 **Examples:**
 

@@ -85,11 +85,6 @@ its dokploy projects
 
 its dokploy projects --json
 
-its dokploy projects
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy projects --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy projects --watch
 ```

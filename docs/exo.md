@@ -417,9 +417,6 @@ List mail flow (transport) rules. Surfaces the most common fields; pass --json f
 ```bash
 its exo rules
 
-# Transport rules (Exchange admin centre)
-its exo rules
-
 # Pipe-friendly output — use with jq / scripts.
 its exo rules --json
 
