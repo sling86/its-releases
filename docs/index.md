@@ -10,7 +10,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [rmm.md](./rmm.md) | Tactical RMM — 69 commands across 16 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 70 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 106 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
@@ -33,7 +33,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 3 commands across 2 resources |
 
-**22 providers** · **202 resources** · **711 commands**
+**22 providers** · **202 resources** · **712 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -50,7 +50,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [alerts](./rmm.md#alerts) | list, get, resolve, snooze, unsnooze | `src/providers/rmm/commands/alerts.ts` |
 | [scripts](./rmm.md#scripts) | list, get, run, upload-local, delete, upsert | `src/providers/rmm/commands/scripts.ts` |
 | [checks](./rmm.md#checks) | list, failing, results, run, create, edit, delete | `src/providers/rmm/commands/checks.ts` |
-| [tasks](./rmm.md#tasks) | list, create, delete | `src/providers/rmm/commands/tasks.ts` |
+| [tasks](./rmm.md#tasks) | list, create, edit, delete | `src/providers/rmm/commands/tasks.ts` |
 | [policies](./rmm.md#policies) | list, get, checks, add-check, patch-policy | `src/providers/rmm/commands/policies.ts` |
 | [diagnostics](./rmm.md#diagnostics) | list | `src/providers/rmm/commands/diagnostics.ts` |
 | [doctor](./rmm.md#doctor) | list | `src/providers/rmm/commands/doctor.ts` |
@@ -456,11 +456,12 @@ its
 │   │   ├── results <agent>
 │   │   ├── run <agent>
 │   │   ├── create <agent>
-│   │   ├── edit <agent>
+│   │   ├── edit [agent]
 │   │   └── delete [agent_id]
 │   ├── tasks
-│   │   ├── (list) <agent>
-│   │   ├── create <agent>
+│   │   ├── (list) [agent]
+│   │   ├── create [agent]
+│   │   ├── edit
 │   │   └── delete
 │   ├── policies
 │   │   ├── (list)
@@ -1267,6 +1268,7 @@ src/
 │   │   ├── prompt.ts
 │   │   ├── types.ts
 │   │   └── wizard.ts
+│   ├── args.ts
 │   ├── audit.ts
 │   ├── auth-map.ts
 │   ├── auth-scopes.ts
