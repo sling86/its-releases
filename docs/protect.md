@@ -25,9 +25,15 @@ its protect setup --reset   # Re-run setup (overwrite config)
 
 | Variable | Description |
 |----------|-------------|
+| `ITS_PROTECT_SITE` | Default named Protect profile; override per command with `--site <name>` |
+| `UNIFI_PROTECT_HOST_<SITE>` | Controller for a named profile, e.g. `_HEAD_OFFICE` or `_WAREHOUSE` |
+| `UNIFI_PROTECT_USERNAME_<SITE>` | Username for a named profile |
+| `UNIFI_PROTECT_PASSWORD_<SITE>` | Password for a named profile |
 | `UNIFI_PROTECT_HOST` | Protect controller IP or hostname (e.g. `192.168.60.50`) |
 | `UNIFI_PROTECT_USERNAME` | Protect username (falls back to `UNIFI_USERNAME`) |
 | `UNIFI_PROTECT_PASSWORD` | Protect password (falls back to `UNIFI_PASSWORD`) |
+
+Named profiles use upper-case suffixed variables: `UNIFI_PROTECT_HOST_<SITE>`, `UNIFI_PROTECT_USERNAME_<SITE>`, and `UNIFI_PROTECT_PASSWORD_<SITE>`. Select one with `--site <name>` or set `ITS_PROTECT_SITE`. Explicit profiles never fall back to unsuffixed credentials.
 
 ### Source Files
 
@@ -55,6 +61,12 @@ its protect setup --reset   # Re-run setup (overwrite config)
 
 List all Protect cameras with status. Surfaces the most common fields; pass --json for raw shape.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+
 **Examples:**
 
 ```bash
@@ -71,6 +83,12 @@ its protect cameras --watch
 
 Get camera details. Pass the id (or any natural identifier) as the positional arg.
 
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+
 **Examples:**
 
 ```bash
@@ -83,6 +101,12 @@ its protect cameras get <camera-id> --json
 #### `its protect cameras offline`
 
 List disconnected/offline cameras — those whose state is not CONNECTED.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
 
 **Examples:**
 
@@ -103,6 +127,7 @@ Get the full-resolution snapshot URL for a camera (authenticated endpoint). Pass
 |------|-------|-------------|---------|
 | `--width` | `` | Snapshot width in px | 1920 |
 | `--height` | `` | Snapshot height in px | 1080 |
+| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
 
 ```bash
 its protect cameras snapshot <camera_id>
@@ -121,6 +146,12 @@ its protect cameras snapshot <camera_id>
 #### `its protect nvr`
 
 Show NVR status, storage, and capacity. Surfaces the most common fields; pass --json for raw shape.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
 
 **Examples:**
 
@@ -155,6 +186,7 @@ List recent Protect events (motion, smart detections). Surfaces the most common 
 |------|-------|-------------|---------|
 | `--hours` | `` | Hours to look back (default 24) | 24 |
 | `--limit` | `` | Maximum events to return (default 30) | 30 |
+| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
 
 **Examples:**
 
@@ -180,6 +212,12 @@ its protect events --hours 1 --watch
 #### `its protect dashboard`
 
 Protect overview — NVR, cameras, storage, recent motion. Surfaces the most common fields; pass --json for raw shape.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
 
 **Examples:**
 

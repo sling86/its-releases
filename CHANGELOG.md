@@ -15,6 +15,60 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.5.0] - 2026-07-30
+
+### Added
+
+- **rmm**: the check-then-remediate pattern is now expressible from the CLI.
+  `tasks create --policy <id>` attaches a task to an automation policy instead
+  of one agent, and `--on-check-failure <checkId>` makes it a `checkfailure`
+  remediation that fires when that check fails. Previously both required the
+  TRMM web UI, so a script could be uploaded but never wired up.
+- **rmm**: `--disabled` on `tasks create`, for arming a policy-wide
+  remediation without setting it off — create it off, look at what the check
+  actually reports across the fleet, then enable.
+- **rmm**: `tasks list --policy <id>` lists a policy's tasks, including its
+  check-failure remediations.
+- **rmm**: `tasks edit --enable/--disable` arms or disarms an existing task.
+  Delete-and-recreate is not equivalent for a policy checkfailure task: it
+  loses the `assigned_check` wiring. Also retunes name, severity and run-asap.
+- **rmm**: `scripts upsert --run-as-user` sets `run_as_user` on the script
+  (it lives on the script, not the task). Without it, anything touching
+  `%USERPROFILE%`, HKCU or the user PATH silently configures the SYSTEM
+  profile. `scripts run --as-user` and `scripts upload-local --as-user` do the
+  same for one-off runs, matching `agents run --as-user`.
+- **protect**: named NVR profiles selected per command with `--site <name>` or
+  by default with `ITS_PROTECT_SITE`. Suffixed credentials stay isolated per
+  controller while existing single-site configuration remains compatible.
+
+### Changed
+
+- **rmm**: setup now defaults to the managed hosted API, opens the Tactical RMM
+  dashboard, and walks new operators through creating a personal least-privilege
+  API key linked to their assigned Tactical role.
+- **protect**: `setup --site <name>` now writes and tests that profile's
+  suffixed credentials instead of the legacy single-site keys.
+
+### Fixed
+
+- **cli**: declared value-taking flags now reject missing values, and numeric
+  flags reject empty, non-numeric and infinite values instead of silently
+  coercing them or falling back.
+- **rmm**: `checks edit` no longer demands an agent positional. The check is
+  addressed by `--check <id>`, and requiring an agent made policy checks
+  uneditable — so their severity could not be changed from the CLI at all.
+- **rmm**: `tasks list --policy` filters client-side. TRMM ignores the
+  `?policy=` query param and returns every task in the deployment (228 here
+  against 19 real ones), so the unfiltered count was wrong and per-agent
+  tasks leaked into the result.
+- **rmm**: fleet and single-agent script runs now handle both TRMM response
+  shapes, surfacing the final output line and explicit success, failure or
+  unknown status instead of blank output with no exit code.
+- **protect**: multi-type event queries now repeat the `types` parameter as the
+  API expects, restoring motion and smart-detection results.
+- **protect**: NVR uptime now falls back to `upSince` when current Protect
+  firmware omits `uptime`, instead of displaying `NaNd NaNh NaNm`.
+
 ## [0.4.1] - 2026-07-10
 
 ### Added
