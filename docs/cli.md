@@ -51,7 +51,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
 | Exchange Online | `exo` | 42 commands, 9 resources | [exo.md](./exo.md) |
 | Intune | `intune` | 42 commands, 17 resources | [intune.md](./intune.md) |
-| UniFi Protect | `protect` | 7 commands, 4 resources | [protect.md](./protect.md) |
+| UniFi Protect | `protect` | 9 commands, 5 resources | [protect.md](./protect.md) |
 | Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |
 | Power Platform | `pa` | 12 commands, 4 resources | [pa.md](./pa.md) |
 | Cloudflare | `cf` | 16 commands, 5 resources | [cf.md](./cf.md) |

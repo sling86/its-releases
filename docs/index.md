@@ -20,7 +20,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
 | [exo.md](./exo.md) | Exchange Online — 42 commands across 9 resources |
 | [intune.md](./intune.md) | Intune — 42 commands across 17 resources |
-| [protect.md](./protect.md) | UniFi Protect — 7 commands across 4 resources |
+| [protect.md](./protect.md) | UniFi Protect — 9 commands across 5 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
 | [pa.md](./pa.md) | Power Platform — 12 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
@@ -33,7 +33,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 3 commands across 2 resources |
 
-**22 providers** · **202 resources** · **712 commands**
+**22 providers** · **203 resources** · **714 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -241,7 +241,8 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [cameras](./protect.md#cameras) | list, get, offline, snapshot | `src/providers/protect/commands/cameras.ts` |
 | [nvr](./protect.md#nvr) | list | `src/providers/protect/commands/nvr.ts` |
-| [events](./protect.md#events) | list | `src/providers/protect/commands/events.ts` |
+| [events](./protect.md#events) | list, thumbnail | `src/providers/protect/commands/events.ts` |
+| [footage](./protect.md#footage) | export | `src/providers/protect/commands/footage.ts` |
 | [dashboard](./protect.md#dashboard) | list | `src/providers/protect/commands/dashboard.ts` |
 
 ### [Power BI](./pbi.md)
@@ -1091,7 +1092,10 @@ its
 │   │   ├── offline
 │   │   └── snapshot <camera_id>
 │   ├── nvr (list)
-│   ├── events (list)
+│   ├── events
+│   │   ├── (list)
+│   │   └── thumbnail <event_id>
+│   ├── footage export <camera>
 │   └── dashboard (list)
 ├── pbi
 │   ├── workspaces
@@ -1539,10 +1543,12 @@ src/
 │   │   │   ├── cameras.ts
 │   │   │   ├── dashboard.ts
 │   │   │   ├── events.ts
+│   │   │   ├── footage.ts
 │   │   │   ├── index.ts
 │   │   │   └── nvr.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── query.ts
 │   │   └── types.ts
 │   ├── rmm/
 │   │   ├── commands/
