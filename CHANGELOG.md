@@ -15,6 +15,28 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.7.1] - 2026-07-31
+
+### Fixed
+
+- **rmm**: `its rmm scripts run` executed the target script **twice on every
+  agent** for any script slower than 30 seconds. The endpoint is posted with
+  `output: "wait"`, so TRMM holds the connection until the agent finishes, but
+  the call never raised the HTTP read timeout above the 30s default. The client
+  aborted mid-run and the retry re-POSTed, so TRMM ran the script again.
+  Confirmed from agent history: three invocations produced six executions,
+  31 seconds apart. The read timeout is now derived from the agent-side
+  timeout, as `agents run` already did.
+- **http**: POST and PATCH are no longer retried after a network error or a
+  5xx. Both failures are ambiguous about whether the server acted, so a replay
+  could repeat a side effect that had already happened. 429 remains retryable
+  for every method — a rate-limited request was rejected rather than processed.
+  `retryNonIdempotent` opts an individual call back in where replay is known to
+  be safe.
+- **http**: an error matching none of the retry branches fell out of the catch
+  and was sent again by the next loop iteration. Plain 4xx responses were being
+  replayed up to `maxRetries` times across every provider.
+
 ## [0.7.0] - 2026-07-31
 
 ### Added
