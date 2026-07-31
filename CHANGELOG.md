@@ -15,6 +15,47 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.6.0] - 2026-07-31
+
+### Added
+
+- **protect**: `events --start`/`--end` accept an arbitrary window — ISO, a
+  local `YYYY-MM-DD HH:mm`, or epoch ms. `--hours` remains the quick relative
+  form. Reviewing a specific night no longer means pulling everything since
+  and filtering by hand.
+- **protect**: `events --camera <name-or-id>` filters server-side, resolving
+  names against the bootstrap. An ambiguous partial name is an error listing
+  the matches rather than a guess — the wrong camera is the wrong evidence.
+- **protect**: `events --types` (server-side event types) and `--smart`
+  (person/vehicle/animal/package). `--smart` is applied client-side on
+  purpose: the controller accepts a `smartDetectTypes` parameter and then
+  ignores it, so filtering there would silently over-report.
+- **protect**: `events --all` pages through the whole window by walking the
+  end boundary down to each page's oldest event. The endpoint caps every
+  response, so a busy site used to truncate silently — a seven-day query
+  returned three days, which reads as quiet nights rather than missing data.
+  Verified at 109,060 events over seven days with no duplicates.
+- **protect**: `events thumbnail <event-id> --output <file>` downloads the
+  historical still for an event, which the live snapshot endpoint cannot
+  give you.
+- **protect**: `footage export <camera> --start --output <file>` exports MP4
+  for an exact window. Both media commands require an explicit `--output`,
+  and export additionally requires `--start`, so identifiable imagery is
+  never written by accident.
+
+### Fixed
+
+- **secrets**: `secrets migrate` skipped named-profile credentials. The
+  secret-key check matched exact names only, so the suffixed variables the
+  Protect profiles introduced (`UNIFI_PROTECT_PASSWORD_<SITE>`) were treated
+  as ordinary config and left in `~/.its/.env` as plaintext. Prefix variants
+  now count as secrets, on both the migrate path and the keychain load path —
+  without the pair, a migrated profile secret would be stored and never read
+  back.
+- **auth**: the Protect entry in `auth doctor` claimed authentication used
+  `UNIFI_PROTECT_KEY`. It is a local username/password exchanged for a
+  session cookie.
+
 ## [0.5.0] - 2026-07-30
 
 ### Added

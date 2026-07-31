@@ -11,6 +11,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [cameras](#cameras)
 - [nvr](#nvr)
 - [events](#events)
+- [footage](#footage)
 - [dashboard](#dashboard)
 
 ## Setup
@@ -43,6 +44,7 @@ Named profiles use upper-case suffixed variables: `UNIFI_PROTECT_HOST_<SITE>`, `
 | `src/providers/protect/types.ts` | TypeScript interfaces |
 | `src/providers/protect/commands/` | Command definitions (split by resource) |
 | `src/providers/protect/definition.ts` | definition |
+| `src/providers/protect/query.ts` | query |
 
 ## Resources
 
@@ -174,18 +176,25 @@ its protect nvr --watch
 
 | Command | Description |
 |---------|-------------|
-| `its protect events` | List recent Protect events (motion, smart detections). Surfaces the most common fields; pass --json for raw shape. |
+| `its protect events` | List Protect events (motion, smart detections). Surfaces the most common fields; pass --json for raw shape. |
+| `its protect events thumbnail <event_id>` | Download the historical still for an event. Identifiable imagery — --output is required so the write is always deliberate. |
 
 #### `its protect events`
 
-List recent Protect events (motion, smart detections). Surfaces the most common fields; pass --json for raw shape.
+List Protect events (motion, smart detections). Surfaces the most common fields; pass --json for raw shape.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--hours` | `` | Hours to look back (default 24) | 24 |
-| `--limit` | `` | Maximum events to return (default 30) | 30 |
+| `--hours` | `` | Hours to look back (ignored when --start is given) | 24 |
+| `--start` | `` | Window start — ISO, local 'YYYY-MM-DD HH:mm', or epoch ms | — |
+| `--end` | `` | Window end (default: now) | — |
+| `--camera` | `` | Camera name or ID — comma-separate for several | — |
+| `--types` | `` | Event types, server-side filter | — |
+| `--smart` | `` | Smart-detection labels, filtered client-side (the NVR ignores the query param) | — |
+| `--all` | `` | Page through the whole window — the fix for silently truncated busy sites | — |
+| `--limit` | `` | Maximum events to return (default 30, ignored with --all) | 30 |
 | `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
 
 **Examples:**
@@ -197,6 +206,50 @@ its protect events --filter camera=<camera-name> --hours 24
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its protect events --hours 1 --watch
+```
+
+#### `its protect events thumbnail <event_id>`
+
+Download the historical still for an event. Identifiable imagery — --output is required so the write is always deliberate.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--output` | `` | File to write the JPEG to | — |
+| `--width` | `` | Thumbnail width in px | 640 |
+| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+
+```bash
+its protect events thumbnail <event_id>
+```
+
+---
+
+### footage
+
+> Source: `src/providers/protect/commands/footage.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its protect footage export <camera>` | Export MP4 footage for one camera over an exact window. Identifiable footage — --output is required so the write is always deliberate. |
+
+#### `its protect footage export <camera>`
+
+Export MP4 footage for one camera over an exact window. Identifiable footage — --output is required so the write is always deliberate.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--start` | `` | Window start — ISO, local 'YYYY-MM-DD HH:mm', or epoch ms | — |
+| `--end` | `` | Window end (default: now) | — |
+| `--minutes` | `` | Window length from --start when --end is omitted | — |
+| `--output` | `` | File to write the MP4 to | — |
+| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+
+```bash
+its protect footage export <camera>
 ```
 
 ---
