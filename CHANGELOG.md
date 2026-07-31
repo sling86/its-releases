@@ -15,6 +15,63 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.7.0] - 2026-07-31
+
+### Added
+
+- **output**: `--filter` gained operators — `=` `!=` `>` `<` `>=` `<=` `~`
+  (regex) `!~` — and repeats to AND conditions. Comparison is numeric when both
+  sides are numeric (a trailing `%`/`GB` unit is understood), chronological on
+  time columns, and an error when it is neither, rather than a string-order
+  guess. An empty value asks for absence (`manager=`), `!=` for presence.
+- **output**: `--count-by col[,col2]` counts rows per unique value instead of
+  listing them.
+- **output**: `--since`/`--until` accept ISO, a local `YYYY-MM-DD HH:mm`,
+  `31/07/2026`, or a relative `-7d`; `--between HH:MM-HH:MM` filters by time of
+  day and wraps midnight. Both report which column they matched on, and how
+  many rows had no readable time.
+- **output**: a result the size of its limit now warns on stderr that it may be
+  truncated — keyed on what came back, so a filter that empties the result
+  still says the fetch was capped.
+- **protect**: `--site all` runs a command against every configured profile and
+  merges the results under a leading `site` column. Each site gets its own
+  client; a site that fails is named in the summary rather than discarding the
+  ones that answered. Media commands refuse to fan out.
+
+### Changed
+
+- **BREAKING — output**: an unknown or ambiguous column name in `--filter`,
+  `--sort` or `--fields` is now an error listing the real columns. Previously
+  `--filter` returned every row unfiltered, `--sort` returned them unsorted and
+  `--fields` silently dropped the name — a query that could not do what was
+  asked still looked like an answer. Scripts passing a slightly-wrong column
+  name will now fail instead of quietly returning everything. Commands that
+  declare their own `--filter`/`--since`/`--until`/`--between` (the Graph OData
+  filters, `unifi clients --filter`, `pbi activity --since`, …) are unaffected:
+  the global pipeline stands down for a flag the command owns.
+- **output**: `--filter`/`--sort`/`--limit` now apply in `--json` and `--ai`
+  modes. They previously affected only human and CSV/TSV output, so every
+  filter passed to a piped or AI-driven invocation was silently discarded.
+- **output**: `--fields` is applied after filtering, so a filter can name a
+  column the projection drops.
+
+### Fixed
+
+- **output**: `--count` evaluated filters against unredacted values, so a
+  regex filter on a secret-bearing column could recover it a character at a
+  time without `--include-secrets` and without an audit-log entry.
+- **output**: `--json`/`--ai` payloads were rebuilt from a rectangular table
+  whenever any pipeline flag was present, turning `null` into `""` and giving
+  every record every other record's keys. `--limit` alone was enough. Records
+  are now returned as they came.
+- **output**: a row filter on non-record data returned the payload unfiltered
+  in JSON/AI while erroring in human mode. Single-array envelopes (`{value:
+  […]}`) are unwrapped; anything else is a clear error.
+- **output**: a filter naming a field present in `data` but not in the table
+  headers wrote correct JSON and *then* threw, exiting non-zero on a valid
+  result.
+- **cli**: `--filter` followed by another flag silently dropped the filter.
+
 ## [0.6.0] - 2026-07-31
 
 ### Added

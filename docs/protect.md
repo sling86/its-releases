@@ -45,6 +45,7 @@ Named profiles use upper-case suffixed variables: `UNIFI_PROTECT_HOST_<SITE>`, `
 | `src/providers/protect/commands/` | Command definitions (split by resource) |
 | `src/providers/protect/definition.ts` | definition |
 | `src/providers/protect/query.ts` | query |
+| `src/providers/protect/sites.ts` | sites |
 
 ## Resources
 
@@ -67,7 +68,7 @@ List all Protect cameras with status. Surfaces the most common fields; pass --js
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -89,7 +90,7 @@ Get camera details. Pass the id (or any natural identifier) as the positional ar
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -108,7 +109,7 @@ List disconnected/offline cameras — those whose state is not CONNECTED.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -129,7 +130,7 @@ Get the full-resolution snapshot URL for a camera (authenticated endpoint). Pass
 |------|-------|-------------|---------|
 | `--width` | `` | Snapshot width in px | 1920 |
 | `--height` | `` | Snapshot height in px | 1080 |
-| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect cameras snapshot <camera_id>
@@ -153,7 +154,7 @@ Show NVR status, storage, and capacity. Surfaces the most common fields; pass --
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -195,7 +196,7 @@ List Protect events (motion, smart detections). Surfaces the most common fields;
 | `--smart` | `` | Smart-detection labels, filtered client-side (the NVR ignores the query param) | — |
 | `--all` | `` | Page through the whole window — the fix for silently truncated busy sites | — |
 | `--limit` | `` | Maximum events to return (default 30, ignored with --all) | 30 |
-| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -218,7 +219,7 @@ Download the historical still for an event. Identifiable imagery — --output is
 |------|-------|-------------|---------|
 | `--output` | `` | File to write the JPEG to | — |
 | `--width` | `` | Thumbnail width in px | 640 |
-| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect events thumbnail <event_id>
@@ -246,7 +247,7 @@ Export MP4 footage for one camera over an exact window. Identifiable footage —
 | `--end` | `` | Window end (default: now) | — |
 | `--minutes` | `` | Window length from --start when --end is omitted | — |
 | `--output` | `` | File to write the MP4 to | — |
-| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect footage export <camera>
@@ -270,7 +271,7 @@ Protect overview — NVR, cameras, storage, recent motion. Surfaces the most com
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables) | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
 
 **Examples:**
 

@@ -75,7 +75,11 @@ its <provider> <resource> [action] [args] [--flags]
 | `--tsv` | TSV output |
 | `--sort <column>` | Sort table output by column name |
 | `--order asc\|desc` | Sort direction (default: asc) |
-| `--filter col=val` | Filter rows — case-insensitive substring match, comma for OR |
+| `--filter col=val` | Filter rows. Operators: `=` `!=` `>` `<` `>=` `<=` `~` (regex) `!~`. Comma for OR on `=`/`!=`, empty value for absent/present. Repeat the flag to AND. Quote the expression in PowerShell |
+| `--count-by col[,col2]` | Count rows per unique value instead of listing them |
+| `--since <time>` | Only rows at/after this time — ISO, `2026-07-27 00:02`, or relative `-7d` |
+| `--until <time>` | Only rows at/before this time |
+| `--between HH:MM-HH:MM` | Only rows inside this time-of-day range, wrapping midnight |
 | `--fields a,b,c` | Select columns — works in all output modes (partial names OK) |
 | `--limit N` | Limit output to N rows (server-side where supported) |
 | `--count` | Show only the row count |
