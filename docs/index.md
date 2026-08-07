@@ -13,7 +13,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [rmm.md](./rmm.md) | Tactical RMM — 70 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 106 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
-| [bw.md](./bw.md) | Bitwarden — 37 commands across 10 resources |
+| [bw.md](./bw.md) | Bitwarden — 40 commands across 12 resources |
 | [sp.md](./sp.md) | SharePoint — 48 commands across 11 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 51 commands across 13 resources |
@@ -33,7 +33,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 3 commands across 2 resources |
 
-**22 providers** · **203 resources** · **714 commands**
+**22 providers** · **205 resources** · **717 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -116,8 +116,10 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [items](./bw.md#items) | list, search, get, totp, trash, recent, favourites, create, update, move, delete, restore, purge | `src/providers/bw/commands.ts` |
+| [items](./bw.md#items) | list, search, get, totp, trash, recent, favourites, create, update, share, move, delete, restore, purge | `src/providers/bw/commands.ts` |
 | [folders](./bw.md#folders) | list, get, summary, create, delete | `src/providers/bw/commands.ts` |
+| [organisations](./bw.md#organisations) | list | `src/providers/bw/commands.ts` |
+| [collections](./bw.md#collections) | list | `src/providers/bw/commands.ts` |
 | [password](./bw.md#password) | list | `src/providers/bw/commands.ts` |
 | [profile](./bw.md#profile) | list | `src/providers/bw/commands.ts` |
 | [dashboard](./bw.md#dashboard) | list | `src/providers/bw/commands.ts` |
@@ -746,6 +748,7 @@ its
 │   │   ├── favourites
 │   │   ├── create <name>
 │   │   ├── update <id>
+│   │   ├── share <id>
 │   │   ├── move <id>
 │   │   ├── delete <id>
 │   │   ├── restore <id>
@@ -756,6 +759,8 @@ its
 │   │   ├── summary
 │   │   ├── create <name>
 │   │   └── delete <name>
+│   ├── organisations (list)
+│   ├── collections (list)
 │   ├── password (list) <query>
 │   ├── profile (list)
 │   ├── dashboard (list)
@@ -1280,7 +1285,9 @@ src/
 │   ├── az-broker.ts
 │   ├── cache.ts
 │   ├── clipboard.ts
+│   ├── command-metadata.ts
 │   ├── completions.ts
+│   ├── daily-art.ts
 │   ├── delegated-auth.ts
 │   ├── errors.ts
 │   ├── filter.ts
@@ -1291,6 +1298,7 @@ src/
 │   ├── logger.ts
 │   ├── long-args.ts
 │   ├── output.ts
+│   ├── pipeline.ts
 │   ├── secrets-audit.ts
 │   ├── secrets.ts
 │   ├── session.ts

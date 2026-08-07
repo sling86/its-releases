@@ -33,6 +33,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Command | Description |
 |---------|-------------|
 | `its --help` | Global help — list all providers |
+| `its setup` | Show configuration status and the next setup command for every provider |
 | `its <provider>` | Provider help — list all resources and actions |
 | `its <provider> help` | Same as above |
 | `its <provider> <resource> help` | Resource help — list all actions, args, and flags |
@@ -44,7 +45,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Tactical RMM | `rmm` | 70 commands, 16 resources | [rmm.md](./rmm.md) |
 | Entra ID | `entra` | 106 commands, 21 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 116 commands, 25 resources | [dokploy.md](./dokploy.md) |
-| Bitwarden | `bw` | 37 commands, 10 resources | [bw.md](./bw.md) |
+| Bitwarden | `bw` | 40 commands, 12 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 48 commands, 11 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 43 commands, 17 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 51 commands, 13 resources | [wrike.md](./wrike.md) |
@@ -71,6 +72,7 @@ its <provider> <resource> [action] [args] [--flags]
 | `--ai`, `--compact` | Minimal JSON for AI piping. Arrays of 5+ rows are compacted into a lossless columnar envelope (see Output Modes) |
 | `--ai-flat` | Like `--ai` but plain row objects — skips the columnar envelope, for consumers that don't decode it |
 | `--json` | Full raw JSON output |
+| `--jsonl` | NDJSON — one compact JSON record per line |
 | `--csv` | CSV output |
 | `--tsv` | TSV output |
 | `--sort <column>` | Sort table output by column name |
@@ -85,10 +87,15 @@ its <provider> <resource> [action] [args] [--flags]
 | `--count` | Show only the row count |
 | `--auth auto\|delegated\|app` | OAuth mode for Graph providers. `auto` (default) tries delegated then falls back to app-only; `delegated` errors if no delegated token; `app` forces SP context |
 | `--profile <name>` | Force a delegated identity for one call, overriding the provider→profile map (see `its auth use`) |
+| `--stdin` | Fan a command out over JSON, NDJSON, scalar, or columnar `--ai` input |
+| `--map arg=.path` | Explicitly bind an input field to a positional argument; repeatable |
+| `--on-error stop\|continue` | Per-record failure policy |
+| `--max-input N` | Bound fan-out; required explicitly for irreversible commands |
+| `--dry-run` | Preview mutations without sending writes |
 | `--no-cache` | Bypass response cache |
 | `--max-chars N` | Character budget (AI mode only) |
 | `--no-colour` | Disable ANSI colours |
-| `--include-secrets` | Disable global secret redaction. Audit-logged (one JSON line per use) to `~/.its/audit.log`; secret-bearing flag values are masked before write; perms `0o600` (file) / `0o700` (dir) on POSIX. Never paste output into chat/AI tools |
+| `--include-secrets` | Reveal plaintext only in interactive human output; machine modes and redirected stdout reject it. Every use is audit-logged |
 | `-v`, `--verbose` | Debug output to stderr |
 | `-h`, `--help` | Show help |
 
@@ -128,6 +135,7 @@ its exo groups --fields name,email --csv > groups.csv
 | AI | `--ai` or non-TTY pipe | Minified JSON, respects `--max-chars`. Uniform arrays of 5+ rows become a columnar envelope (below) |
 | AI (flat) | `--ai-flat` | Minified JSON of plain row objects — no columnar envelope |
 | JSON | `--json` | Pretty-printed full JSON |
+| JSONL | `--jsonl` | NDJSON — one compact JSON record per line |
 
 ```bash
 its rmm agents                 # Human-readable table
@@ -150,11 +158,23 @@ To save tokens, `--ai` rewrites a uniform array of 5+ objects into a lossless co
 - Over `--max-chars`, trailing rows are dropped and a `_truncated` count is added — the output stays valid JSON.
 - If your consumer can't decode the envelope, use `--ai-flat` to get plain row objects instead.
 
-## Setup
+### Composable pipelines
 
-Each provider has an interactive setup wizard that checks prerequisites, prompts for missing config, writes to `.env.local`, and tests the connection.
+A downstream command with positional arguments accepts a JSON array, one JSON object, NDJSON, a scalar, or the columnar envelope emitted by `--ai`. Each input record must bind at least one argument. Command-owned `pipeFrom` metadata is preferred; use repeatable `--map arg=.path` when the source shape differs.
 
 ```bash
+its rmm agents --filter status=overdue --jsonl | its rmm agents ping --stdin --jsonl
+its rmm agents --jsonl | its rmm agents get --stdin --map agent=.agent_id --jsonl
+```
+
+Commands without positional arguments reject record fan-out. Mutations validate every binding before the first write and run sequentially. Fan-out defaults to 100 records; irreversible commands require an explicit `--max-input`. Per-record failures are written to stderr, successful records to stdout, and any failure produces a non-zero exit code.
+
+## Setup
+
+Each provider has an interactive setup wizard that checks prerequisites, prompts for missing config, writes non-secret values to `~/.its/.env`, stores secrets in the OS keychain when available, and tests the connection.
+
+```bash
+its setup                      # Configuration overview and next steps
 its <provider> setup           # Interactive — prompts for missing config
 its <provider> setup --check   # Non-interactive status check
 its <provider> setup --reset   # Re-run setup (overwrite existing config)

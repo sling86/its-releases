@@ -10,6 +10,8 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [Setup](#setup)
 - [items](#items)
 - [folders](#folders)
+- [organisations](#organisations)
+- [collections](#collections)
 - [password](#password)
 - [profile](#profile)
 - [dashboard](#dashboard)
@@ -39,41 +41,21 @@ its bw setup --reset   # Re-run setup (overwrite config)
 
 The master password is stored PIN-encrypted in `~/.its/secrets/`. During setup you choose a PIN (8+ characters) that encrypts your master password locally. The PIN is required each time you use `its bw`.
 
-**Multiple vaults** — the default vault is configured via env vars (`BW_URL`, `BW_EMAIL`/`BW_CLIENTID`+`BW_CLIENTSECRET`) plus the PIN-encrypted master password at `~/.its/secrets/bw-password.enc`. For additional vaults (e.g. a separate personal Vaultwarden), run `its bw vaults create <name>` — all credentials are encrypted into a single blob at `~/.its/secrets/bw-vault-<name>.enc`. Switch per-command with `--vault <name>` on any data command. List configured profiles with `its bw vaults`. Remove a profile with `its bw vaults delete <name> --confirm` (local config only — never touches the actual vault data).
+**Multiple vaults** — the default vault is configured via env vars (`BW_URL`, `BW_EMAIL`/`BW_CLIENTID`+`BW_CLIENTSECRET`) plus the PIN-encrypted master password at `~/.its/secrets/bw-password.enc`. For additional vaults, run `its bw vaults create <name>`; credentials are encrypted into `~/.its/secrets/bw-vault-<name>.enc`. Switch per command with `--vault <name>`, list profiles with `its bw vaults`, and remove local profile configuration with `its bw vaults delete <name> --confirm`.
 
-**Identity print** — every auth prints `Authenticating <email-or-clientid> @ <host>` to stderr so you can immediately spot when a forgotten `--vault <name>` flag has routed you to the wrong account.
+**Identity print** — every authentication prints `Authenticating <email-or-clientid> @ <host>` to stderr so a missing `--vault <name>` is visible before any command runs.
 
-**2FA behaviour** — on first successful TOTP/email auth a 30-day remember token is saved (OS keychain preferred, file fallback `~/.its/secrets/bw-2fa-remember.json`), so subsequent `its bw` calls skip the 2FA prompt. Tokens are keyed by email, so each `--vault <name>` profile keeps its own slot — switching vaults no longer re-prompts. If the server later challenges 2FA again (token expired or revoked), only that vault's slot is cleared. Bitwarden returns `invalid_username_or_password` for both bad master password AND bad TOTP — after a 2FA prompt this CLI re-messages it as "Invalid 2FA code" since the password has already been accepted at that point.
+**2FA behaviour** — after successful TOTP/email authentication, a 30-day remember token is stored per email (OS keychain preferred, encrypted-file fallback). If a server challenges again, only that vault profile's token is cleared.
 
-### Viewing secrets — `--copy` vs `--unsafe`
+### Viewing secrets
 
-`its` has a global secret redactor (`src/core/output.ts`) that walks every command result and replaces any field keyed `password`, `secret`, `token`, `apikey`, etc. with `***REDACTED***`. That means **plain `its bw password "x"` prints nothing useful by default** — you have to opt in to seeing the value. Two opt-ins, picked by use case:
+Secret fields are redacted by default. For interactive desk work, use `--copy` / `-c` on `its bw password <q>`, `its bw items get <id>`, or `its bw items totp <q>`; the value goes directly to the OS clipboard and is cleared after `--clear-after` seconds (default 30). `--copy` requires an interactive terminal and cannot be combined with `--json`, `--ai`, `--jsonl`, CSV/TSV, or redirected stdout.
 
-| Goal | Flag | Behaviour |
-|------|------|-----------|
-| You want to paste the secret somewhere | `--copy` / `-c` | Pipes value to OS clipboard over stdin (`clip.exe` / `pbcopy` / `wl-copy` / `xclip`). Replaces the field with a placeholder so the value never lands in stdout, JSON, or any wrapping transcript. Detached subprocess wipes the clipboard after `--clear-after` seconds (default 30, 0 disables). |
-| Another tool needs to consume the secret over a pipe | `--unsafe` | Disables the redactor for this call. Pair with `--json` and `jq` to feed the secret into the next process via stdin — never bind to a shell variable. |
-
-Applies to `its bw password <q>`, `its bw items get <id>`, and `its bw items totp <q>`. Examples:
-
-```bash
-its bw password "github pat" -c                          # copy to clipboard, auto-clear in 30s
-its bw items totp "github" -c --clear-after 10
-
-# pipe to a consumer (note --unsafe — without it, jq sees "***REDACTED***")
-its bw password "ghcr" --json --unsafe \
-  | jq -r .data.password \
-  | docker login ghcr.io -u tony --password-stdin
-```
+`--include-secrets` / `--unsafe` reveals plaintext only in interactive human output and is audit-logged. Machine output and redirected stdout reject plaintext-secret mode rather than leaking a value into a pipe or transcript. Do not use `--json --unsafe`, and never paste revealed output into chat, tickets, or AI tools.
 
 ### Using from Claude Code or other AI shells
 
-Claude Code's Bash tool runs non-interactively, so the PIN prompt for `its bw` will hang. Two ways to make `its bw` callable from an AI session:
-
-1. **Recommended for interactive desk work**: run `its bw session unlock` once yourself in a real terminal. The 8-hour session at `~/.its/sessions/bw.json` is then inherited by every subsequent `its bw` call — including those Claude Code makes from your shell. Re-unlock when the session expires.
-2. **For unattended use only** (CI, cron, hooks): set `BW_PASSWORD_FILE` to a path with mode `0600` containing the master password. The CLI reads it without prompting.
-
-With a session active, prefer `-c` over `--unsafe` when Claude is the one running the command — `-c` keeps the secret out of the conversation transcript while still landing it on your OS clipboard for you to paste.
+AI shell commands run non-interactively, so first run `its bw session unlock` yourself in a real terminal. The 8-hour session at `~/.its/sessions/bw.json` is inherited by subsequent calls. For unattended CI, cron, or hooks only, set `BW_PASSWORD_FILE` to a mode-`0600` file. With an unlocked session, use interactive `-c` when a human needs the value; raw secret stdout is deliberately unavailable to the AI process.
 
 ### Source Files
 
@@ -104,6 +86,7 @@ With a session active, prefer `-c` over `--unsafe` when Claude is the one runnin
 | `its bw items favourites` | List favourite vault items. Items the user has starred. |
 | `its bw items create <name>` | Create a new vault item (login, note, card, or identity). Idempotent on duplicate names — use update/edit to mutate an existing record. |
 | `its bw items update <id>` | Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. Use --field-remove to drop a custom field. |
+| `its bw items share <id>` | Irreversibly transfer a personal item to an organisation collection. There is no automatic rollback. |
 | `its bw items move <id>` | Move vault items to a folder. Move an item between folders. --confirm required. |
 | `its bw items delete <id>` | Move a vault item to trash (soft-delete, recoverable). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
 | `its bw items restore <id>` | Restore a vault item from the trash. Restore a soft-deleted item from trash. |
@@ -120,6 +103,9 @@ List all vault items. Surfaces the most common fields; pass --json for raw shape
 | `--type` | `` | Filter by type (login/note/card/identity) | — |
 | `--folder` | `` | Filter by folder name | — |
 | `--favourite` | `` | Show only favourites | — |
+| `--organisation` | `` | Organisation name or ID | — |
+| `--collection` | `` | Collection name or ID | — |
+| `--personal-only` | `` | Show only personal items | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
 **Examples:**
@@ -141,6 +127,9 @@ Search vault items by name, username, URL, or notes. Substring match across the 
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
+| `--organisation` | `` | Organisation name or ID | — |
+| `--collection` | `` | Collection name or ID | — |
+| `--personal-only` | `` | Show only personal items | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
 **Examples:**
@@ -272,6 +261,8 @@ Create a new vault item (login, note, card, or identity). Idempotent on duplicat
 | `--folder` | `` | Folder name (created if it does not exist) | — |
 | `--field` | `` | Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. | — |
 | `--field-hidden` | `` | Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). | — |
+| `--organisation` | `` | Organisation name or ID | — |
+| `--collection` | `` | Collection name or ID | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
 **Examples:**
@@ -322,6 +313,23 @@ its bw items update <item-id> --password "NewP@ss" --confirm
 
 # Pipe-friendly output — use with jq / scripts.
 its bw items update <item-id> --password "NewP@ss" --confirm --json
+```
+
+#### `its bw items share <id>`
+
+Irreversibly transfer a personal item to an organisation collection. There is no automatic rollback.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--organisation` | `` | Organisation name or ID | — |
+| `--collection` | `` | Collection name or ID | — |
+| `--confirm` | `` | Confirm the irreversible ownership transfer | — |
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+```bash
+its bw items share <id>
 ```
 
 #### `its bw items move <id>`
@@ -513,6 +521,55 @@ Delete a folder (items in it are moved to No Folder, not deleted).
 
 ```bash
 its bw folders delete "Old stuff" --confirm
+```
+
+---
+
+### organisations
+
+> Source: `src/providers/bw/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bw organisations` | List organisations available to the selected vault account. |
+
+#### `its bw organisations`
+
+List organisations available to the selected vault account.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+```bash
+its bw organisations
+```
+
+---
+
+### collections
+
+> Source: `src/providers/bw/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bw collections` | List collections, optionally scoped by organisation name or ID. |
+
+#### `its bw collections`
+
+List collections, optionally scoped by organisation name or ID.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--organisation` | `` | Organisation name or ID | — |
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+```bash
+its bw collections
 ```
 
 ---
