@@ -15,6 +15,41 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.8.1] - 2026-08-07
+
+### Fixed
+
+- **Safety:** 40 commands that issue a POST/PUT/PATCH/DELETE or a shell
+  mutation were classified read-only, because `isMutationCommand` falls back to
+  a hand-maintained verb allow-list and that fallback is fail-open — an
+  unrecognised action verb silently counts as a read. Among them
+  `rmm agents run`, `entra users revoke-sessions`, `entra ca patch`,
+  `unifi wlans password`, `sp permissions grant-app` and the six Wrike
+  `set-due`/`update-*` commands. For the args-bound ones this meant `--stdin`
+  fan-out ran with no `--max-input` cap, **six writes in parallel** instead of
+  serially, and no validation of mapped values before the first write — so a
+  redacted or malformed row partway through left a partially mutated batch. All
+  40 now declare `mutates: true`; `entra users revoke-sessions`,
+  `entra xtenant partner-add`, `rmm agents run`, `sp permissions grant-app` and
+  `unifi wlans password` also declare `irreversible: true`, which requires an
+  explicit `--max-input` on any fan-out.
+- **Help UI:** `isReadOnlyInvocation` gates the help-UI HTTP and WS execution
+  paths so mutations stay terminal-only, but it matched on the action verb
+  alone. `sp files folder`, `outlook mail unread` and `docs build list` all
+  write and were reachable from the browser. The gate now also honours the
+  command's own `mutates` declaration.
+- **SharePoint:** `sp files folder` creates a folder; its description also
+  claimed it "returns the contents of a folder by path", which is what taught
+  the verb-based gates to treat it as a read.
+
+### Added
+
+- `tests/mutation-classification.test.ts` — fail-closed guard: every command
+  must be classified by an explicit `mutates`, `cacheable: false`, a known
+  mutation verb, or a curated read verb. A new verb in none of them fails the
+  build instead of defaulting to read-only. It also pins that no `mutates: true`
+  command passes the help-UI gate.
+
 ## [0.8.0] - 2026-08-07
 
 ### Added
