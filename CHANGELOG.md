@@ -15,6 +15,47 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.8.0] - 2026-08-07
+
+### Added
+
+- **CLI:** Bare `its` now greets the operator with a three-second eased,
+  diagonal heatmap and independent shine; other interactive commands use a
+  shortened version on their first invocation each local day. Machine output,
+  CI, `NO_COLOR`, `--no-colour` and `ITS_NO_DAILY_ART=1` remain silent.
+- **CLI:** Added `--jsonl` NDJSON output and composable `--stdin` pipelines
+  with explicit `--map`, command-owned binding metadata, legacy `--ai`
+  compatibility, bounded mutation fan-out, structured failures and fail-closed
+  handling of redacted or plaintext secret input.
+- **Bitwarden:** Added named vault, organisation and collection discovery and
+  filtering, ownership provenance on item reads, organisation-aware item
+  creation, and explicitly confirmed irreversible sharing of personal items
+  into organisation collections.
+
+### Fixed
+
+- **CLI pipelines:** Preserve plain records that contain one array field,
+  preserve each NDJSON line as one record, accept scalar stdin, reject rows
+  that bind no argument, reject record fan-out for commands with no positional
+  arguments, and count null/no-op command results as failures.
+- **CLI safety:** Classify write and irreversible commands explicitly enough
+  for `--dry-run` and `--max-input` enforcement, revalidate secret-output and
+  runtime flags after interactive command selection, and keep pipeline-control
+  flags out of response cache keys.
+- **Bitwarden:** Validate organisation and collection ownership before creating
+  a personal folder, so rejected organisation requests leave no folder behind.
+- **Docs:** Removed the impossible plaintext-secret pipeline example. Machine
+  output and redirected stdout intentionally reject `--include-secrets` /
+  `--unsafe`; Bitwarden `--copy` is interactive-only.
+- **Onboarding:** Shell completion now exposes every global command, completion
+  installer choice and provider setup flag. Unconfigured providers retain full
+  provider/resource help, `its setup --help` documents the first-run flow, and
+  the default help puts setup and completion installation up front.
+- **Docs:** Setup guidance now points at `~/.its/.env` and the OS keychain. The
+  tracked plugin skill mirrors the canonical skill/reference tree during docs
+  generation, and `docs:check` verifies every generated copy without failing
+  merely because an already-generated working tree is uncommitted.
+
 ## [0.7.1] - 2026-07-31
 
 ### Fixed
