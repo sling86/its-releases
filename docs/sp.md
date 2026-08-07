@@ -436,7 +436,7 @@ its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm -
 |---------|-------------|
 | `its sp files download` | Download a drive item to disk (--out) or pipe binary-safe to stdout. Resolves the pre-signed @microsoft.graph.downloadUrl from item metadata and fetches that — `sp graph get .../content` corrupts binary on the UTF-8 path. |
 | `its sp files upload <siteId>` | Upload a text file. Stream a local file to the resource. |
-| `its sp files folder <siteId>` | Create a folder. Returns the contents of a folder by path. |
+| `its sp files folder <siteId>` | Create a folder under a parent item. |
 | `its sp files delete <siteId>` | Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
 | `its sp files share <siteId>` | Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked). |
 | `its sp files move <siteId>` | Move or rename a file. Move an item between folders (reversible). |
@@ -498,7 +498,7 @@ its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --nam
 
 #### `its sp files folder <siteId>`
 
-Create a folder. Returns the contents of a folder by path.
+Create a folder under a parent item.
 
 **Flags:**
 
