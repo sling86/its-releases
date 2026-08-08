@@ -97,9 +97,6 @@ Get managed device details. Pass the id (or any natural identifier) as the posit
 
 ```bash
 its intune devices get <serial>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune devices get <serial> --json
 ```
 
 #### `its intune devices search <query>`
@@ -110,9 +107,6 @@ Search devices by name, user, or serial number. Substring match across the most 
 
 ```bash
 its intune devices search "jane"
-
-# Pipe-friendly output — use with jq / scripts.
-its intune devices search "jane" --json
 ```
 
 #### `its intune devices sync <id>`
@@ -123,9 +117,6 @@ Trigger a device sync. Force the device to sync with Intune.
 
 ```bash
 its intune devices sync <device-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune devices sync <device-id> --json
 ```
 
 #### `its intune devices noncompliant`
@@ -136,9 +127,6 @@ List devices failing compliance. Returns devices failing compliance checks.
 
 ```bash
 its intune devices noncompliant
-
-# Pipe-friendly output — use with jq / scripts.
-its intune devices noncompliant --json
 ```
 
 ---
@@ -200,9 +188,6 @@ List managed apps. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its intune apps
 
-# Pipe-friendly output — use with jq / scripts.
-its intune apps --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune apps --watch
 ```
@@ -215,9 +200,6 @@ Get app details and assignments. Pass the id (or any natural identifier) as the 
 
 ```bash
 its intune apps get <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune apps get <app-id> --json
 ```
 
 #### `its intune apps required`
@@ -229,9 +211,6 @@ List apps with required assignments (blocks ESP). Returns apps required by Intun
 ```bash
 # Assignments with intent=required
 its intune apps required
-
-# Pipe-friendly output — use with jq / scripts.
-its intune apps required --json
 ```
 
 ---
@@ -262,9 +241,6 @@ List platform scripts. Surfaces the most common fields; pass --json for raw shap
 ```bash
 its intune scripts
 
-# Pipe-friendly output — use with jq / scripts.
-its intune scripts --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune scripts --watch
 ```
@@ -277,9 +253,6 @@ Get platform script details and content. Pass the id (or any natural identifier)
 
 ```bash
 its intune scripts get <script-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune scripts get <script-id> --json
 ```
 
 #### `its intune scripts status <id>`
@@ -291,9 +264,6 @@ Get script run status per device. Returns current state plus any pending operati
 ```bash
 # Per-device success/fail
 its intune scripts status <script-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune scripts status <script-id> --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune scripts status <script-id> --watch
@@ -327,9 +297,6 @@ List proactive remediation scripts. Surfaces the most common fields; pass --json
 ```bash
 its intune remediations
 
-# Pipe-friendly output — use with jq / scripts.
-its intune remediations --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune remediations --watch
 ```
@@ -342,9 +309,6 @@ Get remediation script details. Pass the id (or any natural identifier) as the p
 
 ```bash
 its intune remediations get <id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune remediations get <id> --json
 ```
 
 #### `its intune remediations status <id>`
@@ -355,9 +319,6 @@ Get remediation run status per device. Returns current state plus any pending op
 
 ```bash
 its intune remediations status <id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune remediations status <id> --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune remediations status <id> --watch
@@ -392,9 +353,6 @@ List device compliance policies. Surfaces the most common fields; pass --json fo
 ```bash
 its intune policies
 
-# Pipe-friendly output — use with jq / scripts.
-its intune policies --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune policies --watch
 ```
@@ -407,9 +365,6 @@ Get compliance policy details. Pass the id (or any natural identifier) as the po
 
 ```bash
 its intune policies get <policy-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune policies get <policy-id> --json
 ```
 
 #### `its intune policies configs`
@@ -428,9 +383,6 @@ List device configuration profiles. Configuration profiles applied to the device
 
 ```bash
 its intune policies configs
-
-# Pipe-friendly output — use with jq / scripts.
-its intune policies configs --json
 ```
 
 ---
@@ -455,9 +407,6 @@ List Enrollment Status Page profiles. Surfaces the most common fields; pass --js
 # Enrolment Status Page profiles
 its intune esp
 
-# Pipe-friendly output — use with jq / scripts.
-its intune esp --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune esp --watch
 ```
@@ -470,9 +419,6 @@ Get ESP profile details and tracked apps. Pass the id (or any natural identifier
 
 ```bash
 its intune esp get <profile-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune esp get <profile-id> --json
 ```
 
 #### `its intune esp update [id]`
@@ -493,9 +439,6 @@ Update ESP profile settings (timeout, tracked apps). PATCH semantics — only th
 
 ```bash
 its intune esp update <profile-id> --timeout 120
-
-# Pipe-friendly output — use with jq / scripts.
-its intune esp update <profile-id> --timeout 120 --json
 ```
 
 ---
@@ -519,9 +462,6 @@ List Autopilot deployment profiles. Surfaces the most common fields; pass --json
 ```bash
 its intune autopilot
 
-# Pipe-friendly output — use with jq / scripts.
-its intune autopilot --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune autopilot --watch
 ```
@@ -541,9 +481,6 @@ List Autopilot-registered devices. Returns devices for the resource.
 
 ```bash
 its intune autopilot devices
-
-# Pipe-friendly output — use with jq / scripts.
-its intune autopilot devices --json
 ```
 
 #### `its intune autopilot tag <serial> [tag]`
@@ -560,9 +497,6 @@ Set group tag on an Autopilot device. Set or clear a tag value.
 
 ```bash
 its intune autopilot tag <serial> "Office-Standard"
-
-# Pipe-friendly output — use with jq / scripts.
-its intune autopilot tag <serial> "Office-Standard" --json
 ```
 
 ---
@@ -583,9 +517,6 @@ Reverse lookup — list every Intune resource assigned to a group.
 
 ```bash
 its intune group find "All Devices"
-
-# Pipe-friendly output — use with jq / scripts.
-its intune group find "All Devices" --json
 ```
 
 ---
@@ -613,8 +544,6 @@ Audit Intune assignments — per-target matrix (which configs/compliance/apps hi
 
 ```bash
 its intune assignments audit
-
-its intune assignments audit --json
 
 its intune assignments audit --all
 ```
@@ -646,9 +575,6 @@ List Settings Catalog policies (the modern Intune configuration surface).
 # Modern Intune configuration policies
 its intune settings
 
-# Pipe-friendly output — use with jq / scripts.
-its intune settings --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune settings --watch
 ```
@@ -661,9 +587,6 @@ Get a Settings Catalog policy with assignments expanded.
 
 ```bash
 its intune settings get <policy-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune settings get <policy-id> --json
 ```
 
 ---
@@ -695,9 +618,6 @@ List Endpoint Security policy intents (firewall, ASR, BitLocker, etc.).
 # Firewall, ASR, BitLocker policies
 its intune intents
 
-# Pipe-friendly output — use with jq / scripts.
-its intune intents --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune intents --watch
 ```
@@ -710,9 +630,6 @@ Get an Endpoint Security intent with assignments expanded.
 
 ```bash
 its intune intents get <intent-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune intents get <intent-id> --json
 ```
 
 ---
@@ -744,9 +661,6 @@ List Windows Update profiles. --type feature|quality|driver (default feature).
 ```bash
 its intune updates
 
-# Pipe-friendly output — use with jq / scripts.
-its intune updates --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune updates --watch
 ```
@@ -765,9 +679,6 @@ Get a Windows Update profile by id (auto-detects type — pass --type to disambi
 
 ```bash
 its intune updates get <ring-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune updates get <ring-id> --json
 ```
 
 ---
@@ -796,9 +707,6 @@ List mobile app configuration policies (per-app key/value config).
 ```bash
 its intune appconfig
 
-# Pipe-friendly output — use with jq / scripts.
-its intune appconfig --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune appconfig --watch
 ```
@@ -811,9 +719,6 @@ Get an app configuration policy with assignments expanded.
 
 ```bash
 its intune appconfig get <policy-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune appconfig get <policy-id> --json
 ```
 
 ---
@@ -865,9 +770,6 @@ Get an App Protection policy by id. Pass the id (or any natural identifier) as t
 
 ```bash
 its intune appprotection get <policy-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its intune appprotection get <policy-id> --json
 ```
 
 ---
@@ -895,9 +797,6 @@ Intune health snapshot — non-compliant devices, sync staleness, unencrypted en
 
 ```bash
 its intune doctor
-
-# Pipe-friendly output — use with jq / scripts.
-its intune doctor --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune doctor --watch
@@ -932,9 +831,6 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 
 ```bash
 its intune graph get "/deviceManagement/managedDevices?$top=5"
-
-# Pipe-friendly output — use with jq / scripts.
-its intune graph get "/deviceManagement/managedDevices?$top=5" --json
 ```
 
 #### `its intune graph post <path>`
@@ -953,9 +849,6 @@ Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 
 ```bash
 its intune graph post "/deviceManagement/managedDevices/<id>/syncDevice"
-
-# Pipe-friendly output — use with jq / scripts.
-its intune graph post "/deviceManagement/managedDevices/<id>/syncDevice" --json
 ```
 
 #### `its intune graph patch <path>`
@@ -974,9 +867,6 @@ Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta).
 
 ```bash
 its intune graph patch "/deviceManagement/deviceCompliancePolicies/<id>" --body @./patch.json
-
-# Pipe-friendly output — use with jq / scripts.
-its intune graph patch "/deviceManagement/deviceCompliancePolicies/<id>" --body @./patch.json --json
 ```
 
 #### `its intune graph put <path>`
@@ -995,9 +885,6 @@ Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 
 ```bash
 its intune graph put "/deviceManagement/managedDevices/<id>" --body @./body.json
-
-# Pipe-friendly output — use with jq / scripts.
-its intune graph put "/deviceManagement/managedDevices/<id>" --body @./body.json --json
 ```
 
 #### `its intune graph delete <path>`

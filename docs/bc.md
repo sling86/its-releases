@@ -71,9 +71,6 @@ List all BC companies visible to the service principal. Surfaces the most common
 ```bash
 its bc companies
 
-# Pipe-friendly output — use with jq / scripts.
-its bc companies --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its bc companies --watch
 ```
@@ -92,9 +89,6 @@ Resolve a company by name/id/partial match. Pass the id (or any natural identifi
 
 ```bash
 its bc companies get "Head Office"
-
-# Pipe-friendly output — use with jq / scripts.
-its bc companies get "Head Office" --json
 ```
 
 ---
@@ -171,9 +165,6 @@ Query any BC entity — OData passthrough with filter/top/select.
 
 ```bash
 its bc query get items --company <company-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its bc query get items --company <company-id> --json
 ```
 
 ---
@@ -202,9 +193,6 @@ Get a single BC record by entity + ID. Pass the id (or any natural identifier) a
 
 ```bash
 its bc record get items <item-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its bc record get items <item-id> --json
 ```
 
 ---
@@ -231,9 +219,6 @@ Probe BC connectivity by listing companies. Takes no positional argument; use --
 
 ```bash
 its bc health
-
-# Pipe-friendly output — use with jq / scripts.
-its bc health --json
 ```
 
 ---

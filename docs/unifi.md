@@ -82,9 +82,6 @@ List all UniFi sites. Surfaces the most common fields; pass --json for raw shape
 ```bash
 its unifi sites
 
-# Pipe-friendly output — use with jq / scripts.
-its unifi sites --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi sites --watch
 ```
@@ -105,9 +102,6 @@ Site health — WAN/WLAN/LAN subsystem status. Live health check across the reso
 # WAN/LAN/WLAN status per site
 its unifi sites health
 
-# Useful as a watchdog feed for site-level alerts.
-its unifi sites health --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi sites health --watch
 ```
@@ -126,9 +120,6 @@ Controller version, uptime, and IP addresses. Returns the controller version + u
 
 ```bash
 its unifi sites sysinfo
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi sites sysinfo --json
 ```
 
 ---
@@ -157,7 +148,7 @@ List all UniFi devices with name, MAC, IP, type, state, uptime, clients.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--type` | `` | Filter by type (ap|switch|gateway|all) | — |
+| `--type` | `` | Filter by type | — |
 | `--site` | `` | Site name override | — |
 
 **Examples:**
@@ -185,9 +176,6 @@ Get device detail by MAC address. Pass the id (or any natural identifier) as the
 
 ```bash
 its unifi devices get <mac>
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi devices get <mac> --json
 ```
 
 #### `its unifi devices restart <mac>`
@@ -205,9 +193,6 @@ Restart a device by MAC address. Stop + start in one call.
 
 ```bash
 its unifi devices restart <mac> --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi devices restart <mac> --confirm --json
 ```
 
 #### `its unifi devices locate <mac>`
@@ -225,9 +210,6 @@ Toggle locate LED on a device. Flash the device's locate LED.
 
 ```bash
 its unifi devices locate <mac>
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi devices locate <mac> --json
 ```
 
 #### `its unifi devices upgrade <mac>`
@@ -245,9 +227,6 @@ Trigger firmware upgrade on a device. Trigger a firmware upgrade.
 
 ```bash
 its unifi devices upgrade <mac> --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi devices upgrade <mac> --confirm --json
 ```
 
 #### `its unifi devices provision <mac>`
@@ -264,9 +243,6 @@ Force re-provision a device. Force the device to re-pull its provisioning.
 
 ```bash
 its unifi devices provision <mac>
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi devices provision <mac> --json
 ```
 
 #### `its unifi devices power-cycle`
@@ -286,9 +262,6 @@ PoE power cycle a switch port. Cycle PoE on a port. --confirm required.
 
 ```bash
 its unifi devices power-cycle --mac <mac> --port 5
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi devices power-cycle --mac <mac> --port 5 --json
 ```
 
 #### `its unifi devices leds`
@@ -306,9 +279,6 @@ Toggle all site LEDs on or off. Toggle the controller's status LEDs.
 
 ```bash
 its unifi devices leds off
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi devices leds off --json
 ```
 
 #### `its unifi devices poe`
@@ -326,9 +296,6 @@ PoE power summary for all switches. Returns the PoE budget + per-port consumptio
 ```bash
 # Power budget + per-port draw
 its unifi devices poe
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi devices poe --json
 ```
 
 ---
@@ -355,7 +322,7 @@ List online clients. Surfaces the most common fields; pass --json for raw shape.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--filter` | `` | Filter by connection type (wired|wireless|all) | all |
+| `--filter` | `` | Filter by connection type | all |
 | `--site` | `` | Site name override | — |
 
 **Examples:**
@@ -382,9 +349,6 @@ Get client detail by MAC address. Pass the id (or any natural identifier) as the
 
 ```bash
 its unifi clients get <mac>
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi clients get <mac> --json
 ```
 
 #### `its unifi clients search <query>`
@@ -401,9 +365,6 @@ Search all known clients by name, hostname, IP, or MAC. Substring match across t
 
 ```bash
 its unifi clients search "jane"
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi clients search "jane" --json
 ```
 
 #### `its unifi clients block <mac>`
@@ -421,9 +382,6 @@ Block a client by MAC address. Blocks a client. Reversible via `unblock`.
 
 ```bash
 its unifi clients block <mac>
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi clients block <mac> --json
 ```
 
 #### `its unifi clients unblock <mac>`
@@ -440,9 +398,6 @@ Unblock a client by MAC address. Re-allows a previously blocked client.
 
 ```bash
 its unifi clients unblock <mac>
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi clients unblock <mac> --json
 ```
 
 #### `its unifi clients reconnect <mac>`
@@ -459,9 +414,6 @@ Force reconnect a client. Force a client to disassociate + re-auth.
 
 ```bash
 its unifi clients reconnect <mac>
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi clients reconnect <mac> --json
 ```
 
 #### `its unifi clients offline`
@@ -480,9 +432,6 @@ List recently disconnected clients. Returns recently-disconnected clients.
 ```bash
 # Recently-disconnected clients
 its unifi clients offline
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi clients offline --json
 ```
 
 ---
@@ -514,9 +463,6 @@ Authorise a guest WiFi client. Permits a guest network device.
 
 ```bash
 its unifi guests authorise <mac> --minutes 1440
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi guests authorise <mac> --minutes 1440 --json
 ```
 
 #### `its unifi guests unauthorise <mac>`
@@ -533,9 +479,6 @@ Revoke guest WiFi authorisation. Revokes a guest authorisation.
 
 ```bash
 its unifi guests unauthorise <mac>
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi guests unauthorise <mac> --json
 ```
 
 ---
@@ -562,9 +505,6 @@ List networks and VLANs. Surfaces the most common fields; pass --json for raw sh
 
 ```bash
 its unifi networks
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi networks --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi networks --watch
@@ -596,9 +536,6 @@ List WiFi SSIDs. Surfaces the most common fields; pass --json for raw shape.
 
 ```bash
 its unifi wlans
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi wlans --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi wlans --watch
@@ -641,9 +578,6 @@ Update WiFi password for an SSID. Rotate a PSK / passphrase. Disconnects every c
 
 ```bash
 its unifi wlans password <wlan-id> --passphrase "new-password" --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi wlans password <wlan-id> --passphrase "new-password" --confirm --json
 ```
 
 ---
@@ -672,9 +606,6 @@ List firewall rules. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its unifi firewall
 
-# Pipe-friendly output — use with jq / scripts.
-its unifi firewall --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi firewall --watch
 ```
@@ -693,9 +624,6 @@ List firewall groups. List groups for a resource.
 
 ```bash
 its unifi firewall groups
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi firewall groups --json
 ```
 
 ---
@@ -722,9 +650,6 @@ List static routes. Surfaces the most common fields; pass --json for raw shape.
 
 ```bash
 its unifi routes
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi routes --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi routes --watch
@@ -761,9 +686,6 @@ its unifi port-forwards
 
 # Scope to a specific site.
 its unifi portforwards --site t7kq3dcp
-
-# Raw rule shape including WAN interface and logging.
-its unifi portforwards --json
 ```
 
 #### `its unifi portforwards toggle <id>`
@@ -816,9 +738,6 @@ its unifi port-forwards
 
 # Scope to a specific site.
 its unifi portforwards --site t7kq3dcp
-
-# Raw rule shape including WAN interface and logging.
-its unifi portforwards --json
 ```
 
 #### `its unifi port-forwards toggle <id>`
@@ -871,13 +790,7 @@ its unifi port-forwards
 # Scope to a specific site.
 its unifi portforwards --site t7kq3dcp
 
-# Raw rule shape including WAN interface and logging.
-its unifi portforwards --json
-
 its unifi ports
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi ports --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi ports --watch
@@ -910,9 +823,6 @@ List recent events. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its unifi events --hours 1
 
-# Pipe-friendly output — use with jq / scripts.
-its unifi events --hours 1 --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi events --hours 1 --watch
 ```
@@ -944,9 +854,6 @@ List alarms with archived status. Surfaces the most common fields; pass --json f
 ```bash
 its unifi alarms
 
-# Pipe-friendly output — use with jq / scripts.
-its unifi alarms --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi alarms --watch
 ```
@@ -965,9 +872,6 @@ Count active (non-archived) alarms. Returns a single number — cheap for thresh
 
 ```bash
 its unifi alarms count
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi alarms count --json
 ```
 
 #### `its unifi alarms archive`
@@ -985,9 +889,6 @@ Archive all alarms. Archive (soft-delete) the record. Reversible.
 
 ```bash
 its unifi alarms archive --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi alarms archive --confirm --json
 ```
 
 ---
@@ -1016,9 +917,6 @@ List detected rogue access points. Surfaces the most common fields; pass --json 
 ```bash
 # Detected rogue access points
 its unifi rogue
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi rogue --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi rogue --watch
@@ -1051,9 +949,6 @@ List guest WiFi vouchers. Surfaces the most common fields; pass --json for raw s
 ```bash
 its unifi vouchers
 
-# Pipe-friendly output — use with jq / scripts.
-its unifi vouchers --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi vouchers --watch
 ```
@@ -1076,9 +971,6 @@ Create guest WiFi vouchers. Idempotent on duplicate names — use update/edit to
 
 ```bash
 its unifi vouchers create --minutes 1440 --count 5
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi vouchers create --minutes 1440 --count 5 --json
 ```
 
 #### `its unifi vouchers revoke <id>`
@@ -1096,9 +988,6 @@ Revoke/delete a guest voucher. Reverse an assignment. --confirm where required.
 
 ```bash
 its unifi vouchers revoke <voucher-id> --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi vouchers revoke <voucher-id> --confirm --json
 ```
 
 ---
@@ -1125,9 +1014,6 @@ Comprehensive site overview — health, devices, clients, alarms.
 
 ```bash
 its unifi dashboard
-
-# Pipe-friendly output — use with jq / scripts.
-its unifi dashboard --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi dashboard --watch

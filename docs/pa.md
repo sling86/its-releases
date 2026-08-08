@@ -72,9 +72,6 @@ List Power Platform environments (admin). Surfaces the most common fields; pass 
 ```bash
 its pa environments
 
-# Pipe-friendly output — use with jq / scripts.
-its pa environments --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its pa environments --watch
 ```
@@ -87,9 +84,6 @@ Show details for one environment. Pass the id (or any natural identifier) as the
 
 ```bash
 its pa environments get <env-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its pa environments get <env-id> --json
 ```
 
 ---
@@ -145,9 +139,6 @@ Show flow details (definition, triggers, actions). Pass the id (or any natural i
 
 ```bash
 its pa flows get <flow-id> --environment <env-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its pa flows get <flow-id> --environment <env-id> --json
 ```
 
 #### `its pa flows permissions <flow_id>`
@@ -194,9 +185,6 @@ Turn a flow on (admin). Start the resource. Idempotent.
 
 ```bash
 its pa flows start <flow-id> --environment <env-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its pa flows start <flow-id> --environment <env-id> --json
 ```
 
 #### `its pa flows delete <flow_id>`
@@ -249,9 +237,6 @@ List recent runs for a flow. Returns historical run records.
 
 ```bash
 its pa flows runs <flow-id> --environment <env-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its pa flows runs <flow-id> --environment <env-id> --json
 ```
 
 ---
@@ -278,9 +263,6 @@ List Power Apps canvas apps. Defaults to all envs — scope with --environment <
 
 ```bash
 its pa apps --environment <env-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its pa apps --environment <env-id> --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its pa apps --environment <env-id> --watch
@@ -310,9 +292,6 @@ List connections in an environment. Surfaces the most common fields; pass --json
 
 ```bash
 its pa connections --environment <env-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its pa connections --environment <env-id> --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its pa connections --environment <env-id> --watch

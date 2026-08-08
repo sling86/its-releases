@@ -77,9 +77,6 @@ List Power BI workspaces (admin API). Surfaces the most common fields; pass --js
 ```bash
 its pbi workspaces
 
-# Pipe-friendly output — use with jq / scripts.
-its pbi workspaces --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its pbi workspaces --watch
 ```
@@ -92,9 +89,6 @@ List users/groups with access to a workspace. Returns direct members; nested gro
 
 ```bash
 its pbi workspaces members <workspace-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi workspaces members <workspace-id> --json
 ```
 
 #### `its pbi workspaces add-user <workspace_id>`
@@ -113,9 +107,6 @@ Add a user/group/app to a workspace (admin). Add a primary user; idempotent.
 
 ```bash
 its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member --json
 ```
 
 #### `its pbi workspaces update-user <workspace_id>`
@@ -134,9 +125,6 @@ Update a user's access right on a workspace. Change the primary user.
 
 ```bash
 its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin --json
 ```
 
 #### `its pbi workspaces remove-user <workspace_id>`
@@ -154,9 +142,6 @@ Remove a user/group/app from a workspace (admin, requires --confirm). Reverse of
 
 ```bash
 its pbi workspaces remove-user <workspace-id> --user jane.smith@example.com --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi workspaces remove-user <workspace-id> --user jane.smith@example.com --confirm --json
 ```
 
 ---
@@ -200,9 +185,6 @@ Fuzzy search reports by name across all workspaces. Substring match across the m
 
 ```bash
 its pbi reports search "sales"
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi reports search "sales" --json
 ```
 
 #### `its pbi reports url <report_id>`
@@ -214,9 +196,6 @@ Print the web URL for a report. Returns a reachable connection URL.
 ```bash
 # Embed/share link
 its pbi reports url <report-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi reports url <report-id> --json
 ```
 
 ---
@@ -245,9 +224,6 @@ List Power BI apps. Use --user <id|upn> to list one user's app access.
 ```bash
 its pbi apps
 
-# Pipe-friendly output — use with jq / scripts.
-its pbi apps --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its pbi apps --watch
 ```
@@ -270,9 +246,6 @@ List Power BI licence SKUs with consumption. Surfaces the most common fields; pa
 
 ```bash
 its pbi licences
-
-# Surfaces all PBI SKUs + assigned counts.
-its pbi licences --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its pbi licences --watch
@@ -307,9 +280,6 @@ List Power BI activity events. Power BI retains up to 30 days of activity.
 # Audit events for the tenant
 its pbi activity --since 24h
 
-# Pipe-friendly output — use with jq / scripts.
-its pbi activity --since 24h --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its pbi activity --since 24h --watch
 ```
@@ -342,9 +312,6 @@ Sign in as a Power BI user via device-code flow. Tokens are cached locally (~/.i
 ```bash
 # Device-code flow for user-context API
 its pbi my login
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi my login --json
 ```
 
 #### `its pbi my logout`
@@ -355,9 +322,6 @@ Clear the cached Power BI user token. Does not revoke it server-side.
 
 ```bash
 its pbi my logout
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi my logout --json
 ```
 
 #### `its pbi my whoami`
@@ -368,9 +332,6 @@ Show the cached Power BI user account and token expiry.
 
 ```bash
 its pbi my whoami
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi my whoami --json
 ```
 
 #### `its pbi my workspaces`
@@ -381,9 +342,6 @@ List workspaces accessible to the signed-in user. Workspaces visible to the curr
 
 ```bash
 its pbi my workspaces
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi my workspaces --json
 ```
 
 #### `its pbi my reports`
@@ -400,9 +358,6 @@ List Power BI reports accessible to the signed-in user.
 
 ```bash
 its pbi my reports
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi my reports --json
 ```
 
 #### `its pbi my datasets`
@@ -419,9 +374,6 @@ List Power BI datasets accessible to the signed-in user.
 
 ```bash
 its pbi my datasets
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi my datasets --json
 ```
 
 #### `its pbi my add-workspace-user <workspace_id>`
@@ -440,9 +392,6 @@ Add a user/group/app to a workspace using the signed-in user's permissions (side
 
 ```bash
 its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member --json
 ```
 
 #### `its pbi my update-workspace-user <workspace_id>`
@@ -461,9 +410,6 @@ Update a user's access right on a workspace using the signed-in user's permissio
 
 ```bash
 its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin --json
 ```
 
 #### `its pbi my remove-workspace-user <workspace_id>`
@@ -481,9 +427,6 @@ Remove a user/group/app from a workspace using the signed-in user's permissions 
 
 ```bash
 its pbi my remove-workspace-user <workspace-id> --user jane.smith@example.com --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its pbi my remove-workspace-user <workspace-id> --user jane.smith@example.com --confirm --json
 ```
 
 #### `its pbi my refresh <dataset_id>`

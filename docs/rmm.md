@@ -108,9 +108,6 @@ its rmm agents --rebooted-since 24h
 # Agents booted on or after a given date
 its rmm agents --rebooted-since 2026-06-14
 
-# Full JSON for scripting
-its rmm agents --json
-
 its rmm agents --ai | ai "which agents are overdue?"
 ```
 
@@ -131,9 +128,6 @@ List agents overdue for 7+ days (stale/abandoned). Sorted oldest-first so the wo
 its rmm agents stale
 
 its rmm agents stale --days 30
-
-# Pipe-friendly output for cron / jq.
-its rmm agents stale --json
 ```
 
 #### `its rmm agents search <query>`
@@ -268,9 +262,6 @@ Command + script execution history for one agent. Shows time, type, exit status,
 
 ```bash
 its rmm agents history OFFICE-PC-01
-
-# No --days flag — the endpoint returns full history; pipe to jq/ai to narrow by time.
-its rmm agents history OFFICE-PC-01 --json
 ```
 
 #### `its rmm agents notes <agent>`
@@ -281,8 +272,6 @@ Free-form notes attached to the agent — common workflow is documenting inciden
 
 ```bash
 its rmm agents notes OFFICE-PC-01
-
-its rmm agents notes OFFICE-PC-01 --json
 ```
 
 #### `its rmm agents pending <agent>`
@@ -293,9 +282,6 @@ Queued reboots, script runs, and update installs that the agent hasn't picked up
 
 ```bash
 its rmm agents pending OFFICE-PC-01
-
-# Queue depth + action types for monitoring.
-its rmm agents pending OFFICE-PC-01 --json
 ```
 
 #### `its rmm agents wake <agent>`
@@ -340,9 +326,6 @@ Trigger a WMI/sysinfo refresh on an agent — repopulates hardware fields (seria
 ```bash
 # Repopulates hardware fields (serial, BIOS, etc.)
 its rmm agents refresh OFFICE-PC-01
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm agents refresh OFFICE-PC-01 --json
 ```
 
 #### `its rmm agents eventlog <agent>`
@@ -380,8 +363,6 @@ Single-screen fleet health view — online/offline/overdue counts, server vs wor
 # Counts by site, status, OS
 its rmm dashboard
 
-its rmm dashboard --json
-
 # Re-runs every 10s — handy for incident-response screens.
 its rmm dashboard --watch
 ```
@@ -406,8 +387,6 @@ Top-level RMM client list with each client's sites flattened into one row. Use I
 
 ```bash
 its rmm clients
-
-its rmm clients --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm clients --watch
@@ -542,9 +521,6 @@ Top processes by CPU usage (live snapshot via PowerShell).
 ```bash
 # Top processes by CPU + memory
 its rmm processes top OFFICE-PC-01
-
-# Snapshot for trend analysis.
-its rmm processes top OFFICE-PC-01 --json
 ```
 
 #### `its rmm processes kill <agent>`
@@ -610,9 +586,6 @@ Service detail — startup type, dependencies, current state, last exit code.
 
 ```bash
 its rmm services get OFFICE-PC-01 --name spooler
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm services get OFFICE-PC-01 --name spooler --json
 ```
 
 #### `its rmm services control <agent>`
@@ -649,9 +622,6 @@ Set startup type to Automatic and start the service if stopped. Idempotent.
 
 ```bash
 its rmm services enable OFFICE-PC-01 --name spooler
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm services enable OFFICE-PC-01 --name spooler --json
 ```
 
 #### `its rmm services disable <agent>`
@@ -669,9 +639,6 @@ Set a service startup type to Disabled (requires --confirm).
 
 ```bash
 its rmm services disable OFFICE-PC-01 --name spooler --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm services disable OFFICE-PC-01 --name spooler --confirm --json
 ```
 
 ---
@@ -723,8 +690,6 @@ Windows Update queue — pending, installed, failed. Shows KB, severity, install
 # Windows Update queue
 its rmm updates OFFICE-PC-01
 
-its rmm updates OFFICE-PC-01 --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm updates OFFICE-PC-01 --watch
 ```
@@ -754,9 +719,6 @@ its rmm updates scan --client "Candle Retail"
 its rmm updates scan --client "Candle Retail" --confirm
 
 its rmm updates scan OFFICE-PC-01
-
-# Useful in scheduled checks.
-its rmm updates scan OFFICE-PC-01 --json
 ```
 
 #### `its rmm updates install [agent]`
@@ -846,9 +808,6 @@ Full installed-software inventory for one agent. Includes publisher, version, in
 ```bash
 its rmm software OFFICE-PC-01
 
-# Full software inventory — feed to compliance reports.
-its rmm software OFFICE-PC-01 --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm software OFFICE-PC-01 --watch
 ```
@@ -913,9 +872,6 @@ Alert detail — full message, source check, snooze state, agent it fired on.
 
 ```bash
 its rmm alerts get <alert-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm alerts get <alert-id> --json
 ```
 
 #### `its rmm alerts resolve <alert_id>`
@@ -985,9 +941,6 @@ All saved automation scripts in the RMM script library. Returns name, shell, cat
 ```bash
 its rmm scripts
 
-# Useful when scripting against the registry.
-its rmm scripts --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm scripts --watch
 ```
@@ -1000,9 +953,6 @@ Script detail — body, default args, category, hash, last edited timestamp.
 
 ```bash
 its rmm scripts get <script-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm scripts get <script-id> --json
 ```
 
 #### `its rmm scripts run [agent]`
@@ -1114,9 +1064,6 @@ its rmm scripts upsert 'Configure User Profile' ./Set-UserProfile.ps1 --run-as-u
 
 # Creates if missing, updates body if name exists
 its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1 --json
 ```
 
 ---
@@ -1143,8 +1090,6 @@ Scheduled health checks attached to one agent. Includes last-run result + cadenc
 
 ```bash
 its rmm checks OFFICE-PC-01
-
-its rmm checks OFFICE-PC-01 --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm checks OFFICE-PC-01 --watch
@@ -1237,9 +1182,6 @@ its rmm checks create SRV-01 --type ping --ip 10.10.0.1
 its rmm checks create OFFICE-PC --script 42 --timeout 300
 
 its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600 --json
 ```
 
 #### `its rmm checks edit [agent]`
@@ -1324,8 +1266,6 @@ its rmm tasks list --policy 4
 
 its rmm tasks OFFICE-PC-01
 
-its rmm tasks OFFICE-PC-01 --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm tasks OFFICE-PC-01 --watch
 ```
@@ -1361,9 +1301,6 @@ its rmm tasks create --policy 4 --script 252 --daily-time 06:30
 its rmm tasks create OFFICE-PC --script 12 --name 'Clear cache'
 
 its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun --json
 ```
 
 #### `its rmm tasks edit`
@@ -1431,9 +1368,6 @@ RMM automation policies — packages of checks + scheduled tasks applied across 
 ```bash
 its rmm policies
 
-# Useful for diffing policy assignments between sites.
-its rmm policies --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm policies --watch
 ```
@@ -1446,9 +1380,6 @@ Policy detail — included checks, tasks, target agents/sites.
 
 ```bash
 its rmm policies get <policy-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm policies get <policy-id> --json
 ```
 
 #### `its rmm policies checks <policy_id>`
@@ -1459,9 +1390,6 @@ List checks attached to a policy (uses the asymmetric `/automation/policies/<id>
 
 ```bash
 its rmm policies checks <policy-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm policies checks <policy-id> --json
 ```
 
 #### `its rmm policies add-check <policy_id>`
@@ -1498,9 +1426,6 @@ its rmm policies add-check 4 --type winsvc --service Spooler --restart-if-stoppe
 its rmm policies add-check 4 --script 42
 
 its rmm policies add-check <policy-id> --script <script-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its rmm policies add-check <policy-id> --script <script-id> --json
 ```
 
 #### `its rmm policies patch-policy <policy_id>`
@@ -1547,8 +1472,6 @@ System health snapshot — CPU, RAM, disk, power plan, uptime, top processes.
 # Full health snapshot — CPU, disk, services, last check-in
 its rmm diagnostics OFFICE-PC-01
 
-its rmm diagnostics OFFICE-PC-01 --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm diagnostics OFFICE-PC-01 --watch
 ```
@@ -1572,9 +1495,6 @@ Tactical RMM health snapshot — agent status, failing checks, active alerts, si
 ```bash
 # Verify RMM connectivity + auth
 its rmm doctor
-
-# Use in CI to verify the box can still reach the RMM API.
-its rmm doctor --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its rmm doctor --watch

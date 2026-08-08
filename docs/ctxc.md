@@ -65,9 +65,6 @@ Full-text search across ctxc memories (FTS5). Supports query operators: AND OR N
 
 ```bash
 its ctxc memories search "auth"
-
-# Pipe-friendly output — use with jq / scripts.
-its ctxc memories search "auth" --json
 ```
 
 #### `its ctxc memories recall`
@@ -86,9 +83,6 @@ Project-scoped recall — recent memories for a project plus globals. Mirrors ct
 
 ```bash
 its ctxc memories recall "graph api throttling"
-
-# Pipe-friendly output — use with jq / scripts.
-its ctxc memories recall "graph api throttling" --json
 ```
 
 #### `its ctxc memories get <id>`
@@ -99,9 +93,6 @@ Fetch a single memory by id (includes full content). Pass the id (or any natural
 
 ```bash
 its ctxc memories get <memory-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its ctxc memories get <memory-id> --json
 ```
 
 #### `its ctxc memories`
@@ -137,9 +128,6 @@ Memory counts broken down by type and project (handy for grooming).
 ```bash
 # Counts by type, project, recency
 its ctxc memories stats
-
-# Pipe-friendly output — use with jq / scripts.
-its ctxc memories stats --json
 ```
 
 ---

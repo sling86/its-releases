@@ -136,9 +136,6 @@ Search vault items by name, username, URL, or notes. Substring match across the 
 
 ```bash
 its bw items search "github"
-
-# Pipe-friendly output — use with jq / scripts.
-its bw items search "github" --json
 ```
 
 #### `its bw items get <id>`
@@ -157,9 +154,6 @@ Get a vault item by ID (includes password and fields). Pass the id (or any natur
 
 ```bash
 its bw items get "Server admin"
-
-# Pipe-friendly output — use with jq / scripts.
-its bw items get "Server admin" --json
 ```
 
 #### `its bw items totp <query>`
@@ -179,9 +173,6 @@ Generate current TOTP code for an item. Returns the current TOTP code — refres
 ```bash
 # Generate current TOTP — refreshes every 30s
 its bw items totp "Server admin"
-
-# Pipe-friendly output — use with jq / scripts.
-its bw items totp "Server admin" --json
 ```
 
 #### `its bw items trash`
@@ -198,9 +189,6 @@ List trashed vault items. Returns soft-deleted items in the trash bin.
 
 ```bash
 its bw items trash
-
-# Pipe-friendly output — use with jq / scripts.
-its bw items trash --json
 ```
 
 #### `its bw items recent`
@@ -218,9 +206,6 @@ List recently modified vault items. Returns the N most recently modified items.
 
 ```bash
 its bw items recent
-
-# Pipe-friendly output — use with jq / scripts.
-its bw items recent --json
 ```
 
 #### `its bw items favourites`
@@ -237,9 +222,6 @@ List favourite vault items. Items the user has starred.
 
 ```bash
 its bw items favourites
-
-# Pipe-friendly output — use with jq / scripts.
-its bw items favourites --json
 ```
 
 #### `its bw items create <name>`
@@ -310,9 +292,6 @@ its bw items update <id> --field lan_ip=10.0.0.2 --confirm
 its bw items update <id> --field-remove lan_ip --confirm
 
 its bw items update <item-id> --password "NewP@ss" --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its bw items update <item-id> --password "NewP@ss" --confirm --json
 ```
 
 #### `its bw items share <id>`
@@ -348,9 +327,6 @@ Move vault items to a folder. Move an item between folders. --confirm required.
 
 ```bash
 its bw items move <item-id> --folder "Servers" --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its bw items move <item-id> --folder "Servers" --confirm --json
 ```
 
 #### `its bw items delete <id>`
@@ -386,9 +362,6 @@ Restore a vault item from the trash. Restore a soft-deleted item from trash.
 
 ```bash
 its bw items restore <item-id> --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its bw items restore <item-id> --confirm --json
 ```
 
 #### `its bw items purge <id>`
@@ -439,9 +412,6 @@ List all vault folders. Surfaces the most common fields; pass --json for raw sha
 ```bash
 its bw folders
 
-# Pipe-friendly output — use with jq / scripts.
-its bw folders --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw folders --watch
 ```
@@ -460,9 +430,6 @@ List items in a folder by name. Pass the id (or any natural identifier) as the p
 
 ```bash
 its bw folders get "Servers"
-
-# Pipe-friendly output — use with jq / scripts.
-its bw folders get "Servers" --json
 ```
 
 #### `its bw folders summary`
@@ -479,9 +446,6 @@ List folders with item counts. Quick one-screen view — designed for dashboards
 
 ```bash
 its bw folders summary
-
-# Pipe-friendly output — use with jq / scripts.
-its bw folders summary --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw folders summary --watch
@@ -501,9 +465,6 @@ Create a new folder. Idempotent on duplicate names — use update/edit to mutate
 
 ```bash
 its bw folders create "Servers"
-
-# Pipe-friendly output — use with jq / scripts.
-its bw folders create "Servers" --json
 ```
 
 #### `its bw folders delete <name>`
@@ -635,9 +596,6 @@ Show vault profile information. Surfaces the most common fields; pass --json for
 ```bash
 its bw profile
 
-# Pipe-friendly output — use with jq / scripts.
-its bw profile --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw profile --watch
 ```
@@ -666,9 +624,6 @@ Vault summary statistics. Surfaces the most common fields; pass --json for raw s
 
 ```bash
 its bw dashboard
-
-# Pipe-friendly output — use with jq / scripts.
-its bw dashboard --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw dashboard --watch
@@ -699,9 +654,6 @@ Change the PIN used to encrypt the master password. Drop the resource's state �
 ```bash
 # Re-encrypts master password with a new PIN
 its bw pin reset
-
-# Pipe-friendly output — use with jq / scripts.
-its bw pin reset --json
 ```
 
 ---
@@ -732,9 +684,6 @@ Unlock vault — skip PIN prompt for subsequent commands. Begin an interactive s
 ```bash
 # PIN-prompts, decrypts master password, stores session
 its bw session unlock
-
-# Pipe-friendly output — use with jq / scripts.
-its bw session unlock --json
 ```
 
 #### `its bw session lock`
@@ -751,9 +700,6 @@ Lock vault and destroy the active session. End the current session.
 
 ```bash
 its bw session lock
-
-# Pipe-friendly output — use with jq / scripts.
-its bw session lock --json
 ```
 
 #### `its bw session`
@@ -770,9 +716,6 @@ Check if a vault session is active. Surfaces the most common fields; pass --json
 
 ```bash
 its bw session list
-
-# Pipe-friendly output — use with jq / scripts.
-its bw session list --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw session list --watch
@@ -799,9 +742,6 @@ List configured vault profiles. Surfaces the most common fields; pass --json for
 ```bash
 its bw vaults
 
-# Pipe-friendly output — use with jq / scripts.
-its bw vaults --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw vaults --watch
 ```
@@ -823,9 +763,6 @@ Save a named vault profile — its own host, account and master password (use fo
 
 ```bash
 its bw vaults create "personal"
-
-# Pipe-friendly output — use with jq / scripts.
-its bw vaults create "personal" --json
 ```
 
 #### `its bw vaults delete <name>`
@@ -878,9 +815,6 @@ Full vault health audit (weak passwords, reuse, duplicates, cleanup issues).
 # Weak passwords, reuse, duplicates, cleanup
 its bw audit
 
-# Pipe-friendly output — use with jq / scripts.
-its bw audit --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw audit --watch
 ```
@@ -899,9 +833,6 @@ Find logins with weak passwords. Identifies weak passwords; pair with `bw audit 
 
 ```bash
 its bw audit weak
-
-# Pipe-friendly output — use with jq / scripts.
-its bw audit weak --json
 ```
 
 #### `its bw audit reused`
@@ -918,9 +849,6 @@ Find passwords reused across multiple logins. Identifies passwords shared across
 
 ```bash
 its bw audit reused
-
-# Pipe-friendly output — use with jq / scripts.
-its bw audit reused --json
 ```
 
 #### `its bw audit exposed`
@@ -938,9 +866,6 @@ Check passwords against Have I Been Pwned breaches (k-anonymity safe).
 ```bash
 # k-anonymity safe — sends only password hash prefix
 its bw audit exposed
-
-# Pipe-friendly output — use with jq / scripts.
-its bw audit exposed --json
 ```
 
 #### `its bw audit duplicates`
@@ -958,9 +883,6 @@ Detect duplicate logins (domain+username, name+username matching).
 ```bash
 # Items with identical name/username
 its bw audit duplicates
-
-# Pipe-friendly output — use with jq / scripts.
-its bw audit duplicates --json
 ```
 
 #### `its bw audit unfiled`
@@ -979,9 +901,6 @@ Vault items with no folder assigned (hygiene issue). Items with no folder assign
 ```bash
 # Items missing folder/collection
 its bw audit unfiled
-
-# Pipe-friendly output — use with jq / scripts.
-its bw audit unfiled --json
 ```
 
 #### `its bw audit cleanup`
@@ -999,9 +918,6 @@ Detect vault hygiene issues (skeleton logins, missing fields, empty items).
 ```bash
 # Skeleton logins, missing fields, empty items
 its bw audit cleanup
-
-# Pipe-friendly output — use with jq / scripts.
-its bw audit cleanup --json
 ```
 
 #### `its bw audit vault-report`
@@ -1019,9 +935,6 @@ One-shot vault hygiene snapshot — counts, unfiled breakdown, weak/reused/dupli
 
 ```bash
 its bw audit vault-report
-
-# Pipe-friendly output — use with jq / scripts.
-its bw audit vault-report --json
 ```
 
 ---
@@ -1043,9 +956,6 @@ Local health check — vault profiles, active sessions, 2FA-remember token age, 
 ```bash
 # Auth, session, 2FA, PIN status
 its bw doctor
-
-# Pipe-friendly output — use with jq / scripts.
-its bw doctor --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw doctor --watch

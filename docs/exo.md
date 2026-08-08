@@ -74,9 +74,6 @@ List all distribution groups. Surfaces the most common fields; pass --json for r
 ```bash
 its exo groups
 
-# Pipe-friendly output — use with jq / scripts.
-its exo groups --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its exo groups --watch
 ```
@@ -89,9 +86,6 @@ Get distribution group details. Pass the id (or any natural identifier) as the p
 
 ```bash
 its exo groups get "All Staff"
-
-# Pipe-friendly output — use with jq / scripts.
-its exo groups get "All Staff" --json
 ```
 
 #### `its exo groups members <group>`
@@ -102,9 +96,6 @@ List members of a distribution group. Returns direct members; nested groups aren
 
 ```bash
 its exo groups members "All Staff"
-
-# Pipe-friendly output — use with jq / scripts.
-its exo groups members "All Staff" --json
 ```
 
 #### `its exo groups create <name>`
@@ -123,9 +114,6 @@ Create a new distribution group. Idempotent on duplicate names — use update/ed
 
 ```bash
 its exo groups create "Marketing Team" --type distribution --alias marketing
-
-# Pipe-friendly output — use with jq / scripts.
-its exo groups create "Marketing Team" --type distribution --alias marketing --json
 ```
 
 #### `its exo groups delete <group>`
@@ -154,9 +142,6 @@ Add a member to a distribution group. Idempotent — already-a-member is a no-op
 
 ```bash
 its exo groups add-member "All Staff" jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo groups add-member "All Staff" jane.smith@example.com --json
 ```
 
 #### `its exo groups remove-member <group> <member>`
@@ -175,9 +160,6 @@ Remove a member from a distribution group. Reverse of add-member. --confirm requ
 its exo groups remove-member sales@thf.co.uk jo@thf.co.uk --confirm
 
 its exo groups remove-member "All Staff" jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo groups remove-member "All Staff" jane.smith@example.com --json
 ```
 
 ---
@@ -229,9 +211,6 @@ Get mailbox details (accepts partial name, alias, or email).
 
 ```bash
 its exo mailboxes get jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo mailboxes get jane.smith@example.com --json
 ```
 
 #### `its exo mailboxes stats <mailbox>`
@@ -242,9 +221,6 @@ Get mailbox size and item statistics. Aggregated statistics — counts, totals, 
 
 ```bash
 its exo mailboxes stats jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo mailboxes stats jane.smith@example.com --json
 ```
 
 #### `its exo mailboxes create <name> <alias>`
@@ -255,9 +231,6 @@ Create a shared mailbox. Idempotent on duplicate names — use update/edit to mu
 
 ```bash
 its exo mailboxes create "Support" support
-
-# Pipe-friendly output — use with jq / scripts.
-its exo mailboxes create "Support" support --json
 ```
 
 #### `its exo mailboxes permissions <mailbox>`
@@ -268,9 +241,6 @@ List non-inherited permissions on a mailbox. Returns access grants on the resour
 
 ```bash
 its exo mailboxes permissions shared@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo mailboxes permissions shared@example.com --json
 ```
 
 #### `its exo mailboxes add-permission <mailbox> <user>`
@@ -287,9 +257,6 @@ Grant mailbox access to a user. Grant a new permission. Idempotent.
 
 ```bash
 its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess
-
-# Pipe-friendly output — use with jq / scripts.
-its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess --json
 ```
 
 #### `its exo mailboxes remove-permission <mailbox> <user>`
@@ -309,9 +276,6 @@ Remove mailbox access from a user. Revoke a permission. --confirm required.
 its exo mailboxes remove-permission shared@thf.co.uk jo@thf.co.uk --confirm
 
 its exo mailboxes remove-permission shared@example.com jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo mailboxes remove-permission shared@example.com jane.smith@example.com --json
 ```
 
 #### `its exo mailboxes forwarding <mailbox>`
@@ -322,9 +286,6 @@ Show forwarding configuration for a mailbox. Audit pass — find mailboxes with 
 
 ```bash
 its exo mailboxes forwarding jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo mailboxes forwarding jane.smith@example.com --json
 ```
 
 #### `its exo mailboxes user-access <user>`
@@ -336,9 +297,6 @@ List all shared mailboxes a user has FullAccess to (scans all 400+ shared mailbo
 ```bash
 # Every shared mailbox jane has rights on
 its exo mailboxes user-access jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo mailboxes user-access jane.smith@example.com --json
 ```
 
 #### `its exo mailboxes set-forwarding <mailbox> <target>`
@@ -358,9 +316,6 @@ Configure mailbox forwarding. Set a mailbox forward. --confirm required.
 its exo mailboxes set-forwarding jo@thf.co.uk manager@thf.co.uk --confirm
 
 its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy
-
-# Pipe-friendly output — use with jq / scripts.
-its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy --json
 ```
 
 #### `its exo mailboxes set-type <mailbox> <type>`
@@ -417,9 +372,6 @@ List mail flow (transport) rules. Surfaces the most common fields; pass --json f
 ```bash
 its exo rules
 
-# Pipe-friendly output — use with jq / scripts.
-its exo rules --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its exo rules --watch
 ```
@@ -442,8 +394,6 @@ Audit every transport rule for mail-exfiltration verbs (RedirectMessageTo, Blind
 
 ```bash
 its exo rules audit
-
-its exo rules audit --json
 ```
 
 #### `its exo rules disable <name>`
@@ -496,9 +446,6 @@ List accepted email domains. Surfaces the most common fields; pass --json for ra
 
 ```bash
 its exo domains
-
-# Pipe-friendly output — use with jq / scripts.
-its exo domains --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its exo domains --watch
@@ -634,9 +581,6 @@ Get hop-by-hop detail for a traced message (Get-MessageTraceDetailV2). Surfaces 
 
 ```bash
 its exo trace detail <msg-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its exo trace detail <msg-id> --json
 ```
 
 #### `its exo trace historical`
@@ -684,9 +628,6 @@ Check out-of-office / auto-reply status for a mailbox. Pass the id (or any natur
 
 ```bash
 its exo autoreply get jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo autoreply get jane.smith@example.com --json
 ```
 
 #### `its exo autoreply enable <mailbox>`
@@ -706,9 +647,6 @@ Enable out-of-office auto-reply. Switch to active state. Idempotent.
 
 ```bash
 its exo autoreply enable jane.smith@example.com --internal "Out of office until Monday" --external "On leave — contact support@example.com"
-
-# Pipe-friendly output — use with jq / scripts.
-its exo autoreply enable jane.smith@example.com --internal "Out of office until Monday" --external "On leave — contact support@example.com" --json
 ```
 
 #### `its exo autoreply disable <mailbox>`
@@ -719,9 +657,6 @@ Disable out-of-office auto-reply. Switch to inactive state. Idempotent.
 
 ```bash
 its exo autoreply disable jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo autoreply disable jane.smith@example.com --json
 ```
 
 ---
@@ -745,9 +680,6 @@ Search all recipient types (users, groups, contacts, shared mailboxes).
 
 ```bash
 its exo recipients search "jane"
-
-# Pipe-friendly output — use with jq / scripts.
-its exo recipients search "jane" --json
 ```
 
 #### `its exo recipients send-as <identity>`
@@ -758,9 +690,6 @@ List Send-As permissions on a mailbox or group. Returns SendAs delegates for a m
 
 ```bash
 its exo recipients send-as shared@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo recipients send-as shared@example.com --json
 ```
 
 #### `its exo recipients add-send-as <identity> <trustee>`
@@ -771,9 +700,6 @@ Grant Send-As permission. Idempotent — already-granted delegates are skipped.
 
 ```bash
 its exo recipients add-send-as shared@example.com jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo recipients add-send-as shared@example.com jane.smith@example.com --json
 ```
 
 #### `its exo recipients remove-send-as <identity> <trustee>`
@@ -792,9 +718,6 @@ Revoke Send-As permission. Reverse of add-send-as.
 its exo recipients remove-send-as shared@thf.co.uk jo@thf.co.uk --confirm
 
 its exo recipients remove-send-as shared@example.com jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its exo recipients remove-send-as shared@example.com jane.smith@example.com --json
 ```
 
 ---
@@ -816,9 +739,6 @@ Audit auto-forwarding posture — transport rules + outbound spam policies (+ op
 ```bash
 # Every mailbox with external forwarding configured
 its exo forwarding check
-
-# Pipe-friendly output — use with jq / scripts.
-its exo forwarding check --json
 ```
 
 ---
