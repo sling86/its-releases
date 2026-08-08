@@ -75,9 +75,6 @@ List all Protect cameras with status. Surfaces the most common fields; pass --js
 ```bash
 its protect cameras
 
-# Pipe-friendly output — use with jq / scripts.
-its protect cameras --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its protect cameras --watch
 ```
@@ -96,9 +93,6 @@ Get camera details. Pass the id (or any natural identifier) as the positional ar
 
 ```bash
 its protect cameras get <camera-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its protect cameras get <camera-id> --json
 ```
 
 #### `its protect cameras offline`
@@ -115,9 +109,6 @@ List disconnected/offline cameras — those whose state is not CONNECTED.
 
 ```bash
 its protect cameras offline
-
-# Pipe-friendly output — use with jq / scripts.
-its protect cameras offline --json
 ```
 
 #### `its protect cameras snapshot <camera_id>`
@@ -161,9 +152,6 @@ Show NVR status, storage, and capacity. Surfaces the most common fields; pass --
 ```bash
 # Storage usage, retention, health
 its protect nvr
-
-# Pipe-friendly output — use with jq / scripts.
-its protect nvr --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its protect nvr --watch
@@ -277,9 +265,6 @@ Protect overview — NVR, cameras, storage, recent motion. Surfaces the most com
 
 ```bash
 its protect dashboard
-
-# Pipe-friendly output — use with jq / scripts.
-its protect dashboard --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its protect dashboard --watch

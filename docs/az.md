@@ -65,9 +65,6 @@ List all Azure subscriptions. Surfaces the most common fields; pass --json for r
 ```bash
 its az account
 
-# Pipe-friendly output — use with jq / scripts.
-its az account --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its az account --watch
 ```
@@ -80,9 +77,6 @@ Show current active subscription. Pass the id (or any natural identifier) as the
 
 ```bash
 its az account get
-
-# Pipe-friendly output — use with jq / scripts.
-its az account get --json
 ```
 
 #### `its az account set <subscription>`
@@ -122,9 +116,6 @@ List resource groups. Surfaces the most common fields; pass --json for raw shape
 
 ```bash
 its az groups
-
-# Pipe-friendly output — use with jq / scripts.
-its az groups --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its az groups --watch
@@ -172,9 +163,6 @@ Show resource detail by ID. Requires the full Azure resource ID (/subscriptions/
 
 ```bash
 its az resources get /subscriptions/<sub>/resourceGroups/<rg>/...
-
-# Pipe-friendly output — use with jq / scripts.
-its az resources get /subscriptions/<sub>/resourceGroups/<rg>/... --json
 ```
 
 ---
@@ -228,9 +216,6 @@ Show VM detail. Pass the id (or any natural identifier) as the positional arg.
 
 ```bash
 its az vm get my-vm
-
-# Pipe-friendly output — use with jq / scripts.
-its az vm get my-vm --json
 ```
 
 #### `its az vm start <name>`
@@ -285,9 +270,6 @@ Restart a VM. Stop + start in one call.
 
 ```bash
 its az vm restart my-vm --rg my-rg
-
-# Pipe-friendly output — use with jq / scripts.
-its az vm restart my-vm --rg my-rg --json
 ```
 
 #### `its az vm deallocate <name>`
@@ -306,9 +288,6 @@ Deallocate a VM (stops billing). Stop + release compute resources. Billing pause
 ```bash
 # Cheaper than stop — releases compute reservation
 its az vm deallocate my-vm --rg my-rg
-
-# Pipe-friendly output — use with jq / scripts.
-its az vm deallocate my-vm --rg my-rg --json
 ```
 
 ---
@@ -336,9 +315,6 @@ List storage accounts. Surfaces the most common fields; pass --json for raw shap
 
 ```bash
 its az storage
-
-# Pipe-friendly output — use with jq / scripts.
-its az storage --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its az storage --watch
@@ -371,9 +347,6 @@ List Key Vaults. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its az keyvault
 
-# Pipe-friendly output — use with jq / scripts.
-its az keyvault --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its az keyvault --watch
 ```
@@ -386,9 +359,6 @@ List secret names in a Key Vault. List vault secret names (values aren't returne
 
 ```bash
 its az keyvault secrets my-kv
-
-# Use with jq to diff against another vault.
-its az keyvault secrets my-kv --json
 ```
 
 ---
@@ -418,9 +388,6 @@ List network security groups. Surfaces the most common fields; pass --json for r
 ```bash
 its az nsg
 
-# Pipe-friendly output — use with jq / scripts.
-its az nsg --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its az nsg --watch
 ```
@@ -439,9 +406,6 @@ Show NSG detail with security rules. Pass the id (or any natural identifier) as 
 
 ```bash
 its az nsg get my-nsg --rg my-rg
-
-# Pipe-friendly output — use with jq / scripts.
-its az nsg get my-nsg --rg my-rg --json
 ```
 
 ---
@@ -471,9 +435,6 @@ List virtual networks. Surfaces the most common fields; pass --json for raw shap
 ```bash
 its az vnet
 
-# Pipe-friendly output — use with jq / scripts.
-its az vnet --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its az vnet --watch
 ```
@@ -492,9 +453,6 @@ Show VNet detail with subnets. Pass the id (or any natural identifier) as the po
 
 ```bash
 its az vnet get my-vnet --rg my-rg
-
-# Pipe-friendly output — use with jq / scripts.
-its az vnet get my-vnet --rg my-rg --json
 ```
 
 ---
@@ -525,9 +483,6 @@ List web apps. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its az webapp
 
-# Useful when feeding a compliance report.
-its az webapp --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its az webapp --watch
 ```
@@ -546,9 +501,6 @@ Show web app detail. Pass the id (or any natural identifier) as the positional a
 
 ```bash
 its az webapp get my-app --rg my-rg
-
-# Pipe-friendly output — use with jq / scripts.
-its az webapp get my-app --rg my-rg --json
 ```
 
 #### `its az webapp restart <name>`
@@ -566,9 +518,6 @@ Restart a web app. Stop + start in one call.
 
 ```bash
 its az webapp restart my-app --rg my-rg
-
-# Pipe-friendly output — use with jq / scripts.
-its az webapp restart my-app --rg my-rg --json
 ```
 
 ---
@@ -597,9 +546,6 @@ Cost summary for current billing period by resource group. Quick one-screen view
 ```bash
 # Current billing period spend by service
 its az cost summary
-
-# Pipe-friendly output — use with jq / scripts.
-its az cost summary --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its az cost summary --watch

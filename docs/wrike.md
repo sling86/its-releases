@@ -114,9 +114,6 @@ Ticket analytics — median resolve time, backlog, bus-factor risk by assignee.
 
 ```bash
 its wrike tickets stats
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets stats --json
 ```
 
 #### `its wrike tickets active`
@@ -127,9 +124,6 @@ List active IT tickets — those not in a completed/cancelled state.
 
 ```bash
 its wrike tickets active
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets active --json
 ```
 
 #### `its wrike tickets mine`
@@ -147,9 +141,6 @@ List tickets assigned to you (reads ITS_USER_EMAIL or --email).
 
 ```bash
 its wrike tickets mine
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets mine --json
 ```
 
 #### `its wrike tickets get <idOrPermalink>`
@@ -161,9 +152,6 @@ Get full ticket details with comments. Pass the id (or any natural identifier) a
 ```bash
 # Full ticket with comments + attachments
 its wrike tickets get <task-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets get <task-id> --json
 ```
 
 #### `its wrike tickets search <query>`
@@ -174,9 +162,6 @@ Search IT/BC support tickets by title. Substring match across the most relevant 
 
 ```bash
 its wrike tickets search "printer"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets search "printer" --json
 ```
 
 #### `its wrike tickets create`
@@ -201,9 +186,6 @@ Create a new IT support ticket. Idempotent on duplicate names — use update/edi
 
 ```bash
 its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox" --json
 ```
 
 #### `its wrike tickets set-due <taskId> <dueDate>`
@@ -214,9 +196,6 @@ Set due date on a ticket (YYYY-MM-DD). Set the task's due date.
 
 ```bash
 its wrike tickets set-due <task-id> 2026-06-01
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets set-due <task-id> 2026-06-01 --json
 ```
 
 #### `its wrike tickets assign <taskId> <userId>`
@@ -227,9 +206,6 @@ Add an assignee to a ticket. Idempotent — assigning twice is a no-op.
 
 ```bash
 its wrike tickets assign <task-id> <user-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets assign <task-id> <user-id> --json
 ```
 
 #### `its wrike tickets update-title <taskId> <title>`
@@ -240,9 +216,6 @@ Change a ticket's title. Rename the task — keeps the same ID.
 
 ```bash
 its wrike tickets update-title <task-id> "New title"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets update-title <task-id> "New title" --json
 ```
 
 #### `its wrike tickets update-importance <taskId> <importance>`
@@ -253,9 +226,6 @@ Change ticket importance (High, Normal, Low). Set Low / Normal / High importance
 
 ```bash
 its wrike tickets update-importance <task-id> High
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets update-importance <task-id> High --json
 ```
 
 #### `its wrike tickets update-status <taskId> <status>`
@@ -266,9 +236,6 @@ Change ticket status. Move the task to a different workflow stage.
 
 ```bash
 its wrike tickets update-status <task-id> "Completed"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets update-status <task-id> "Completed" --json
 ```
 
 #### `its wrike tickets update-description <taskId> [text]`
@@ -289,9 +256,6 @@ Replace a ticket's description. Same formatting rules as add-comment: plain text
 
 ```bash
 its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..."
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..." --json
 ```
 
 #### `its wrike tickets add-comment <taskId> [text]`
@@ -312,9 +276,6 @@ Add a comment to a ticket. Prefer --markdown (bold/italic/links/bullets + plain 
 
 ```bash
 its wrike tickets add-comment <task-id> "Replicated, escalating"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets add-comment <task-id> "Replicated, escalating" --json
 ```
 
 #### `its wrike tickets update-comment <commentId> [text]`
@@ -335,9 +296,6 @@ Replace the body of an existing comment. Same formatting rules as add-comment (-
 
 ```bash
 its wrike tickets update-comment <comment-id> "fixed typo"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets update-comment <comment-id> "fixed typo" --json
 ```
 
 #### `its wrike tickets delete-comment <commentId>`
@@ -354,9 +312,6 @@ Delete a comment by ID. Requires --confirm. Use the commentId from add-comment o
 
 ```bash
 its wrike tickets delete-comment <comment-id> --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets delete-comment <comment-id> --confirm --json
 ```
 
 #### `its wrike tickets narrative [taskId]`
@@ -378,9 +333,6 @@ Deep per-ticket narrative with recent comments + ball-is-with heuristic. Priorit
 ```bash
 # AI-friendly chronological narrative
 its wrike tickets narrative <task-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets narrative <task-id> --json
 ```
 
 #### `its wrike tickets attachments <taskId>`
@@ -391,9 +343,6 @@ List attachments on a ticket. List attachments; pair with `attach`.
 
 ```bash
 its wrike tickets attachments <task-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets attachments <task-id> --json
 ```
 
 #### `its wrike tickets download <taskId> [attachmentId]`
@@ -410,9 +359,6 @@ Download an attachment from a ticket. Stream the resource to a local file.
 
 ```bash
 its wrike tickets download <task-id> <attachment-id> --output ./screenshot.png
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets download <task-id> <attachment-id> --output ./screenshot.png --json
 ```
 
 #### `its wrike tickets attach <taskId> <filePath>`
@@ -423,9 +369,6 @@ Attach a file to a ticket. Upload a local file as an attachment.
 
 ```bash
 its wrike tickets attach <task-id> ./screenshot.png
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tickets attach <task-id> ./screenshot.png --json
 ```
 
 ---
@@ -464,9 +407,6 @@ List tasks in a folder or project (accepts name or ID). Surfaces the most common
 ```bash
 its wrike tasks
 
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike tasks --watch
 ```
@@ -486,9 +426,6 @@ Search tasks across all of Wrike (use --folder or --space to scope, accepts name
 
 ```bash
 its wrike tasks search "deploy"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks search "deploy" --json
 ```
 
 #### `its wrike tasks get <idOrPermalink>`
@@ -499,9 +436,6 @@ Get full task details with comments. Pass the id (or any natural identifier) as 
 
 ```bash
 its wrike tasks get https://www.wrike.com/open.htm?id=...
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks get https://www.wrike.com/open.htm?id=... --json
 ```
 
 #### `its wrike tasks create <folder>`
@@ -522,9 +456,6 @@ Create a new task in a folder or project (accepts name or ID).
 
 ```bash
 its wrike tasks create "My folder" --title "New task"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks create "My folder" --title "New task" --json
 ```
 
 #### `its wrike tasks set-due <taskId> <dueDate>`
@@ -535,9 +466,6 @@ Set due date on a task (YYYY-MM-DD). Set the task's due date.
 
 ```bash
 its wrike tasks set-due <task-id> 2026-06-01
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks set-due <task-id> 2026-06-01 --json
 ```
 
 #### `its wrike tasks update-title <taskId> <title>`
@@ -548,9 +476,6 @@ Change a task's title. Rename the task — keeps the same ID.
 
 ```bash
 its wrike tasks update-title <task-id> "New title"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks update-title <task-id> "New title" --json
 ```
 
 #### `its wrike tasks update-importance <taskId> <importance>`
@@ -561,9 +486,6 @@ Change task importance (High, Normal, Low). Set Low / Normal / High importance.
 
 ```bash
 its wrike tasks update-importance <task-id> Low
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks update-importance <task-id> Low --json
 ```
 
 #### `its wrike tasks update-status <taskId> <status>`
@@ -574,9 +496,6 @@ Change task status. Move the task to a different workflow stage.
 
 ```bash
 its wrike tasks update-status <task-id> "In Progress"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks update-status <task-id> "In Progress" --json
 ```
 
 #### `its wrike tasks update-description <taskId> [text]`
@@ -597,9 +516,6 @@ Replace a task's description. Same formatting rules as add-comment: plain text b
 
 ```bash
 its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1" --json
 ```
 
 #### `its wrike tasks add-comment <taskId> [text]`
@@ -620,9 +536,6 @@ Add a comment to a task. Prefer --markdown (bold/italic/links/bullets + plain @N
 
 ```bash
 its wrike tasks add-comment <task-id> --markdown "**done** — pushed to main"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks add-comment <task-id> --markdown "**done** — pushed to main" --json
 ```
 
 #### `its wrike tasks attach <taskId> <filePath>`
@@ -633,9 +546,6 @@ Attach a file to a task. Upload a local file as an attachment.
 
 ```bash
 its wrike tasks attach <task-id> ./diagram.png
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike tasks attach <task-id> ./diagram.png --json
 ```
 
 ---
@@ -685,9 +595,6 @@ Search Wrike projects by title (accepts space name or ID). Substring match acros
 
 ```bash
 its wrike projects search "migration"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike projects search "migration" --json
 ```
 
 #### `its wrike projects tasks <project>`
@@ -705,9 +612,6 @@ List tasks in a project (accepts project name or ID).
 
 ```bash
 its wrike projects tasks "Sprint 23"
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike projects tasks "Sprint 23" --json
 ```
 
 ---
@@ -738,9 +642,6 @@ List all Wrike contacts. Surfaces the most common fields; pass --json for raw sh
 ```bash
 its wrike contacts
 
-# Pipe-friendly output — use with jq / scripts.
-its wrike contacts --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike contacts --watch
 ```
@@ -753,9 +654,6 @@ Search contacts by name or email. Substring match across the most relevant field
 
 ```bash
 its wrike contacts search jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike contacts search jane.smith@example.com --json
 ```
 
 #### `its wrike contacts find [query]`
@@ -772,9 +670,6 @@ Find contacts by name and/or email domain (for populating --assignee).
 
 ```bash
 its wrike contacts find jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike contacts find jane.smith@example.com --json
 ```
 
 #### `its wrike contacts get <user_id>`
@@ -785,9 +680,6 @@ Get a single contact by user ID. Pass the id (or any natural identifier) as the 
 
 ```bash
 its wrike contacts get <user-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike contacts get <user-id> --json
 ```
 
 ---
@@ -808,9 +700,6 @@ List all Wrike spaces. Surfaces the most common fields; pass --json for raw shap
 
 ```bash
 its wrike spaces
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike spaces --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike spaces --watch
@@ -835,9 +724,6 @@ List folders in a space (accepts space name or ID). Surfaces the most common fie
 ```bash
 its wrike folders "IT Operations"
 
-# Pipe-friendly output — use with jq / scripts.
-its wrike folders "IT Operations" --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike folders "IT Operations" --watch
 ```
@@ -860,9 +746,6 @@ List all workflows with statuses. Surfaces the most common fields; pass --json f
 
 ```bash
 its wrike workflows
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike workflows --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike workflows --watch
@@ -893,9 +776,6 @@ List custom field definitions. Surfaces the most common fields; pass --json for 
 ```bash
 its wrike custom-fields
 
-# Pipe-friendly output — use with jq / scripts.
-its wrike custom-fields --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike custom-fields --watch
 ```
@@ -918,9 +798,6 @@ List custom item types (request types). Surfaces the most common fields; pass --
 
 ```bash
 its wrike item-types
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike item-types --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike item-types --watch
@@ -945,9 +822,6 @@ Extract new starter onboarding details from a task. Pass the id (or any natural 
 ```bash
 # Parse onboarding task into structured fields
 its wrike onboarding get <task-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike onboarding get <task-id> --json
 ```
 
 ---
@@ -1021,9 +895,6 @@ Overview of IT tickets by status. Surfaces the most common fields; pass --json f
 ```bash
 # Open/in-progress/blocked counts
 its wrike dashboard
-
-# Pipe-friendly output — use with jq / scripts.
-its wrike dashboard --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its wrike dashboard --watch

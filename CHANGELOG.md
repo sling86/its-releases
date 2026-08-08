@@ -15,6 +15,33 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.9.0] - 2026-08-08
+
+### Changed
+
+- **Pipelines:** 165 identifier arguments on writeable commands now declare
+  `pipeFrom`. Without it `bindPipeRecord` falls back to `LEGACY_SELECTORS`,
+  which only covers argument 0 and tries `.id` first — so a piped record
+  carrying both `.id` and `.backupId` bound the wrong field, silently, with
+  only a warning. Binding is now declared per argument and the warning is gone
+  for those commands.
+- **Docs:** the AI-facing skill reference renders a flag's declared value set
+  (`--type <ap|switch|gateway|all>`). 81 flags across the estate already
+  declared one and the reference was dropping it, leaving agents to guess.
+- **Docs:** dropped `<example> --json` from generated pages where the bare
+  example is already present — 444 lines that repeated a globally documented
+  flag, ~20KB (8%) of the skill reference.
+- **UniFi / Dokploy:** `unifi devices --type`, `unifi clients --filter`,
+  `dokploy backup --db-type` and `dokploy backup update --enabled` declare
+  their accepted values instead of naming them in prose, so tab completion and
+  the reference both pick them up.
+
+### Added
+
+- Two pipeline guards: every `pipeFrom` selector must be a usable path, and an
+  identifier argument on a writeable command must declare where it binds rather
+  than relying on the legacy guess.
+
 ## [0.8.1] - 2026-08-07
 
 ### Fixed

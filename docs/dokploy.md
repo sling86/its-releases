@@ -83,8 +83,6 @@ Every project in this Dokploy server, with a per-project tally of applications a
 ```bash
 its dokploy projects
 
-its dokploy projects --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy projects --watch
 ```
@@ -97,9 +95,6 @@ Full project detail — owner, env, plus the contained apps/databases/composes. 
 
 ```bash
 its dokploy projects get <project-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy projects get <project-id> --json
 ```
 
 #### `its dokploy projects create`
@@ -117,9 +112,6 @@ Create an empty Dokploy project. Apps and databases are added afterwards via `do
 
 ```bash
 its dokploy projects create --name "my-app"
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy projects create --name "my-app" --json
 ```
 
 #### `its dokploy projects delete <projectId>`
@@ -203,9 +195,6 @@ Get full detail for an application — source config, mounts, env keys, replicas
 
 ```bash
 its dokploy apps get <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps get <app-id> --json
 ```
 
 #### `its dokploy apps create`
@@ -225,9 +214,6 @@ Scaffold an empty application inside a project. Wire it to a source (git, docker
 
 ```bash
 its dokploy apps create --project <project-id> --name "my-api"
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps create --project <project-id> --name "my-api" --json
 ```
 
 #### `its dokploy apps delete <applicationId>`
@@ -283,9 +269,6 @@ Start a previously stopped container. Idempotent — no-op if already running.
 
 ```bash
 its dokploy apps start <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps start <app-id> --json
 ```
 
 #### `its dokploy apps restart <applicationId>`
@@ -296,9 +279,6 @@ Stop + start in one call. Doesn't rebuild — use `dokploy apps deploy` if the i
 
 ```bash
 its dokploy apps restart <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps restart <app-id> --json
 ```
 
 #### `its dokploy apps set-source <app>`
@@ -326,9 +306,6 @@ Wire an application to a source provider. --type github links a GitHub App repo;
 
 ```bash
 its dokploy apps set-source <app-id> --type github --repo owner/repo --branch main
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps set-source <app-id> --type github --repo owner/repo --branch main --json
 ```
 
 #### `its dokploy apps set-build <app>`
@@ -363,9 +340,6 @@ Force a fresh build from source (clones, builds image, deploys). Distinct from `
 ```bash
 # Distinct from deploy — clones, builds image, deploys
 its dokploy apps rebuild <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps rebuild <app-id> --json
 ```
 
 #### `its dokploy apps wait-deploy <app>`
@@ -384,9 +358,6 @@ Poll an application's deployments until the latest (or --since <id>) transitions
 
 ```bash
 its dokploy apps wait-deploy <app-id> --timeout 600
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps wait-deploy <app-id> --timeout 600 --json
 ```
 
 #### `its dokploy apps redeploy <applicationId>`
@@ -397,9 +368,6 @@ Redeploy an application without rebuilding. Redeploys the existing container; do
 
 ```bash
 its dokploy apps redeploy <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps redeploy <app-id> --json
 ```
 
 #### `its dokploy apps logs <app>`
@@ -438,9 +406,6 @@ Resource-usage snapshot for a running app — CPU%, memory MB, disk, network rx/
 
 ```bash
 its dokploy apps monitoring <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps monitoring <app-id> --json
 ```
 
 #### `its dokploy apps traefik <app>`
@@ -451,9 +416,6 @@ Show the Traefik routing config (router + service + middlewares) Dokploy generat
 
 ```bash
 its dokploy apps traefik <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps traefik <app-id> --json
 ```
 
 #### `its dokploy apps status <app>`
@@ -464,9 +426,6 @@ Show container state, uptime, restart count, image, and domain.
 
 ```bash
 its dokploy apps status <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps status <app-id> --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy apps status <app-id> --watch
@@ -488,9 +447,6 @@ Clone an application — copies Docker settings, env vars, and creates a domain.
 
 ```bash
 its dokploy apps clone <source-id> "my-api-staging"
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps clone <source-id> "my-api-staging" --json
 ```
 
 #### `its dokploy apps shell <app> [cmd]`
@@ -508,9 +464,6 @@ Open an interactive shell in the running container via SSH + docker exec. Pass [
 ```bash
 # Opens xterm dock — bash inside the container
 its dokploy apps shell <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps shell <app-id> --json
 ```
 
 #### `its dokploy apps migrate <app>`
@@ -578,9 +531,6 @@ Lightweight health sweep across ALL apps — replicas / last deploy / domain rea
 # Container status + healthcheck result
 its dokploy apps health <app-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps health <app-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy apps health <app-id> --watch
 ```
@@ -621,9 +571,6 @@ Run a battery of parallel checks (env, mounts, webhook, replicas, image, healthc
 ```bash
 # Walks deploy logs, traefik, env, source. Flags issues.
 its dokploy apps doctor <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy apps doctor <app-id> --json
 ```
 
 #### `its dokploy apps bootstrap <name>`
@@ -684,9 +631,6 @@ List all databases across projects. Surfaces the most common fields; pass --json
 ```bash
 its dokploy databases
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy databases --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy databases --watch
 ```
@@ -708,9 +652,6 @@ Compose a connection URL for a database — uses the docker-network appName by d
 ```bash
 # Print connection string (mask in shared terminals)
 its dokploy databases url <db-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy databases url <db-id> --json
 ```
 
 #### `its dokploy databases get`
@@ -727,9 +668,6 @@ Get full details for a database (appName, credentials, port).
 
 ```bash
 its dokploy databases get <db-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy databases get <db-id> --json
 ```
 
 #### `its dokploy databases create`
@@ -753,9 +691,6 @@ Create a database (postgres, mysql, mariadb, mongo, or redis).
 
 ```bash
 its dokploy databases create --type postgres --name "app-db" --project <project-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy databases create --type postgres --name "app-db" --project <project-id> --json
 ```
 
 #### `its dokploy databases deploy <databaseId>`
@@ -772,9 +707,6 @@ Deploy a database instance. Trigger a fresh deploy from the wired source.
 
 ```bash
 its dokploy databases deploy <db-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy databases deploy <db-id> --json
 ```
 
 #### `its dokploy databases stop <databaseId>`
@@ -832,9 +764,6 @@ List deployments for an application. Surfaces the most common fields; pass --jso
 # Last N deploys with status + duration
 its dokploy deployments <app-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy deployments <app-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy deployments <app-id> --watch
 ```
@@ -847,9 +776,6 @@ Show pending/active deployments across the whole Dokploy server (not scoped to o
 
 ```bash
 its dokploy deployments queue
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy deployments queue --json
 ```
 
 #### `its dokploy deployments kill <deploymentId>`
@@ -885,9 +811,6 @@ List domains for an application. Surfaces the most common fields; pass --json fo
 ```bash
 its dokploy domains <app-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy domains <app-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy domains <app-id> --watch
 ```
@@ -909,9 +832,6 @@ Add a domain to an application. Idempotent on duplicate names — use update/edi
 
 ```bash
 its dokploy domains create <app-id> --host "app.example.com" --port 3000
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy domains create <app-id> --host "app.example.com" --port 3000 --json
 ```
 
 #### `its dokploy domains check [host]`
@@ -929,9 +849,6 @@ Inspect the live TLS certificate for a domain — issuer, validity window, days-
 ```bash
 # Issuer, validity window, days-to-expiry
 its dokploy domains check "app.example.com"
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy domains check "app.example.com" --json
 ```
 
 #### `its dokploy domains delete <domainId>`
@@ -981,9 +898,6 @@ Show environment variables for an application. Keys are visible by default; valu
 ```bash
 its dokploy env <app-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy env <app-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy env <app-id> --watch
 ```
@@ -1004,9 +918,6 @@ Push an env file to an application. Upload local state to the upstream. Pass --d
 
 ```bash
 its dokploy env push <app-id> --file .env.production
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy env push <app-id> --file .env.production --json
 ```
 
 #### `its dokploy env set <applicationId> <pairs>`
@@ -1024,9 +935,6 @@ Set one or more env vars (KEY=value) without affecting others. NB: a plain set u
 
 ```bash
 its dokploy env set <app-id> DEBUG=true
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy env set <app-id> DEBUG=true --json
 ```
 
 #### `its dokploy env unset <applicationId> <keys>`
@@ -1057,9 +965,6 @@ Pull env vars from an application to a local file. Download upstream state to lo
 
 ```bash
 its dokploy env pull <app-id> --file .env.local
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy env pull <app-id> --file .env.local --json
 ```
 
 #### `its dokploy env copy <srcApp> <dstApp>`
@@ -1187,9 +1092,6 @@ List configured container registries. Surfaces the most common fields; pass --js
 ```bash
 its dokploy registries
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy registries --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy registries --watch
 ```
@@ -1212,9 +1114,6 @@ List configured backup destinations (S3/Wasabi). Surfaces the most common fields
 
 ```bash
 its dokploy destinations
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy destinations --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy destinations --watch
@@ -1239,9 +1138,6 @@ List configured notification channels. Surfaces the most common fields; pass --j
 ```bash
 its dokploy notifications
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy notifications --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy notifications --watch
 ```
@@ -1265,9 +1161,6 @@ Overview of all projects, applications, and databases. Surfaces the most common 
 ```bash
 # Apps, projects, databases counts + last deploy times
 its dokploy dashboard
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy dashboard --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy dashboard --watch
@@ -1295,9 +1188,6 @@ List mounts (bind/volume/file) for an application. Surfaces the most common fiel
 ```bash
 its dokploy mounts <app-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy mounts <app-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy mounts <app-id> --watch
 ```
@@ -1321,9 +1211,6 @@ Add a mount to an application (--type bind|volume|file). Use --ensure-host-path 
 
 ```bash
 its dokploy mounts add <app-id> --type bind --src /data --dst /app/data
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy mounts add <app-id> --type bind --src /data --dst /app/data --json
 ```
 
 #### `its dokploy mounts update <mountId>`
@@ -1343,9 +1230,6 @@ Update an existing mount. PATCH semantics — only the supplied fields change.
 
 ```bash
 its dokploy mounts update <mount-id> --src "/data" --dst "/app/data"
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy mounts update <mount-id> --src "/data" --dst "/app/data" --json
 ```
 
 #### `its dokploy mounts remove <mountId>`
@@ -1385,9 +1269,6 @@ Diff the Dokploy expected webhook against the GitHub repo's actual hooks. Catche
 ```bash
 # Test GitHub webhook end-to-end
 its dokploy webhook check <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy webhook check <app-id> --json
 ```
 
 #### `its dokploy webhook setup <app>`
@@ -1404,9 +1285,6 @@ Create the GitHub webhook on the repo wired to the Dokploy auto-deploy endpoint.
 
 ```bash
 its dokploy webhook setup <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy webhook setup <app-id> --json
 ```
 
 #### `its dokploy webhook <app>`
@@ -1417,9 +1295,6 @@ List GitHub webhooks on the repo backing this application. Surfaces the most com
 
 ```bash
 its dokploy webhook list <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy webhook list <app-id> --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy webhook list <app-id> --watch
@@ -1447,9 +1322,6 @@ List Docker Swarm nodes (host, availability, role, engine version).
 ```bash
 its dokploy nodes
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy nodes --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy nodes --watch
 ```
@@ -1462,9 +1334,6 @@ Detailed info for a single swarm node (CPU, memory, labels, status).
 
 ```bash
 its dokploy nodes info <node-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy nodes info <node-id> --json
 ```
 
 #### `its dokploy nodes apps`
@@ -1475,9 +1344,6 @@ List swarm services (replicated apps) running across nodes.
 
 ```bash
 its dokploy nodes apps
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy nodes apps --json
 ```
 
 #### `its dokploy nodes stats`
@@ -1488,9 +1354,6 @@ Live container resource stats across all swarm containers (CPU%, MemUsage, Block
 
 ```bash
 its dokploy nodes stats
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy nodes stats --json
 ```
 
 ---
@@ -1547,9 +1410,6 @@ List ALL containers on the Dokploy host (not scoped to app). Surfaces the most c
 # Every container on the host, not just app-scoped
 its dokploy containers
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy containers --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy containers --watch
 ```
@@ -1562,9 +1422,6 @@ Get full Docker config for a container (env, mounts, network, labels).
 
 ```bash
 its dokploy containers config <container-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy containers config <container-id> --json
 ```
 
 #### `its dokploy containers start <containerId>`
@@ -1575,9 +1432,6 @@ Start a container by ID (not app name). Lower-level than `apps start` — operat
 
 ```bash
 its dokploy containers start <container-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy containers start <container-id> --json
 ```
 
 #### `its dokploy containers stop <containerId>`
@@ -1598,9 +1452,6 @@ Restart a container by ID (not app name). Lower-level than `apps restart` — op
 
 ```bash
 its dokploy containers restart <container-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy containers restart <container-id> --json
 ```
 
 #### `its dokploy containers kill <containerId>`
@@ -1658,9 +1509,6 @@ Docker disk usage on the Dokploy host (Images / Containers / Volumes / Build Cac
 ```bash
 # Images / containers / volumes / build cache
 its dokploy maintenance disk
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy maintenance disk --json
 ```
 
 #### `its dokploy maintenance web`
@@ -1671,9 +1519,6 @@ Dokploy web-server settings (server IP, HTTPS, certificate type, host).
 
 ```bash
 its dokploy maintenance web
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy maintenance web --json
 ```
 
 #### `its dokploy maintenance traefik`
@@ -1684,9 +1529,6 @@ Global Traefik dynamic config (Dokploy-wide, not per-app). Use `apps traefik` fo
 
 ```bash
 its dokploy maintenance traefik
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy maintenance traefik --json
 ```
 
 #### `its dokploy maintenance clean`
@@ -1717,9 +1559,6 @@ Server time + timezone (sanity check for cron drift / TLS errors).
 ```bash
 # Sanity check for cron drift / TLS errors
 its dokploy maintenance time
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy maintenance time --json
 ```
 
 ---
@@ -1775,9 +1614,6 @@ List GitHub App installations configured in Dokploy.
 
 ```bash
 its dokploy github providers
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy github providers --json
 ```
 
 #### `its dokploy github repos <githubId>`
@@ -1788,9 +1624,6 @@ Repos visible to a GitHub App installation. Pass the `githubId` from `github pro
 
 ```bash
 its dokploy github repos <github-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy github repos <github-id> --json
 ```
 
 #### `its dokploy github branches <owner> <repo>`
@@ -1807,9 +1640,6 @@ Branches in a GitHub repo (uses the GitHub App, no PAT needed).
 
 ```bash
 its dokploy github branches owner repo
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy github branches owner repo --json
 ```
 
 ---
@@ -1834,9 +1664,6 @@ List users + roles in the active Dokploy organization. Surfaces the most common 
 ```bash
 its dokploy users
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy users --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy users --watch
 ```
@@ -1849,9 +1676,6 @@ Current user (the API token's owner) + org context + role.
 
 ```bash
 its dokploy users me
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy users me --json
 ```
 
 #### `its dokploy users invite`
@@ -1869,9 +1693,6 @@ Invite a user to the active Dokploy organization by email (user.invitation).
 
 ```bash
 its dokploy users invite --email jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy users invite --email jane.smith@example.com --json
 ```
 
 #### `its dokploy users remove <userId>`
@@ -1910,9 +1731,6 @@ Organizations the API key has access to. Surfaces the most common fields; pass -
 ```bash
 its dokploy orgs
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy orgs --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy orgs --watch
 ```
@@ -1925,9 +1743,6 @@ The currently active organization for the API key. Returns whichever record the 
 
 ```bash
 its dokploy orgs active
-
-# Returns ownerId + slug — handy for scripted multi-org tooling.
-its dokploy orgs active --json
 ```
 
 ---
@@ -1954,9 +1769,6 @@ Get a docker-compose stack by composeId. Pass the id (or any natural identifier)
 
 ```bash
 its dokploy compose get <compose-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy compose get <compose-id> --json
 ```
 
 #### `its dokploy compose services <composeId>`
@@ -1967,9 +1779,6 @@ List services declared inside a compose stack (compose.loadServices).
 
 ```bash
 its dokploy compose services <compose-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy compose services <compose-id> --json
 ```
 
 #### `its dokploy compose config <composeId>`
@@ -1981,9 +1790,6 @@ Show the resolved docker-compose YAML Dokploy will deploy (after env substitutio
 ```bash
 # After env substitution
 its dokploy compose config <compose-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy compose config <compose-id> --json
 ```
 
 #### `its dokploy compose deploy <composeId>`
@@ -1994,9 +1800,6 @@ Trigger a deploy on a compose stack. Trigger a fresh deploy from the wired sourc
 
 ```bash
 its dokploy compose deploy <compose-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy compose deploy <compose-id> --json
 ```
 
 #### `its dokploy compose stop <composeId>`
@@ -2017,9 +1820,6 @@ Redeploy a compose stack (rebuild + deploy). Redeploys the existing container; d
 
 ```bash
 its dokploy compose redeploy <compose-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy compose redeploy <compose-id> --json
 ```
 
 #### `its dokploy compose delete <composeId>`
@@ -2061,7 +1861,7 @@ Create a scheduled backup config. Postgres example: its dokploy backup create --
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--db-type` | `` | postgres | mariadb | mysql | mongo | libsql | web-server (default: postgres) | — |
+| `--db-type` | `` | Database engine (default: postgres) | — |
 | `--db-id` | `` | Parent resource id (postgresId/mysqlId/...). Omit for web-server. | — |
 | `--schedule` | `` | Cron expression, e.g. '0 2,14 * * *' | — |
 | `--prefix` | `` | Destination path prefix, e.g. prod-postgres/ | — |
@@ -2082,9 +1882,6 @@ Get a backup config by id (schedule, destination, prefix). Pass the id (or any n
 
 ```bash
 its dokploy backup get <backup-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy backup get <backup-id> --json
 ```
 
 #### `its dokploy backup update <backupId>`
@@ -2098,7 +1895,7 @@ Update a backup config (schedule, prefix, keep count, enabled). Only provided fl
 | `--schedule` | `` | Cron expression | — |
 | `--prefix` | `` | Destination path prefix | — |
 | `--keep` | `` | keepLatestCount | — |
-| `--enabled` | `` | Set enabled true|false | — |
+| `--enabled` | `` | Set enabled | — |
 
 ```bash
 its dokploy backup update <backupId>
@@ -2118,9 +1915,6 @@ List backup files present in a remote destination (S3/MinIO bucket etc.).
 
 ```bash
 its dokploy backup files <destination-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy backup files <destination-id> --json
 ```
 
 #### `its dokploy backup run <backupId>`
@@ -2131,9 +1925,6 @@ Trigger a manual backup run for a given backup config (backup.manualBackup).
 
 ```bash
 its dokploy backup run <backup-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy backup run <backup-id> --json
 ```
 
 #### `its dokploy backup delete <backupId>`
@@ -2181,9 +1972,6 @@ List cron schedules attached to an application, compose stack, or the server.
 ```bash
 its dokploy schedule <id>
 
-# Pipe-friendly output — use with jq / scripts.
-its dokploy schedule <id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy schedule <id> --watch
 ```
@@ -2196,9 +1984,6 @@ Get a schedule by id. Pass the id (or any natural identifier) as the positional 
 
 ```bash
 its dokploy schedule get <schedule-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy schedule get <schedule-id> --json
 ```
 
 #### `its dokploy schedule run <scheduleId>`
@@ -2209,9 +1994,6 @@ Trigger a schedule manually (schedule.runManually). Execute the named job/script
 
 ```bash
 its dokploy schedule run <schedule-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy schedule run <schedule-id> --json
 ```
 
 #### `its dokploy schedule delete <scheduleId>`
@@ -2250,9 +2032,6 @@ List all configured git providers across GitHub Apps, GitLab OAuth apps, and Bit
 
 ```bash
 its dokploy git
-
-# Pipe-friendly output — use with jq / scripts.
-its dokploy git --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy git --watch

@@ -179,8 +179,6 @@ its entra users get jane.smith@example.com
 
 # Object IDs work in place of UPN — useful from sign-in logs.
 its entra users get 8d3b9c8f-...-aaa
-
-its entra users get jane.smith@example.com --json
 ```
 
 #### `its entra users groups <id>`
@@ -191,9 +189,6 @@ All groups the user is a direct member of — security, M365, distribution, mail
 
 ```bash
 its entra users groups jane.smith@example.com
-
-# Pipe to jq to diff against a target user.
-its entra users groups jane.smith@example.com --json
 ```
 
 #### `its entra users chain <id>`
@@ -211,8 +206,6 @@ Follow manager pointers up the org tree and render the chain. Useful for access-
 ```bash
 # Walk up the manager tree
 its entra users chain jane.smith@example.com
-
-its entra users chain jane.smith@example.com --json
 ```
 
 #### `its entra users licences <id>`
@@ -223,9 +216,6 @@ Per-SKU licence assignments with service-plan level detail — which SKUs the us
 
 ```bash
 its entra users licences jane.smith@example.com
-
-# Surfaces serviceplan-level enabled/disabled detail.
-its entra users licences jane.smith@example.com --json
 ```
 
 #### `its entra users invite`
@@ -273,9 +263,6 @@ Create a new user. Idempotent on duplicate names — use update/edit to mutate a
 
 ```bash
 its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!"
-
-# Pipe-friendly output — use with jq / scripts.
-its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --json
 ```
 
 #### `its entra users enable <id>`
@@ -286,8 +273,6 @@ Enable a user account. Switch to active state. Idempotent.
 
 ```bash
 its entra users enable jane.smith@example.com
-
-its entra users enable jane.smith@example.com --json
 ```
 
 #### `its entra users bootstrap-admin <id>`
@@ -309,9 +294,6 @@ Macro: create a TAP for the user, then optionally exclude them from CA policies 
 ```bash
 # Creates a TAP and excludes user from blocking CA policies
 its entra users bootstrap-admin newadmin@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its entra users bootstrap-admin newadmin@example.com --json
 ```
 
 #### `its entra users stale`
@@ -497,9 +479,6 @@ Search groups by name. Substring match across the most relevant fields; case-ins
 
 ```bash
 its entra groups search "all staff"
-
-# Pipe-friendly output — use with jq / scripts.
-its entra groups search "all staff" --json
 ```
 
 #### `its entra groups get <group_id>`
@@ -510,9 +489,6 @@ Get group details. Pass the id (or any natural identifier) as the positional arg
 
 ```bash
 its entra groups get <group-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra groups get <group-id> --json
 ```
 
 #### `its entra groups members <group_id>`
@@ -551,9 +527,6 @@ Create a new security group. Idempotent on duplicate names — use update/edit t
 
 ```bash
 its entra groups create --displayName "Marketing"
-
-# Pipe-friendly output — use with jq / scripts.
-its entra groups create --displayName "Marketing" --json
 ```
 
 #### `its entra groups add-member <group_id>`
@@ -573,9 +546,6 @@ Add a user to a group. Refuses dynamic-membership groups (ctxc 41) — Graph acc
 ```bash
 # Guards against dynamic groups, disabled users, and namesake collisions
 its entra groups add-member <group-id> --user jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its entra groups add-member <group-id> --user jane.smith@example.com --json
 ```
 
 #### `its entra groups remove-member <group_id>`
@@ -594,9 +564,6 @@ Remove a user from a group (requires --confirm). Refuses dynamic-membership grou
 
 ```bash
 its entra groups remove-member <group-id> --user jane.smith@example.com --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its entra groups remove-member <group-id> --user jane.smith@example.com --confirm --json
 ```
 
 #### `its entra groups edit-rule <group_id>`
@@ -660,8 +627,6 @@ its entra licences
 # Show only SKUs at zero seats
 its entra licences --filter available=0
 
-its entra licences --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra licences --watch
 ```
@@ -717,8 +682,6 @@ List users assigned a specific licence SKU. List by resource membership; use --j
 
 ```bash
 its entra licences users SPB
-
-its entra licences users SPB --json
 ```
 
 #### `its entra licences unlicensed`
@@ -730,8 +693,6 @@ Find enabled users with no licence assignments. Read-only — useful for billing
 ```bash
 # Active users without any licence — billing leak hunt
 its entra licences unlicensed
-
-its entra licences unlicensed --json
 ```
 
 #### `its entra licences audit`
@@ -743,9 +704,6 @@ Licence usage report with availability and over-allocation warnings.
 ```bash
 # Per-SKU usage with under/over-allocation flags
 its entra licences audit
-
-# Feed the audit into a scheduled spend report.
-its entra licences audit --json
 ```
 
 #### `its entra licences waste`
@@ -763,9 +721,6 @@ Find disabled accounts with reclaimable licences. Read-only — useful for findi
 ```bash
 # Disabled users still holding licences
 its entra licences waste
-
-# Use the json envelope's totals to file an exec report.
-its entra licences waste --json
 ```
 
 ---
@@ -792,9 +747,6 @@ List activated directory roles. Surfaces the most common fields; pass --json for
 # Currently active directory roles
 its entra roles
 
-# Pipe-friendly output — use with jq / scripts.
-its entra roles --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra roles --watch
 ```
@@ -807,9 +759,6 @@ List members of a directory role. Returns direct members; nested groups aren't e
 
 ```bash
 its entra roles members <role-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra roles members <role-id> --json
 ```
 
 #### `its entra roles assign <user_id>`
@@ -826,9 +775,6 @@ Assign a directory role to a user. Idempotent — assigning twice is a no-op.
 
 ```bash
 its entra roles assign jane.smith@example.com --role <role-def-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra roles assign jane.smith@example.com --role <role-def-id> --json
 ```
 
 #### `its entra roles remove <user_id>`
@@ -857,9 +803,6 @@ List all role assignments with role names. Returns the assignment record, not th
 ```bash
 # Complete map of role → principal
 its entra roles assignments
-
-# Pipe-friendly output — use with jq / scripts.
-its entra roles assignments --json
 ```
 
 ---
@@ -913,9 +856,6 @@ Sign-in summary for a user (last sign-in timestamps). Quick one-screen view — 
 ```bash
 its entra signin summary jane.smith@example.com
 
-# Pipe-friendly output — use with jq / scripts.
-its entra signin summary jane.smith@example.com --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra signin summary jane.smith@example.com --watch
 ```
@@ -929,9 +869,6 @@ Decode a single sign-in event: error code, failureReason, and the CA policies th
 ```bash
 # Show error code + which CA policies fired
 its entra signin explain <signin-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra signin explain <signin-id> --json
 ```
 
 #### `its entra signin suspicious`
@@ -948,9 +885,6 @@ List sign-ins with risk indicators. Bounded by --since; defaults to last 24h.
 
 ```bash
 its entra signin suspicious --days 7
-
-# Pipe-friendly output — use with jq / scripts.
-its entra signin suspicious --days 7 --json
 ```
 
 ---
@@ -995,9 +929,6 @@ List active Temporary Access Passes for a user (codes redacted).
 # Temporary access passes outstanding
 its entra tap
 
-# Pipe-friendly output — use with jq / scripts.
-its entra tap --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra tap --watch
 ```
@@ -1016,9 +947,6 @@ Revoke a Temporary Access Pass. Reverse an assignment. --confirm where required.
 
 ```bash
 its entra tap revoke jane.smith@example.com <method-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra tap revoke jane.smith@example.com <method-id> --json
 ```
 
 ---
@@ -1057,9 +985,6 @@ List all Conditional Access policies. Surfaces the most common fields; pass --js
 # Conditional access policies (state + targets)
 its entra ca
 
-# Pipe-friendly output — use with jq / scripts.
-its entra ca --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra ca --watch
 ```
@@ -1072,9 +997,6 @@ List only enabled CA policies. Filters by `state eq 'enabled'`.
 
 ```bash
 its entra ca enabled
-
-# Pipe-friendly output — use with jq / scripts.
-its entra ca enabled --json
 ```
 
 #### `its entra ca get <id_or_name>`
@@ -1085,9 +1007,6 @@ Show full CA policy JSON by id or displayName. Pass the id (or any natural ident
 
 ```bash
 its entra ca get <policy-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra ca get <policy-id> --json
 ```
 
 #### `its entra ca patch <id_or_name>`
@@ -1124,9 +1043,6 @@ Add 'All guest and external users' to excludeGuestsOrExternalUsers on a policy.
 
 ```bash
 its entra ca exclude-guests <policy-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra ca exclude-guests <policy-id> --json
 ```
 
 #### `its entra ca create`
@@ -1144,9 +1060,6 @@ Create a Conditional Access policy from a JSON body or file (@path).
 
 ```bash
 its entra ca create @./policy.json
-
-# Pipe-friendly output — use with jq / scripts.
-its entra ca create @./policy.json --json
 ```
 
 #### `its entra ca delete <id_or_name>`
@@ -1200,9 +1113,6 @@ Remove a user from a CA policy's excludeUsers list. Reverse of `exclude-user`. I
 
 ```bash
 its entra ca unexclude-user <policy-id> jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its entra ca unexclude-user <policy-id> jane.smith@example.com --json
 ```
 
 #### `its entra ca why-blocked <user>`
@@ -1220,9 +1130,6 @@ Show which enabled CA policies target a user, plus the grant controls each requi
 ```bash
 # Which CA policy is blocking sign-in?
 its entra ca why-blocked jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its entra ca why-blocked jane.smith@example.com --json
 ```
 
 #### `its entra ca named-locations`
@@ -1233,9 +1140,6 @@ List trusted/named locations referenced by CA policies.
 
 ```bash
 its entra ca named-locations
-
-# Pipe-friendly output — use with jq / scripts.
-its entra ca named-locations --json
 ```
 
 ---
@@ -1261,9 +1165,6 @@ Fetch the full Authentication Methods Policy — shows which methods (TAP, FIDO2
 ```bash
 # Tenant-wide TAP / FIDO2 / Authenticator state
 its entra authmethods policy
-
-# Pipe-friendly output — use with jq / scripts.
-its entra authmethods policy --json
 ```
 
 #### `its entra authmethods get <method>`
@@ -1274,9 +1175,6 @@ Get a single authentication method configuration by id (TemporaryAccessPass, Fid
 
 ```bash
 its entra authmethods get TemporaryAccessPass
-
-# Pipe-friendly output — use with jq / scripts.
-its entra authmethods get TemporaryAccessPass --json
 ```
 
 #### `its entra authmethods enable <method>`
@@ -1295,9 +1193,6 @@ Enable a method tenant-wide (sets state=enabled on the method configuration). Pa
 
 ```bash
 its entra authmethods enable Fido2
-
-# Pipe-friendly output — use with jq / scripts.
-its entra authmethods enable Fido2 --json
 ```
 
 #### `its entra authmethods disable <method>`
@@ -1315,9 +1210,6 @@ Disable a method tenant-wide (state=disabled). Switch to inactive state. Idempot
 
 ```bash
 its entra authmethods disable Sms
-
-# Pipe-friendly output — use with jq / scripts.
-its entra authmethods disable Sms --json
 ```
 
 #### `its entra authmethods patch <method>`
@@ -1336,9 +1228,6 @@ Patch a method configuration with a custom body (inline or @path/to/file.json).
 
 ```bash
 its entra authmethods patch TemporaryAccessPass @./tap-policy.json
-
-# Pipe-friendly output — use with jq / scripts.
-its entra authmethods patch TemporaryAccessPass @./tap-policy.json --json
 ```
 
 ---
@@ -1371,9 +1260,6 @@ List delegated OAuth2 permission grants for a client app (existing consent).
 ```bash
 its entra consent <app-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its entra consent <app-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra consent <app-id> --watch
 ```
@@ -1395,9 +1281,6 @@ Safely add delegated scope(s) to an app — UNION with existing scope, never rep
 ```bash
 # Unions with existing scopes, never replaces
 its entra consent add-scope <app-id> Mail.Read
-
-# Pipe-friendly output — use with jq / scripts.
-its entra consent add-scope <app-id> Mail.Read --json
 ```
 
 #### `its entra consent remove-scope <client_app_id> <scopes>`
@@ -1416,9 +1299,6 @@ Remove delegated scope(s) from an existing grant — keeps others intact.
 
 ```bash
 its entra consent remove-scope <app-id> Mail.Read
-
-# Pipe-friendly output — use with jq / scripts.
-its entra consent remove-scope <app-id> Mail.Read --json
 ```
 
 #### `its entra consent app-roles <client_app_id>`
@@ -1429,9 +1309,6 @@ List application-permission grants (appRoleAssignments) for a client app.
 
 ```bash
 its entra consent app-roles <app-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra consent app-roles <app-id> --json
 ```
 
 #### `its entra consent app-role-grant <client_app_id> <role>`
@@ -1449,9 +1326,6 @@ Grant an application-permission (app-role) to a client app — equivalent to con
 
 ```bash
 its entra consent app-role-grant <app-id> User.Read.All
-
-# Pipe-friendly output — use with jq / scripts.
-its entra consent app-role-grant <app-id> User.Read.All --json
 ```
 
 #### `its entra consent app-role-revoke <client_app_id> <assignment_id>`
@@ -1469,9 +1343,6 @@ Revoke an app-role assignment by id. Revokes a previously-granted app-role grant
 
 ```bash
 its entra consent app-role-revoke <app-id> <assignment-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra consent app-role-revoke <app-id> <assignment-id> --json
 ```
 
 ---
@@ -1498,9 +1369,6 @@ Show the default cross-tenant access policy. Returns the tenant-default policy /
 ```bash
 # Default cross-tenant access settings
 its entra xtenant default
-
-# Pipe-friendly output — use with jq / scripts.
-its entra xtenant default --json
 ```
 
 #### `its entra xtenant trust-mfa <on_off>`
@@ -1517,9 +1385,6 @@ Toggle inboundTrust.isMfaAccepted on the default policy.
 
 ```bash
 its entra xtenant trust-mfa on
-
-# Pipe-friendly output — use with jq / scripts.
-its entra xtenant trust-mfa on --json
 ```
 
 #### `its entra xtenant trust-device <on_off>`
@@ -1536,9 +1401,6 @@ Toggle inboundTrust.isCompliantDeviceAccepted on the default policy.
 
 ```bash
 its entra xtenant trust-device on
-
-# Pipe-friendly output — use with jq / scripts.
-its entra xtenant trust-device on --json
 ```
 
 #### `its entra xtenant partners`
@@ -1549,9 +1411,6 @@ List per-partner cross-tenant access overrides. Returns per-partner overrides �
 
 ```bash
 its entra xtenant partners
-
-# Pipe-friendly output — use with jq / scripts.
-its entra xtenant partners --json
 ```
 
 #### `its entra xtenant partner-add <tenant_id>`
@@ -1562,9 +1421,6 @@ Start a per-partner cross-tenant access config. Bootstraps a fresh per-partner o
 
 ```bash
 its entra xtenant partner-add <partner-tenant-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its entra xtenant partner-add <partner-tenant-id> --json
 ```
 
 #### `its entra xtenant partner-set <tenant_id>`
@@ -1584,9 +1440,6 @@ Patch a partner cross-tenant access record. Patches an existing partner record.
 
 ```bash
 its entra xtenant partner-set <partner-tenant-id> --trust-mfa on
-
-# Pipe-friendly output — use with jq / scripts.
-its entra xtenant partner-set <partner-tenant-id> --trust-mfa on --json
 ```
 
 ---
@@ -1648,9 +1501,6 @@ List risky users from Identity Protection. Returns users with non-none risk scor
 ```bash
 # Identity Protection risk score > none
 its entra security risky
-
-# Pipe-friendly output — use with jq / scripts.
-its entra security risky --json
 ```
 
 #### `its entra security mfa <user_id>`
@@ -1662,9 +1512,6 @@ Check MFA readiness for a user. Returns user's strong-auth methods plus a readin
 ```bash
 # Users without strong MFA
 its entra security mfa
-
-# Pipe-friendly output — use with jq / scripts.
-its entra security mfa --json
 ```
 
 #### `its entra security admin-mfa`
@@ -1676,9 +1523,6 @@ Audit all admin users for MFA readiness. Audit pass — flags any admin without 
 ```bash
 # Privileged accounts without MFA
 its entra security admin-mfa
-
-# Pipe-friendly output — use with jq / scripts.
-its entra security admin-mfa --json
 ```
 
 ---
@@ -1704,9 +1548,6 @@ Get tenant organisation details. Returns the tenant organisation profile.
 
 ```bash
 its entra directory org
-
-# Pipe-friendly output — use with jq / scripts.
-its entra directory org --json
 ```
 
 #### `its entra directory domains`
@@ -1717,9 +1558,6 @@ List verified domains. Returns verified + provisioning domains.
 
 ```bash
 its entra directory domains
-
-# Pipe-friendly output — use with jq / scripts.
-its entra directory domains --json
 ```
 
 #### `its entra directory deleted`
@@ -1738,9 +1576,6 @@ List recently deleted users. Returns soft-deleted users still within the 30-day 
 ```bash
 # Soft-deleted users (30-day window)
 its entra directory deleted
-
-# Pipe-friendly output — use with jq / scripts.
-its entra directory deleted --json
 ```
 
 #### `its entra directory tree <user_id>`
@@ -1758,9 +1593,6 @@ Build org tree from a root user (recursive). Recursive — pass --depth to bound
 ```bash
 # Recursive manager hierarchy
 its entra directory tree
-
-# Pipe-friendly output — use with jq / scripts.
-its entra directory tree --json
 ```
 
 #### `its entra directory summary`
@@ -1771,9 +1603,6 @@ Aggregate users by company, department, location. Quick one-screen view — desi
 
 ```bash
 its entra directory summary
-
-# Pipe-friendly output — use with jq / scripts.
-its entra directory summary --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra directory summary --watch
@@ -1787,9 +1616,6 @@ Licence and app usage summary. Aggregated app + licence usage across the tenant.
 
 ```bash
 its entra directory app-usage
-
-# Pipe-friendly output — use with jq / scripts.
-its entra directory app-usage --json
 ```
 
 ---
@@ -1813,9 +1639,6 @@ Onboarding snapshot: user profile, licences, groups, manager.
 ```bash
 its entra onboarding summary jane.smith@example.com
 
-# Pipe-friendly output — use with jq / scripts.
-its entra onboarding summary jane.smith@example.com --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra onboarding summary jane.smith@example.com --watch
 ```
@@ -1835,9 +1658,6 @@ Copy group memberships from one user to another. Idempotent — already-shared g
 
 ```bash
 its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com --json
 ```
 
 #### `its entra onboarding convert-mailbox <user_id>`
@@ -1855,9 +1675,6 @@ Convert user mailbox to shared (disable + remove licences). Requires --confirm.
 ```bash
 # Disables user + removes licences after conversion
 its entra onboarding convert-mailbox jane.smith@example.com --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its entra onboarding convert-mailbox jane.smith@example.com --confirm --json
 ```
 
 ---
@@ -1880,9 +1697,6 @@ Offboarding checklist: disable account, list licences and groups to remove.
 ```bash
 its entra offboarding summary jane.smith@example.com
 
-# Pipe-friendly output — use with jq / scripts.
-its entra offboarding summary jane.smith@example.com --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra offboarding summary jane.smith@example.com --watch
 ```
@@ -1902,9 +1716,6 @@ Execute offboarding: disable account, revoke licences, remove from groups. Requi
 ```bash
 # Disable, revoke, strip licences, remove groups
 its entra offboarding run jane.smith@example.com --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its entra offboarding run jane.smith@example.com --confirm --json
 ```
 
 ---
@@ -1933,9 +1744,6 @@ Audit your two break-glass accounts (BG01 password + BG02 FIDO2) — GA role, CA
 ```bash
 # Verify emergency-access accounts are healthy + excluded from CA
 its entra break-glass audit
-
-# Pipe-friendly output — use with jq / scripts.
-its entra break-glass audit --json
 ```
 
 ---
@@ -1956,9 +1764,6 @@ Dump the current Entra CLIENT_ID, app display name, Graph app-role assignments (
 
 ```bash
 its entra whoami
-
-# Pipe-friendly output — use with jq / scripts.
-its entra whoami --json
 ```
 
 ---
@@ -1986,9 +1791,6 @@ Parallel health check on tenant — expiring secrets, admin MFA gaps, risky user
 
 ```bash
 its entra doctor
-
-# Pipe-friendly output — use with jq / scripts.
-its entra doctor --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its entra doctor --watch
@@ -2213,9 +2015,6 @@ Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 
 ```bash
 its entra graph post "/users/$count" --body @./payload.json
-
-# Pipe-friendly output — use with jq / scripts.
-its entra graph post "/users/$count" --body @./payload.json --json
 ```
 
 #### `its entra graph patch <path>`
@@ -2255,9 +2054,6 @@ Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 
 ```bash
 its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg
-
-# Pipe-friendly output — use with jq / scripts.
-its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg --json
 ```
 
 #### `its entra graph delete <path>`

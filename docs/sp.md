@@ -78,9 +78,6 @@ List all SharePoint sites. Surfaces the most common fields; pass --json for raw 
 ```bash
 its sp sites
 
-# Pipe-friendly output — use with jq / scripts.
-its sp sites --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its sp sites --watch
 ```
@@ -93,9 +90,6 @@ Get site details by ID. Pass the id (or any natural identifier) as the positiona
 
 ```bash
 its sp sites get <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp sites get <site-id> --json
 ```
 
 #### `its sp sites search <query>`
@@ -106,9 +100,6 @@ Search sites by name. Substring match across the most relevant fields; case-inse
 
 ```bash
 its sp sites search "marketing"
-
-# Pipe-friendly output — use with jq / scripts.
-its sp sites search "marketing" --json
 ```
 
 #### `its sp sites root`
@@ -119,9 +110,6 @@ Get the root site. Returns the document library root.
 
 ```bash
 its sp sites root
-
-# Pipe-friendly output — use with jq / scripts.
-its sp sites root --json
 ```
 
 #### `its sp sites subsites <siteId>`
@@ -132,9 +120,6 @@ List child sites. Returns child sites of the given site.
 
 ```bash
 its sp sites subsites <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp sites subsites <site-id> --json
 ```
 
 #### `its sp sites structure <siteId>`
@@ -146,9 +131,6 @@ Get site structure (drives, lists, subsites). Walks the site hierarchy + drives.
 ```bash
 # Lists, drives, subsites in one view
 its sp sites structure <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp sites structure <site-id> --json
 ```
 
 #### `its sp sites storage [siteId]`
@@ -182,9 +164,6 @@ List document libraries on a site. Surfaces the most common fields; pass --json 
 ```bash
 its sp drives <site-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its sp drives <site-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its sp drives <site-id> --watch
 ```
@@ -205,9 +184,6 @@ List files at document library root. Returns the document library root.
 
 ```bash
 its sp drives root <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp drives root <site-id> --json
 ```
 
 #### `its sp drives folder <siteId>`
@@ -225,9 +201,6 @@ List folder contents. Returns the contents of a folder by path.
 
 ```bash
 its sp drives folder <site-id> --path "Shared Documents/Marketing"
-
-# Pipe-friendly output — use with jq / scripts.
-its sp drives folder <site-id> --path "Shared Documents/Marketing" --json
 ```
 
 #### `its sp drives get <siteId>`
@@ -245,9 +218,6 @@ Get file or folder details. Pass the id (or any natural identifier) as the posit
 
 ```bash
 its sp drives get <site-id> --drive <drive-id> --item <item-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp drives get <site-id> --drive <drive-id> --item <item-id> --json
 ```
 
 #### `its sp drives recent <siteId>`
@@ -296,9 +266,6 @@ List all lists on a site. Surfaces the most common fields; pass --json for raw s
 ```bash
 its sp lists <site-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its sp lists <site-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its sp lists <site-id> --watch
 ```
@@ -317,9 +284,6 @@ Get list details. Pass the id (or any natural identifier) as the positional arg.
 
 ```bash
 its sp lists get <site-id> --list <list-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp lists get <site-id> --list <list-id> --json
 ```
 
 #### `its sp lists columns <siteId>`
@@ -337,9 +301,6 @@ Get column definitions for a list. Returns column definitions for a list.
 
 ```bash
 its sp lists columns <site-id> --list <list-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp lists columns <site-id> --list <list-id> --json
 ```
 
 #### `its sp lists items <siteId>`
@@ -359,9 +320,6 @@ List items from a list. Returns rows of a list, with column values.
 
 ```bash
 its sp lists items <site-id> --list <list-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp lists items <site-id> --list <list-id> --json
 ```
 
 #### `its sp lists create-item <siteId>`
@@ -421,9 +379,6 @@ Delete a list item. Permanent — use --confirm.
 
 ```bash
 its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm
-
-# Pipe-friendly output — use with jq / scripts.
-its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm --json
 ```
 
 ---
@@ -491,9 +446,6 @@ Upload a text file. Stream a local file to the resource.
 
 ```bash
 its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf
-
-# Pipe-friendly output — use with jq / scripts.
-its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf --json
 ```
 
 #### `its sp files folder <siteId>`
@@ -512,9 +464,6 @@ Create a folder under a parent item.
 
 ```bash
 its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder"
-
-# Pipe-friendly output — use with jq / scripts.
-its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder" --json
 ```
 
 #### `its sp files delete <siteId>`
@@ -569,9 +518,6 @@ Move or rename a file. Move an item between folders (reversible).
 
 ```bash
 its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id> --json
 ```
 
 #### `its sp files checkout <siteId>`
@@ -589,9 +535,6 @@ Check out a file for editing. Locks the item against concurrent edits.
 
 ```bash
 its sp files checkout <site-id> --drive <drive-id> --item <item-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp files checkout <site-id> --drive <drive-id> --item <item-id> --json
 ```
 
 #### `its sp files checkin <siteId>`
@@ -611,9 +554,6 @@ Check in a file. Releases the lock after editing.
 
 ```bash
 its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2"
-
-# Pipe-friendly output — use with jq / scripts.
-its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2" --json
 ```
 
 #### `its sp files versions <siteId>`
@@ -631,9 +571,6 @@ List file version history. Returns version history for a file.
 
 ```bash
 its sp files versions --item <item-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp files versions --item <item-id> --json
 ```
 
 #### `its sp files restore <siteId>`
@@ -653,9 +590,6 @@ Restore a file to a previous version. Restore a soft-deleted item from trash.
 
 ```bash
 its sp files restore <site-id> --item <item-id> --version <version-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp files restore <site-id> --item <item-id> --version <version-id> --json
 ```
 
 ---
@@ -684,9 +618,6 @@ Search across SharePoint. Surfaces the most common fields; pass --json for raw s
 ```bash
 its sp search "quarterly report"
 
-# Pipe-friendly output — use with jq / scripts.
-its sp search "quarterly report" --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its sp search "quarterly report" --watch
 ```
@@ -714,9 +645,6 @@ List app-level site permissions. Surfaces the most common fields; pass --json fo
 ```bash
 its sp permissions <site-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its sp permissions <site-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its sp permissions <site-id> --watch
 ```
@@ -736,9 +664,6 @@ List sharing permissions on a file or folder. Single record detail.
 
 ```bash
 its sp permissions item <site-id> --item <item-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp permissions item <site-id> --item <item-id> --json
 ```
 
 #### `its sp permissions share <siteId>`
@@ -758,9 +683,6 @@ Create a sharing link. Creates a sharing link / direct grant.
 
 ```bash
 its sp permissions share <site-id> --item <item-id> --type view --scope organization
-
-# Pipe-friendly output — use with jq / scripts.
-its sp permissions share <site-id> --item <item-id> --type view --scope organization --json
 ```
 
 #### `its sp permissions grant-app <siteId>`
@@ -891,9 +813,6 @@ List modern pages on a site. Surfaces the most common fields; pass --json for ra
 ```bash
 its sp pages <site-id>
 
-# Pipe-friendly output — use with jq / scripts.
-its sp pages <site-id> --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its sp pages <site-id> --watch
 ```
@@ -912,9 +831,6 @@ Get page details. Pass the id (or any natural identifier) as the positional arg.
 
 ```bash
 its sp pages get <site-id> --page <page-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its sp pages get <site-id> --page <page-id> --json
 ```
 
 ---
@@ -936,9 +852,6 @@ Comprehensive SharePoint overview. Surfaces the most common fields; pass --json 
 ```bash
 # Sites, storage, recent activity
 its sp dashboard
-
-# Pipe-friendly output — use with jq / scripts.
-its sp dashboard --json
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its sp dashboard --watch
@@ -973,9 +886,6 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 
 ```bash
 its sp graph get "/sites/<site-id>/lists"
-
-# Pipe-friendly output — use with jq / scripts.
-its sp graph get "/sites/<site-id>/lists" --json
 ```
 
 #### `its sp graph post <path>`
@@ -994,9 +904,6 @@ Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 
 ```bash
 its sp graph post "/sites/<site-id>/lists" --body @./new-list.json
-
-# Pipe-friendly output — use with jq / scripts.
-its sp graph post "/sites/<site-id>/lists" --body @./new-list.json --json
 ```
 
 #### `its sp graph patch <path>`
@@ -1036,9 +943,6 @@ Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 
 ```bash
 its sp graph put "/sites/<site-id>/drive/items/<item-id>/content" --body @./file.bin
-
-# Pipe-friendly output — use with jq / scripts.
-its sp graph put "/sites/<site-id>/drive/items/<item-id>/content" --body @./file.bin --json
 ```
 
 #### `its sp graph delete <path>`

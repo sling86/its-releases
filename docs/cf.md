@@ -70,9 +70,6 @@ List Cloudflare accounts the token can see. Surfaces the most common fields; pas
 ```bash
 its cf accounts
 
-# Pipe-friendly output — use with jq / scripts.
-its cf accounts --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its cf accounts --watch
 ```
@@ -118,9 +115,6 @@ Show zone details (accepts domain name or zone id). Pass the id (or any natural 
 
 ```bash
 its cf zones get example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its cf zones get example.com --json
 ```
 
 #### `its cf zones purge <zone>`
@@ -193,9 +187,6 @@ Show a single DNS record. Pass the id (or any natural identifier) as the positio
 
 ```bash
 its cf dns get <record-id> --zone example.com
-
-# Pipe-friendly output — use with jq / scripts.
-its cf dns get <record-id> --zone example.com --json
 ```
 
 #### `its cf dns create`
@@ -244,9 +235,6 @@ Patch fields on an existing DNS record. PATCH semantics — only the supplied fi
 
 ```bash
 its cf dns update <record-id> --zone example.com --content 5.6.7.8
-
-# Pipe-friendly output — use with jq / scripts.
-its cf dns update <record-id> --zone example.com --content 5.6.7.8 --json
 ```
 
 #### `its cf dns delete <record_id>`
@@ -295,9 +283,6 @@ List Cloudflare tunnels (cloudflared) for the account. Surfaces the most common 
 ```bash
 its cf tunnels
 
-# Pipe-friendly output — use with jq / scripts.
-its cf tunnels --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its cf tunnels --watch
 ```
@@ -316,9 +301,6 @@ Show tunnel details (accepts name or id). Pass the id (or any natural identifier
 
 ```bash
 its cf tunnels get <tunnel-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its cf tunnels get <tunnel-id> --json
 ```
 
 #### `its cf tunnels connections <tunnel>`
@@ -335,9 +317,6 @@ List active cloudflared connections for a tunnel. Returns API connections for th
 
 ```bash
 its cf tunnels connections <tunnel-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its cf tunnels connections <tunnel-id> --json
 ```
 
 #### `its cf tunnels delete <tunnel>`
@@ -372,9 +351,6 @@ List public hostname ingress rules for a tunnel. Routes defined in the configura
 
 ```bash
 its cf tunnels routes <tunnel-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its cf tunnels routes <tunnel-id> --json
 ```
 
 ---
@@ -403,9 +379,6 @@ Print a Cloudflare dashboard URL pre-filled with the scopes the `cf` provider ne
 ```bash
 # Print the Cloudflare dashboard URL with the right scopes
 its cf token url
-
-# Pipe-friendly output — use with jq / scripts.
-its cf token url --json
 ```
 
 #### `its cf token request`

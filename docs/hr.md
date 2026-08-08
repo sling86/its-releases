@@ -90,9 +90,6 @@ List all employees. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its hr employees
 
-# Pipe-friendly output — use with jq / scripts.
-its hr employees --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its hr employees --watch
 ```
@@ -111,9 +108,6 @@ Search employees by name/email/role/department/location. Substring match across 
 
 ```bash
 its hr employees search "jane"
-
-# Pipe-friendly output — use with jq / scripts.
-its hr employees search "jane" --json
 ```
 
 #### `its hr employees get <email>`
@@ -124,9 +118,6 @@ Get employee details by email (client-side filter). Match is exact on email addr
 
 ```bash
 its hr employees get <employee-id>
-
-# Pipe-friendly output — use with jq / scripts.
-its hr employees get <employee-id> --json
 ```
 
 ---
@@ -155,9 +146,6 @@ Upcoming starters — employees with StartDate in the future. Surfaces the most 
 ```bash
 its hr starters
 
-# Pipe-friendly output — use with jq / scripts.
-its hr starters --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its hr starters --watch
 ```
@@ -176,9 +164,6 @@ Recent starters — employees with StartDate in the past window.
 
 ```bash
 its hr starters recent --days 30
-
-# Pipe-friendly output — use with jq / scripts.
-its hr starters recent --days 30 --json
 ```
 
 ---
@@ -207,9 +192,6 @@ Upcoming leavers — employees with LeavingDate in the future.
 ```bash
 its hr leavers
 
-# Pipe-friendly output — use with jq / scripts.
-its hr leavers --json
-
 # Re-runs every 10s — handy for dashboards or incident response.
 its hr leavers --watch
 ```
@@ -228,9 +210,6 @@ Recent leavers — employees with LeavingDate in the past window.
 
 ```bash
 its hr leavers recent --days 30
-
-# Pipe-friendly output — use with jq / scripts.
-its hr leavers recent --days 30 --json
 ```
 
 ---
