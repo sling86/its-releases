@@ -336,6 +336,8 @@ Create a list item. Idempotent on natural-key collision; use update-item to muta
 **Examples:**
 
 ```bash
+its sp lists create-item example.sharepoint.com,1a2b3c4d,5e6f7a8b --list "IT Assets" --fields '{"Title":"Dell 5540","Serial":"ABC123"}'
+
 its sp lists create-item <site-id> --list <list-id> --json '{"Title":"New row"}'
 
 # Set arbitrary list columns via the inline JSON payload.
@@ -357,6 +359,8 @@ Update a list item. PATCH — only supplied fields change.
 **Examples:**
 
 ```bash
+its sp lists update-item example.sharepoint.com,1a2b3c4d,5e6f7a8b --list "IT Assets" --item 42 --fields '{"Status":"Retired"}'
+
 its sp lists update-item <site-id> --list <list-id> --item <item-id> --json '{"Title":"Updated"}'
 
 # PATCH semantics — only the supplied fields are changed.
@@ -378,6 +382,8 @@ Delete a list item. Permanent — use --confirm.
 **Examples:**
 
 ```bash
+its sp lists delete-item example.sharepoint.com,1a2b,3c4d --list "IT Assets" --item 42 --confirm
+
 its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm
 ```
 
@@ -419,13 +425,13 @@ Download a drive item to disk (--out) or pipe binary-safe to stdout. Resolves th
 **Examples:**
 
 ```bash
-its sp files download --user tony@contractcandles.com --item 01Q3JEFHMUOTAVKHPGWNBJPEDKM376OQH6 --out out.docx
+its sp files download --user jane.smith@example.com --item 01Q3JEFHMUOTAVKHPGWNBJPEDKM376OQH6 --out out.docx
 
 its sp files download --site <siteId> --drive <driveId> --path "/Folder/file.pdf" --out file.pdf
 
 its sp files download --url "https://.../download" --out file.bin
 
-its sp files download --user tony@contractcandles.com --item <id> | sha256sum
+its sp files download --user jane.smith@example.com --item <id> | sha256sum
 ```
 
 #### `its sp files upload <siteId>`
@@ -445,6 +451,8 @@ Upload a text file. Stream a local file to the resource.
 **Examples:**
 
 ```bash
+its sp files upload example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --path /Policies --content-file ./policy.md
+
 its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf
 ```
 
@@ -463,6 +471,8 @@ Create a folder under a parent item.
 **Examples:**
 
 ```bash
+its sp files folder example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --parent root --name "2026 Audits"
+
 its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder"
 ```
 
@@ -481,6 +491,9 @@ Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Aud
 **Examples:**
 
 ```bash
+# Goes to the site recycle bin — restore with `its sp recycle-bin restore`
+its sp files delete example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --confirm
+
 its sp files delete <site-id> --drive <drive-id> --item <item-id> --confirm
 ```
 
@@ -497,8 +510,13 @@ Create a sharing link for a file/folder (Graph createLink) and return its URL. -
 | `--type` | `` | Link type | view |
 | `--scope` | `` | Link scope | organization |
 
+**Examples:**
+
 ```bash
-its sp files share <siteId>
+its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope organization
+
+# Creates a link anyone with the URL can open — audit these with `its sp audit sharing-links`
+its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope anonymous
 ```
 
 #### `its sp files move <siteId>`
@@ -517,6 +535,10 @@ Move or rename a file. Move an item between folders (reversible).
 **Examples:**
 
 ```bash
+its sp files move example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --name "policy-v2.docx"
+
+its sp files move example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --parent 01ARCHIVE
+
 its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id>
 ```
 
@@ -534,6 +556,8 @@ Check out a file for editing. Locks the item against concurrent edits.
 **Examples:**
 
 ```bash
+its sp files checkout example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH
+
 its sp files checkout <site-id> --drive <drive-id> --item <item-id>
 ```
 
@@ -553,6 +577,8 @@ Check in a file. Releases the lock after editing.
 **Examples:**
 
 ```bash
+its sp files checkin example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --comment "Updated section 4"
+
 its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2"
 ```
 
@@ -589,6 +615,8 @@ Restore a file to a previous version. Restore a soft-deleted item from trash.
 **Examples:**
 
 ```bash
+its sp files restore example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --version 3.0 --confirm
+
 its sp files restore <site-id> --item <item-id> --version <version-id>
 ```
 
@@ -682,6 +710,8 @@ Create a sharing link. Creates a sharing link / direct grant.
 **Examples:**
 
 ```bash
+its sp permissions share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope users
+
 its sp permissions share <site-id> --item <item-id> --type view --scope organization
 ```
 
@@ -697,8 +727,11 @@ Grant the it-cli app (or another app via --app) a Sites.Selected role on one sit
 | `--app` | `` | Client (object) id of the app to grant. Defaults to the current SP_CLIENT_ID / CLIENT_ID. | — |
 | `--name` | `` | Display name to store with the grant. Defaults to 'its-cli'. | its-cli |
 
+**Examples:**
+
 ```bash
-its sp permissions grant-app <siteId>
+# Sites.Selected grant — scopes an app to this one site instead of the whole tenant
+its sp permissions grant-app example.sharepoint.com,1a2b,3c4d --app 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --role write --name "its CLI"
 ```
 
 #### `its sp permissions remove <siteId>`
@@ -717,6 +750,8 @@ Remove a sharing permission. Permanent — use --confirm.
 **Examples:**
 
 ```bash
+its sp permissions remove example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --permission aTowIzQuZg --confirm
+
 its sp permissions remove <site-id> --drive <drive-id> --item <item-id> --permission <permission-id> --confirm
 ```
 
@@ -753,8 +788,12 @@ its sp groups members <site> <group>
 
 Add a UPN, Entra security-group object id, or pre-formed claim LoginName to an SP site group. Idempotent.
 
+**Examples:**
+
 ```bash
-its sp groups add-member <site> <group> <principal>
+its sp groups add-member example.sharepoint.com,1a2b3c4d,5e6f7a8b "IT Owners" jane.smith@example.com
+
+its sp groups add-member example.sharepoint.com,1a2b3c4d,5e6f7a8b "IT Owners" 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
 ```
 
 #### `its sp groups remove-member <site> <group> <principal>`
@@ -767,8 +806,10 @@ Remove a member from an SP site group. Destructive — use --confirm.
 |------|-------|-------------|---------|
 | `--confirm` | `` | Confirm removal | — |
 
+**Examples:**
+
 ```bash
-its sp groups remove-member <site> <group> <principal>
+its sp groups remove-member example.sharepoint.com,1a2b3c4d,5e6f7a8b "IT Owners" jane.smith@example.com --confirm
 ```
 
 ---
@@ -790,7 +831,7 @@ List the site recycle bin. Reads classic SP REST (/_api/web/RecycleBin) — Grap
 ```bash
 its sp recycle-bin list <siteId>
 
-its sp recycle-bin list https://contractcandles.sharepoint.com/sites/IT
+its sp recycle-bin list https://example.sharepoint.com/sites/IT
 ```
 
 ---
@@ -885,6 +926,12 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its sp graph get /users
+
+its sp graph get /administrativeUnits --beta
+
+its sp graph get /users --header ConsistencyLevel=eventual
+
 its sp graph get "/sites/<site-id>/lists"
 ```
 
@@ -903,6 +950,12 @@ Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its sp graph post /users --body '{"displayName":"Jane Smith"}'
+
+its sp graph post /administrativeUnits --beta
+
+its sp graph post /users --header ConsistencyLevel=eventual
+
 its sp graph post "/sites/<site-id>/lists" --body @./new-list.json
 ```
 
@@ -921,6 +974,12 @@ Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its sp graph patch /users --body '{"displayName":"Jane Smith"}'
+
+its sp graph patch /administrativeUnits --beta
+
+its sp graph patch /users --header ConsistencyLevel=eventual
+
 its sp graph patch "/sites/<site-id>/lists/<list-id>" --body '{"displayName":"Renamed"}'
 
 # Pipe-friendly output — use with jq / scripts.
@@ -942,6 +1001,12 @@ Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its sp graph put /users --body '{"displayName":"Jane Smith"}'
+
+its sp graph put /administrativeUnits --beta
+
+its sp graph put /users --header ConsistencyLevel=eventual
+
 its sp graph put "/sites/<site-id>/drive/items/<item-id>/content" --body @./file.bin
 ```
 
@@ -959,6 +1024,13 @@ Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+# No confirmation prompt — the path is sent exactly as given
+its sp graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+
+its sp graph delete /administrativeUnits --beta
+
+its sp graph delete /users --header ConsistencyLevel=eventual
+
 its sp graph delete "/sites/<site-id>/lists/<list-id>"
 ```
 

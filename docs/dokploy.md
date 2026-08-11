@@ -111,6 +111,8 @@ Create an empty Dokploy project. Apps and databases are added afterwards via `do
 **Examples:**
 
 ```bash
+its dokploy projects create --name web --description "Customer-facing sites"
+
 its dokploy projects create --name "my-app"
 ```
 
@@ -127,6 +129,14 @@ Permanently delete a project AND every app/database it contains. Destructive —
 **Examples:**
 
 ```bash
+# Without --confirm, reports what would be removed and stops
+its dokploy projects delete xK9mPqR2
+
+# Takes every app and database in the project with it
+its dokploy projects delete xK9mPqR2 --confirm
+
+its dokploy projects list
+
 its dokploy projects delete <project-id> --confirm
 ```
 
@@ -213,6 +223,9 @@ Scaffold an empty application inside a project. Wire it to a source (git, docker
 **Examples:**
 
 ```bash
+# Creates an empty app — wire it to a source next with `apps set-source`
+its dokploy apps create --project xK9mPqR2 --name storefront
+
 its dokploy apps create --project <project-id> --name "my-api"
 ```
 
@@ -229,6 +242,10 @@ Permanently delete an application — container, build artefacts, env. Destructi
 **Examples:**
 
 ```bash
+its dokploy apps delete aB3xY7pL --confirm
+
+its dokploy apps list --project web
+
 its dokploy apps delete <app-id> --confirm
 ```
 
@@ -246,6 +263,11 @@ Trigger deployment, optionally wait for healthy and show logs.
 **Examples:**
 
 ```bash
+its dokploy apps deploy storefront
+
+# Blocks until the container reports healthy, then tails the last 50 log lines
+its dokploy apps deploy storefront --wait --logs
+
 its dokploy apps deploy <app-id>
 
 its dokploy apps deploy <app-id> --wait
@@ -258,6 +280,9 @@ Stop the running container without deleting it. Restart via `dokploy apps start`
 **Examples:**
 
 ```bash
+# Container stops but is not deleted
+its dokploy apps stop storefront
+
 its dokploy apps stop <app-id>
 ```
 
@@ -268,6 +293,8 @@ Start a previously stopped container. Idempotent — no-op if already running.
 **Examples:**
 
 ```bash
+its dokploy apps start storefront
+
 its dokploy apps start <app-id>
 ```
 
@@ -278,6 +305,9 @@ Stop + start in one call. Doesn't rebuild — use `dokploy apps deploy` if the i
 **Examples:**
 
 ```bash
+# Does not rebuild — use `apps deploy` when the image needs to change
+its dokploy apps restart storefront
+
 its dokploy apps restart <app-id>
 ```
 
@@ -305,6 +335,12 @@ Wire an application to a source provider. --type github links a GitHub App repo;
 **Examples:**
 
 ```bash
+its dokploy apps set-source storefront --type github --owner acme --repo storefront --branch main
+
+its dokploy apps set-source storefront --type docker --image ghcr.io/acme/storefront:latest
+
+its dokploy apps set-source storefront --type github --owner acme --repo storefront --branch main --dry-run
+
 its dokploy apps set-source <app-id> --type github --repo owner/repo --branch main
 ```
 
@@ -326,6 +362,10 @@ Set build type for an application (dockerfile, nixpacks, heroku_buildpacks, pake
 **Examples:**
 
 ```bash
+its dokploy apps set-build storefront --type dockerfile --dockerfile ./Dockerfile --context .
+
+its dokploy apps set-build storefront --type nixpacks
+
 its dokploy apps set-build <app-id> --type nixpacks
 
 its dokploy apps set-build <app-id> --type dockerfile --dockerfile "./Dockerfile"
@@ -338,6 +378,9 @@ Force a fresh build from source (clones, builds image, deploys). Distinct from `
 **Examples:**
 
 ```bash
+# Clones and builds a fresh image — slower than `redeploy`, which reuses the existing one
+its dokploy apps rebuild storefront
+
 # Distinct from deploy — clones, builds image, deploys
 its dokploy apps rebuild <app-id>
 ```
@@ -357,6 +400,10 @@ Poll an application's deployments until the latest (or --since <id>) transitions
 **Examples:**
 
 ```bash
+its dokploy apps wait-deploy storefront --timeout 600
+
+its dokploy apps wait-deploy storefront --since dep_8f1c2d3e
+
 its dokploy apps wait-deploy <app-id> --timeout 600
 ```
 
@@ -367,6 +414,9 @@ Redeploy an application without rebuilding. Redeploys the existing container; do
 **Examples:**
 
 ```bash
+# Restarts the existing container — no rebuild from source
+its dokploy apps redeploy aB3xY7pL
+
 its dokploy apps redeploy <app-id>
 ```
 
@@ -405,6 +455,10 @@ Resource-usage snapshot for a running app — CPU%, memory MB, disk, network rx/
 **Examples:**
 
 ```bash
+its dokploy apps monitoring storefront
+
+its dokploy apps monitoring storefront --samples 5
+
 its dokploy apps monitoring <app-id>
 ```
 
@@ -415,6 +469,9 @@ Show the Traefik routing config (router + service + middlewares) Dokploy generat
 **Examples:**
 
 ```bash
+# First place to look for a 502 or a domain that will not route
+its dokploy apps traefik storefront
+
 its dokploy apps traefik <app-id>
 ```
 
@@ -446,6 +503,8 @@ Clone an application — copies Docker settings, env vars, and creates a domain.
 **Examples:**
 
 ```bash
+its dokploy apps clone storefront storefront-staging --domain staging.example.com
+
 its dokploy apps clone <source-id> "my-api-staging"
 ```
 
@@ -462,6 +521,10 @@ Open an interactive shell in the running container via SSH + docker exec. Pass [
 **Examples:**
 
 ```bash
+its dokploy apps shell storefront
+
+its dokploy apps shell storefront "ls -la /app" --shell sh
+
 # Opens xterm dock — bash inside the container
 its dokploy apps shell <app-id>
 ```
@@ -479,6 +542,11 @@ Run a migration command inside the running app container. Defaults to `bun run d
 **Examples:**
 
 ```bash
+# Runs `bun run db:migrate` inside the running container
+its dokploy apps migrate storefront
+
+its dokploy apps migrate storefront --cmd "bun run db:seed"
+
 # Defaults to `bun run db:migrate` inside the container
 its dokploy apps migrate <app-id>
 
@@ -496,8 +564,13 @@ Read the env vars actually present in the running container (via docker exec) �
 | `--show-values` | `` | Show actual values (otherwise redacted as ***) | — |
 | `--diff` | `` | Compare the saved record against the runtime — flags vars in the record but missing from the container (un-applied) and runtime-only vars | — |
 
+**Examples:**
+
 ```bash
-its dokploy apps env-runtime <app>
+its dokploy apps env-runtime storefront
+
+# Shows where the running container disagrees with the saved env — the usual cause of a config change that never took effect
+its dokploy apps env-runtime storefront --diff
 ```
 
 #### `its dokploy apps apply-env <app>`
@@ -510,8 +583,11 @@ Make the saved env actually reach the container. On Docker Swarm a plain redeplo
 |------|-------|-------------|---------|
 | `--timeout` | `` | Deploy timeout in seconds (default 600) | 600 |
 
+**Examples:**
+
 ```bash
-its dokploy apps apply-env <app>
+# On Swarm a plain redeploy does not pick up new env — this forces it through
+its dokploy apps apply-env storefront --timeout 300
 ```
 
 #### `its dokploy apps health`
@@ -528,6 +604,12 @@ Lightweight health sweep across ALL apps — replicas / last deploy / domain rea
 **Examples:**
 
 ```bash
+its dokploy apps health
+
+its dokploy apps health --fail-only
+
+its dokploy apps health --project web
+
 # Container status + healthcheck result
 its dokploy apps health <app-id>
 
@@ -569,6 +651,10 @@ Run a battery of parallel checks (env, mounts, webhook, replicas, image, healthc
 **Examples:**
 
 ```bash
+its dokploy apps doctor storefront
+
+its dokploy apps doctor storefront --no-ssh
+
 # Walks deploy logs, traefik, env, source. Flags issues.
 its dokploy apps doctor <app-id>
 ```
@@ -583,7 +669,7 @@ Bootstrap a new Dokploy app end-to-end: resolves or creates the project, creates
 |------|-------|-------------|---------|
 | `--repo` | `` | GitHub source as <owner/repo> | — |
 | `--branch` | `` | Git branch (default main) | main |
-| `--domain` | `` | Domain to assign (e.g. app.contractcandles.com) | — |
+| `--domain` | `` | Domain to assign (e.g. app.example.com) | — |
 | `--port` | `` | Container port the app listens on (default 3000) | 3000 |
 | `--env-file` | `` | Path to .env file to push | — |
 | `--project` | `` | Project name or id (default: same as --name; created if missing) | — |
@@ -594,16 +680,23 @@ Bootstrap a new Dokploy app end-to-end: resolves or creates the project, creates
 | `--no-deploy` | `` | Skip the final rebuild/deploy step | — |
 | `--dry-run` | `` | Print the plan without sending any mutations | — |
 
+**Examples:**
+
 ```bash
-its dokploy apps bootstrap <name>
+its dokploy apps bootstrap storefront --repo acme/storefront --branch main --domain shop.example.com --port 3000 --project web
+
+its dokploy apps bootstrap storefront --repo acme/storefront --domain shop.example.com --dry-run
 ```
 
 #### `its dokploy apps cert-status <app>`
 
 Read Traefik acme.json for the app's domains — surfaces certificate state, expiry, last LE error. SSH-backed (reads from the dokploy-traefik container).
 
+**Examples:**
+
 ```bash
-its dokploy apps cert-status <app>
+# Reads Traefik acme.json — surfaces expiry and the last Let's Encrypt error
+its dokploy apps cert-status storefront
 ```
 
 ---
@@ -650,6 +743,10 @@ Compose a connection URL for a database — uses the docker-network appName by d
 **Examples:**
 
 ```bash
+its dokploy databases url dB8kW2nQ --type postgres
+
+its dokploy databases url dB8kW2nQ --type postgres --external
+
 # Print connection string (mask in shared terminals)
 its dokploy databases url <db-id>
 ```
@@ -690,6 +787,8 @@ Create a database (postgres, mysql, mariadb, mongo, or redis).
 **Examples:**
 
 ```bash
+its dokploy databases create --project xK9mPqR2 --type postgres --name shop-db --dbName shop --dbUser shop
+
 its dokploy databases create --type postgres --name "app-db" --project <project-id>
 ```
 
@@ -706,6 +805,8 @@ Deploy a database instance. Trigger a fresh deploy from the wired source.
 **Examples:**
 
 ```bash
+its dokploy databases deploy dB8kW2nQ --type postgres
+
 its dokploy databases deploy <db-id>
 ```
 
@@ -722,6 +823,8 @@ Stop a database instance. Stop the resource. Use --confirm if the action is dest
 **Examples:**
 
 ```bash
+its dokploy databases stop dB8kW2nQ --type postgres
+
 its dokploy databases stop <db-id>
 ```
 
@@ -739,6 +842,11 @@ Delete a database instance. Permanent — use --confirm. Audit trail (if the ups
 **Examples:**
 
 ```bash
+# --type must match the engine — it selects the delete endpoint
+its dokploy databases delete dB8kW2nQ --type postgres --confirm
+
+its dokploy databases list
+
 its dokploy databases delete <db-id> --confirm
 ```
 
@@ -775,6 +883,7 @@ Show pending/active deployments across the whole Dokploy server (not scoped to o
 **Examples:**
 
 ```bash
+# Every pending and active deployment on the host, not scoped to one app
 its dokploy deployments queue
 ```
 
@@ -785,6 +894,9 @@ Kill an in-flight deployment by ID (sends SIGTERM to the build process).
 **Examples:**
 
 ```bash
+# Sends SIGTERM to the build process — the app keeps running its current container
+its dokploy deployments kill dep_8f1c2d3e
+
 # Sends SIGTERM to the build process
 its dokploy deployments kill <deployment-id>
 ```
@@ -831,6 +943,8 @@ Add a domain to an application. Idempotent on duplicate names — use update/edi
 **Examples:**
 
 ```bash
+its dokploy domains create aB3xY7pL --host shop.example.com --port 3000 --https
+
 its dokploy domains create <app-id> --host "app.example.com" --port 3000
 ```
 
@@ -847,6 +961,10 @@ Inspect the live TLS certificate for a domain — issuer, validity window, days-
 **Examples:**
 
 ```bash
+its dokploy domains check shop.example.com
+
+its dokploy domains check shop.example.com --warn-days 21
+
 # Issuer, validity window, days-to-expiry
 its dokploy domains check "app.example.com"
 ```
@@ -864,6 +982,10 @@ Remove a domain. Permanent — use --confirm. Audit trail (if the upstream suppo
 **Examples:**
 
 ```bash
+its dokploy domains delete dM4tV9sC --confirm
+
+its dokploy domains list aB3xY7pL
+
 its dokploy domains delete <domain-id> --confirm
 ```
 
@@ -917,6 +1039,9 @@ Push an env file to an application. Upload local state to the upstream. Pass --d
 **Examples:**
 
 ```bash
+# Replaces the saved env wholesale — diff first with `env-runtime --diff`
+its dokploy env push aB3xY7pL --file ./.env.production
+
 its dokploy env push <app-id> --file .env.production
 ```
 
@@ -934,6 +1059,11 @@ Set one or more env vars (KEY=value) without affecting others. NB: a plain set u
 **Examples:**
 
 ```bash
+its dokploy env set aB3xY7pL LOG_LEVEL=debug
+
+# Without --deploy the record changes but the container keeps the old value
+its dokploy env set aB3xY7pL LOG_LEVEL=debug NODE_ENV=production --deploy
+
 its dokploy env set <app-id> DEBUG=true
 ```
 
@@ -947,8 +1077,10 @@ Remove one or more env vars by key, preserving all others. The inverse of `env s
 |------|-------|-------------|---------|
 | `--deploy` | `` | After saving, recreate the swarm service (stop + deploy) so the removal takes effect. Causes a brief outage. | — |
 
+**Examples:**
+
 ```bash
-its dokploy env unset <applicationId> <keys>
+its dokploy env unset aB3xY7pL LOG_LEVEL --deploy
 ```
 
 #### `its dokploy env pull <applicationId>`
@@ -980,8 +1112,13 @@ Securely copy env vars from one app to another. Reads the REAL values from <srcA
 | `--deploy` | `` | After writing, recreate the destination's swarm service so the new vars go live. Causes a brief outage on the destination. | — |
 | `--force-mask` | `` | Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets (ctxc 1705). | — |
 
+**Examples:**
+
 ```bash
-its dokploy env copy <srcApp> <dstApp>
+its dokploy env copy storefront storefront-staging --keys DATABASE_URL,REDIS_URL
+
+# Reads the real values from the source app and writes them to the destination
+its dokploy env copy storefront storefront-staging --all
 ```
 
 #### `its dokploy env reveal <applicationId> <key>`
@@ -996,8 +1133,13 @@ Read ONE secret value to a 0600 file or the OS clipboard — never to stdout. Fo
 | `--to-clipboard` | `` | Copy the value to the OS clipboard instead of a file | — |
 | `--clear-after` | `` | Seconds before the clipboard is wiped (0 disables). Only meaningful with --to-clipboard. | 30 |
 
+**Examples:**
+
 ```bash
-its dokploy env reveal <applicationId> <key>
+# Never prints to stdout — the file is written 0600
+its dokploy env reveal aB3xY7pL DATABASE_URL --to-file ./secret.txt
+
+its dokploy env reveal aB3xY7pL DATABASE_URL --to-clipboard --clear-after 30
 ```
 
 ---
@@ -1047,8 +1189,11 @@ Push an env file as an environment's SHARED env vars (replaces all). Upload loca
 | `--file` | `-f` | Path to env file | .env |
 | `--force` | `` | Allow pushing an empty file (wipes ALL shared env on the environment). Required because Dokploy keeps no env history — an accidental empty push is unrecoverable. | — |
 
+**Examples:**
+
 ```bash
-its dokploy environments push <environmentId>
+# Replaces every shared variable on the environment
+its dokploy environments push env_7hK2nQ --file ./shared.env
 ```
 
 #### `its dokploy environments pull <environmentId>`
@@ -1069,8 +1214,10 @@ its dokploy environments pull <environmentId>
 
 Set one or more SHARED env vars (KEY=value) on an environment without affecting the others.
 
+**Examples:**
+
 ```bash
-its dokploy environments set <environmentId> <pairs>
+its dokploy environments set env_7hK2nQ SENTRY_DSN=https://key@sentry.io/1
 ```
 
 ---
@@ -1210,6 +1357,10 @@ Add a mount to an application (--type bind|volume|file). Use --ensure-host-path 
 **Examples:**
 
 ```bash
+its dokploy mounts add storefront --type bind --src /srv/uploads --dst /app/uploads --ensure-host-path
+
+its dokploy mounts add storefront --type file --dst /app/config.json --content-file ./config.json
+
 its dokploy mounts add <app-id> --type bind --src /data --dst /app/data
 ```
 
@@ -1229,6 +1380,8 @@ Update an existing mount. PATCH semantics — only the supplied fields change.
 **Examples:**
 
 ```bash
+its dokploy mounts update mnt_4tV9sC --dst /app/data
+
 its dokploy mounts update <mount-id> --src "/data" --dst "/app/data"
 ```
 
@@ -1245,6 +1398,8 @@ Remove a mount. Permanent — use --confirm.
 **Examples:**
 
 ```bash
+its dokploy mounts remove mnt_4tV9sC --confirm
+
 its dokploy mounts remove <mount-id> --confirm
 ```
 
@@ -1267,6 +1422,9 @@ Diff the Dokploy expected webhook against the GitHub repo's actual hooks. Catche
 **Examples:**
 
 ```bash
+# Catches auto-deploy that silently stopped firing
+its dokploy webhook check storefront
+
 # Test GitHub webhook end-to-end
 its dokploy webhook check <app-id>
 ```
@@ -1284,6 +1442,8 @@ Create the GitHub webhook on the repo wired to the Dokploy auto-deploy endpoint.
 **Examples:**
 
 ```bash
+its dokploy webhook setup storefront
+
 its dokploy webhook setup <app-id>
 ```
 
@@ -1431,6 +1591,11 @@ Start a container by ID (not app name). Lower-level than `apps start` — operat
 **Examples:**
 
 ```bash
+its dokploy containers start 3f2b1c94a8d1
+
+# These take a container ID, not an app name — use `apps start` for the app-level action
+its dokploy containers list
+
 its dokploy containers start <container-id>
 ```
 
@@ -1441,6 +1606,11 @@ Stop a container by ID (not app name). Lower-level than `apps stop` — operates
 **Examples:**
 
 ```bash
+its dokploy containers stop 3f2b1c94a8d1
+
+# These take a container ID, not an app name — use `apps stop` for the app-level action
+its dokploy containers list
+
 its dokploy containers stop <container-id>
 ```
 
@@ -1451,6 +1621,11 @@ Restart a container by ID (not app name). Lower-level than `apps restart` — op
 **Examples:**
 
 ```bash
+its dokploy containers restart 3f2b1c94a8d1
+
+# These take a container ID, not an app name — use `apps restart` for the app-level action
+its dokploy containers list
+
 its dokploy containers restart <container-id>
 ```
 
@@ -1467,6 +1642,12 @@ Kill a container by ID (not app name). Lower-level than `apps kill` — operates
 **Examples:**
 
 ```bash
+# SIGKILL — no graceful shutdown, unlike `containers stop`
+its dokploy containers kill 3f2b1c94a8d1 --confirm
+
+# These take a container ID, not an app name — use `apps kill` for the app-level action
+its dokploy containers list
+
 its dokploy containers kill <container-id> --confirm
 ```
 
@@ -1483,6 +1664,11 @@ Remove a container by ID (not app name). Lower-level than `apps stop` — operat
 **Examples:**
 
 ```bash
+its dokploy containers remove 3f2b1c94a8d1 --confirm
+
+# These take a container ID, not an app name — use `apps stop` for the app-level action
+its dokploy containers list
+
 its dokploy containers remove <container-id> --confirm
 ```
 
@@ -1545,9 +1731,12 @@ Reclaim disk on the Dokploy host. --target images|volumes|containers|builder|mon
 **Examples:**
 
 ```bash
-its dokploy maintenance clean --target builder --confirm
-
 its dokploy maintenance clean --target images --confirm
+
+# Reclaims host disk — prunes unused images, volumes, containers and build cache
+its dokploy maintenance clean --target all --confirm
+
+its dokploy maintenance clean --target builder --confirm
 ```
 
 #### `its dokploy maintenance time`
@@ -1582,13 +1771,18 @@ Tail the dokploy-traefik container logs over SSH. Useful for debugging 502/cert 
 |------|-------|-------------|---------|
 | `--tail` | `` | Lines to tail (default 200) | 200 |
 
+**Examples:**
+
 ```bash
-its dokploy traefik logs
+# Proxy-level view for 502s and certificate failures
+its dokploy traefik logs --tail 200
 ```
 
 #### `its dokploy traefik acme`
 
 Read the Traefik acme.json from the dokploy-traefik container — surfaces every Let's Encrypt certificate the host knows about. Read-only over SSH.
+
+**Examples:**
 
 ```bash
 its dokploy traefik acme
@@ -1692,6 +1886,8 @@ Invite a user to the active Dokploy organization by email (user.invitation).
 **Examples:**
 
 ```bash
+its dokploy users invite --email jane.smith@example.com --role member
+
 its dokploy users invite --email jane.smith@example.com
 ```
 
@@ -1708,6 +1904,8 @@ Remove a user from the active Dokploy organization (requires --confirm).
 **Examples:**
 
 ```bash
+its dokploy users remove usr_9wD3kF --confirm
+
 its dokploy users remove <user-id> --confirm
 ```
 
@@ -1799,6 +1997,8 @@ Trigger a deploy on a compose stack. Trigger a fresh deploy from the wired sourc
 **Examples:**
 
 ```bash
+its dokploy compose deploy cP6rZ1hN
+
 its dokploy compose deploy <compose-id>
 ```
 
@@ -1809,6 +2009,8 @@ Stop a compose stack. Stop the resource. Use --confirm if the action is destruct
 **Examples:**
 
 ```bash
+its dokploy compose stop cP6rZ1hN
+
 its dokploy compose stop <compose-id>
 ```
 
@@ -1819,6 +2021,8 @@ Redeploy a compose stack (rebuild + deploy). Redeploys the existing container; d
 **Examples:**
 
 ```bash
+its dokploy compose redeploy cP6rZ1hN
+
 its dokploy compose redeploy <compose-id>
 ```
 
@@ -1835,6 +2039,11 @@ Delete a compose stack permanently (requires --confirm). Stops the stack first, 
 **Examples:**
 
 ```bash
+# Stops the stack first, then removes the record
+its dokploy compose delete cP6rZ1hN --confirm
+
+its dokploy compose list
+
 its dokploy compose delete <compose-id> --confirm
 ```
 
@@ -1870,8 +2079,10 @@ Create a scheduled backup config. Postgres example: its dokploy backup create --
 | `--keep` | `` | keepLatestCount — how many backups to retain | — |
 | `--disabled` | `` | Create the config disabled (default: enabled) | — |
 
+**Examples:**
+
 ```bash
-its dokploy backup create
+its dokploy backup create --db-type postgres --db-id dB8kW2nQ --schedule "0 3 * * *" --database shop --destination dst_2mN8vC --keep 14
 ```
 
 #### `its dokploy backup get <backupId>`
@@ -1897,8 +2108,12 @@ Update a backup config (schedule, prefix, keep count, enabled). Only provided fl
 | `--keep` | `` | keepLatestCount | — |
 | `--enabled` | `` | Set enabled | — |
 
+**Examples:**
+
 ```bash
-its dokploy backup update <backupId>
+its dokploy backup update bK5jF3wD --schedule "0 4 * * *" --keep 30
+
+its dokploy backup update bK5jF3wD --enabled false
 ```
 
 #### `its dokploy backup files <destinationId>`
@@ -1924,6 +2139,8 @@ Trigger a manual backup run for a given backup config (backup.manualBackup).
 **Examples:**
 
 ```bash
+its dokploy backup run bK5jF3wD
+
 its dokploy backup run <backup-id>
 ```
 
@@ -1940,6 +2157,11 @@ Delete a backup configuration (requires --confirm). Does NOT delete stored backu
 **Examples:**
 
 ```bash
+# Removes the schedule only — files already written to the remote destination are left alone
+its dokploy backup delete bK5jF3wD --confirm
+
+its dokploy backup list
+
 # Doesn't delete stored backup files
 its dokploy backup delete <backup-id> --confirm
 ```
@@ -1993,6 +2215,8 @@ Trigger a schedule manually (schedule.runManually). Execute the named job/script
 **Examples:**
 
 ```bash
+its dokploy schedule run sQ2gH8mT
+
 its dokploy schedule run <schedule-id>
 ```
 
@@ -2009,6 +2233,10 @@ Delete a schedule (requires --confirm). Permanent — use --confirm. Audit trail
 **Examples:**
 
 ```bash
+its dokploy schedule delete sQ2gH8mT --confirm
+
+its dokploy schedule list
+
 its dokploy schedule delete <schedule-id> --confirm
 ```
 
@@ -2060,6 +2288,11 @@ Set up a new git provider. GitHub is UI-only (prints dashboard URL); GitLab/Bitb
 **Examples:**
 
 ```bash
+its dokploy git setup --type gitlab --name acme-gitlab --application-id 4f2b --secret <secret> --redirect-uri https://dok.example.com/api/providers/gitlab/callback
+
+# GitHub is UI-only — prints the dashboard URL to finish in the browser
+its dokploy git setup --type github
+
 # Prompts for client id/secret + redirect URI in the terminal pane.
 its dokploy git setup --type gitlab
 
@@ -2081,6 +2314,11 @@ Remove a git provider. Pass --type so the right delete endpoint is used.
 **Examples:**
 
 ```bash
+# --type picks the endpoint: github, gitlab or bitbucket
+its dokploy git delete gH7bN4vX --type github --confirm
+
+its dokploy git list
+
 its dokploy git delete <id> --type gitlab --confirm
 ```
 

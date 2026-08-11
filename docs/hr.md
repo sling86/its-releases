@@ -55,7 +55,7 @@ Detect drift between PeopleHR and Entra ID. Reports field mismatches plus PHR-on
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--domain` | `` | Entra UPN domain to audit (e.g. contractcandles.com). Defaults to every domain seen in active Entra users. | — |
+| `--domain` | `` | Entra UPN domain to audit (e.g. example.com). Defaults to every domain seen in active Entra users. | — |
 | `--company` | `` | Restrict PHR side to this company (substring match against Company DisplayValue). Default: search globally. | — |
 | `--include-disabled` | `` | Include disabled Entra accounts (default: only enabled). | — |
 

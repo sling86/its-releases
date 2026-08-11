@@ -54,8 +54,12 @@ Apply the THF standard branch-protection block to <owner/repo> on the named bran
 | `--branch` | `` | Branch to protect | main |
 | `--dry-run` | `` | Print the planned PUT body without sending | — |
 
+**Examples:**
+
 ```bash
-its gh branch-protect apply <repo>
+its gh branch-protect apply acme/storefront --dry-run
+
+its gh branch-protect apply acme/storefront --branch main
 ```
 
 #### `its gh branch-protect show <repo>`
@@ -92,8 +96,11 @@ Create a push-event webhook on <owner/repo> pointing at <url>. Idempotent — ba
 | `--secret` | `` | Webhook secret (defaults to a random secret, printed once - save it) | — |
 | `--events` | `` | Comma-separated events (default: push) | push |
 
+**Examples:**
+
 ```bash
-its gh webhook setup <repo> <url>
+# Idempotent — bails if a hook with that URL already exists
+its gh webhook setup acme/storefront https://dok.example.com/api/deploy --events push
 ```
 
 #### `its gh webhook <repo>`

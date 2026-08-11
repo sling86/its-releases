@@ -182,6 +182,9 @@ Reboot the agent's host OS. Destructive — needs --confirm. Returns immediately
 **Examples:**
 
 ```bash
+# Returns immediately — the host may take a few minutes to come back
+its rmm agents reboot WKS-9 --confirm
+
 # Requires --confirm. UI surfaces a destructive-action dialog before sending.
 its rmm agents reboot OFFICE-PC-01 --confirm
 
@@ -202,6 +205,9 @@ Permanently delete the agent record from RMM. Doesn't uninstall the local agent 
 **Examples:**
 
 ```bash
+# Deletes the RMM record only — the agent service stays installed on the machine
+its rmm agents remove WKS-9 --confirm
+
 # Destructive — needs --confirm. Agent record is gone permanently.
 its rmm agents remove OFFICE-PC-01 --confirm
 ```
@@ -247,6 +253,16 @@ Execute a one-shot shell command on the target agent. Returns stdout + stderr + 
 **Examples:**
 
 ```bash
+its rmm agents run WKS-9 --shell powershell --cmd "Get-Service spooler"
+
+# Raise --timeout above the agent-side runtime — the HTTP read timeout is derived from it
+its rmm agents run WKS-9 --shell powershell --cmd "gpupdate /force" --timeout 300
+
+# Runs in the logged-on user's session instead of as SYSTEM. Fails if nobody is signed in
+its rmm agents run WKS-9 --shell powershell --cmd "whoami" --as-user
+
+its rmm agents run WKS-9 --shell powershell --file ./fix-printer.ps1
+
 its rmm agents run OFFICE-PC-01 --shell powershell --cmd "Get-Process"
 
 its rmm agents run OFFICE-PC-01 --shell cmd --cmd "ipconfig /all"
@@ -291,6 +307,9 @@ Send a magic packet via another online agent on the same LAN. Doesn't work acros
 **Examples:**
 
 ```bash
+# Sends the magic packet via another online agent on the same LAN — will not cross VLANs
+its rmm agents wake WKS-9
+
 its rmm agents wake OFFICE-PC-01
 
 # No --site flag — duplicate hostnames auto-resolve to the online/most-recent match, or pass the UUID directly.
@@ -312,6 +331,10 @@ Reassign an agent's client/site or update description (PUT /agents/{id}/).
 **Examples:**
 
 ```bash
+its rmm agents edit WKS-9 --client "Acme" --site "Head Office"
+
+its rmm agents edit WKS-9 --description "Finance workstation"
+
 its rmm agents edit OFFICE-PC-01 --site <site-id>
 
 its rmm agents edit OFFICE-PC-01 --description "Marketing — Jane's desk"
@@ -324,6 +347,9 @@ Trigger a WMI/sysinfo refresh on an agent — repopulates hardware fields (seria
 **Examples:**
 
 ```bash
+# Repopulates hardware fields such as serial and model after a WMI cache goes stale
+its rmm agents refresh WKS-9
+
 # Repopulates hardware fields (serial, BIOS, etc.)
 its rmm agents refresh OFFICE-PC-01
 ```
@@ -403,8 +429,11 @@ Create a client (POST /clients/). TRMM also creates its first site in the same c
 | `--name` | `` | New client name | — |
 | `--site` | `` | Name of the client's initial site (default 'Default') | Default |
 
+**Examples:**
+
 ```bash
-its rmm clients create
+# TRMM requires an initial site — a client cannot exist without one
+its rmm clients create --name "Acme" --site "Head Office"
 ```
 
 #### `its rmm clients delete <client>`
@@ -418,8 +447,16 @@ Delete a client by ID or name (DELETE /clients/{id}/). --confirm required. If th
 | `--confirm` | `` | Confirm deletion | — |
 | `--move-to-site` | `` | Site ID to move this client's agents to before deleting | — |
 
+**Examples:**
+
 ```bash
-its rmm clients delete <client>
+# Without --confirm, prints what would be deleted and stops
+its rmm clients delete Acme
+
+its rmm clients delete Acme --confirm
+
+# Required when the client still has agents — TRMM refuses the delete otherwise
+its rmm clients delete Acme --move-to-site 12 --confirm
 ```
 
 ---
@@ -461,8 +498,10 @@ Create a site under a client (POST /clients/sites/). Idempotent — skips if a s
 | `--client` | `` | Client name or ID | — |
 | `--name` | `` | New site name | — |
 
+**Examples:**
+
 ```bash
-its rmm sites create
+its rmm sites create --client "Acme" --name "Warehouse"
 ```
 
 #### `its rmm sites delete <site_id>`
@@ -475,8 +514,13 @@ Delete a site by ID (DELETE /clients/sites/{id}/). Fails if the site still has a
 |------|-------|-------------|---------|
 | `--confirm` | `` | Confirm deletion | — |
 
+**Examples:**
+
 ```bash
-its rmm sites delete <site_id>
+its rmm sites delete 12 --confirm
+
+# Lists every site with its ID — the site must have no agents left
+its rmm sites
 ```
 
 ---
@@ -519,6 +563,8 @@ Top processes by CPU usage (live snapshot via PowerShell).
 **Examples:**
 
 ```bash
+its rmm processes top WKS-9 --count 10
+
 # Top processes by CPU + memory
 its rmm processes top OFFICE-PC-01
 ```
@@ -537,6 +583,10 @@ Terminate a process by PID. Destructive — needs --confirm. Use `processes list
 **Examples:**
 
 ```bash
+its rmm processes kill WKS-9 --pid 4821 --confirm
+
+its rmm processes list WKS-9
+
 its rmm processes kill OFFICE-PC-01 --pid 1234 --confirm
 
 # No --name on kill — find the PID first, then its rmm processes kill <agent> --pid <pid> --confirm.
@@ -603,6 +653,10 @@ Control a service (start/stop/restart). Stop requires --confirm.
 **Examples:**
 
 ```bash
+its rmm services control WKS-9 --name spooler --action restart
+
+its rmm services control WKS-9 --name spooler --action stop --confirm
+
 its rmm services control OFFICE-PC-01 --name spooler --action restart
 
 its rmm services control OFFICE-PC-01 --name spooler --action start
@@ -621,6 +675,9 @@ Set startup type to Automatic and start the service if stopped. Idempotent.
 **Examples:**
 
 ```bash
+# Sets startup to Automatic and starts it if stopped
+its rmm services enable WKS-9 --name spooler
+
 its rmm services enable OFFICE-PC-01 --name spooler
 ```
 
@@ -638,6 +695,8 @@ Set a service startup type to Disabled (requires --confirm).
 **Examples:**
 
 ```bash
+its rmm services disable WKS-9 --name spooler --confirm
+
 its rmm services disable OFFICE-PC-01 --name spooler --confirm
 ```
 
@@ -884,8 +943,10 @@ Mark an alert resolved (clears it from the active dashboard). Needs --confirm.
 |------|-------|-------------|---------|
 | `--confirm` | `` | Confirm the resolve | — |
 
+**Examples:**
+
 ```bash
-its rmm alerts resolve <alert_id>
+its rmm alerts resolve 4821 --confirm
 ```
 
 #### `its rmm alerts snooze <alert_id>`
@@ -899,8 +960,10 @@ Suppress an alert for N days (default 1). Needs --confirm.
 | `--days` | `` | Days to snooze for | 1 |
 | `--confirm` | `` | Confirm the snooze | — |
 
+**Examples:**
+
 ```bash
-its rmm alerts snooze <alert_id>
+its rmm alerts snooze 4821 --days 7 --confirm
 ```
 
 #### `its rmm alerts unsnooze <alert_id>`
@@ -913,8 +976,10 @@ Lift a snooze early so the alert can fire again. Needs --confirm.
 |------|-------|-------------|---------|
 | `--confirm` | `` | Confirm the unsnooze | — |
 
+**Examples:**
+
 ```bash
-its rmm alerts unsnooze <alert_id>
+its rmm alerts unsnooze 4821 --confirm
 ```
 
 ---
@@ -1018,6 +1083,11 @@ Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output,
 **Examples:**
 
 ```bash
+# Uploads, runs, captures output, then deletes the script from TRMM — pass --keep to leave it
+its rmm scripts upload-local WKS-9 ./Fix-Printer.ps1 --timeout 300
+
+its rmm scripts upload-local WKS-9 ./Fix-Profile.ps1 --as-user
+
 its rmm scripts upload-local ./fix-printers.ps1
 
 its rmm scripts upload-local ./linux-housekeeping.sh --shell bash
@@ -1036,6 +1106,11 @@ Permanently remove a script from the library. Destructive — needs --confirm.
 **Examples:**
 
 ```bash
+its rmm scripts delete 57 --confirm
+
+# Lists the script library with IDs
+its rmm scripts list
+
 its rmm scripts delete <script-id> --confirm
 ```
 
@@ -1230,6 +1305,11 @@ Remove a scheduled check from an agent. Destructive — needs --confirm.
 **Examples:**
 
 ```bash
+its rmm checks delete --check 418 --confirm
+
+# Lists that agent's checks with their IDs
+its rmm checks list WKS-9
+
 its rmm checks delete <check-id> --confirm
 ```
 
@@ -1342,6 +1422,11 @@ Remove a scheduled task from an agent. Destructive — needs --confirm.
 **Examples:**
 
 ```bash
+its rmm tasks delete --task 92 --confirm
+
+# Lists that agent's automated tasks with their IDs
+its rmm tasks list WKS-9
+
 its rmm tasks delete --task <task-id> --confirm
 ```
 
@@ -1448,8 +1533,10 @@ Edit a policy's Windows Update schedule + per-severity approvals (WinUpdatePolic
 | `--other` | `` | Other updates | — |
 | `--confirm` | `` | Apply — affects every agent under the policy | — |
 
+**Examples:**
+
 ```bash
-its rmm policies patch-policy <policy_id>
+its rmm policies patch-policy 7 --run-time-hour 3 --frequency daily --critical approve --important approve --confirm
 ```
 
 ---
@@ -1469,6 +1556,9 @@ System health snapshot — CPU, RAM, disk, power plan, uptime, top processes.
 **Examples:**
 
 ```bash
+# CPU, RAM, disk, power plan, uptime and top processes in one call
+its rmm diagnostics list WKS-9
+
 # Full health snapshot — CPU, disk, services, last check-in
 its rmm diagnostics OFFICE-PC-01
 
@@ -1529,8 +1619,12 @@ its rmm custom-fields
 
 Set a custom field value on an agent. Accepts the field by numeric id OR by exact name (looked up against /core/customfields/). Writes both `value` and the typed column TRMM actually reads.
 
+**Examples:**
+
 ```bash
-its rmm custom-fields set <agent> <field> <value>
+its rmm custom-fields set WKS-9 "RustDesk ID" 123456789
+
+its rmm custom-fields set WKS-9 4 123456789
 ```
 
 ---

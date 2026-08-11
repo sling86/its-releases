@@ -167,6 +167,15 @@ its rmm agents --filter status=overdue --jsonl | its rmm agents ping --stdin --j
 its rmm agents --jsonl | its rmm agents get --stdin --map agent=.agent_id --jsonl
 ```
 
+Positional arguments you supply on the command line fill from the left, so pass `-` to mark the one that should come from the piped record instead. Without it, a literal meant for the second argument lands in the first.
+
+```bash
+its wrike tickets --filter status=active --jsonl \
+  | its wrike tickets set-due - 2026-09-01 --stdin --max-input 50
+```
+
+Only the first argument falls back to guessing a field, so a `-` after it needs `--map` or command-owned `pipeFrom`. `-` is only special under `--stdin`.
+
 Commands without positional arguments reject record fan-out. Mutations validate every binding before the first write and run sequentially. Fan-out defaults to 100 records; irreversible commands require an explicit `--max-input`. Per-record failures are written to stderr, successful records to stdout, and any failure produces a non-zero exit code.
 
 ## Setup

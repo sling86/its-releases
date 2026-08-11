@@ -40,7 +40,7 @@ For a read-only audit token use the same minus DNS:Edit. Token zone resources ca
 
 `tunnels *` commands need an account id — set `CLOUDFLARE_ACCOUNT_ID` in `~/.its/.env` or pass `--account <id>` per call. Run `its cf accounts` once to find it.
 
-Zone resolver: every command that takes a zone accepts either the 32-char zone id or the domain name (e.g. `--zone contractcandles.com`).
+Zone resolver: every command that takes a zone accepts either the 32-char zone id or the domain name (e.g. `--zone example.com`).
 
 ### Source Files
 
@@ -131,7 +131,10 @@ Purge zone cache (everything, or specific URLs with --file).
 **Examples:**
 
 ```bash
+# Drops the entire edge cache for the zone — expect an origin load spike
 its cf zones purge example.com --confirm
+
+its cf zones purge example.com --file ./urls.txt --confirm
 ```
 
 ---
@@ -209,6 +212,10 @@ Create a DNS record. Idempotent on duplicate names — use update/edit to mutate
 **Examples:**
 
 ```bash
+its cf dns create --zone example.com --type A --name shop --content 203.0.113.10 --proxied
+
+its cf dns create --zone example.com --type CNAME --name www --content example.com --ttl 300
+
 its cf dns create --zone example.com --type A --name www --content 1.2.3.4
 
 its cf dns create --zone example.com --type CNAME --name app --content app.example.dokploy.com --proxied false
@@ -234,6 +241,8 @@ Patch fields on an existing DNS record. PATCH semantics — only the supplied fi
 **Examples:**
 
 ```bash
+its cf dns update 372e67954025e0ba6aaa6d586b9e0b59 --zone example.com --content 203.0.113.20
+
 its cf dns update <record-id> --zone example.com --content 5.6.7.8
 ```
 
@@ -251,6 +260,10 @@ Delete a DNS record. Permanent — use --confirm. Audit trail (if the upstream s
 **Examples:**
 
 ```bash
+its cf dns delete 372e67954025e0ba6aaa6d586b9e0b59 --zone example.com --confirm
+
+its cf dns list --zone example.com
+
 its cf dns delete <record-id> --zone example.com --confirm
 ```
 
@@ -334,6 +347,11 @@ Delete a Cloudflare tunnel (destructive — prompts for confirmation unless --ye
 **Examples:**
 
 ```bash
+its cf tunnels delete my-tunnel --account 1a2b3c4d --yes
+
+# --cascade also removes the DNS routes pointing at the tunnel
+its cf tunnels delete my-tunnel --account 1a2b3c4d --cascade --yes
+
 its cf tunnels delete <tunnel-id> --yes
 ```
 

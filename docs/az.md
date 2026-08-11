@@ -86,10 +86,9 @@ Switch active subscription. Single-value write; idempotent on no-op.
 **Examples:**
 
 ```bash
-its az account set <sub-id>
-
-# Subscription display name is accepted in place of GUID.
 its az account set "Production"
+
+its az account set <sub-id>
 ```
 
 ---
@@ -232,6 +231,8 @@ Start a VM. Start the resource. Idempotent.
 **Examples:**
 
 ```bash
+its az vm start app-vm-01 --rg rg-production --confirm
+
 its az vm start my-vm --rg my-rg
 
 # Handler throws without --confirm — the only other flag vm start declares.
@@ -252,6 +253,9 @@ Stop a VM (still billed — use deallocate to stop billing). Stop the resource. 
 **Examples:**
 
 ```bash
+# Still billed — use `vm deallocate` to stop compute charges
+its az vm stop app-vm-01 --rg rg-production --confirm
+
 its az vm stop my-vm --rg my-rg
 ```
 
@@ -269,6 +273,8 @@ Restart a VM. Stop + start in one call.
 **Examples:**
 
 ```bash
+its az vm restart app-vm-01 --rg rg-production --confirm
+
 its az vm restart my-vm --rg my-rg
 ```
 
@@ -286,6 +292,9 @@ Deallocate a VM (stops billing). Stop + release compute resources. Billing pause
 **Examples:**
 
 ```bash
+# Releases the compute and stops billing for it
+its az vm deallocate app-vm-01 --rg rg-production --confirm
+
 # Cheaper than stop — releases compute reservation
 its az vm deallocate my-vm --rg my-rg
 ```
@@ -517,6 +526,8 @@ Restart a web app. Stop + start in one call.
 **Examples:**
 
 ```bash
+its az webapp restart web-prod --rg rg-production --confirm
+
 its az webapp restart my-app --rg my-rg
 ```
 

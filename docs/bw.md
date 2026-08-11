@@ -171,6 +171,10 @@ Generate current TOTP code for an item. Returns the current TOTP code — refres
 **Examples:**
 
 ```bash
+its bw items totp "GitHub"
+
+its bw items totp "GitHub" --copy --clear-after 30
+
 # Generate current TOTP — refreshes every 30s
 its bw items totp "Server admin"
 ```
@@ -307,8 +311,11 @@ Irreversibly transfer a personal item to an organisation collection. There is no
 | `--confirm` | `` | Confirm the irreversible ownership transfer | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
+**Examples:**
+
 ```bash
-its bw items share <id>
+# Moves the item into the organisation — it leaves your personal vault and cannot be moved back by this command
+its bw items share 3f2b1c94-... --organisation Acme --collection IT --confirm
 ```
 
 #### `its bw items move <id>`
@@ -326,6 +333,8 @@ Move vault items to a folder. Move an item between folders. --confirm required.
 **Examples:**
 
 ```bash
+its bw items move 3f2b1c94-... --folder "Infrastructure" --confirm
+
 its bw items move <item-id> --folder "Servers" --confirm
 ```
 
@@ -343,6 +352,9 @@ Move a vault item to trash (soft-delete, recoverable). Permanent — use --confi
 **Examples:**
 
 ```bash
+# Sends the item to the trash — recoverable until purged
+its bw items delete 3f2b1c94-... --confirm
+
 # Moves to trash, recoverable for 30 days
 its bw items delete <item-id> --confirm
 ```
@@ -361,6 +373,8 @@ Restore a vault item from the trash. Restore a soft-deleted item from trash.
 **Examples:**
 
 ```bash
+its bw items restore 3f2b1c94-... --confirm
+
 its bw items restore <item-id> --confirm
 ```
 
@@ -379,6 +393,9 @@ PERMANENTLY delete a vault item. This CANNOT be undone.
 **Examples:**
 
 ```bash
+# Unrecoverable. Both flags are required — there is no trash to restore from afterwards
+its bw items purge 3f2b1c94-... --confirm --yes-permanently-delete
+
 # CANNOT be undone
 its bw items purge <item-id> --confirm --yes-permanently-delete
 ```
@@ -464,6 +481,8 @@ Create a new folder. Idempotent on duplicate names — use update/edit to mutate
 **Examples:**
 
 ```bash
+its bw folders create "Infrastructure"
+
 its bw folders create "Servers"
 ```
 
@@ -481,6 +500,9 @@ Delete a folder (items in it are moved to No Folder, not deleted).
 **Examples:**
 
 ```bash
+# Items in the folder are kept — they become unfiled
+its bw folders delete "Old kit" --confirm
+
 its bw folders delete "Old stuff" --confirm
 ```
 
@@ -652,7 +674,6 @@ Change the PIN used to encrypt the master password. Drop the resource's state �
 **Examples:**
 
 ```bash
-# Re-encrypts master password with a new PIN
 its bw pin reset
 ```
 
@@ -682,8 +703,10 @@ Unlock vault — skip PIN prompt for subsequent commands. Begin an interactive s
 **Examples:**
 
 ```bash
-# PIN-prompts, decrypts master password, stores session
 its bw session unlock
+
+# Subsequent bw commands skip the PIN prompt until it expires
+its bw session unlock --ttl 3600
 ```
 
 #### `its bw session lock`
@@ -762,6 +785,8 @@ Save a named vault profile — its own host, account and master password (use fo
 **Examples:**
 
 ```bash
+its bw vaults create work --url https://vault.example.com --email jane.smith@example.com
+
 its bw vaults create "personal"
 ```
 
@@ -778,6 +803,11 @@ Delete a named vault profile (local config only — does NOT touch the actual va
 **Examples:**
 
 ```bash
+# Removes the local vault profile and its stored credentials
+its bw vaults delete work --confirm
+
+its bw vaults list
+
 # Local config only — doesn't touch the actual vault
 its bw vaults delete "personal" --confirm
 ```

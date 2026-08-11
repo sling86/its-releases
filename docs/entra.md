@@ -99,7 +99,7 @@ List users from the Entra ID directory. Defaults to first 50 — use --all to pa
 | `--filter` | `` | OData filter expression | — |
 | `--search` | `` | Fuzzy substring match across displayName, mail, and UPN (Graph $search) | — |
 | `--enabled` | `` | Only show enabled accounts | — |
-| `--domain` | `` | Filter by UPN domain (e.g. contractcandles.com) — server-side endsWith match | — |
+| `--domain` | `` | Filter by UPN domain (e.g. example.com) — server-side endsWith match | — |
 
 **Examples:**
 
@@ -112,7 +112,7 @@ its entra users --all
 
 its entra users --enabled
 
-its entra users --domain contractcandles.com
+its entra users --domain example.com
 
 # Fuzzy match on name, mail, UPN
 its entra users --search smith
@@ -148,6 +148,12 @@ Update user properties. Use named flags for common fields, --set k=v,k=v for any
 **Examples:**
 
 ```bash
+its entra users update jane.smith@example.com --jobTitle "Finance Manager" --department Finance
+
+its entra users update jane.smith@example.com --manager john.doe@example.com
+
+its entra users update jane.smith@example.com --set extensionAttribute13=Leaver
+
 its entra users update jane.smith@example.com --department "Marketing"
 
 its entra users update jane.smith@example.com --manager boss@example.com
@@ -236,6 +242,11 @@ Send a B2B guest invitation to an external user. Send an invitation; the recipie
 **Examples:**
 
 ```bash
+its entra users invite --email contractor@partner.com --name "Alex Cole"
+
+# Creates the guest and returns the redemption URL for you to send yourself
+its entra users invite --email contractor@partner.com --name "Alex Cole" --no-email
+
 its entra users invite contractor@vendor.com --redirect "https://myapps.microsoft.com"
 
 # Returns the redeem URL so you can hand it over manually.
@@ -262,6 +273,8 @@ Create a new user. Idempotent on duplicate names — use update/edit to mutate a
 **Examples:**
 
 ```bash
+its entra users create --displayName "Jane Smith" --upn jane.smith@example.com --department Finance
+
 its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!"
 ```
 
@@ -292,6 +305,10 @@ Macro: create a TAP for the user, then optionally exclude them from CA policies 
 **Examples:**
 
 ```bash
+its entra users bootstrap-admin jane.smith@example.com --dry-run
+
+its entra users bootstrap-admin jane.smith@example.com --ttl 60 --one-time
+
 # Creates a TAP and excludes user from blocking CA policies
 its entra users bootstrap-admin newadmin@example.com
 ```
@@ -339,7 +356,7 @@ Disable a user account (requires --confirm). Pass --revoke-sessions to also kill
 ```bash
 its entra users disable jane.smith@example.com --confirm
 
-# Disable account + force re-auth on every existing session.
+# Kills active refresh tokens too — without this a signed-in session survives the disable
 its entra users disable jane.smith@example.com --revoke-sessions --confirm
 ```
 
@@ -356,11 +373,11 @@ Revoke all sign-in sessions for a user (POST /users/{id}/revokeSignInSessions). 
 **Examples:**
 
 ```bash
+# First move on a suspected compromise — signs every client out without disabling the account
+its entra users revoke-sessions jane.smith@example.com --confirm
+
 # Force re-auth on every device
 its entra users revoke-sessions jane.smith@example.com
-
-# Standard offboarding step — paired with disable.
-its entra users revoke-sessions jane.smith@example.com --confirm
 ```
 
 #### `its entra users set-password <id>`
@@ -375,8 +392,11 @@ Set a user's password (requires --confirm). The calling principal needs Password
 | `--force-change` | `` | Force a password change at next sign-in | — |
 | `--confirm` | `` | Confirm the password set | — |
 
+**Examples:**
+
 ```bash
-its entra users set-password <id>
+# Caller needs Password Administrator or higher
+its entra users set-password jane.smith@example.com --password '<generated>' --force-change --confirm
 ```
 
 #### `its entra users delete <id>`
@@ -389,8 +409,14 @@ Soft-delete a user (requires --confirm). Recoverable for 30 days via directory/d
 |------|-------|-------------|---------|
 | `--confirm` | `` | Confirm the deletion | — |
 
+**Examples:**
+
 ```bash
-its entra users delete <id>
+# Without --confirm, reports the target and stops
+its entra users delete jane.smith@example.com
+
+# Soft delete — recoverable for 30 days from directory/deletedItems
+its entra users delete jane.smith@example.com --confirm
 ```
 
 #### `its entra users transfer <id>`
@@ -408,8 +434,10 @@ Internal transfer (Company A→B): rename UPN + swap primary SMTP (optionally ke
 | `--keep-old-smtp-as-alias` | `` | Keep the old primary SMTP as a secondary alias | — |
 | `--confirm` | `` | Confirm the transfer | — |
 
+**Examples:**
+
 ```bash
-its entra users transfer <id>
+its entra users transfer jane.smith@example.com --new-upn jane.smith@newco.example.com --new-company NewCo --keep-old-smtp-as-alias --confirm
 ```
 
 #### `its entra users reinstate <id>`
@@ -425,8 +453,11 @@ Reverse a recent offboarding (requires --confirm): re-enable the account, option
 | `--force-change` | `` | Force password change at next sign-in (with --password) | — |
 | `--confirm` | `` | Confirm the reinstate | — |
 
+**Examples:**
+
 ```bash
-its entra users reinstate <id>
+# Replays the recent offboarding in reverse — re-enables and restores group membership
+its entra users reinstate jane.smith@example.com --from-audit-minutes 120 --confirm
 ```
 
 ---
@@ -526,6 +557,10 @@ Create a new security group. Idempotent on duplicate names — use update/edit t
 **Examples:**
 
 ```bash
+its entra groups create --displayName "IT Admins" --description "IT team"
+
+its entra groups create --displayName "All Staff" --mail
+
 its entra groups create --displayName "Marketing"
 ```
 
@@ -544,6 +579,9 @@ Add a user to a group. Refuses dynamic-membership groups (ctxc 41) — Graph acc
 **Examples:**
 
 ```bash
+# Refuses dynamic-membership groups — Graph accepts the call but the member is silently dropped
+its entra groups add-member 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --user jane.smith@example.com
+
 # Guards against dynamic groups, disabled users, and namesake collisions
 its entra groups add-member <group-id> --user jane.smith@example.com
 ```
@@ -563,6 +601,8 @@ Remove a user from a group (requires --confirm). Refuses dynamic-membership grou
 **Examples:**
 
 ```bash
+its entra groups remove-member 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --user jane.smith@example.com --confirm
+
 its entra groups remove-member <group-id> --user jane.smith@example.com --confirm
 ```
 
@@ -580,8 +620,13 @@ Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants
 | `--confirm` | `` | Apply the change | — |
 | `--force` | `` | Skip the --add-upn existence check (allow a UPN that doesn't resolve) | — |
 
+**Examples:**
+
 ```bash
-its entra groups edit-rule <group_id>
+# Appends an OR clause so one user joins a dynamic group without matching the rule
+its entra groups edit-rule 8f1c2d3e-... --add-upn jane.smith@example.com --confirm
+
+its entra groups edit-rule 8f1c2d3e-... --remove-upn jane.smith@example.com --confirm
 ```
 
 #### `its entra groups audit-rules [group_id]`
@@ -668,6 +713,11 @@ Remove a licence from a user (requires --confirm). Permanent — use --confirm.
 **Examples:**
 
 ```bash
+its entra licences remove jane.smith@example.com --sku ENTERPRISEPACK --confirm
+
+# Shows which SKUs the user currently holds
+its entra users licences jane.smith@example.com
+
 its entra licences remove jane.smith@example.com --sku SPB --confirm
 
 # licences remove has no --all flag (only a single --sku at a time) — onboarding convert-mailbox strips every assigned SKU (and disables the account) in one call, used in offboarding.
@@ -774,6 +824,8 @@ Assign a directory role to a user. Idempotent — assigning twice is a no-op.
 **Examples:**
 
 ```bash
+its entra roles assign jane.smith@example.com --role "User Administrator"
+
 its entra roles assign jane.smith@example.com --role <role-def-id>
 ```
 
@@ -791,6 +843,8 @@ Remove a directory role from a user (requires --confirm). Permanent — use --co
 **Examples:**
 
 ```bash
+its entra roles remove jane.smith@example.com --role "User Administrator" --confirm
+
 its entra roles remove jane.smith@example.com --role <role-def-id> --confirm
 ```
 
@@ -914,6 +968,9 @@ Create a Temporary Access Pass for a user (does not work for B2B guests).
 **Examples:**
 
 ```bash
+# Does not work for B2B guests
+its entra tap create jane.smith@example.com --ttl 60 --one-time
+
 its entra tap create jane.smith@example.com
 
 its entra tap create jane.smith@example.com --ttl 8h
@@ -946,6 +1003,10 @@ Revoke a Temporary Access Pass. Reverse an assignment. --confirm where required.
 **Examples:**
 
 ```bash
+its entra tap revoke jane.smith@example.com 3f2b1c94-... --confirm
+
+its entra tap list jane.smith@example.com
+
 its entra tap revoke jane.smith@example.com <method-id>
 ```
 
@@ -1024,6 +1085,10 @@ Patch a CA policy (state or full JSON body). PATCH semantics — only the suppli
 **Examples:**
 
 ```bash
+its entra ca patch "Block legacy auth" --state enabledForReportingButNotEnforced --dry-run
+
+its entra ca patch "Block legacy auth" --state enabled
+
 its entra ca patch <policy-id> --state enabled
 
 its entra ca patch <policy-id> --state enabledForReportingButNotEnforced
@@ -1042,6 +1107,8 @@ Add 'All guest and external users' to excludeGuestsOrExternalUsers on a policy.
 **Examples:**
 
 ```bash
+its entra ca exclude-guests "Require compliant device" --dry-run
+
 its entra ca exclude-guests <policy-id>
 ```
 
@@ -1059,6 +1126,8 @@ Create a Conditional Access policy from a JSON body or file (@path).
 **Examples:**
 
 ```bash
+its entra ca create --body @./policy.json --dry-run
+
 its entra ca create @./policy.json
 ```
 
@@ -1076,6 +1145,9 @@ Delete a Conditional Access policy by id or displayName. Permanent — use --con
 **Examples:**
 
 ```bash
+# Shows the policy that would go, changes nothing
+its entra ca delete "Block legacy auth" --dry-run
+
 its entra ca delete "Block legacy auth" --confirm
 ```
 
@@ -1092,6 +1164,9 @@ Add a user to a CA policy's excludeUsers — atomic mutation, no need to rebuild
 **Examples:**
 
 ```bash
+# Atomic — no need to rebuild the whole users object
+its entra ca exclude-user "Require MFA" jane.smith@example.com
+
 # Use sparingly — re-include the user once the trip-cause is cleared.
 its entra ca exclude-user <policy-id> jane.smith@example.com
 
@@ -1112,6 +1187,8 @@ Remove a user from a CA policy's excludeUsers list. Reverse of `exclude-user`. I
 **Examples:**
 
 ```bash
+its entra ca unexclude-user "Require MFA" jane.smith@example.com
+
 its entra ca unexclude-user <policy-id> jane.smith@example.com
 ```
 
@@ -1192,6 +1269,10 @@ Enable a method tenant-wide (sets state=enabled on the method configuration). Pa
 **Examples:**
 
 ```bash
+its entra authmethods enable fido2 --confirm
+
+its entra authmethods enable fido2 --target 8f1c2d3e-... --confirm
+
 its entra authmethods enable Fido2
 ```
 
@@ -1209,6 +1290,8 @@ Disable a method tenant-wide (state=disabled). Switch to inactive state. Idempot
 **Examples:**
 
 ```bash
+its entra authmethods disable sms --dry-run
+
 its entra authmethods disable Sms
 ```
 
@@ -1227,6 +1310,8 @@ Patch a method configuration with a custom body (inline or @path/to/file.json).
 **Examples:**
 
 ```bash
+its entra authmethods patch fido2 --body @./fido2.json --confirm
+
 its entra authmethods patch TemporaryAccessPass @./tap-policy.json
 ```
 
@@ -1279,6 +1364,9 @@ Safely add delegated scope(s) to an app — UNION with existing scope, never rep
 **Examples:**
 
 ```bash
+# Union with the existing grant — never replaces what is already consented
+its entra consent add-scope 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f User.Read,Mail.Read --dry-run
+
 # Unions with existing scopes, never replaces
 its entra consent add-scope <app-id> Mail.Read
 ```
@@ -1298,6 +1386,8 @@ Remove delegated scope(s) from an existing grant — keeps others intact.
 **Examples:**
 
 ```bash
+its entra consent remove-scope 8f1c2d3e-... Mail.Read --dry-run
+
 its entra consent remove-scope <app-id> Mail.Read
 ```
 
@@ -1325,6 +1415,8 @@ Grant an application-permission (app-role) to a client app — equivalent to con
 **Examples:**
 
 ```bash
+its entra consent app-role-grant 8f1c2d3e-... User.Read.All --dry-run
+
 its entra consent app-role-grant <app-id> User.Read.All
 ```
 
@@ -1342,6 +1434,8 @@ Revoke an app-role assignment by id. Revokes a previously-granted app-role grant
 **Examples:**
 
 ```bash
+its entra consent app-role-revoke 8f1c2d3e-... 9a8b7c6d-... --confirm
+
 its entra consent app-role-revoke <app-id> <assignment-id>
 ```
 
@@ -1384,6 +1478,8 @@ Toggle inboundTrust.isMfaAccepted on the default policy.
 **Examples:**
 
 ```bash
+its entra xtenant trust-mfa on --dry-run
+
 its entra xtenant trust-mfa on
 ```
 
@@ -1400,6 +1496,8 @@ Toggle inboundTrust.isCompliantDeviceAccepted on the default policy.
 **Examples:**
 
 ```bash
+its entra xtenant trust-device off --dry-run
+
 its entra xtenant trust-device on
 ```
 
@@ -1420,6 +1518,11 @@ Start a per-partner cross-tenant access config. Bootstraps a fresh per-partner o
 **Examples:**
 
 ```bash
+# Creates a cross-tenant partner configuration for the given tenant ID
+its entra xtenant partner-add 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+
+its entra xtenant list
+
 its entra xtenant partner-add <partner-tenant-id>
 ```
 
@@ -1439,6 +1542,8 @@ Patch a partner cross-tenant access record. Patches an existing partner record.
 **Examples:**
 
 ```bash
+its entra xtenant partner-set 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --trust-mfa true --dry-run
+
 its entra xtenant partner-set <partner-tenant-id> --trust-mfa on
 ```
 
@@ -1657,6 +1762,9 @@ Copy group memberships from one user to another. Idempotent — already-shared g
 **Examples:**
 
 ```bash
+# Already-shared groups are skipped, so it is safe to re-run
+its entra onboarding copy-groups --source john.doe@example.com --target jane.smith@example.com
+
 its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com
 ```
 
@@ -1673,7 +1781,7 @@ Convert user mailbox to shared (disable + remove licences). Requires --confirm.
 **Examples:**
 
 ```bash
-# Disables user + removes licences after conversion
+# Disables the account and strips licences as part of the conversion
 its entra onboarding convert-mailbox jane.smith@example.com --confirm
 ```
 
@@ -1714,7 +1822,7 @@ Execute offboarding: disable account, revoke licences, remove from groups. Requi
 **Examples:**
 
 ```bash
-# Disable, revoke, strip licences, remove groups
+# Disables the account, revokes licences and removes group membership in one pass
 its entra offboarding run jane.smith@example.com --confirm
 ```
 
@@ -1827,8 +1935,10 @@ Bootstrap a new Entra app registration end-to-end — creates the application, i
 | `--months` | `` | Client secret lifetime in months | 12 |
 | `--no-secret` | `` | Skip generating a client secret | — |
 
+**Examples:**
+
 ```bash
-its entra apps register <name>
+its entra apps register "its CLI" --redirect-uri http://localhost --months 12
 ```
 
 #### `its entra apps add-password <app>`
@@ -1842,8 +1952,11 @@ Rotate / add a client secret on an existing app registration. The plaintext secr
 | `--name` | `` | Display name for the secret | its-cli generated |
 | `--months` | `` | Lifetime in months | 12 |
 
+**Examples:**
+
 ```bash
-its entra apps add-password <app>
+# The plaintext secret is returned once and never again — capture it now
+its entra apps add-password "its CLI" --name 2026-rotation --months 12
 ```
 
 #### `its entra apps secrets`
@@ -1876,8 +1989,12 @@ Mint a new client secret on an app registration and store it straight into the O
 | `--prune-expired` | `` | Also remove credentials that had already expired before this rotation (prompts per credential unless --confirm) | — |
 | `--confirm` | `` | Skip the interactive confirmation | — |
 
+**Examples:**
+
 ```bash
-its entra apps rotate <app>
+its entra apps rotate "its CLI" --env-key CLIENT_SECRET --months 12 --confirm
+
+its entra apps rotate "its CLI" --bw --prune-expired --confirm
 ```
 
 #### `its entra apps plan`
@@ -1893,8 +2010,13 @@ Diff the apps manifest against live tenant state — read-only. Shows what apply
 | `--exit-code` | `` | Exit 1 when there is actionable drift (CI guard) | — |
 | `--changes-only` | `` | Hide manual-step and report-only rows — show only actionable changes and warnings | — |
 
+**Examples:**
+
 ```bash
 its entra apps plan
+
+# Non-zero exit when the tenant has drifted from the manifest
+its entra apps plan --exit-code --changes-only
 ```
 
 #### `its entra apps apply`
@@ -1909,8 +2031,11 @@ Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever 
 | `--app` | `` | Only apply one manifest entry (by name or appId) | — |
 | `--confirm` | `` | Skip the interactive confirmation | — |
 
+**Examples:**
+
 ```bash
-its entra apps apply
+# Additive only — extras warn, nothing is ever removed
+its entra apps apply --confirm
 ```
 
 #### `its entra apps export <appIds>`
@@ -1935,8 +2060,10 @@ Security-posture audit across all app registrations — god-apps (app-role grant
 | `--manifest` | `` | Path to the JSONC apps manifest for the not-in-manifest check | — |
 | `--severity` | `` | Only show findings at or above this severity | — |
 
+**Examples:**
+
 ```bash
-its entra apps audit
+its entra apps audit --severity high
 ```
 
 ---
@@ -1962,8 +2089,11 @@ Unblock an admin who can't sign in for phishing-resistant MFA. Tries TAP first; 
 | `--no-fallback` | `` | Don't exclude from the phish-resistant policy if TAP fails — just report. | — |
 | `--dry-run` | `` | Show the plan without mutating | — |
 
+**Examples:**
+
 ```bash
-its entra admin-bootstrap run <user_id>
+# Tries a TAP first, falls back where TAP is not permitted
+its entra admin-bootstrap run jane.smith@example.com --ttl 60 --one-time --dry-run
 ```
 
 ---
@@ -1994,6 +2124,12 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its entra graph get /users
+
+its entra graph get /administrativeUnits --beta
+
+its entra graph get /users --header ConsistencyLevel=eventual
+
 its entra graph get "/users?$top=5"
 
 its entra graph get "/identityGovernance" --beta
@@ -2014,6 +2150,12 @@ Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its entra graph post /users --body '{"displayName":"Jane Smith"}'
+
+its entra graph post /administrativeUnits --beta
+
+its entra graph post /users --header ConsistencyLevel=eventual
+
 its entra graph post "/users/$count" --body @./payload.json
 ```
 
@@ -2032,6 +2174,12 @@ Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its entra graph patch /users --body '{"displayName":"Jane Smith"}'
+
+its entra graph patch /administrativeUnits --beta
+
+its entra graph patch /users --header ConsistencyLevel=eventual
+
 its entra graph patch "/users/<id>" --body '{"jobTitle":"Lead"}'
 
 # Pipe-friendly output — use with jq / scripts.
@@ -2053,6 +2201,12 @@ Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its entra graph put /users --body '{"displayName":"Jane Smith"}'
+
+its entra graph put /administrativeUnits --beta
+
+its entra graph put /users --header ConsistencyLevel=eventual
+
 its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg
 ```
 
@@ -2070,6 +2224,13 @@ Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+# No confirmation prompt — the path is sent exactly as given
+its entra graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+
+its entra graph delete /administrativeUnits --beta
+
+its entra graph delete /users --header ConsistencyLevel=eventual
+
 # Raw Graph passthrough — this command has no --confirm guard (unlike typed delete commands such as users delete / ca delete). Double-check the path before running; there is no dry-run.
 its entra graph delete "/users/<id>"
 ```

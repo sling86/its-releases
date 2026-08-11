@@ -113,6 +113,8 @@ Create a new distribution group. Idempotent on duplicate names — use update/ed
 **Examples:**
 
 ```bash
+its exo groups create "All Finance" --alias all-finance --managed-by jane.smith@example.com
+
 its exo groups create "Marketing Team" --type distribution --alias marketing
 ```
 
@@ -141,6 +143,8 @@ Add a member to a distribution group. Idempotent — already-a-member is a no-op
 **Examples:**
 
 ```bash
+its exo groups add-member "All Finance" jane.smith@example.com
+
 its exo groups add-member "All Staff" jane.smith@example.com
 ```
 
@@ -230,6 +234,8 @@ Create a shared mailbox. Idempotent on duplicate names — use update/edit to mu
 **Examples:**
 
 ```bash
+its exo mailboxes create "IT Helpdesk" helpdesk
+
 its exo mailboxes create "Support" support
 ```
 
@@ -256,6 +262,8 @@ Grant mailbox access to a user. Grant a new permission. Idempotent.
 **Examples:**
 
 ```bash
+its exo mailboxes add-permission helpdesk jane.smith@example.com --rights FullAccess
+
 its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess
 ```
 
@@ -345,8 +353,12 @@ Hide or show a mailbox in the global address list (GAL). Pass exactly one of --h
 | `--hide` | `` | Hide from the GAL | — |
 | `--show` | `` | Show in the GAL | — |
 
+**Examples:**
+
 ```bash
-its exo mailboxes set-visibility <mailbox>
+its exo mailboxes set-visibility helpdesk --hide
+
+its exo mailboxes set-visibility helpdesk --show
 ```
 
 ---
@@ -495,7 +507,7 @@ Rotate the DKIM signing key for a domain (Rotate-DkimSigningConfig). Mutation �
 **Examples:**
 
 ```bash
-its exo dkim rotate contractcandles.com --confirm
+its exo dkim rotate example.com --confirm
 ```
 
 #### `its exo dkim enable <domain>`
@@ -511,7 +523,7 @@ Enable DKIM signing for a domain (Set-DkimSigningConfig). Mutation — requires 
 **Examples:**
 
 ```bash
-its exo dkim enable contractcandles.com --confirm
+its exo dkim enable example.com --confirm
 ```
 
 #### `its exo dkim disable <domain>`
@@ -527,7 +539,7 @@ Disable DKIM signing for a domain (Set-DkimSigningConfig). Mutation — requires
 **Examples:**
 
 ```bash
-its exo dkim disable contractcandles.com --confirm
+its exo dkim disable example.com --confirm
 ```
 
 ---
@@ -596,8 +608,11 @@ Submit a historical message-trace search (Start-HistoricalSearch) for the 11–9
 | `--days` | `-d` | Days back to search (max 90) | 30 |
 | `--notify` | `` | Email address to notify when the CSV is ready (required by EXO) | — |
 
+**Examples:**
+
 ```bash
-its exo trace historical
+# Asynchronous — results are emailed to --notify when the search completes
+its exo trace historical --sender jane.smith@example.com --days 30 --notify jane.smith@example.com
 ```
 
 #### `its exo trace historical-status <job-id>`
@@ -646,6 +661,8 @@ Enable out-of-office auto-reply. Switch to active state. Idempotent.
 **Examples:**
 
 ```bash
+its exo autoreply enable jane.smith@example.com --internal "On leave until Monday." --external "Away, please contact helpdesk@example.com." --start 2026-09-01 --end 2026-09-08
+
 its exo autoreply enable jane.smith@example.com --internal "Out of office until Monday" --external "On leave — contact support@example.com"
 ```
 
@@ -699,6 +716,8 @@ Grant Send-As permission. Idempotent — already-granted delegates are skipped.
 **Examples:**
 
 ```bash
+its exo recipients add-send-as helpdesk jane.smith@example.com
+
 its exo recipients add-send-as shared@example.com jane.smith@example.com
 ```
 
