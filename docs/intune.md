@@ -116,6 +116,9 @@ Trigger a device sync. Force the device to sync with Intune.
 **Examples:**
 
 ```bash
+# Queues a check-in — the device applies pending policy on next contact
+its intune devices sync 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+
 its intune devices sync <device-id>
 ```
 
@@ -438,6 +441,11 @@ Update ESP profile settings (timeout, tracked apps). PATCH semantics — only th
 **Examples:**
 
 ```bash
+# Heavy tracked apps routinely exceed the default window and time the ESP out
+its intune esp update 8f1c2d3e-... --timeout 3600
+
+its intune esp update 8f1c2d3e-... --track-app 9a8b7c6d-...
+
 its intune esp update <profile-id> --timeout 120
 ```
 
@@ -496,6 +504,10 @@ Set group tag on an Autopilot device. Set or clear a tag value.
 **Examples:**
 
 ```bash
+its intune autopilot tag ABC1234 "Finance-Laptops"
+
+its intune autopilot tag ABC1234 --clear
+
 its intune autopilot tag <serial> "Office-Standard"
 ```
 
@@ -830,6 +842,12 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its intune graph get /users
+
+its intune graph get /administrativeUnits --beta
+
+its intune graph get /users --header ConsistencyLevel=eventual
+
 its intune graph get "/deviceManagement/managedDevices?$top=5"
 ```
 
@@ -848,6 +866,12 @@ Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its intune graph post /users --body '{"displayName":"Jane Smith"}'
+
+its intune graph post /administrativeUnits --beta
+
+its intune graph post /users --header ConsistencyLevel=eventual
+
 its intune graph post "/deviceManagement/managedDevices/<id>/syncDevice"
 ```
 
@@ -866,6 +890,12 @@ Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its intune graph patch /users --body '{"displayName":"Jane Smith"}'
+
+its intune graph patch /administrativeUnits --beta
+
+its intune graph patch /users --header ConsistencyLevel=eventual
+
 its intune graph patch "/deviceManagement/deviceCompliancePolicies/<id>" --body @./patch.json
 ```
 
@@ -884,6 +914,12 @@ Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+its intune graph put /users --body '{"displayName":"Jane Smith"}'
+
+its intune graph put /administrativeUnits --beta
+
+its intune graph put /users --header ConsistencyLevel=eventual
+
 its intune graph put "/deviceManagement/managedDevices/<id>" --body @./body.json
 ```
 
@@ -901,6 +937,13 @@ Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
+# No confirmation prompt — the path is sent exactly as given
+its intune graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+
+its intune graph delete /administrativeUnits --beta
+
+its intune graph delete /users --header ConsistencyLevel=eventual
+
 its intune graph delete "/deviceManagement/managedDevices/<id>"
 ```
 

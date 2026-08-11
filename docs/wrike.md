@@ -185,6 +185,10 @@ Create a new IT support ticket. Idempotent on duplicate names — use update/edi
 **Examples:**
 
 ```bash
+its wrike tickets create --title "Printer offline in Finance" --description "Label printer not responding"
+
+its wrike tickets create --title "Server migration plan" --description-file ./plan.md --markdown --importance High
+
 its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox"
 ```
 
@@ -195,6 +199,8 @@ Set due date on a ticket (YYYY-MM-DD). Set the task's due date.
 **Examples:**
 
 ```bash
+its wrike tickets set-due IEACW7BXKQ2R4KMT 2026-09-01
+
 its wrike tickets set-due <task-id> 2026-06-01
 ```
 
@@ -205,6 +211,9 @@ Add an assignee to a ticket. Idempotent — assigning twice is a no-op.
 **Examples:**
 
 ```bash
+# Find the user ID with `its wrike users list`
+its wrike tickets assign IEACW7BXKQ2R4KMT KUAEXAMP
+
 its wrike tickets assign <task-id> <user-id>
 ```
 
@@ -215,6 +224,8 @@ Change a ticket's title. Rename the task — keeps the same ID.
 **Examples:**
 
 ```bash
+its wrike tickets update-title IEACW7BXKQ2R4KMT "Printer offline — Finance, resolved"
+
 its wrike tickets update-title <task-id> "New title"
 ```
 
@@ -225,6 +236,8 @@ Change ticket importance (High, Normal, Low). Set Low / Normal / High importance
 **Examples:**
 
 ```bash
+its wrike tickets update-importance IEACW7BXKQ2R4KMT High
+
 its wrike tickets update-importance <task-id> High
 ```
 
@@ -235,6 +248,8 @@ Change ticket status. Move the task to a different workflow stage.
 **Examples:**
 
 ```bash
+its wrike tickets update-status IEACW7BXKQ2R4KMT Completed
+
 its wrike tickets update-status <task-id> "Completed"
 ```
 
@@ -255,6 +270,10 @@ Replace a ticket's description. Same formatting rules as add-comment: plain text
 **Examples:**
 
 ```bash
+its wrike tickets update-description IEACW7BXKQ2R4KMT "**Root cause:** stale spooler" --markdown
+
+cat notes.md | its wrike tickets update-description IEACW7BXKQ2R4KMT --stdin --markdown
+
 its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..."
 ```
 
@@ -275,6 +294,10 @@ Add a comment to a ticket. Prefer --markdown (bold/italic/links/bullets + plain 
 **Examples:**
 
 ```bash
+its wrike tickets add-comment IEACW7BXKQ2R4KMT "Fixed — restarted spooler on WKS-9" --markdown
+
+its wrike tickets add-comment IEACW7BXKQ2R4KMT --file ./update.md --markdown
+
 its wrike tickets add-comment <task-id> "Replicated, escalating"
 ```
 
@@ -295,6 +318,8 @@ Replace the body of an existing comment. Same formatting rules as add-comment (-
 **Examples:**
 
 ```bash
+its wrike tickets update-comment IEACW7BXIMBB3B7F "Corrected: it was the driver, not the spooler" --markdown
+
 its wrike tickets update-comment <comment-id> "fixed typo"
 ```
 
@@ -311,6 +336,8 @@ Delete a comment by ID. Requires --confirm. Use the commentId from add-comment o
 **Examples:**
 
 ```bash
+its wrike tickets delete-comment IEACW7BXIMBB3B7F --confirm
+
 its wrike tickets delete-comment <comment-id> --confirm
 ```
 
@@ -358,6 +385,10 @@ Download an attachment from a ticket. Stream the resource to a local file.
 **Examples:**
 
 ```bash
+its wrike tickets download IEACW7BXKQ2R4KMT --output ./ticket-files
+
+its wrike tickets download IEACW7BXKQ2R4KMT IEAExampleAtt --output ./screenshot.png
+
 its wrike tickets download <task-id> <attachment-id> --output ./screenshot.png
 ```
 
@@ -368,6 +399,8 @@ Attach a file to a ticket. Upload a local file as an attachment.
 **Examples:**
 
 ```bash
+its wrike tickets attach IEACW7BXKQ2R4KMT ./screenshot.png
+
 its wrike tickets attach <task-id> ./screenshot.png
 ```
 
@@ -455,6 +488,8 @@ Create a new task in a folder or project (accepts name or ID).
 **Examples:**
 
 ```bash
+its wrike tasks create "IT Projects" --title "Roll out FIDO2 keys" --importance High
+
 its wrike tasks create "My folder" --title "New task"
 ```
 
@@ -465,6 +500,8 @@ Set due date on a task (YYYY-MM-DD). Set the task's due date.
 **Examples:**
 
 ```bash
+its wrike tasks set-due IEACW7BXKQ2R4KMT 2026-09-01
+
 its wrike tasks set-due <task-id> 2026-06-01
 ```
 
@@ -475,6 +512,8 @@ Change a task's title. Rename the task — keeps the same ID.
 **Examples:**
 
 ```bash
+its wrike tasks update-title IEACW7BXKQ2R4KMT "Roll out FIDO2 keys — phase 2"
+
 its wrike tasks update-title <task-id> "New title"
 ```
 
@@ -485,6 +524,8 @@ Change task importance (High, Normal, Low). Set Low / Normal / High importance.
 **Examples:**
 
 ```bash
+its wrike tasks update-importance IEACW7BXKQ2R4KMT Low
+
 its wrike tasks update-importance <task-id> Low
 ```
 
@@ -495,6 +536,8 @@ Change task status. Move the task to a different workflow stage.
 **Examples:**
 
 ```bash
+its wrike tasks update-status IEACW7BXKQ2R4KMT Completed
+
 its wrike tasks update-status <task-id> "In Progress"
 ```
 
@@ -515,6 +558,8 @@ Replace a task's description. Same formatting rules as add-comment: plain text b
 **Examples:**
 
 ```bash
+its wrike tasks update-description IEACW7BXKQ2R4KMT "## Plan\n- Order keys" --markdown
+
 its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1"
 ```
 
@@ -535,6 +580,8 @@ Add a comment to a task. Prefer --markdown (bold/italic/links/bullets + plain @N
 **Examples:**
 
 ```bash
+its wrike tasks add-comment IEACW7BXKQ2R4KMT "Keys ordered, ETA Friday" --markdown
+
 its wrike tasks add-comment <task-id> --markdown "**done** — pushed to main"
 ```
 
@@ -545,6 +592,8 @@ Attach a file to a task. Upload a local file as an attachment.
 **Examples:**
 
 ```bash
+its wrike tasks attach IEACW7BXKQ2R4KMT ./quote.pdf
+
 its wrike tasks attach <task-id> ./diagram.png
 ```
 
@@ -864,8 +913,15 @@ Orchestrate the IT offboarding flow for a leaver ticket — disable + revoke ses
 | `--user` | `` | Override the resolved Entra UPN (skip ticket → user lookup) | — |
 | `--skip` | `` | Comma-separated steps to skip (disable, sessions, manager, ext13, mailbox, licences, groups, wrike) | — |
 
+**Examples:**
+
 ```bash
-its wrike leavers complete <idOrPermalink>
+# Shows every step it would run without touching the account
+its wrike leavers complete IEACW7BXKQ2R4KMT --dry-run
+
+its wrike leavers complete IEACW7BXKQ2R4KMT --confirm
+
+its wrike leavers complete IEACW7BXKQ2R4KMT --skip convert-mailbox --confirm
 ```
 
 #### `its wrike leavers get <idOrPermalink>`
@@ -916,13 +972,18 @@ its wrike dashboard --watch
 
 Sign in to Wrike via OAuth (browser). Requires WRIKE_CLIENT_ID/WRIKE_CLIENT_SECRET from a Wrike app registration — run `its wrike setup` first.
 
+**Examples:**
+
 ```bash
+# Opens a browser — needs WRIKE_CLIENT_ID and WRIKE_CLIENT_SECRET configured first
 its wrike auth login
 ```
 
 #### `its wrike auth logout`
 
 Clear the persisted Wrike OAuth token.
+
+**Examples:**
 
 ```bash
 its wrike auth logout

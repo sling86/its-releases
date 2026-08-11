@@ -168,6 +168,8 @@ Turn a flow off (admin). Stop the resource. Use --confirm if the action is destr
 **Examples:**
 
 ```bash
+its pa flows stop 8f1c2d3e-... --environment Default-1a2b3c4d
+
 its pa flows stop <flow-id> --environment <env-id>
 ```
 
@@ -184,6 +186,8 @@ Turn a flow on (admin). Start the resource. Idempotent.
 **Examples:**
 
 ```bash
+its pa flows start 8f1c2d3e-... --environment Default-1a2b3c4d
+
 its pa flows start <flow-id> --environment <env-id>
 ```
 
@@ -201,6 +205,10 @@ Delete a flow (admin). Permanent — use --confirm. Audit trail (if the upstream
 **Examples:**
 
 ```bash
+its pa flows delete 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --environment Default-1a2b3c4d --confirm
+
+its pa flows list --environment Default-1a2b3c4d
+
 its pa flows delete <flow-id> --environment <env-id> --confirm
 ```
 
@@ -218,8 +226,12 @@ Change ownership / permissions on a cloud flow (admin). --owner <upn|guid> upser
 | `--role` | `` | Permission tier when granting | CanEdit |
 | `--confirm` | `` | Required to execute the mutation | — |
 
+**Examples:**
+
 ```bash
-its pa flows set-owner <flow_id>
+its pa flows set-owner 8f1c2d3e-... --environment Default-1a2b3c4d --owner jane.smith@example.com --role CanEdit --confirm
+
+its pa flows set-owner 8f1c2d3e-... --environment Default-1a2b3c4d --remove jane.smith@example.com --confirm
 ```
 
 #### `its pa flows runs <flow_id>`

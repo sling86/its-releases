@@ -10,6 +10,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
+| [global.md](./global.md) | Global commands — 23 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 70 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 106 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
@@ -1291,6 +1292,7 @@ src/
 │   ├── delegated-auth.ts
 │   ├── errors.ts
 │   ├── filter.ts
+│   ├── global-commands.ts
 │   ├── graph-passthrough.ts
 │   ├── help.ts
 │   ├── http.ts
@@ -1307,6 +1309,8 @@ src/
 │   ├── trusted-certs.ts
 │   ├── types.ts
 │   └── updates.ts
+├── global/
+│   └── handlers.ts
 ├── help-ui/
 │   ├── web/
 │   │   ├── fonts/

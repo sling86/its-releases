@@ -192,6 +192,8 @@ Restart a device by MAC address. Stop + start in one call.
 **Examples:**
 
 ```bash
+its unifi devices restart 78:45:58:aa:bb:cc --confirm
+
 its unifi devices restart <mac> --confirm
 ```
 
@@ -209,6 +211,10 @@ Toggle locate LED on a device. Flash the device's locate LED.
 **Examples:**
 
 ```bash
+its unifi devices locate 78:45:58:aa:bb:cc --enable
+
+its unifi devices locate 78:45:58:aa:bb:cc
+
 its unifi devices locate <mac>
 ```
 
@@ -226,6 +232,9 @@ Trigger firmware upgrade on a device. Trigger a firmware upgrade.
 **Examples:**
 
 ```bash
+# Device reboots into the new firmware — clients on it drop
+its unifi devices upgrade 78:45:58:aa:bb:cc --confirm
+
 its unifi devices upgrade <mac> --confirm
 ```
 
@@ -242,6 +251,8 @@ Force re-provision a device. Force the device to re-pull its provisioning.
 **Examples:**
 
 ```bash
+its unifi devices provision 78:45:58:aa:bb:cc
+
 its unifi devices provision <mac>
 ```
 
@@ -261,6 +272,9 @@ PoE power cycle a switch port. Cycle PoE on a port. --confirm required.
 **Examples:**
 
 ```bash
+# Drops power to whatever is on that port — cameras and phones reboot
+its unifi devices power-cycle --mac 78:45:58:aa:bb:cc --port 7 --confirm
+
 its unifi devices power-cycle --mac <mac> --port 5
 ```
 
@@ -278,6 +292,10 @@ Toggle all site LEDs on or off. Toggle the controller's status LEDs.
 **Examples:**
 
 ```bash
+its unifi devices leds --enable
+
+its unifi devices leds
+
 its unifi devices leds off
 ```
 
@@ -381,6 +399,9 @@ Block a client by MAC address. Blocks a client. Reversible via `unblock`.
 **Examples:**
 
 ```bash
+# Reversible with `clients unblock`
+its unifi clients block a4:83:e7:11:22:33 --confirm
+
 its unifi clients block <mac>
 ```
 
@@ -397,6 +418,8 @@ Unblock a client by MAC address. Re-allows a previously blocked client.
 **Examples:**
 
 ```bash
+its unifi clients unblock a4:83:e7:11:22:33
+
 its unifi clients unblock <mac>
 ```
 
@@ -413,6 +436,9 @@ Force reconnect a client. Force a client to disassociate + re-auth.
 **Examples:**
 
 ```bash
+# Forces a re-associate — first thing to try for a stuck wireless client
+its unifi clients reconnect a4:83:e7:11:22:33
+
 its unifi clients reconnect <mac>
 ```
 
@@ -462,6 +488,10 @@ Authorise a guest WiFi client. Permits a guest network device.
 **Examples:**
 
 ```bash
+its unifi guests authorise a4:83:e7:11:22:33 --minutes 1440
+
+its unifi guests authorise a4:83:e7:11:22:33 --minutes 480 --down 5000 --up 1000
+
 its unifi guests authorise <mac> --minutes 1440
 ```
 
@@ -478,6 +508,8 @@ Revoke guest WiFi authorisation. Revokes a guest authorisation.
 **Examples:**
 
 ```bash
+its unifi guests unauthorise a4:83:e7:11:22:33
+
 its unifi guests unauthorise <mac>
 ```
 
@@ -555,6 +587,10 @@ Enable or disable a WiFi SSID. Toggle a boolean state; idempotent.
 **Examples:**
 
 ```bash
+its unifi wlans toggle 6f2a9c14 --enable
+
+its unifi wlans toggle 6f2a9c14
+
 # Toggles whatever the current enabled state is.
 its unifi wlans toggle <wlan-id>
 
@@ -577,6 +613,11 @@ Update WiFi password for an SSID. Rotate a PSK / passphrase. Disconnects every c
 **Examples:**
 
 ```bash
+# Every client on that SSID is disconnected and must rejoin with the new passphrase
+its unifi wlans password 6f2a9c14 --passphrase "new-passphrase-here" --confirm
+
+its unifi wlans list
+
 its unifi wlans password <wlan-id> --passphrase "new-password" --confirm
 ```
 
@@ -970,6 +1011,8 @@ Create guest WiFi vouchers. Idempotent on duplicate names — use update/edit to
 **Examples:**
 
 ```bash
+its unifi vouchers create --count 10 --minutes 1440 --note "Reception"
+
 its unifi vouchers create --minutes 1440 --count 5
 ```
 
@@ -987,6 +1030,10 @@ Revoke/delete a guest voucher. Reverse an assignment. --confirm where required.
 **Examples:**
 
 ```bash
+its unifi vouchers revoke 6f2a9c14 --confirm
+
+its unifi vouchers list
+
 its unifi vouchers revoke <voucher-id> --confirm
 ```
 

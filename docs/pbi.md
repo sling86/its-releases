@@ -106,6 +106,8 @@ Add a user/group/app to a workspace (admin). Add a primary user; idempotent.
 **Examples:**
 
 ```bash
+its pbi workspaces add-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Member
+
 its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member
 ```
 
@@ -124,6 +126,8 @@ Update a user's access right on a workspace. Change the primary user.
 **Examples:**
 
 ```bash
+its pbi workspaces update-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Admin
+
 its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin
 ```
 
@@ -141,6 +145,8 @@ Remove a user/group/app from a workspace (admin, requires --confirm). Reverse of
 **Examples:**
 
 ```bash
+its pbi workspaces remove-user 8f1c2d3e-... --user jane.smith@example.com --confirm
+
 its pbi workspaces remove-user <workspace-id> --user jane.smith@example.com --confirm
 ```
 
@@ -310,7 +316,7 @@ Sign in as a Power BI user via device-code flow. Tokens are cached locally (~/.i
 **Examples:**
 
 ```bash
-# Device-code flow for user-context API
+# Device-code flow — token cached under ~/.its/secrets
 its pbi my login
 ```
 
@@ -321,6 +327,7 @@ Clear the cached Power BI user token. Does not revoke it server-side.
 **Examples:**
 
 ```bash
+# Local only — does not revoke server-side
 its pbi my logout
 ```
 
@@ -391,6 +398,9 @@ Add a user/group/app to a workspace using the signed-in user's permissions (side
 **Examples:**
 
 ```bash
+# Uses your own permissions — sidesteps the service-principal admin restriction
+its pbi my add-workspace-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Member
+
 its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member
 ```
 
@@ -409,6 +419,8 @@ Update a user's access right on a workspace using the signed-in user's permissio
 **Examples:**
 
 ```bash
+its pbi my update-workspace-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Contributor
+
 its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin
 ```
 
@@ -426,6 +438,8 @@ Remove a user/group/app from a workspace using the signed-in user's permissions 
 **Examples:**
 
 ```bash
+its pbi my remove-workspace-user 8f1c2d3e-... --user jane.smith@example.com --confirm
+
 its pbi my remove-workspace-user <workspace-id> --user jane.smith@example.com --confirm
 ```
 
@@ -443,6 +457,8 @@ Trigger a refresh of a dataset owned by the signed-in user. Force the provider t
 **Examples:**
 
 ```bash
+its pbi my refresh 9a8b7c6d-... --workspace 8f1c2d3e-...
+
 its pbi my refresh <dataset-id>
 
 # Disambiguates when the dataset isn't in your personal workspace.

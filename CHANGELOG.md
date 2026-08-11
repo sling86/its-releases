@@ -15,6 +15,78 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.10.0] - 2026-08-11
+
+### Added
+
+- **Pipelines:** `-` marks the positional that should come from the piped
+  record. Positionals given on the command line fill from index 0, so a command
+  with two required arguments could not fan out at all — `its wrike tickets
+  set-due --stdin 2026-09-01` put the date in the `taskId` slot. Now:
+
+  ```bash
+  its wrike tickets --filter status=active --jsonl \
+    | its wrike tickets set-due - 2026-09-01 --stdin --max-input 50
+  ```
+
+  Unblocks the 47 commands with two or more required arguments. Only the first
+  positional falls back to guessing a field, so a `-` after it needs `--map` or
+  command-owned `pipeFrom`, and an unbindable required argument still fails
+  before the first write. `-` is only meaningful under `--stdin`.
+
+- **Global commands** (`its setup`, `its status`, `its find`, …) are documented
+  for the first time. They were dispatched by hand in three different styles, so
+  no tooling could see them as a set: the docs generator emitted nothing for
+  them, `docs:check` could not detect drift in them, and 11 appeared nowhere in
+  `docs/` or the README. There is now a generated
+  [docs/global.md](docs/global.md) covering all 23, and `its <command> --help`
+  works on every one.
+
+- **Examples:** all 315 commands that change state now carry a worked example
+  rather than a generated `its <resource> <action> <placeholder>` skeleton, with
+  the consequence spelled out where it is not obvious — `bw items purge` is
+  unrecoverable, `unifi wlans password` disconnects every client on the SSID,
+  `dokploy projects delete` takes every app and database with it.
+
+### Fixed
+
+- **HTTP:** a 200 response whose body is HTML now fails with the host and the
+  page title, instead of being cast to the expected type. An SPA index page or
+  an SSO login form reached the caller typed as an array and died later with
+  `TypeError: (…).map is not a function`, naming neither the host that answered
+  nor the cause. Pointing `TACTICAL_URL` at the RMM dashboard host rather than
+  the API host produced exactly this. The same defect let `its rmm setup` accept
+  a wrong URL, because its connection test only checks that nothing throws.
+  Fixed in the shared HTTP layer, so all 22 providers gain it.
+
+- **`--help` on global commands:** `config`, `secrets`, `status`, `trust-cert`,
+  `update` and `version` executed instead of explaining themselves.
+  `its status --help` ran a live connectivity test against every provider.
+
+- **Pipelines:** `MISSING_PIPE_VALUE` now names the fix — the `--map` to write,
+  and, for an argument after the first, why the legacy guess does not apply.
+
+- Nine examples carried real internal hostnames and an address. These ship in
+  the public plugin repo; all are now `example.com` placeholders, and a test
+  fails the build if one returns.
+
+### Changed
+
+- **Internals:** nine global commands (`status`, `config`, `inventory`,
+  `health`, `find`, `user`, `onboard`, `digest`, `resume`) now return a
+  `CommandResult` and dispatch through the shared output pipeline, so they
+  inherit `--json`/`--sort`/`--filter`. `src/index.ts` is 1,480 lines smaller.
+  The remaining globals stay hand-rolled because they cannot express themselves
+  as a `CommandResult` — interactive wizards, commands that prompt mid-flow, and
+  `watch`/`diff`, which own their stdout.
+
+- **Docs gate:** `docs:check` proves the generated docs were regenerated; it
+  cannot prove the source says anything useful, which is how every gap above
+  passed a green gate. A new content gate requires a real description on every
+  command, arg and flag, an example on every mutating command, and resolves each
+  example against the live command definitions — which caught four examples that
+  would have failed on paste.
+
 ## [0.9.0] - 2026-08-08
 
 ### Changed
