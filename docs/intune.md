@@ -38,6 +38,9 @@ its intune setup --reset   # Re-run setup (overwrite config)
 
 | Variable | Description |
 |----------|-------------|
+| `INTUNE_CLIENT_ID` | Dedicated Intune app registration client ID — optional, falls back to CLIENT_ID. Use one holding ONLY the DeviceManagement roles: a token from the shared ~40-permission app stops carrying them and every call 403s. |
+| `INTUNE_CLIENT_SECRET` | Dedicated Intune app registration secret — optional, falls back to CLIENT_SECRET |
+| `INTUNE_TENANT_ID` | Tenant for the dedicated Intune app — optional, falls back to TENANT_ID |
 | `TENANT_ID` | Microsoft Entra tenant ID (same as Entra provider) |
 | `CLIENT_ID` | App registration client ID (same as Entra) |
 | `CLIENT_SECRET` | App registration client secret (same as Entra) |

@@ -13,9 +13,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [global.md](./global.md) | Global commands — 23 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 70 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 106 commands across 21 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 117 commands across 25 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 118 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 40 commands across 12 resources |
-| [sp.md](./sp.md) | SharePoint — 48 commands across 11 resources |
+| [sp.md](./sp.md) | SharePoint — 49 commands across 11 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 51 commands across 13 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
@@ -34,7 +34,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **205 resources** · **719 commands**
+**22 providers** · **205 resources** · **721 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -109,7 +109,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [users](./dokploy.md#users) | list, me, invite, remove | `src/providers/dokploy/commands/users.ts` |
 | [orgs](./dokploy.md#orgs) | list, active | `src/providers/dokploy/commands/users.ts` |
 | [compose](./dokploy.md#compose) | get, services, config, deploy, stop, redeploy, delete | `src/providers/dokploy/commands/compose.ts` |
-| [backup](./dokploy.md#backup) | create, get, update, files, run, delete | `src/providers/dokploy/commands/backup.ts` |
+| [backup](./dokploy.md#backup) | create, get, update, files, restore, run, delete | `src/providers/dokploy/commands/backup.ts` |
 | [schedule](./dokploy.md#schedule) | list, get, run, delete | `src/providers/dokploy/commands/schedule.ts` |
 | [git](./dokploy.md#git) | list, setup, delete | `src/providers/dokploy/commands/git.ts` |
 
@@ -139,7 +139,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [lists](./sp.md#lists) | list, get, columns, items, create-item, update-item, delete-item | `src/providers/sp/commands/lists.ts` |
 | [files](./sp.md#files) | download, upload, folder, delete, share, move, checkout, checkin, versions, restore | `src/providers/sp/commands/files.ts` |
 | [search](./sp.md#search) | list | `src/providers/sp/commands/search.ts` |
-| [permissions](./sp.md#permissions) | list, item, share, grant-app, remove | `src/providers/sp/commands/permissions.ts` |
+| [permissions](./sp.md#permissions) | find-group, list, item, share, grant-app, remove | `src/providers/sp/commands/permissions.ts` |
 | [groups](./sp.md#groups) | list, members, add-member, remove-member | `src/providers/sp/commands/groups.ts` |
 | [recycle-bin](./sp.md#recycle-bin) | list | `src/providers/sp/commands/recycle-bin.ts` |
 | [pages](./sp.md#pages) | list, get | `src/providers/sp/commands/pages.ts` |
@@ -728,6 +728,7 @@ its
 │   │   ├── get <backupId>
 │   │   ├── update <backupId>
 │   │   ├── files <destinationId>
+│   │   ├── restore
 │   │   ├── run <backupId>
 │   │   └── delete <backupId>
 │   ├── schedule
@@ -821,6 +822,7 @@ its
 │   │   └── restore <siteId>
 │   ├── search (list) <query>
 │   ├── permissions
+│   │   ├── find-group <groupId>
 │   │   ├── (list) <siteId>
 │   │   ├── item <siteId>
 │   │   ├── share <siteId>
@@ -1606,6 +1608,7 @@ src/
 │   │   │   └── sites.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── find-group.ts
 │   │   └── types.ts
 │   ├── teams/
 │   │   ├── commands/

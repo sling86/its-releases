@@ -46,6 +46,7 @@ SharePoint can use dedicated credentials (`SP_CLIENT_ID`/`SP_CLIENT_SECRET`) or 
 | `src/providers/sp/types.ts` | TypeScript interfaces |
 | `src/providers/sp/commands/` | Command definitions (split by resource) |
 | `src/providers/sp/definition.ts` | definition |
+| `src/providers/sp/find-group.ts` | find group |
 
 ## Resources
 
@@ -658,11 +659,31 @@ its sp search "quarterly report" --watch
 
 | Command | Description |
 |---------|-------------|
+| `its sp permissions find-group <groupId>` | Reverse-lookup: which sites grant an Entra group access, directly or nested inside a site's Owners/Members group. Run this before retiring a security group. Reports sites it could not read rather than counting them as clear — absence of hits only proves the group is unused if every site was readable. |
 | `its sp permissions <siteId>` | List app-level site permissions. Surfaces the most common fields; pass --json for raw shape. |
 | `its sp permissions item <siteId>` | List sharing permissions on a file or folder. Single record detail. |
 | `its sp permissions share <siteId>` | Create a sharing link. Creates a sharing link / direct grant. |
 | `its sp permissions grant-app <siteId>` | Grant the it-cli app (or another app via --app) a Sites.Selected role on one site. Useful for bootstrapping the role needed by `its sp groups *`. Requires Sites.FullControl.All on the CALLING credentials — typically via a separate admin app (SP_ADMIN_CLIENT_ID/SP_ADMIN_CLIENT_SECRET) or a one-off elevation. |
 | `its sp permissions remove <siteId>` | Remove a sharing permission. Permanent — use --confirm. |
+
+#### `its sp permissions find-group <groupId>`
+
+Reverse-lookup: which sites grant an Entra group access, directly or nested inside a site's Owners/Members group. Run this before retiring a security group. Reports sites it could not read rather than counting them as clear — absence of hits only proves the group is unused if every site was readable.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--top` | `` | Maximum sites to scan (default 200) | — |
+| `--concurrency` | `` | Sites scanned in parallel (default 6) | — |
+
+**Examples:**
+
+```bash
+its sp permissions find-group 462e4d2a-1f3c-4b8e-9d21-7a5e0c9b1234
+
+its sp permissions find-group <groupId> --top 50 --concurrency 10
+```
 
 #### `its sp permissions <siteId>`
 
