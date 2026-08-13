@@ -63,7 +63,7 @@ its <provider> <resource> [action] [args] [--flags]
 | GitHub | `gh` | 4 commands, 2 resources | [gh.md](./gh.md) |
 | Outlook | `outlook` | 42 commands, 11 resources | [outlook.md](./outlook.md) |
 | Microsoft 365 Health | `m365` | 3 commands, 2 resources | [m365.md](./m365.md) |
-| Teams | `teams` | 3 commands, 2 resources | [teams.md](./teams.md) |
+| Teams | `teams` | 4 commands, 2 resources | [teams.md](./teams.md) |
 
 ## Global Options
 

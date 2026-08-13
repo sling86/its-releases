@@ -15,6 +15,31 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.11.0] - 2026-08-13
+
+### Added
+
+- **Teams:** `its teams chats send <chat_id>` posts a message to one of your
+  chats, as you. `--message` for inline text, `--message-file` for a long body
+  (the Windows command line has a length cap), `--html` to send HTML instead of
+  plain text. Delegated-only, and it needs the `ChatMessage.Send` scope — after
+  granting it, run `its auth login` again or the cached token still will not
+  carry it.
+
+### Fixed
+
+- **Skill:** the agent-facing reference documents all 23 global commands.
+  v0.10.0 gave them a docs page and `--help` but no skill page — `skill/
+  reference/` has one page per provider and had no global page at all, so the
+  only coverage was a hand-maintained list in `SKILL.md` that had drifted to 15
+  of 23. `its user`, the cross-provider single-user snapshot, was among the
+  missing, so an agent reading the skill could not discover it.
+  `skill/reference/global.md` is now generated from the same registry as
+  `docs/global.md`, and two tests keep it that way: one requires every
+  registered command to appear in the reference, the other that the tracked
+  plugin mirror matches `skill/` byte for byte, since CI publishes that mirror
+  verbatim.
+
 ## [0.10.0] - 2026-08-11
 
 ### Added
