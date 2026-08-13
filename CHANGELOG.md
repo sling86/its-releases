@@ -15,6 +15,32 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.11.1] - 2026-08-13
+
+### Fixed
+
+- **Entra (security):** `apps rotate` no longer prints the freshly minted client
+  secret to stderr when every storage target fails. A locked Bitwarden vault or
+  an unavailable keychain used to fall through to a plaintext dump, on the
+  reasoning that the secret would otherwise be lost — which turned a
+  recoverable error into an unrecoverable leak, and put a live client secret
+  into an agent transcript on 2026-08-13. It now fails closed: the new
+  credential is rolled back with `removePassword` so nothing dangles on the app
+  registration, and the command exits non-zero naming what failed and how to
+  retry (`its bw session unlock`). If the rollback itself fails, the error names
+  the `keyId` of the live-but-unheld credential so it can be deleted by hand.
+  The secret is printed only when `--include-secrets` is passed explicitly.
+- **Dokploy:** `apps bootstrap` resolves the GitHub App installation that can
+  actually see `--repo` instead of taking the first one configured. Dokploy
+  servers accumulate installations (four on ours) and they are not
+  interchangeable — picking the wrong one wired an app to an installation
+  without access, the clone silently never ran, and the build failed with
+  `cannot create .../code/.env: Directory nonexistent`, which names neither the
+  repo nor the installation. Bootstrap now probes each installation's repo list;
+  no match or an ambiguous match errors with the full candidate list and
+  requires `--github-id`. The probe also runs under `--dry-run`, so the preview
+  shows which installation would be used.
+
 ## [0.11.0] - 2026-08-13
 
 ### Added

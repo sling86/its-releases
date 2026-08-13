@@ -57,6 +57,7 @@ its dokploy setup --reset   # Re-run setup (overwrite config)
 | `src/providers/dokploy/types.ts` | TypeScript interfaces |
 | `src/providers/dokploy/commands/` | Command definitions (split by resource) |
 | `src/providers/dokploy/definition.ts` | definition |
+| `src/providers/dokploy/github-resolve.ts` | github resolve |
 | `src/providers/dokploy/resolve.ts` | resolve |
 | `src/providers/dokploy/runtime.ts` | runtime |
 | `src/providers/dokploy/ssh.ts` | ssh |
@@ -673,7 +674,7 @@ Bootstrap a new Dokploy app end-to-end: resolves or creates the project, creates
 | `--port` | `` | Container port the app listens on (default 3000) | 3000 |
 | `--env-file` | `` | Path to .env file to push | — |
 | `--project` | `` | Project name or id (default: same as --name; created if missing) | — |
-| `--github-id` | `` | Dokploy GitHub provider id (default: first provider from `github providers`) | — |
+| `--github-id` | `` | Dokploy GitHub provider id. Default: the installation that can actually see --repo (each installation only sees the repos it was granted; bootstrap probes them and fails with the candidate list rather than guessing) | — |
 | `--dockerfile` | `` | Dockerfile path inside the repo (default Dockerfile) | Dockerfile |
 | `--context` | `` | Docker build context (default .) | . |
 | `--build-type` | `` | Build type (default dockerfile) | dockerfile |
