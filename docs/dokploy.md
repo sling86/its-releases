@@ -2085,6 +2085,7 @@ its dokploy compose delete <compose-id> --confirm
 | `its dokploy backup get <backupId>` | Get a backup config by id (schedule, destination, prefix). Pass the id (or any natural identifier) as the positional arg. |
 | `its dokploy backup update <backupId>` | Update a backup config (schedule, prefix, keep count, enabled). Only provided flags change. e.g. its dokploy backup update <id> --schedule '0 1 * * *' --keep 7 |
 | `its dokploy backup files <destinationId>` | List backup files present in a remote destination (S3/MinIO bucket etc.) |
+| `its dokploy backup restore` | Restore a backup file OVER a live database, streaming Dokploy's progress log. Destructive and irreversible — the target's current contents are replaced. Needs --confirm; use --dry-run first to see the exact payload without starting anything. Find the file with `its dokploy backup files <destinationId>`. |
 | `its dokploy backup run <backupId>` | Trigger a manual backup run for a given backup config (backup.manualBackup) |
 | `its dokploy backup delete <backupId>` | Delete a backup configuration (requires --confirm). Does NOT delete stored backup files on the remote destination. |
 
@@ -2156,6 +2157,33 @@ List backup files present in a remote destination (S3/MinIO bucket etc.).
 
 ```bash
 its dokploy backup files <destination-id>
+```
+
+#### `its dokploy backup restore`
+
+Restore a backup file OVER a live database, streaming Dokploy's progress log. Destructive and irreversible — the target's current contents are replaced. Needs --confirm; use --dry-run first to see the exact payload without starting anything. Find the file with `its dokploy backup files <destinationId>`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--db-id` | `` | Target database ID | — |
+| `--db-type` | `` | Database type | — |
+| `--destination` | `` | Destination ID holding the backup file | — |
+| `--file` | `` | Backup file key within the destination | — |
+| `--database` | `` | Database name to restore into | — |
+| `--backup-type` | `` | database (default) or compose | — |
+| `--service` | `` | Service name — compose backups only | — |
+| `--dry-run` | `` | Resolve and print the payload without restoring | — |
+| `--confirm` | `` | Required — this overwrites the target database | — |
+
+**Examples:**
+
+```bash
+# Resolves everything and prints what would be sent — starts nothing
+its dokploy backup restore --db-id pg_2mN8vC --db-type postgres --destination dst_2mN8vC --file ccd-prod/2026-08-13.sql.gz --database ccd --dry-run
+
+its dokploy backup restore --db-id pg_2mN8vC --db-type postgres --destination dst_2mN8vC --file ccd-prod/2026-08-13.sql.gz --database ccd --confirm
 ```
 
 #### `its dokploy backup run <backupId>`

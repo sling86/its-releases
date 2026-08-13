@@ -15,6 +15,46 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.13.0] - 2026-08-13
+
+### Added
+
+- **SharePoint:** `permissions find-group <groupId>` answers the reverse
+  question — which sites grant an Entra group access — which is what you need
+  before retiring a security group. Two things make a naive version dangerous,
+  because both produce a false "not used" on a group that is used: the group is
+  usually nested inside a site's Owners/Members SP group rather than holding its
+  own role assignment, so any member with PrincipalType 8 is expanded; and even
+  a delegated SharePoint admin only sees sites they belong to, so sites that
+  return 403 are counted and listed as unreadable and the summary says outright
+  that the result is not proof. Matching is on the object id embedded in the
+  claims string, covering every prefix variant; "Limited Access" is filtered as
+  plumbing rather than reported as a grant.
+- **Dokploy:** `backup restore` restores a backup file over a live database and
+  streams Dokploy's progress log, closing a gap where backups could be created
+  and run but never exercised. Dokploy serves restore as a tRPC subscription, so
+  this adds an SSE transport. Gated as irreversible and refuses without
+  `--confirm`; `--dry-run` resolves and prints the exact payload without
+  starting anything. Verified end to end against a throwaway Postgres database:
+  seeded a marker row, backed up, overwrote the marker, restored, and confirmed
+  the original value came back.
+
+### Fixed
+
+- **Dokploy:** database names now resolve. `project.all` returns each database
+  as its id and nothing else, so `databases list` had been printing a blank name
+  column and `databases sql <name>` could not match anything on a real server —
+  name and appName exist only on the per-database record and are now fetched.
+  Only those two fields are lifted out; the same record carries the database
+  password and service env, which stay put.
+- **Intune:** optional `INTUNE_CLIENT_ID` / `INTUNE_CLIENT_SECRET` /
+  `INTUNE_TENANT_ID`, each falling back to the shared Entra values when unset,
+  so nothing changes until they are set. A dedicated registration matters when
+  the shared app grows wide enough that its token stops carrying the granted
+  DeviceManagement roles and every call 403s while the portal still shows
+  consent. The delegated path deliberately stays on `CLIENT_ID`, since
+  `its auth login` never writes tokens against the dedicated app.
+
 ## [0.12.0] - 2026-08-13
 
 ### Added
