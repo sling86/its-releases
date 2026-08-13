@@ -1425,6 +1425,7 @@ src/
 │   │   │   └── webhook.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── github-resolve.ts
 │   │   ├── resolve.ts
 │   │   ├── runtime.ts
 │   │   ├── ssh.ts
