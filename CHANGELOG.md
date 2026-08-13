@@ -15,6 +15,25 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.12.0] - 2026-08-13
+
+### Added
+
+- **Dokploy:** `databases sql <database> [query]` runs SQL against a
+  Dokploy-managed database directly. Previously there was no such command, so a
+  prod row count went through `apps shell <someApp> 'docker exec <container>
+  psql …'` — an **apps** command to reach a **database**, working only because a
+  compound command lands on the Dokploy host rather than inside the app
+  container, with a container task id that changes on every redeploy. The
+  database is resolved by name, appName, or id and its engine inferred from the
+  project tree, so no `--type`; omitting the query opens an interactive session.
+  Credentials are never read out of the Dokploy API — each client runs as
+  `docker exec <id> sh -c 'psql -U "$POSTGRES_USER" …'`, single-quoted so the
+  host shell leaves the variable alone and the container's own shell expands it,
+  keeping the password out of argv, out of debug logs, and off the host's
+  process list. Writes require `--confirm`. Postgres, MySQL, MariaDB and Mongo;
+  Redis points at `apps shell`.
+
 ## [0.11.1] - 2026-08-13
 
 ### Fixed
