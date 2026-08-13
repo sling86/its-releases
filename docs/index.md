@@ -32,9 +32,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
-| [teams.md](./teams.md) | Teams — 3 commands across 2 resources |
+| [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **205 resources** · **717 commands**
+**22 providers** · **205 resources** · **718 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -348,7 +348,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [chats](./teams.md#chats) | list, messages | `src/providers/teams/commands/chats.ts` |
+| [chats](./teams.md#chats) | list, messages, send | `src/providers/teams/commands/chats.ts` |
 | [presence](./teams.md#presence) | get | `src/providers/teams/commands/chats.ts` |
 
 ## Key Source Files
@@ -1263,7 +1263,8 @@ its
 └── teams
     ├── chats
     │   ├── (list)
-    │   └── messages <chat_id>
+    │   ├── messages <chat_id>
+    │   └── send <chat_id>
     └── presence get
 ```
 
