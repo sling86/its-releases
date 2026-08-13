@@ -15,6 +15,17 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.13.1] - 2026-08-13
+
+### Fixed
+
+- **Dokploy:** `backup create` now reports the `backupId`, so a new config can
+  be chained straight into `backup run` / `backup restore`. The running Dokploy
+  returns nothing from the create call, so the id is recovered by matching the
+  config just requested on destination, prefix and database; if no config
+  matches it reports that plainly rather than returning some other backup's id,
+  which would aim `backup run` at the wrong database.
+
 ## [0.13.0] - 2026-08-13
 
 ### Added
