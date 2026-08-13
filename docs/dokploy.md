@@ -56,6 +56,7 @@ its dokploy setup --reset   # Re-run setup (overwrite config)
 | `src/providers/dokploy/client.ts` | API client methods |
 | `src/providers/dokploy/types.ts` | TypeScript interfaces |
 | `src/providers/dokploy/commands/` | Command definitions (split by resource) |
+| `src/providers/dokploy/db-sql.ts` | db sql |
 | `src/providers/dokploy/definition.ts` | definition |
 | `src/providers/dokploy/github-resolve.ts` | github resolve |
 | `src/providers/dokploy/resolve.ts` | resolve |
@@ -711,6 +712,7 @@ its dokploy apps cert-status storefront
 | `its dokploy databases` | List all databases across projects. Surfaces the most common fields; pass --json for raw shape. |
 | `its dokploy databases url <id>` | Compose a connection URL for a database — uses the docker-network appName by default (sibling apps in the same project), or external host:port with --external. URL is printed plain to stdout for `eval` / `export DATABASE_URL=$(its dokploy databases url ...)`. |
 | `its dokploy databases get` | Get full details for a database (appName, credentials, port) |
+| `its dokploy databases sql <database> [query]` | Run SQL against a Dokploy-managed database — resolves the live container and execs its own client (psql/mysql/mongosh). Omit [query] for an interactive session. Reads only unless --confirm is passed; credentials are taken from the container's env and never printed. Replaces the `apps shell` + `docker exec` detour. |
 | `its dokploy databases create` | Create a database (postgres, mysql, mariadb, mongo, or redis) |
 | `its dokploy databases deploy <databaseId>` | Deploy a database instance. Trigger a fresh deploy from the wired source. |
 | `its dokploy databases stop <databaseId>` | Stop a database instance. Stop the resource. Use --confirm if the action is destructive. |
@@ -766,6 +768,29 @@ Get full details for a database (appName, credentials, port).
 
 ```bash
 its dokploy databases get <db-id>
+```
+
+#### `its dokploy databases sql <database> [query]`
+
+Run SQL against a Dokploy-managed database — resolves the live container and execs its own client (psql/mysql/mongosh). Omit [query] for an interactive session. Reads only unless --confirm is passed; credentials are taken from the container's env and never printed. Replaces the `apps shell` + `docker exec` detour.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required for anything that writes (INSERT/UPDATE/DDL) | — |
+| `--timeout` | `` | One-shot query timeout in seconds (default 30) | — |
+
+**Examples:**
+
+```bash
+# Row counts and sanity checks — the migration-review question
+its dokploy databases sql ccd-prod-postgres "select count(*) from crm.tasks"
+
+# Drops into psql; unscreened, so mutations are on you
+its dokploy databases sql ccd-prod-postgres
+
+its dokploy databases sql ccd-prod-postgres "update crm.tasks set done = true where id = 42" --confirm
 ```
 
 #### `its dokploy databases create`

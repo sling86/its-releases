@@ -13,7 +13,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [global.md](./global.md) | Global commands — 23 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 70 commands across 16 resources |
 | [entra.md](./entra.md) | Entra ID — 106 commands across 21 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 116 commands across 25 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 117 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 40 commands across 12 resources |
 | [sp.md](./sp.md) | SharePoint — 48 commands across 11 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
@@ -34,7 +34,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **205 resources** · **718 commands**
+**22 providers** · **205 resources** · **719 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -89,7 +89,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [projects](./dokploy.md#projects) | list, get, create, delete | `src/providers/dokploy/commands/projects.ts` |
 | [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, env-runtime, apply-env, health, env-drift, doctor, bootstrap, cert-status | `src/providers/dokploy/commands/apps.ts` |
-| [databases](./dokploy.md#databases) | list, url, get, create, deploy, stop, delete | `src/providers/dokploy/commands/databases.ts` |
+| [databases](./dokploy.md#databases) | list, url, get, sql, create, deploy, stop, delete | `src/providers/dokploy/commands/databases.ts` |
 | [deployments](./dokploy.md#deployments) | list, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
 | [domains](./dokploy.md#domains) | list, create, check, delete | `src/providers/dokploy/commands/domains.ts` |
 | [env](./dokploy.md#env) | list, push, set, unset, pull, copy, reveal | `src/providers/dokploy/commands/env.ts` |
@@ -639,6 +639,7 @@ its
 │   │   ├── (list)
 │   │   ├── url <id>
 │   │   ├── get
+│   │   ├── sql <database> [query]
 │   │   ├── create
 │   │   ├── deploy <databaseId>
 │   │   ├── stop <databaseId>
@@ -1424,6 +1425,7 @@ src/
 │   │   │   ├── users.ts
 │   │   │   └── webhook.ts
 │   │   ├── client.ts
+│   │   ├── db-sql.ts
 │   │   ├── definition.ts
 │   │   ├── github-resolve.ts
 │   │   ├── resolve.ts
