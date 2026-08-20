@@ -11,7 +11,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [global.md](./global.md) | Global commands — 23 commands that take no provider |
-| [rmm.md](./rmm.md) | Tactical RMM — 70 commands across 16 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 78 commands across 18 resources |
 | [entra.md](./entra.md) | Entra ID — 106 commands across 21 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 118 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 40 commands across 12 resources |
@@ -34,7 +34,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **205 resources** · **721 commands**
+**22 providers** · **207 resources** · **729 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -56,6 +56,8 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [diagnostics](./rmm.md#diagnostics) | list | `src/providers/rmm/commands/diagnostics.ts` |
 | [doctor](./rmm.md#doctor) | list | `src/providers/rmm/commands/doctor.ts` |
 | [custom-fields](./rmm.md#custom-fields) | list, set | `src/providers/rmm/commands/custom-fields.ts` |
+| [accounts](./rmm.md#accounts) | roles, users, apikeys, provision | `src/providers/rmm/commands/accounts.ts` |
+| [terminal](./rmm.md#terminal) | list, login, status, logout | `src/providers/rmm/commands/terminal.ts` |
 
 ### [Entra ID](./entra.md)
 
@@ -475,9 +477,19 @@ its
 │   │   └── patch-policy <policy_id>
 │   ├── diagnostics (list) <agent>
 │   ├── doctor (list)
-│   └── custom-fields
-│       ├── (list)
-│       └── set <agent> <field> <value>
+│   ├── custom-fields
+│   │   ├── (list)
+│   │   └── set <agent> <field> <value>
+│   ├── accounts
+│   │   ├── roles
+│   │   ├── users
+│   │   ├── apikeys
+│   │   └── provision <name>
+│   └── terminal
+│       ├── (list) <agent>
+│       ├── login
+│       ├── status
+│       └── logout
 ├── entra
 │   ├── users
 │   │   ├── (list)
@@ -1573,6 +1585,7 @@ src/
 │   │   └── types.ts
 │   ├── rmm/
 │   │   ├── commands/
+│   │   │   ├── accounts.ts
 │   │   │   ├── agents.ts
 │   │   │   ├── alerts.ts
 │   │   │   ├── checks.ts
@@ -1587,10 +1600,13 @@ src/
 │   │   │   ├── services.ts
 │   │   │   ├── software.ts
 │   │   │   ├── tasks.ts
+│   │   │   ├── terminal.ts
 │   │   │   └── updates.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── resolve.ts
+│   │   ├── terminal-auth.ts
+│   │   ├── terminal.ts
 │   │   ├── types.ts
 │   │   └── wrap-ps.ts
 │   ├── sp/
@@ -1659,6 +1675,7 @@ src/
 ├── cli.ts
 ├── config.ts
 ├── index.ts
+├── markdown.d.ts
 ├── tui-history.ts
 └── tui.ts
 ```

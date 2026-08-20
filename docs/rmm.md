@@ -1,6 +1,6 @@
 # Tactical RMM (`rmm`)
 
-Tactical RMM endpoint management — agents, alerts, software, services, updates, scripts, checks, tasks, policies.
+Tactical RMM endpoint management — agents, live terminal, alerts, software, services, updates, scripts, checks, tasks, policies.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
 Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
@@ -24,6 +24,8 @@ Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md)
 - [diagnostics](#diagnostics)
 - [doctor](#doctor)
 - [custom-fields](#custom-fields)
+- [accounts](#accounts)
+- [terminal](#terminal)
 
 ## Setup
 
@@ -40,6 +42,8 @@ its rmm setup --reset   # Re-run setup (overwrite config)
 | `TACTICAL_URL` | Tactical RMM API address; managed-worker setup offers the hosted service by default (not the dashboard address) |
 | `TACTICAL_API_KEY` | Personal API key from RMM dashboard > Settings > Global Settings > API Keys. Select your own Tactical user; the key inherits that user's role. |
 
+Live terminal access additionally needs `its rmm terminal login` with a local Tactical dashboard account that has `can_use_terminal` for the target agent. Credentials and tokens require HTTPS. Tactical's upstream WebSocket protocol carries the Knox token in an `access_token` query parameter, so reverse-proxy access logs must redact query strings. Treat remote terminal output like SSH output: it may contain ANSI/OSC terminal control sequences.
+
 ### Source Files
 
 | File | Purpose |
@@ -49,6 +53,8 @@ its rmm setup --reset   # Re-run setup (overwrite config)
 | `src/providers/rmm/commands/` | Command definitions (split by resource) |
 | `src/providers/rmm/definition.ts` | definition |
 | `src/providers/rmm/resolve.ts` | resolve |
+| `src/providers/rmm/terminal-auth.ts` | terminal auth |
+| `src/providers/rmm/terminal.ts` | terminal |
 | `src/providers/rmm/wrap-ps.ts` | wrap ps |
 
 ## Resources
@@ -1625,6 +1631,147 @@ Set a custom field value on an agent. Accepts the field by numeric id OR by exac
 its rmm custom-fields set WKS-9 "RustDesk ID" 123456789
 
 its rmm custom-fields set WKS-9 4 123456789
+```
+
+---
+
+### accounts
+
+> Source: `src/providers/rmm/commands/accounts.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its rmm accounts roles` | List TRMM roles with the count of granted permissions. A role is what actually scopes an API key — the key itself carries no permissions. |
+| `its rmm accounts users` | List TRMM users and the role each carries. API-only users should show blocked dashboard login. |
+| `its rmm accounts apikeys` | List TRMM API keys with their linked user and expiry. Key values are MASKED — the API returns them in full, so an unmasked listing would dump every live credential. |
+| `its rmm accounts provision <name>` | Create a least-privilege API key end-to-end: a role with only the permissions you name, an API-only user carrying it with dashboard login blocked, and a key bound to that user. Additive — nothing existing is modified. The key is never printed; it goes to Bitwarden and/or the keychain. |
+
+#### `its rmm accounts roles`
+
+List TRMM roles with the count of granted permissions. A role is what actually scopes an API key — the key itself carries no permissions.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--permissions` | `` | Show every granted can_* flag, not just the count | — |
+
+```bash
+its rmm accounts roles
+```
+
+#### `its rmm accounts users`
+
+List TRMM users and the role each carries. API-only users should show blocked dashboard login.
+
+```bash
+its rmm accounts users
+```
+
+#### `its rmm accounts apikeys`
+
+List TRMM API keys with their linked user and expiry. Key values are MASKED — the API returns them in full, so an unmasked listing would dump every live credential.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--reveal` | `` | Show full key values. Interactive terminals only; audit-logged. | — |
+
+```bash
+its rmm accounts apikeys
+```
+
+#### `its rmm accounts provision <name>`
+
+Create a least-privilege API key end-to-end: a role with only the permissions you name, an API-only user carrying it with dashboard login blocked, and a key bound to that user. Additive — nothing existing is modified. The key is never printed; it goes to Bitwarden and/or the keychain.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--permissions` | `` | Comma-separated can_* flags to grant. Default: can_list_agents (read agents only). | — |
+| `--expires-days` | `` | Key lifetime in days (default: no expiry) | — |
+| `--bw` | `` | Upsert a "TRMM - <name>" login item in the Bitwarden Infrastructure folder | — |
+| `--dry-run` | `` | Print the planned objects without creating anything | — |
+
+**Examples:**
+
+```bash
+its rmm accounts provision shuttle-worker --permissions can_list_agents --bw
+```
+
+---
+
+### terminal
+
+> Source: `src/providers/rmm/commands/terminal.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its rmm terminal <agent>` | Open a live interactive shell on an RMM agent over Tactical's terminal WebSocket. Windows automatically tries PowerShell 7, Windows PowerShell, then Command Prompt; use --shell to choose explicitly. Requires can_use_terminal and a real TTY. Ctrl+] disconnects. |
+| `its rmm terminal login` | Sign in with a local Tactical dashboard account and store the short-lived terminal token in the encrypted its session store. Supports Tactical TOTP; SSO-only and dashboard-blocked users are rejected upstream. |
+| `its rmm terminal status` | Show whether a valid local RMM terminal login exists and its remaining lifetime. Never prints the token. |
+| `its rmm terminal logout` | Revoke the Tactical dashboard token and remove the encrypted local terminal session. |
+
+#### `its rmm terminal <agent>`
+
+Open a live interactive shell on an RMM agent over Tactical's terminal WebSocket. Windows automatically tries PowerShell 7, Windows PowerShell, then Command Prompt; use --shell to choose explicitly. Requires can_use_terminal and a real TTY. Ctrl+] disconnects.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--shell` | `` | Choose a shell token or absolute path explicitly; when omitted, Windows tries PowerShell 7, Windows PowerShell, then Command Prompt while Linux/macOS use the agent default | — |
+| `--as-user` | `` | Run as the active desktop user instead of SYSTEM (Windows only) | — |
+
+**Examples:**
+
+```bash
+# Windows: PowerShell 7, Windows PowerShell, then Command Prompt; other platforms: agent default
+its rmm terminal WKS-9
+
+# Require PowerShell 7 from its standard MSI path
+its rmm terminal WKS-9 --shell 'C:\Program Files\PowerShell\7\pwsh.exe'
+
+# Require PowerShell with no automatic fallback
+its rmm terminal WKS-9 --shell powershell
+
+# Require Windows Command Prompt
+its rmm terminal WKS-9 --shell cmd
+
+# Open PowerShell in the signed-in user's session
+its rmm terminal WKS-9 --shell powershell --as-user
+```
+
+#### `its rmm terminal login`
+
+Sign in with a local Tactical dashboard account and store the short-lived terminal token in the encrypted its session store. Supports Tactical TOTP; SSO-only and dashboard-blocked users are rejected upstream.
+
+**Examples:**
+
+```bash
+# Prompt for username, password and TOTP when required
+its rmm terminal login
+```
+
+#### `its rmm terminal status`
+
+Show whether a valid local RMM terminal login exists and its remaining lifetime. Never prints the token.
+
+```bash
+its rmm terminal status
+```
+
+#### `its rmm terminal logout`
+
+Revoke the Tactical dashboard token and remove the encrypted local terminal session.
+
+**Examples:**
+
+```bash
+# Revoke the dashboard token and remove the local session
+its rmm terminal logout
 ```
 
 ---

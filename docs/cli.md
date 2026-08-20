@@ -42,7 +42,7 @@ its <provider> <resource> [action] [args] [--flags]
 
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
-| Tactical RMM | `rmm` | 70 commands, 16 resources | [rmm.md](./rmm.md) |
+| Tactical RMM | `rmm` | 78 commands, 18 resources | [rmm.md](./rmm.md) |
 | Entra ID | `entra` | 106 commands, 21 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 118 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 40 commands, 12 resources | [bw.md](./bw.md) |
@@ -96,6 +96,7 @@ its <provider> <resource> [action] [args] [--flags]
 | `--max-chars N` | Character budget (AI mode only) |
 | `--no-colour` | Disable ANSI colours |
 | `--include-secrets` | Reveal plaintext only in interactive human output; machine modes and redirected stdout reject it. Every use is audit-logged |
+| `--skill` | Print the agent skill as Markdown and exit |
 | `-v`, `--verbose` | Debug output to stderr |
 | `-h`, `--help` | Show help |
 

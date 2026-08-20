@@ -32,12 +32,13 @@ its exo setup --reset   # Re-run setup (overwrite config)
 |----------|-------------|
 | `TENANT_ID` | Microsoft Entra tenant ID (same as Entra provider) |
 | `EXO_APP_ID` | App registration with `Exchange.ManageAsApp` permission |
-| `EXO_CERT_THUMBPRINT` | SHA1 thumbprint of the certificate in the cert store |
+| `EXO_CERT_THUMBPRINT` | SHA1 thumbprint of the certificate in the Windows cert store |
+| `EXO_CERTIFICATE_PATH` | Path to a PEM certificate containing its private key (POSIX) |
 | `EXO_ORGANIZATION` | Exchange Online organisation (e.g. `contoso.onmicrosoft.com`) |
 
 Requires **PowerShell 7** (`pwsh`) and the **ExchangeOnlineManagement** module. Auth uses a self-signed certificate uploaded to a dedicated Entra app registration with `Exchange.ManageAsApp` permission. Run `its exo setup` to check prerequisites and install the module.
 
-On Windows, the certificate lives in the current user's cert store (`Cert:\CurrentUser\My`). On POSIX, PFX file auth is a future enhancement.
+On Windows, the certificate lives in the current user's cert store (`Cert:\CurrentUser\My`) and is selected by `EXO_CERT_THUMBPRINT`. On POSIX, set `EXO_CERTIFICATE_PATH` to a PEM file containing the certificate and its private key.
 
 ### Source Files
 
