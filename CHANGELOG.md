@@ -15,6 +15,38 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.13.4] - 2026-08-20
+
+### Added
+
+- **Tactical RMM live terminal:** `its rmm terminal <agent>` opens Tactical's
+  interactive WebSocket shell in a local TTY or Herdr pane, relaying input,
+  streamed output, resize events and Ctrl+C. Windows automatically tries
+  PowerShell 7, Windows PowerShell, then Command Prompt; `--shell` chooses
+  explicitly. Dashboard login tokens are short-lived, encrypted locally and
+  require `can_use_terminal`; Ctrl+] disconnects and kills the remote session.
+
+### Fixed
+
+- **Release CI:** Linux and Windows builds now use a temporary private draft
+  release as their cross-job handoff instead of Actions artifacts, removing
+  the account storage quota that repeatedly blocked v0.13.2 publication.
+
+## [0.13.2] - 2026-08-18
+
+### Added
+
+- **Agent discovery:** `its --skill` prints the bundled `it-cli` skill as
+  Markdown, matching Herdr's discovery convention so apps and AI agents can
+  load the current CLI guidance directly from the installed binary.
+- **Tactical RMM accounts:** adds `accounts roles`, `accounts users`,
+  `accounts apikeys`, and `accounts provision` for least-privilege API
+  credentials. Keys stay masked by default; provisioning refuses
+  `can_manage_api_keys` and deletes an unstored key if secure storage fails.
+- **Entra app manifest:** declares the Shuttle worker registration with only
+  `User.Read.All`, keeping its read-only credential separate from the
+  higher-privilege it-cli registration.
+
 ## [0.13.1] - 2026-08-13
 
 ### Fixed
