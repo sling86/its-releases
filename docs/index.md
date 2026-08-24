@@ -25,7 +25,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
 | [pa.md](./pa.md) | Power Platform — 12 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
-| [hr.md](./hr.md) | PeopleHR — 8 commands across 4 resources |
+| [hr.md](./hr.md) | PeopleHR — 11 commands across 5 resources |
 | [bc.md](./bc.md) | Business Central — 7 commands across 6 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
@@ -34,7 +34,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **207 resources** · **729 commands**
+**22 providers** · **208 resources** · **732 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -285,6 +285,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [drift](./hr.md#drift) | detect | `src/providers/hr/commands.ts` |
+| [absences](./hr.md#absences) | get, summary, team | `src/providers/hr/commands.ts` |
 | [employees](./hr.md#employees) | list, search, get | `src/providers/hr/commands.ts` |
 | [starters](./hr.md#starters) | list, recent | `src/providers/hr/commands.ts` |
 | [leavers](./hr.md#leavers) | list, recent | `src/providers/hr/commands.ts` |
@@ -1181,6 +1182,10 @@ its
 │       └── request
 ├── hr
 │   ├── drift detect
+│   ├── absences
+│   │   ├── get <employee>
+│   │   ├── summary <employee>
+│   │   └── team
 │   ├── employees
 │   │   ├── (list)
 │   │   ├── search <query>
@@ -1499,6 +1504,7 @@ src/
 │   │   ├── client.ts
 │   │   └── definition.ts
 │   ├── hr/
+│   │   ├── absence.ts
 │   │   ├── client.ts
 │   │   ├── commands.ts
 │   │   ├── definition.ts

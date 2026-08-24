@@ -9,6 +9,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 
 - [Setup](#setup)
 - [drift](#drift)
+- [absences](#absences)
 - [employees](#employees)
 - [starters](#starters)
 - [leavers](#leavers)
@@ -34,6 +35,7 @@ its hr setup --reset   # Re-run setup (overwrite config)
 | `src/providers/hr/client.ts` | API client methods |
 | `src/providers/hr/types.ts` | TypeScript interfaces |
 | `src/providers/hr/commands.ts` | Command definitions |
+| `src/providers/hr/absence.ts` | absence |
 | `src/providers/hr/definition.ts` | definition |
 | `src/providers/hr/drift.ts` | drift |
 
@@ -61,6 +63,64 @@ Detect drift between PeopleHR and Entra ID. Reports field mismatches plus PHR-on
 
 ```bash
 its hr drift detect
+```
+
+---
+
+### absences
+
+> Source: `src/providers/hr/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its hr absences get <employee>` | Get one employee's sickness-absence records. Contains special-category health data. Dates use YYYY-MM-DD; free-text notes are omitted unless --include-notes is passed. |
+| `its hr absences summary <employee>` | Summarise one employee's sickness absence for a calendar year: episodes, days, longest spell, Bradford factor, emergency leave, outstanding return-to-work interviews, and reason breakdown. Contains special-category health data. |
+| `its hr absences team` | Rank a manager's direct reports or a department by Bradford factor for one year. Contains special-category health data. Refuses teams larger than 25. |
+
+#### `its hr absences get <employee>`
+
+Get one employee's sickness-absence records. Contains special-category health data. Dates use YYYY-MM-DD; free-text notes are omitted unless --include-notes is passed.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--from` | `` | Start date (YYYY-MM-DD); defaults to 1 January this year | — |
+| `--to` | `` | End date (YYYY-MM-DD); defaults to today | — |
+| `--include-notes` | `` | Include free-text absence comments | — |
+
+```bash
+its hr absences get <employee>
+```
+
+#### `its hr absences summary <employee>`
+
+Summarise one employee's sickness absence for a calendar year: episodes, days, longest spell, Bradford factor, emergency leave, outstanding return-to-work interviews, and reason breakdown. Contains special-category health data.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--year` | `` | Calendar year; defaults to current year | — |
+
+```bash
+its hr absences summary <employee>
+```
+
+#### `its hr absences team`
+
+Rank a manager's direct reports or a department by Bradford factor for one year. Contains special-category health data. Refuses teams larger than 25.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--manager` | `` | Manager email, EmployeeId, or exact full name | — |
+| `--department` | `` | Exact department name | — |
+| `--year` | `` | Calendar year; defaults to current year | — |
+
+```bash
+its hr absences team
 ```
 
 ---
