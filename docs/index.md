@@ -12,7 +12,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [global.md](./global.md) | Global commands — 23 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 78 commands across 18 resources |
-| [entra.md](./entra.md) | Entra ID — 106 commands across 21 resources |
+| [entra.md](./entra.md) | Entra ID — 108 commands across 22 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 118 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 40 commands across 12 resources |
 | [sp.md](./sp.md) | SharePoint — 49 commands across 11 resources |
@@ -20,13 +20,13 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [wrike.md](./wrike.md) | Wrike — 51 commands across 13 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
 | [exo.md](./exo.md) | Exchange Online — 42 commands across 9 resources |
-| [intune.md](./intune.md) | Intune — 42 commands across 17 resources |
+| [intune.md](./intune.md) | Intune — 44 commands across 17 resources |
 | [protect.md](./protect.md) | UniFi Protect — 9 commands across 5 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
 | [pa.md](./pa.md) | Power Platform — 12 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
-| [hr.md](./hr.md) | PeopleHR — 11 commands across 5 resources |
-| [bc.md](./bc.md) | Business Central — 7 commands across 6 resources |
+| [hr.md](./hr.md) | PeopleHR — 14 commands across 6 resources |
+| [bc.md](./bc.md) | Business Central — 9 commands across 7 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
@@ -34,7 +34,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **208 resources** · **732 commands**
+**22 providers** · **211 resources** · **741 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -76,6 +76,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [audit](./entra.md#audit) | list | `src/providers/entra/commands/audit.ts` |
 | [security](./entra.md#security) | risky, mfa, admin-mfa | `src/providers/entra/commands/security.ts` |
 | [directory](./entra.md#directory) | org, domains, deleted, tree, summary, app-usage | `src/providers/entra/commands/directory.ts` |
+| [devices](./entra.md#devices) | list, get | `src/providers/entra/commands/devices.ts` |
 | [onboarding](./entra.md#onboarding) | summary, copy-groups, convert-mailbox | `src/providers/entra/commands/onboarding.ts` |
 | [offboarding](./entra.md#offboarding) | summary, run | `src/providers/entra/commands/onboarding.ts` |
 | [break-glass](./entra.md#break-glass) | audit | `src/providers/entra/commands/break-glass.ts` |
@@ -222,7 +223,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [devices](./intune.md#devices) | list, get, search, sync, noncompliant | `src/providers/intune/commands/devices.ts` |
+| [devices](./intune.md#devices) | list, get, search, sync, primary-user, set-primary-user, noncompliant | `src/providers/intune/commands/devices.ts` |
 | [compliance](./intune.md#compliance) | why | `src/providers/intune/commands/compliance.ts` |
 | [apps](./intune.md#apps) | list, get, required | `src/providers/intune/commands/apps.ts` |
 | [scripts](./intune.md#scripts) | list, get, status | `src/providers/intune/commands/scripts.ts` |
@@ -286,6 +287,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [drift](./hr.md#drift) | detect | `src/providers/hr/commands.ts` |
 | [absences](./hr.md#absences) | get, summary, team | `src/providers/hr/commands.ts` |
+| [org](./hr.md#org) | chain, reports, leadership | `src/providers/hr/commands.ts` |
 | [employees](./hr.md#employees) | list, search, get | `src/providers/hr/commands.ts` |
 | [starters](./hr.md#starters) | list, recent | `src/providers/hr/commands.ts` |
 | [leavers](./hr.md#leavers) | list, recent | `src/providers/hr/commands.ts` |
@@ -297,6 +299,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [companies](./bc.md#companies) | list, get | `src/providers/bc/commands.ts` |
 | [environments](./bc.md#environments) | list | `src/providers/bc/commands.ts` |
 | [entities](./bc.md#entities) | list | `src/providers/bc/commands.ts` |
+| [extensions](./bc.md#extensions) | list, get | `src/providers/bc/commands.ts` |
 | [query](./bc.md#query) | get | `src/providers/bc/commands.ts` |
 | [record](./bc.md#record) | get | `src/providers/bc/commands.ts` |
 | [health](./bc.md#health) | get | `src/providers/bc/commands.ts` |
@@ -588,6 +591,9 @@ its
 │   │   ├── tree <user_id>
 │   │   ├── summary
 │   │   └── app-usage
+│   ├── devices
+│   │   ├── (list)
+│   │   └── get <device>
 │   ├── onboarding
 │   │   ├── summary <user_id>
 │   │   ├── copy-groups
@@ -1057,6 +1063,8 @@ its
 │   │   ├── get <id>
 │   │   ├── search <query>
 │   │   ├── sync <id>
+│   │   ├── primary-user <device>
+│   │   ├── set-primary-user <device> <user>
 │   │   └── noncompliant
 │   ├── compliance why <device>
 │   ├── apps
@@ -1186,6 +1194,10 @@ its
 │   │   ├── get <employee>
 │   │   ├── summary <employee>
 │   │   └── team
+│   ├── org
+│   │   ├── chain <employee>
+│   │   ├── reports <employee>
+│   │   └── leadership
 │   ├── employees
 │   │   ├── (list)
 │   │   ├── search <query>
@@ -1202,6 +1214,9 @@ its
 │   │   └── get <nameOrId>
 │   ├── environments (list)
 │   ├── entities (list)
+│   ├── extensions
+│   │   ├── (list)
+│   │   └── get <name>
 │   ├── query get <entity>
 │   ├── record get <entity> <id>
 │   └── health get
@@ -1462,6 +1477,7 @@ src/
 │   │   │   ├── break-glass.ts
 │   │   │   ├── ca.ts
 │   │   │   ├── consent.ts
+│   │   │   ├── devices.ts
 │   │   │   ├── directory.ts
 │   │   │   ├── doctor.ts
 │   │   │   ├── groups.ts
@@ -1509,6 +1525,8 @@ src/
 │   │   ├── commands.ts
 │   │   ├── definition.ts
 │   │   ├── drift.ts
+│   │   ├── org.ts
+│   │   ├── resolve.ts
 │   │   └── types.ts
 │   ├── intune/
 │   │   ├── commands/
@@ -1528,6 +1546,7 @@ src/
 │   │   ├── assignments.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── resolve.ts
 │   │   └── types.ts
 │   ├── m365health/
 │   │   ├── commands/

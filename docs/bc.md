@@ -11,6 +11,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [companies](#companies)
 - [environments](#environments)
 - [entities](#entities)
+- [extensions](#extensions)
 - [query](#query)
 - [record](#record)
 - [health](#health)
@@ -132,6 +133,54 @@ List entity sets exposed by the BC API (OData service document).
 
 ```bash
 its bc entities
+```
+
+---
+
+### extensions
+
+> Source: `src/providers/bc/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bc extensions` | List published AL extensions with their versions — the direct answer to "which environment is on which app version?". Reads the Automation API, so it needs the SP's BC user to hold D365 EXTENSION MGT (not the Admin Centre grant). |
+| `its bc extensions get <name>` | Get one extension's published version by name (substring, case-insensitive) — for gating on "is this environment on >= x.y.z?". |
+
+#### `its bc extensions`
+
+List published AL extensions with their versions — the direct answer to "which environment is on which app version?". Reads the Automation API, so it needs the SP's BC user to hold D365 EXTENSION MGT (not the Admin Centre grant).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--company` | `` | Company name/id (default: first company) | — |
+| `--publisher` | `` | Only extensions from this publisher (substring) | — |
+
+**Examples:**
+
+```bash
+its bc extensions list --env Production
+
+its bc extensions list --env Production --publisher THF
+```
+
+#### `its bc extensions get <name>`
+
+Get one extension's published version by name (substring, case-insensitive) — for gating on "is this environment on >= x.y.z?".
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--company` | `` | Company name/id (default: first company) | — |
+
+**Examples:**
+
+```bash
+its bc extensions get platformSync --env Production
 ```
 
 ---

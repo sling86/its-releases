@@ -21,6 +21,7 @@ Other providers: [rmm](./rmm.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · 
 - [audit](#audit)
 - [security](#security)
 - [directory](#directory)
+- [devices](#devices)
 - [onboarding](#onboarding)
 - [offboarding](#offboarding)
 - [break-glass](#break-glass)
@@ -1721,6 +1722,50 @@ Licence and app usage summary. Aggregated app + licence usage across the tenant.
 
 ```bash
 its entra directory app-usage
+```
+
+---
+
+### devices
+
+> Source: `src/providers/entra/commands/devices.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its entra devices` | List Entra-registered and Entra-joined devices. Wider than `its intune devices`, which only sees Intune-managed ones — filter with --filter isManaged=false to find registered-but-unenrolled devices. Needs Device.Read.All. |
+| `its entra devices get <device>` | Get one device by directory object id, deviceId, or exact display name. Needs Device.Read.All. |
+
+#### `its entra devices`
+
+List Entra-registered and Entra-joined devices. Wider than `its intune devices`, which only sees Intune-managed ones — filter with --filter isManaged=false to find registered-but-unenrolled devices. Needs Device.Read.All.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--search` | `` | Match on display name | — |
+| `--top` | `` | Maximum devices to return | 100 |
+
+**Examples:**
+
+```bash
+its entra devices list
+
+its entra devices list --search THF-UD
+
+its entra devices list --filter isManaged=false
+```
+
+#### `its entra devices get <device>`
+
+Get one device by directory object id, deviceId, or exact display name. Needs Device.Read.All.
+
+**Examples:**
+
+```bash
+its entra devices get THF-UD-MP27XZ31
+
+its entra devices get 12345678-90ab-cdef-1234-567890abcdef
 ```
 
 ---

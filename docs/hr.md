@@ -10,6 +10,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [Setup](#setup)
 - [drift](#drift)
 - [absences](#absences)
+- [org](#org)
 - [employees](#employees)
 - [starters](#starters)
 - [leavers](#leavers)
@@ -38,6 +39,8 @@ its hr setup --reset   # Re-run setup (overwrite config)
 | `src/providers/hr/absence.ts` | absence |
 | `src/providers/hr/definition.ts` | definition |
 | `src/providers/hr/drift.ts` | drift |
+| `src/providers/hr/org.ts` | org |
+| `src/providers/hr/resolve.ts` | resolve |
 
 ## Resources
 
@@ -121,6 +124,57 @@ Rank a manager's direct reports or a department by Bradford factor for one year.
 
 ```bash
 its hr absences team
+```
+
+---
+
+### org
+
+> Source: `src/providers/hr/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its hr org chain <employee>` | Show an employee's management chain up to the top of the tree — level 1 is their direct manager. |
+| `its hr org reports <employee>` | List an employee's direct reports, or the whole sub-tree with --recursive. Level 1 is a direct report. |
+| `its hr org leadership` | List employees with no manager set — the top of the tree, plus anyone PeopleHR is missing a reporting line for. |
+
+#### `its hr org chain <employee>`
+
+Show an employee's management chain up to the top of the tree — level 1 is their direct manager.
+
+**Examples:**
+
+```bash
+its hr org chain jane.smith@example.com
+```
+
+#### `its hr org reports <employee>`
+
+List an employee's direct reports, or the whole sub-tree with --recursive. Level 1 is a direct report.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--recursive` | `` | Include reports of reports, all the way down | — |
+| `--depth` | `` | Limit --recursive to this many levels | — |
+
+**Examples:**
+
+```bash
+its hr org reports jane.smith@example.com
+
+its hr org reports jane.smith@example.com --recursive
+```
+
+#### `its hr org leadership`
+
+List employees with no manager set — the top of the tree, plus anyone PeopleHR is missing a reporting line for.
+
+**Examples:**
+
+```bash
+its hr org leadership
 ```
 
 ---

@@ -15,6 +15,59 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.13.6] - 2026-08-24
+
+### Added
+
+- **`its hr org chain|reports|leadership`** — PeopleHR reporting lines.
+  `chain` walks up to the top of the tree, `reports` lists direct reports or
+  the whole sub-tree with `--recursive [--depth N]`, and `leadership` lists
+  everyone without a resolvable manager — separating "no manager set" from
+  "manager id that resolves to nobody", which is a data fault rather than a
+  director. All derived from the employee list the provider already fetches,
+  so no new API surface and no new personal data.
+- **`its intune devices primary-user` and `set-primary-user`** — the device
+  handover step, which previously had no CLI surface at all. `set-primary-user`
+  previews by default and names the user it would displace; `--confirm`
+  applies. Reassigning to the device's existing primary user is reported as a
+  no-op rather than re-POSTing the same assignment.
+- **`its bc extensions list|get`** — published AL extension versions per
+  environment, so a version gate can read a version instead of inferring one
+  from which entities happen to return rows. Reads the Automation API rather
+  than the Admin Centre `/apps` endpoint, since the latter needs the same
+  AdminCenter.ReadWrite.All authorisation that already blocks
+  `bc environments list`. **Requires the service principal's BC user to hold
+  the D365 EXTENSION MGT permission set** — until that is granted BC refuses
+  even a read, and the CLI now says so plainly instead of relaying BC's
+  misleading "you do not have the required permissions to install the selected
+  app" on what was only a list.
+- **`its entra devices list|get`** — Entra-registered and Entra-joined devices,
+  a strictly wider set than the Intune-managed ones `its intune devices` can
+  see. A device registered in Entra but never enrolled in Intune was previously
+  invisible to every command; `--filter isManaged=false` now finds them. `get`
+  accepts the directory object id, the device's own `deviceId`, or an exact
+  display name, because both GUIDs are in circulation and only one of them
+  works against `/devices/{id}`.
+
+### Changed
+
+- **`hr employees list` now shows `company` and `startDate`** in table output.
+  Both were already in the JSON; naming them as columns is what lets
+  `--filter`, `--sort` and `--count-by` reach them in table modes, so
+  "headcount per company" is a flag rather than a command.
+- **`--filter` help now shows how to match exactly.** `=` has always meant
+  "contains", which quietly turns `--filter department=IT` into a match on
+  Facilities and Quality Assurance. The anchored-regex form
+  (`--filter "department~^IT$"`) was available but undocumented.
+
+### Fixed
+
+- **`rmm scripts upload-local` now accepts `--raw`**, matching `scripts run` —
+  it previously warned `unknown flag --raw` and returned JSON-wrapped output
+  with escaped `\r\n` that had to be unescaped by hand. Raw output is emitted
+  after the temporary script is deleted, so `--raw` cannot orphan a script in
+  the TRMM library.
+
 ## [0.13.5] - 2026-08-24
 
 ### Added
