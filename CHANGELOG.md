@@ -15,6 +15,34 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.13.5] - 2026-08-24
+
+### Added
+
+- **PeopleHR sickness absence:** adds `hr absences get`, `summary`, and `team`
+  for sensitive operational use. Commands expose dated episodes,
+  return-to-work status, annual totals and Bradford-factor ranking while
+  omitting free-text clinical notes by default and refusing team sweeps above
+  25 people.
+
+### Fixed
+
+- **`intune compliance why` returned nothing for every device.** The setting
+  breakdown was requested as `$expand=settingStates`, which Graph rejects with
+  a 400 because `settingStates` is not a navigation property. It is now a
+  two-hop read — policy states, then each policy's settings — with the
+  user-scope/device-scope duplicate pair collapsed so settings no longer render
+  doubled. The quieter half of the same bug is fixed too: a noncompliant device
+  with no returned setting detail now says the breakdown is incomplete instead
+  of reporting a clean bill of health.
+- **Credentials pasted into free text are now redacted.** Redaction only
+  examined field names and whole values, so a Teams message body containing
+  `PASSWORD: <value>` was emitted verbatim by machine output. Labelled
+  credentials (`LABEL: value` / `LABEL=value`), JWTs and PEM private keys are
+  now masked inside any string in any provider's output. Prose ("the password
+  is in Bitwarden") and documented CLI examples are left intact, and `--unsafe`
+  still opts out.
+
 ## [0.13.4] - 2026-08-20
 
 ### Added
