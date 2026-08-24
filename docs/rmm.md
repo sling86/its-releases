@@ -1084,6 +1084,7 @@ Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output,
 | `--timeout` | `` | Timeout in seconds (default 120) | 120 |
 | `--keep` | `` | Leave the uploaded script registered in TRMM after execution | — |
 | `--category` | `` | Category for the uploaded script (default 'Ad-hoc') | Ad-hoc |
+| `--raw` | `` | Print the script's raw stdout (and stderr) directly, instead of JSON-wrapped output with escaped \r\n | — |
 | `--as-user` | `` | Run in the logged-on user's session instead of as SYSTEM. Fails if nobody is signed in. | — |
 
 **Examples:**

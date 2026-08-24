@@ -43,7 +43,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 78 commands, 18 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 106 commands, 21 resources | [entra.md](./entra.md) |
+| Entra ID | `entra` | 108 commands, 22 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 118 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 40 commands, 12 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 49 commands, 11 resources | [sp.md](./sp.md) |
@@ -51,13 +51,13 @@ its <provider> <resource> [action] [args] [--flags]
 | Wrike | `wrike` | 51 commands, 13 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
 | Exchange Online | `exo` | 42 commands, 9 resources | [exo.md](./exo.md) |
-| Intune | `intune` | 42 commands, 17 resources | [intune.md](./intune.md) |
+| Intune | `intune` | 44 commands, 17 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 9 commands, 5 resources | [protect.md](./protect.md) |
 | Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |
 | Power Platform | `pa` | 12 commands, 4 resources | [pa.md](./pa.md) |
 | Cloudflare | `cf` | 16 commands, 5 resources | [cf.md](./cf.md) |
-| PeopleHR | `hr` | 11 commands, 5 resources | [hr.md](./hr.md) |
-| Business Central | `bc` | 7 commands, 6 resources | [bc.md](./bc.md) |
+| PeopleHR | `hr` | 14 commands, 6 resources | [hr.md](./hr.md) |
+| Business Central | `bc` | 9 commands, 7 resources | [bc.md](./bc.md) |
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
 | GitHub | `gh` | 4 commands, 2 resources | [gh.md](./gh.md) |

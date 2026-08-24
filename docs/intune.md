@@ -56,6 +56,7 @@ Intune reuses the same Graph API credentials as the Entra provider — no additi
 | `src/providers/intune/commands/` | Command definitions (split by resource) |
 | `src/providers/intune/assignments.ts` | assignments |
 | `src/providers/intune/definition.ts` | definition |
+| `src/providers/intune/resolve.ts` | resolve |
 
 ## Resources
 
@@ -69,6 +70,8 @@ Intune reuses the same Graph API credentials as the Entra provider — no additi
 | `its intune devices get <id>` | Get managed device details. Pass the id (or any natural identifier) as the positional arg. |
 | `its intune devices search <query>` | Search devices by name, user, or serial number. Substring match across the most relevant fields; case-insensitive. |
 | `its intune devices sync <id>` | Trigger a device sync. Force the device to sync with Intune. |
+| `its intune devices primary-user <device>` | Show a device's primary user. Resolve the device by id or name. |
+| `its intune devices set-primary-user <device> <user>` | Reassign a device's primary user (requires --confirm) — the device handover step. Without --confirm it previews the change, naming the current primary user it would replace. |
 | `its intune devices noncompliant` | List devices failing compliance. Returns devices failing compliance checks. |
 
 #### `its intune devices`
@@ -123,6 +126,34 @@ Trigger a device sync. Force the device to sync with Intune.
 its intune devices sync 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
 
 its intune devices sync <device-id>
+```
+
+#### `its intune devices primary-user <device>`
+
+Show a device's primary user. Resolve the device by id or name.
+
+**Examples:**
+
+```bash
+its intune devices primary-user THF-UD-MP27XZ31
+```
+
+#### `its intune devices set-primary-user <device> <user>`
+
+Reassign a device's primary user (requires --confirm) — the device handover step. Without --confirm it previews the change, naming the current primary user it would replace.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Apply the reassignment | — |
+
+**Examples:**
+
+```bash
+its intune devices set-primary-user THF-UD-MP27XZ31 jane.smith@example.com
+
+its intune devices set-primary-user THF-UD-MP27XZ31 jane.smith@example.com --confirm
 ```
 
 #### `its intune devices noncompliant`
