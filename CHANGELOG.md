@@ -15,6 +15,56 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.13.7] - 2026-08-26
+
+### Fixed (auth and trust-cert)
+
+- **`its auth login` wrote a token slot nothing read.** Login resolved its
+  target slot independently of every consumer — always the unnamed
+  `delegated.json` — while providers and `auth doctor` resolve through
+  `auth-map.json`. With `{"default":"admin"}` set, login reported "Signed in
+  as …" while `auth doctor` and every delegated provider saw "not signed in",
+  and `auth status` disagreed with `auth doctor` on the same machine at the
+  same moment. Login now falls back to the auth-map default, so the slot
+  written is the slot read. `auth status` also lists mapped profile slots
+  holding no token, with the command to fix each.
+- **`trust-cert remove` reported success on a miss.**
+  `its trust-cert remove unifi.thfholdings.com` normalises to `:443`, so it
+  silently missed a pin stored under `:8443` and printed "No trusted cert
+  pinned" — which reads as "already gone" rather than "wrong key". It now names
+  the ports that host IS pinned under. `--replace` and `--yes` are also
+  documented; `--yes` was honoured but appeared nowhere in the help.
+
+### Added
+
+- **`its entra apps permissions <app>`** — what an app actually holds. Declared
+  (`requiredResourceAccess`) and granted (`appRoleAssignments` / delegated
+  consent) side by side with permission GUIDs resolved to names, each row marked
+  `ok`, `declared-only` or `granted-only`. Neither half alone answers "can this
+  app do X?", and the two drift in both directions.
+
+### Fixed
+
+- **`apps export` presented declarations as though they were permissions.** It
+  read `requiredResourceAccess` only, so an app whose roles are granted without
+  being declared exported as having no app permissions — the inverse of the BC
+  incident the manifest engine was built for. Export now warns, naming the
+  granted-but-undeclared roles that the fragment will not reproduce.
+- **`apps rotate` had no storage target on a machine without an OS keychain.**
+  `--env-key` needs keytar and `--bw` needs an unlocked vault, yet `its secrets`
+  already falls back to `~/.its/.env` there. New opt-in `--env-file` uses that
+  same store. Deliberately opt-in: an automatic fallback would silently
+  downgrade an encrypted-at-rest keychain to a plaintext file the operator never
+  chose.
+- **`apps rotate`'s fail-closed rollback could orphan a live credential.**
+  `removePassword` immediately after `addPassword` can 400 with "No password
+  credential found" for a credential that appears seconds later — Graph is not
+  read-your-writes here. The rollback now retries with backoff before declaring
+  `SECRET_ORPHANED`, which previously left a 365-day secret nobody held.
+- **Writing a redaction mask as a credential is now refused.** `***REDACTED***`
+  stored as a secret produces `AADSTS7000215: Invalid client secret`, which reads
+  like a propagation delay rather than a masked value round-tripped back in.
+
 ## [0.13.6] - 2026-08-24
 
 ### Added

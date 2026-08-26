@@ -353,18 +353,19 @@ Trust-on-first-use store for self-signed TLS certificates.
 
 ```bash
 its trust-cert [list]
-its trust-cert <url>
-its trust-cert remove <host>
+its trust-cert <url> [--replace] [--yes]
+its trust-cert remove <host:port>
 ```
 
-Pins a self-signed certificate as a trust anchor for one host. Verification stays on — a pinned certificate passes and a changed one fails, which is what makes this safe rather than a blanket bypass. Used for self-signed controllers such as UniFi.
+Pins a self-signed certificate as a trust anchor for one host. Verification stays on — a pinned certificate passes and a changed one fails, which is what makes this safe rather than a blanket bypass. Used for self-signed controllers such as UniFi. `--replace` re-pins a host that already has an entry; `--yes` accepts without the confirmation prompt, which is required in any non-TTY context since the prompt is skipped rather than read from stdin. `remove` takes the host as it is pinned, INCLUDING the port — a bare hostname is normalised to :443 and will not match an entry stored under another port. Pinning is for self-signed certificates only: it disables hostname verification, so a host that has moved to a publicly trusted certificate should have its pin removed rather than refreshed.
 
 **Examples**
 
 ```bash
 its trust-cert
 its trust-cert https://unifi.example.com
-its trust-cert remove unifi.example.com
+its trust-cert https://unifi.example.com:8443 --replace --yes
+its trust-cert remove unifi.example.com:8443
 ```
 
 ## its tui

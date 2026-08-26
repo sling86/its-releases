@@ -1963,6 +1963,7 @@ its entra doctor --watch
 | `its entra apps rotate <app>` | Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key) and/or Bitwarden (--bw). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). Fails closed: if every storage target fails (locked vault, unavailable keychain) the new credential is rolled back and nothing is printed — pass --include-secrets to accept the secret on stderr instead. |
 | `its entra apps plan` | Diff the apps manifest against live tenant state — read-only. Shows what apply would create or grant (+), change (~), plus warnings (!) and manual steps (✋). Declaration (requiredResourceAccess) and grant (appRoleAssignments / delegated consent) are diffed separately. Manifest resolution: --manifest > ITS_APPS_MANIFEST > manifest/entra-apps.jsonc (cwd-relative). |
 | `its entra apps apply` | Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever removed. Per app: create app → create SP → refetch → add owners → one coalesced requiredResourceAccess PATCH → redirect/public-client PATCHes → app-role grants → delegated scope-union grants. Needs Graph permissions Application.ReadWrite.All + AppRoleAssignment.ReadWrite.All + DelegatedPermissionGrant.ReadWrite.All — easiest run as an admin via --auth az, or a delegated admin sign-in (its auth login). Use --dry-run for a write-free preview. |
+| `its entra apps permissions <app>` | What an app ACTUALLY holds — declared (requiredResourceAccess) and granted (appRoleAssignments / delegated consent) side by side, with permission GUIDs resolved to names. The two drift independently and in both directions, so neither alone answers "can this app do X?". |
 | `its entra apps export <appIds>` | Reverse-map live app registrations into manifest fragments — declared permission GUIDs resolve back to value names via each resource SP (unresolved ids stay as raw GUIDs with a note), owners become UPNs, redirect URIs keep their web/publicClient buckets. Paste the output into the manifest's "apps" array. Never dumps the tenant — pass explicit appIds. |
 | `its entra apps audit` | Security-posture audit across all app registrations — god-apps (app-role grant counts near the ~40-role token roles-claim overflow that broke Intune), expired and long-lived secrets, credential-less and secret-only apps, ownerless apps, stale sign-in activity (beta report, degrades gracefully), and apps missing from the manifest (when one is readable). Unused-grants is out of scope — no per-permission usage signal exists without premium logs. |
 
@@ -2029,6 +2030,7 @@ Mint a new client secret on an app registration and store it straight into the O
 |------|-------|-------------|---------|
 | `--name` | `` | Display name for the new secret (default its-rotated-YYYY-MM) | — |
 | `--months` | `` | Lifetime in months | 12 |
+| `--env-file` | `` | Fall back to ~/.its/.env (plaintext, 0600) when the OS keychain and Bitwarden are both unavailable. Opt-in: without it, rotate fails closed rather than silently downgrading where the secret is stored. | — |
 | `--env-key` | `` | Store the secret in the OS keychain under this env var name (must be a known secret key, e.g. CLIENT_SECRET) | — |
 | `--bw` | `` | Upsert a "<app> - <secret name>" login item in the Bitwarden Infrastructure folder | — |
 | `--prune-expired` | `` | Also remove credentials that had already expired before this rotation (prompts per credential unless --confirm) | — |
@@ -2081,6 +2083,18 @@ Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever 
 ```bash
 # Additive only — extras warn, nothing is ever removed
 its entra apps apply --confirm
+```
+
+#### `its entra apps permissions <app>`
+
+What an app ACTUALLY holds — declared (requiredResourceAccess) and granted (appRoleAssignments / delegated consent) side by side, with permission GUIDs resolved to names. The two drift independently and in both directions, so neither alone answers "can this app do X?".
+
+**Examples:**
+
+```bash
+its entra apps permissions c15df88c-3070-4606-a95b-27a871b6a7da
+
+its entra apps permissions <appId> --filter status~^(granted|declared)-only$
 ```
 
 #### `its entra apps export <appIds>`
