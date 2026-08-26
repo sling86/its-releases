@@ -12,7 +12,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [global.md](./global.md) | Global commands — 23 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 78 commands across 18 resources |
-| [entra.md](./entra.md) | Entra ID — 108 commands across 22 resources |
+| [entra.md](./entra.md) | Entra ID — 109 commands across 22 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 118 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 40 commands across 12 resources |
 | [sp.md](./sp.md) | SharePoint — 49 commands across 11 resources |
@@ -34,7 +34,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **211 resources** · **741 commands**
+**22 providers** · **211 resources** · **742 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -82,7 +82,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [break-glass](./entra.md#break-glass) | audit | `src/providers/entra/commands/break-glass.ts` |
 | [whoami](./entra.md#whoami) | show | `src/providers/entra/commands/whoami.ts` |
 | [doctor](./entra.md#doctor) | list | `src/providers/entra/commands/doctor.ts` |
-| [apps](./entra.md#apps) | register, add-password, secrets, rotate, plan, apply, export, audit | `src/providers/entra/commands/apps.ts` |
+| [apps](./entra.md#apps) | register, add-password, secrets, rotate, plan, apply, permissions, export, audit | `src/providers/entra/commands/apps.ts` |
 | [admin-bootstrap](./entra.md#admin-bootstrap) | run | `src/providers/entra/commands/admin-bootstrap.ts` |
 | [graph](./entra.md#graph) | get, post, patch, put, delete | — |
 
@@ -611,6 +611,7 @@ its
 │   │   ├── rotate <app>
 │   │   ├── plan
 │   │   ├── apply
+│   │   ├── permissions <app>
 │   │   ├── export <appIds>
 │   │   └── audit
 │   ├── admin-bootstrap run <user_id>
@@ -1326,6 +1327,7 @@ src/
 │   ├── completions.ts
 │   ├── daily-art.ts
 │   ├── delegated-auth.ts
+│   ├── env-file.ts
 │   ├── errors.ts
 │   ├── filter.ts
 │   ├── global-commands.ts
