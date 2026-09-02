@@ -493,6 +493,7 @@ its intune esp update <profile-id> --timeout 120
 |---------|-------------|
 | `its intune autopilot` | List Autopilot deployment profiles. Surfaces the most common fields; pass --json for raw shape. |
 | `its intune autopilot devices` | List Autopilot-registered devices. Returns devices for the resource. |
+| `its intune autopilot sync` | Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one. |
 | `its intune autopilot tag <serial> [tag]` | Set group tag on an Autopilot device. Set or clear a tag value. |
 
 #### `its intune autopilot`
@@ -523,6 +524,26 @@ List Autopilot-registered devices. Returns devices for the resource.
 
 ```bash
 its intune autopilot devices
+```
+
+#### `its intune autopilot sync`
+
+Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--status` | `` | Report the last sync without triggering a new one | — |
+
+**Examples:**
+
+```bash
+# Pull newly registered serials from the Device Data Sync service
+its intune autopilot sync
+
+# Report the last sync without triggering one
+its intune autopilot sync --status
 ```
 
 #### `its intune autopilot tag <serial> [tag]`

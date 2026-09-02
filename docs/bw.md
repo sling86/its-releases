@@ -51,7 +51,19 @@ The master password is stored PIN-encrypted in `~/.its/secrets/`. During setup y
 
 Secret fields are redacted by default. For interactive desk work, use `--copy` / `-c` on `its bw password <q>`, `its bw items get <id>`, or `its bw items totp <q>`; the value goes directly to the OS clipboard and is cleared after `--clear-after` seconds (default 30). `--copy` requires an interactive terminal and cannot be combined with `--json`, `--ai`, `--jsonl`, CSV/TSV, or redirected stdout.
 
+**Handing a secret to another command** — use `--to-file <path>` on the same three commands. It writes a mode-0600 file and prints only the byte count, needs no terminal and no clipboard tool, and is the one sink that works on a headless box. Pair it with `its dokploy env set <app> KEY --from-file <path>` so the value never appears on argv (`/proc/<pid>/cmdline` is world-readable) or in shell history:
+
+```bash
+its bw items get <id> --to-file /dev/shm/sec
+its dokploy env set <app> CLIENT_SECRET --from-file /dev/shm/sec --deploy
+rm -f /dev/shm/sec
+```
+
 `--include-secrets` / `--unsafe` reveals plaintext only in interactive human output and is audit-logged. Machine output and redirected stdout reject plaintext-secret mode rather than leaking a value into a pipe or transcript. Do not use `--json --unsafe`, and never paste revealed output into chat, tickets, or AI tools.
+
+### Checking readiness
+
+`its bw setup --check` distinguishes *configured* from *usable*. The checklist covers the stored values; the line beneath it reports whether a command would actually work right now — `Configured but LOCKED` when no session exists, a warning when the session is nearly expired, silence when all is well. A locked vault is not a setup problem and the wizard cannot fix one, so the check names `its bw session unlock` rather than sending you back through setup. There is no connection test: the vault is unreachable until the master password is decrypted, and that needs a PIN a non-interactive check must not prompt for.
 
 ### Using from Claude Code or other AI shells
 
@@ -79,7 +91,7 @@ AI shell commands run non-interactively, so first run `its bw session unlock` yo
 |---------|-------------|
 | `its bw items` | List all vault items. Surfaces the most common fields; pass --json for raw shape. |
 | `its bw items search <query>` | Search vault items by name, username, URL, or notes. Substring match across the most relevant fields; case-insensitive. |
-| `its bw items get <id>` | Get a vault item by ID (includes password and fields). Pass the id (or any natural identifier) as the positional arg. |
+| `its bw items get <id>` | Get a vault item by ID (includes password and fields). Pass the id (or any natural identifier) as the positional arg. The secret is redacted unless a sink is given: --copy for desk work, --to-file to hand it to another command. --field <name> targets a custom field instead of the login password. |
 | `its bw items totp <query>` | Generate current TOTP code for an item. Returns the current TOTP code — refresh every 30s. |
 | `its bw items trash` | List trashed vault items. Returns soft-deleted items in the trash bin. |
 | `its bw items recent` | List recently modified vault items. Returns the N most recently modified items. |
@@ -140,7 +152,7 @@ its bw items search "github"
 
 #### `its bw items get <id>`
 
-Get a vault item by ID (includes password and fields). Pass the id (or any natural identifier) as the positional arg.
+Get a vault item by ID (includes password and fields). Pass the id (or any natural identifier) as the positional arg. The secret is redacted unless a sink is given: --copy for desk work, --to-file to hand it to another command. --field <name> targets a custom field instead of the login password.
 
 **Flags:**
 
@@ -148,11 +160,19 @@ Get a vault item by ID (includes password and fields). Pass the id (or any natur
 |------|-------|-------------|---------|
 | `--copy` | `-c` | Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. | — |
 | `--clear-after` | `` | Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. | 30 |
+| `--to-file` | `` | Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. | — |
+| `--field` | `` | Send this custom field to the sink instead of the login password (case-insensitive name match). | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
 **Examples:**
 
 ```bash
+# Works headless — stdout shows only the byte count. Feed it to `its dokploy env set <app> KEY --from-file`
+its bw items get "server-login" --to-file /dev/shm/sec
+
+# For items whose secret lives in a custom field and whose password is empty
+its bw items get "Outlook MCP" --field "API KEY" --to-file /dev/shm/sec
+
 its bw items get "Server admin"
 ```
 
@@ -166,6 +186,7 @@ Generate current TOTP code for an item. Returns the current TOTP code — refres
 |------|-------|-------------|---------|
 | `--copy` | `-c` | Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. | — |
 | `--clear-after` | `` | Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. | 30 |
+| `--to-file` | `` | Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
 **Examples:**
@@ -575,6 +596,7 @@ Get the password for an item by search query. Surfaces the most common fields; p
 |------|-------|-------------|---------|
 | `--copy` | `-c` | Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. | — |
 | `--clear-after` | `` | Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. | 30 |
+| `--to-file` | `` | Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. | — |
 | `--vault` | `` | Named vault profile (omit for default) | — |
 
 **Examples:**
@@ -585,6 +607,9 @@ its bw password "server-login" --include-secrets
 
 # Copy to clipboard, auto-clear after 30s
 its bw password "server-login" --copy
+
+# 0600 file, no TTY needed — the composable sink for scripts
+its bw password "server-login" --to-file /dev/shm/sec
 
 # Print password (mask in shared terminals)
 its bw password "server-login"
