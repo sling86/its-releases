@@ -29,6 +29,7 @@ Other providers: [rmm](./rmm.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · 
 - [doctor](#doctor)
 - [apps](#apps)
 - [admin-bootstrap](#admin-bootstrap)
+- [sync](#sync)
 - [graph](#graph)
 
 ## Setup
@@ -59,6 +60,7 @@ its entra setup --reset   # Re-run setup (overwrite config)
 | `src/providers/entra/auth-methods.ts` | auth methods |
 | `src/providers/entra/definition.ts` | definition |
 | `src/providers/entra/sku-names.ts` | sku names |
+| `src/providers/entra/sync-health.ts` | sync health |
 
 ## Resources
 
@@ -1960,7 +1962,7 @@ its entra doctor --watch
 | `its entra apps register <name>` | Bootstrap a new Entra app registration end-to-end — creates the application, its service principal, and a 12-month client secret. Returns the appId, objectId, SP id, and the plaintext secret (only shown once). |
 | `its entra apps add-password <app>` | Rotate / add a client secret on an existing app registration. The plaintext secretText is only returned once. |
 | `its entra apps secrets` | Credential expiry dashboard — every client secret and certificate across all app registrations, with days-left and a status of EXPIRED, expiring (within --warn-days), long-lived (>2y), or ok. |
-| `its entra apps rotate <app>` | Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key) and/or Bitwarden (--bw). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). Fails closed: if every storage target fails (locked vault, unavailable keychain) the new credential is rolled back and nothing is printed — pass --include-secrets to accept the secret on stderr instead. |
+| `its entra apps rotate <app>` | Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key), Bitwarden (--bw), and/or a mode-0600 file (--to-file, for handing straight to `dokploy env set --from-file`). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). Fails closed: if every storage target fails (locked vault, unavailable keychain) the new credential is rolled back and nothing is printed — pass --include-secrets to accept the secret on stderr instead. |
 | `its entra apps plan` | Diff the apps manifest against live tenant state — read-only. Shows what apply would create or grant (+), change (~), plus warnings (!) and manual steps (✋). Declaration (requiredResourceAccess) and grant (appRoleAssignments / delegated consent) are diffed separately. Manifest resolution: --manifest > ITS_APPS_MANIFEST > manifest/entra-apps.jsonc (cwd-relative). |
 | `its entra apps apply` | Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever removed. Per app: create app → create SP → refetch → add owners → one coalesced requiredResourceAccess PATCH → redirect/public-client PATCHes → app-role grants → delegated scope-union grants. Needs Graph permissions Application.ReadWrite.All + AppRoleAssignment.ReadWrite.All + DelegatedPermissionGrant.ReadWrite.All — easiest run as an admin via --auth az, or a delegated admin sign-in (its auth login). Use --dry-run for a write-free preview. |
 | `its entra apps permissions <app>` | What an app ACTUALLY holds — declared (requiredResourceAccess) and granted (appRoleAssignments / delegated consent) side by side, with permission GUIDs resolved to names. The two drift independently and in both directions, so neither alone answers "can this app do X?". |
@@ -2022,7 +2024,7 @@ its entra apps secrets
 
 #### `its entra apps rotate <app>`
 
-Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key) and/or Bitwarden (--bw). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). Fails closed: if every storage target fails (locked vault, unavailable keychain) the new credential is rolled back and nothing is printed — pass --include-secrets to accept the secret on stderr instead.
+Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key), Bitwarden (--bw), and/or a mode-0600 file (--to-file, for handing straight to `dokploy env set --from-file`). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). Fails closed: if every storage target fails (locked vault, unavailable keychain) the new credential is rolled back and nothing is printed — pass --include-secrets to accept the secret on stderr instead.
 
 **Flags:**
 
@@ -2033,6 +2035,7 @@ Mint a new client secret on an app registration and store it straight into the O
 | `--env-file` | `` | Fall back to ~/.its/.env (plaintext, 0600) when the OS keychain and Bitwarden are both unavailable. Opt-in: without it, rotate fails closed rather than silently downgrading where the secret is stored. | — |
 | `--env-key` | `` | Store the secret in the OS keychain under this env var name (must be a known secret key, e.g. CLIENT_SECRET) | — |
 | `--bw` | `` | Upsert a "<app> - <secret name>" login item in the Bitwarden Infrastructure folder | — |
+| `--to-file` | `` | Also write the secret to this path (created 0600 / owner-only) so it can be handed to another command — pairs with `its dokploy env set <app> KEY --from-file <path>`. Delete the file once consumed. | — |
 | `--prune-expired` | `` | Also remove credentials that had already expired before this rotation (prompts per credential unless --confirm) | — |
 | `--confirm` | `` | Skip the interactive confirmation | — |
 
@@ -2042,6 +2045,9 @@ Mint a new client secret on an app registration and store it straight into the O
 its entra apps rotate "its CLI" --env-key CLIENT_SECRET --months 12 --confirm
 
 its entra apps rotate "its CLI" --bw --prune-expired --confirm
+
+# Feed the file to `its dokploy env set <app> CLIENT_SECRET --from-file /dev/shm/sec --deploy`, then delete it — the secret never touches argv or stdout
+its entra apps rotate "Entra MCP" --bw --to-file /dev/shm/sec --confirm
 ```
 
 #### `its entra apps plan`
@@ -2153,6 +2159,74 @@ Unblock an admin who can't sign in for phishing-resistant MFA. Tries TAP first; 
 ```bash
 # Tries a TAP first, falls back where TAP is not permitted
 its entra admin-bootstrap run jane.smith@example.com --ttl 60 --one-time --dry-run
+```
+
+---
+
+### sync
+
+> Source: `src/providers/entra/commands/sync.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its entra sync status <app>` | Health of an app's SCIM provisioning job — quarantine, successive failures, paused schedule or staleness against its own cycle. Pass the enterprise application name (or its service-principal object ID). |
+| `its entra sync logs <app>` | Provisioning log for an app — what the SCIM job did to each user and whether the target accepted it. The place a 'why is this leaver still there' question gets answered. |
+| `its entra sync provision <app>` | Force an immediate provisioning evaluation for one user against an app's SCIM job, instead of waiting for the next cycle. For a user who has fallen out of the job's scoping filter — a disabled leaver — this is what pushes the deprovision. Needs --confirm. |
+
+#### `its entra sync status <app>`
+
+Health of an app's SCIM provisioning job — quarantine, successive failures, paused schedule or staleness against its own cycle. Pass the enterprise application name (or its service-principal object ID).
+
+**Examples:**
+
+```bash
+# Resolves the provisioning-enabled app and reports whether it is actually syncing
+its entra sync status Wrike
+```
+
+#### `its entra sync logs <app>`
+
+Provisioning log for an app — what the SCIM job did to each user and whether the target accepted it. The place a 'why is this leaver still there' question gets answered.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--action` | `` | Provisioning action to show | — |
+| `--status` | `` | Outcome to show | — |
+| `--user` | `` | Filter to one source identity by display name | — |
+| `--limit` | `` | Maximum entries (default 50) | 50 |
+
+**Examples:**
+
+```bash
+# Disables the target rejected — the accounts that survived offboarding
+its entra sync logs Wrike --action disable --status failure
+
+# Every provisioning event for one source identity
+its entra sync logs Wrike --user 'Jane Doe'
+```
+
+#### `its entra sync provision <app>`
+
+Force an immediate provisioning evaluation for one user against an app's SCIM job, instead of waiting for the next cycle. For a user who has fallen out of the job's scoping filter — a disabled leaver — this is what pushes the deprovision. Needs --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | UPN or object ID of the user to evaluate | — |
+| `--rule-id` | `` | Synchronization rule to apply (default: the job's own user rule, read from its schema) | — |
+| `--confirm` | `` | Actually run the provisioning evaluation | — |
+
+**Examples:**
+
+```bash
+# Evaluates scope immediately; an out-of-scope user is disabled in the target app
+its entra sync provision Wrike --user jane.doe@example.com --confirm
+
+# Without --confirm, resolves everything and sends nothing
+its entra sync provision Wrike --user jane.doe@example.com
 ```
 
 ---

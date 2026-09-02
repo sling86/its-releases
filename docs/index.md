@@ -12,15 +12,15 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [global.md](./global.md) | Global commands — 23 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 78 commands across 18 resources |
-| [entra.md](./entra.md) | Entra ID — 109 commands across 22 resources |
+| [entra.md](./entra.md) | Entra ID — 112 commands across 23 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 118 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 40 commands across 12 resources |
 | [sp.md](./sp.md) | SharePoint — 49 commands across 11 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
-| [wrike.md](./wrike.md) | Wrike — 51 commands across 13 resources |
+| [wrike.md](./wrike.md) | Wrike — 63 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
 | [exo.md](./exo.md) | Exchange Online — 42 commands across 9 resources |
-| [intune.md](./intune.md) | Intune — 44 commands across 17 resources |
+| [intune.md](./intune.md) | Intune — 45 commands across 17 resources |
 | [protect.md](./protect.md) | UniFi Protect — 9 commands across 5 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
 | [pa.md](./pa.md) | Power Platform — 12 commands across 4 resources |
@@ -34,7 +34,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **211 resources** · **742 commands**
+**22 providers** · **216 resources** · **758 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -84,6 +84,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [doctor](./entra.md#doctor) | list | `src/providers/entra/commands/doctor.ts` |
 | [apps](./entra.md#apps) | register, add-password, secrets, rotate, plan, apply, permissions, export, audit | `src/providers/entra/commands/apps.ts` |
 | [admin-bootstrap](./entra.md#admin-bootstrap) | run | `src/providers/entra/commands/admin-bootstrap.ts` |
+| [sync](./entra.md#sync) | status, logs, provision | `src/providers/entra/commands/sync.ts` |
 | [graph](./entra.md#graph) | get, post, patch, put, delete | — |
 
 ### [Dokploy](./dokploy.md)
@@ -175,10 +176,14 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [tickets](./wrike.md#tickets) | list, stats, active, mine, get, search, create, set-due, assign, update-title, update-importance, update-status, update-description, add-comment, update-comment, delete-comment, narrative, attachments, download, attach | `src/providers/wrike/commands/tickets.ts` |
+| [tickets](./wrike.md#tickets) | list, stats, active, mine, get, audit, search, create, set-due, assign, update-title, update-importance, update-status, update-description, add-comment, update-comment, delete-comment, narrative, attachments, download, attach | `src/providers/wrike/commands/tickets.ts` |
 | [tasks](./wrike.md#tasks) | list, search, get, create, set-due, update-title, update-importance, update-status, update-description, add-comment, attach | `src/providers/wrike/commands/tasks.ts` |
 | [projects](./wrike.md#projects) | list, search, tasks | `src/providers/wrike/commands/tasks.ts` |
 | [contacts](./wrike.md#contacts) | list, search, find, get | `src/providers/wrike/commands/contacts.ts` |
+| [groups](./wrike.md#groups) | list, members, for, add-member, remove-member | `src/providers/wrike/commands/groups.ts` |
+| [audit](./wrike.md#audit) | log | `src/providers/wrike/commands/audit.ts` |
+| [access](./wrike.md#access) | drift, last-seen, admins | `src/providers/wrike/commands/access.ts` |
+| [forms](./wrike.md#forms) | list, get | `src/providers/wrike/commands/forms.ts` |
 | [spaces](./wrike.md#spaces) | list | `src/providers/wrike/commands/spaces.ts` |
 | [folders](./wrike.md#folders) | list | `src/providers/wrike/commands/spaces.ts` |
 | [workflows](./wrike.md#workflows) | list | `src/providers/wrike/commands/workflows.ts` |
@@ -230,7 +235,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [remediations](./intune.md#remediations) | list, get, status | `src/providers/intune/commands/remediations.ts` |
 | [policies](./intune.md#policies) | list, get, configs | `src/providers/intune/commands/policies.ts` |
 | [esp](./intune.md#esp) | list, get, update | `src/providers/intune/commands/esp.ts` |
-| [autopilot](./intune.md#autopilot) | list, devices, tag | `src/providers/intune/commands/autopilot.ts` |
+| [autopilot](./intune.md#autopilot) | list, devices, sync, tag | `src/providers/intune/commands/autopilot.ts` |
 | [group](./intune.md#group) | find | `src/providers/intune/commands/lookup.ts` |
 | [assignments](./intune.md#assignments) | audit | `src/providers/intune/commands/assignments.ts` |
 | [settings](./intune.md#settings) | list, get | — |
@@ -615,6 +620,10 @@ its
 │   │   ├── export <appIds>
 │   │   └── audit
 │   ├── admin-bootstrap run <user_id>
+│   ├── sync
+│   │   ├── status <app>
+│   │   ├── logs <app>
+│   │   └── provision <app>
 │   └── graph
 │       ├── get <path>
 │       ├── post <path>
@@ -925,6 +934,7 @@ its
 │   │   ├── active
 │   │   ├── mine
 │   │   ├── get <idOrPermalink>
+│   │   ├── audit <idOrPermalink>
 │   │   ├── search <query>
 │   │   ├── create
 │   │   ├── set-due <taskId> <dueDate>
@@ -961,6 +971,20 @@ its
 │   │   ├── search <query>
 │   │   ├── find [query]
 │   │   └── get <user_id>
+│   ├── groups
+│   │   ├── (list)
+│   │   ├── members <group>
+│   │   ├── for <contact>
+│   │   ├── add-member <group> <contact>
+│   │   └── remove-member <group> <contact>
+│   ├── audit log
+│   ├── access
+│   │   ├── drift
+│   │   ├── last-seen
+│   │   └── admins
+│   ├── forms
+│   │   ├── (list)
+│   │   └── get <form>
 │   ├── spaces (list)
 │   ├── folders (list) <space>
 │   ├── workflows (list)
@@ -1091,6 +1115,7 @@ its
 │   ├── autopilot
 │   │   ├── (list)
 │   │   ├── devices
+│   │   ├── sync
 │   │   └── tag <serial> [tag]
 │   ├── group find <groupId>
 │   ├── assignments audit
@@ -1339,6 +1364,7 @@ src/
 │   ├── long-args.ts
 │   ├── output.ts
 │   ├── pipeline.ts
+│   ├── secret-sink.ts
 │   ├── secrets-audit.ts
 │   ├── secrets.ts
 │   ├── session.ts
@@ -1489,6 +1515,7 @@ src/
 │   │   │   ├── roles.ts
 │   │   │   ├── security.ts
 │   │   │   ├── signin.ts
+│   │   │   ├── sync.ts
 │   │   │   ├── tap.ts
 │   │   │   ├── users.ts
 │   │   │   ├── whoami.ts
@@ -1499,6 +1526,7 @@ src/
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── sku-names.ts
+│   │   ├── sync-health.ts
 │   │   └── types.ts
 │   ├── exo/
 │   │   ├── commands/
@@ -1679,10 +1707,14 @@ src/
 │   │   └── types.ts
 │   ├── wrike/
 │   │   ├── commands/
+│   │   │   ├── access.ts
+│   │   │   ├── audit.ts
 │   │   │   ├── auth.ts
 │   │   │   ├── comment-body.ts
 │   │   │   ├── contacts.ts
 │   │   │   ├── dashboard.ts
+│   │   │   ├── forms.ts
+│   │   │   ├── groups.ts
 │   │   │   ├── index.ts
 │   │   │   ├── leavers.ts
 │   │   │   ├── onboarding.ts
@@ -1690,9 +1722,11 @@ src/
 │   │   │   ├── tasks.ts
 │   │   │   ├── tickets.ts
 │   │   │   └── workflows.ts
+│   │   ├── access-audit.ts
 │   │   ├── auth.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── identity.ts
 │   │   └── types.ts
 │   ├── actions.ts
 │   ├── base.ts

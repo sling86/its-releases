@@ -1025,7 +1025,7 @@ its dokploy domains delete <domain-id> --confirm
 |---------|-------------|
 | `its dokploy env <applicationId>` | Show environment variables for an application. Keys are visible by default; values are redacted unless --show-values is set. |
 | `its dokploy env push <applicationId>` | Push an env file to an application. Upload local state to the upstream. Pass --dry-run to preview which keys would be written (no values, nothing saved). |
-| `its dokploy env set <applicationId> <pairs>` | Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. Pass --dry-run to preview which keys would change (no values, nothing saved). |
+| `its dokploy env set <applicationId> <pairs>` | Set one or more env vars (KEY=value) without affecting others. For a secret, pass the bare KEY plus --from-file/--from-stdin instead of KEY=value: `KEY=$SECRET` on the command line is world-readable in /proc/<pid>/cmdline and lands in shell history. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. Pass --dry-run to preview which keys would change (no values, nothing saved). |
 | `its dokploy env unset <applicationId> <keys>` | Remove one or more env vars by key, preserving all others. The inverse of `env set`. Record-only unless --deploy is passed. Pass --dry-run to preview which keys would be removed (nothing saved). |
 | `its dokploy env pull <applicationId>` | Pull env vars from an application to a local file. Download upstream state to local. |
 | `its dokploy env copy <srcApp> <dstApp>` | Securely copy env vars from one app to another. Reads the REAL values from <srcApp> and writes them to <dstApp> — the values NEVER touch stdout, JSON, or the transcript. The safe way to move secrets like GITHUB_APP_* between staging and prod. Pick keys with --keys K1,K2 or take everything with --all. Honours the redaction-mask guard (won't copy a masked value). Pass --dry-run to preview the set/unchanged/skipped classification without writing. |
@@ -1073,12 +1073,14 @@ its dokploy env push <app-id> --file .env.production
 
 #### `its dokploy env set <applicationId> <pairs>`
 
-Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. Pass --dry-run to preview which keys would change (no values, nothing saved).
+Set one or more env vars (KEY=value) without affecting others. For a secret, pass the bare KEY plus --from-file/--from-stdin instead of KEY=value: `KEY=$SECRET` on the command line is world-readable in /proc/<pid>/cmdline and lands in shell history. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. Pass --dry-run to preview which keys would change (no values, nothing saved).
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
+| `--from-file` | `` | Read the value for the single named KEY from this file (one trailing newline stripped) instead of argv. Use for secrets. | — |
+| `--from-stdin` | `` | Read the value for the single named KEY from stdin instead of argv. Use for secrets. | — |
 | `--deploy` | `` | After saving, recreate the swarm service (stop + deploy) and verify the new vars reached the container. Causes a brief outage. Without this, the change only lands in the record. | — |
 | `--force-mask` | `` | Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets (ctxc 1705). | — |
 
@@ -1089,6 +1091,9 @@ its dokploy env set aB3xY7pL LOG_LEVEL=debug
 
 # Without --deploy the record changes but the container keeps the old value
 its dokploy env set aB3xY7pL LOG_LEVEL=debug NODE_ENV=production --deploy
+
+# Pairs with `its bw items get <id> --to-file` — the value never touches argv, stdout or shell history
+its dokploy env set aB3xY7pL CLIENT_SECRET --from-file /dev/shm/sec --deploy
 
 its dokploy env set <app-id> DEBUG=true
 ```

@@ -15,6 +15,230 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.14.0] - 2026-09-02
+
+### Security
+
+- Credential storage now fails closed. A secret that reached the CLI only via a
+  plaintext `.env` file, on a machine with no OS keychain to hold it, is
+  **refused** rather than used. Previously a missing keytar — a rebuild that
+  never happened, libsecret absent, a fresh checkout with no `bun install` —
+  quietly promoted `~/.its/.env` to the live credential store, and the only
+  signal was a hint from `its secrets`, a command nobody runs while their work
+  is succeeding.
+
+  Only file-sourced secrets are refused; one exported deliberately for a run,
+  or a CI runner's environment, is an explicit act and still works. A secret
+  present in `.env` alongside a working keychain is also still allowed — that
+  is un-migrated config, which `its secrets migrate` handles.
+
+  `ITS_ALLOW_PLAINTEXT=1` accepts plaintext storage deliberately (headless
+  boxes, CI). It is read from the real environment before any file loads, so a
+  `.env` cannot authorise its own use as a credential store.
+
+- `its secrets` warns when the backing keyring is unencrypted. Some
+  distributions — Omarchy among them — ship a passwordless gnome-keyring by
+  design, storing every item as readable text. `its` reported "N secret(s) in
+  OS keychain" over such a file: the count was true and the reassurance was
+  not, which is the worse half, because a store called a keychain stops people
+  looking at it. The check is Linux-only, judged from the keyring file's
+  opening bytes, and stays silent on any format it does not recognise rather
+  than guessing.
+
+
+### Added
+
+- `its wrike access last-seen` — every live Wrike person and when they were
+  last active, longest-dormant first, with `--stale-days`, `--never` and
+  `--licensed`. Answers "who is paying for a seat they don't use".
+
+  Dormancy is measured on **any** audit event, not on `UserLoggedIn`.
+  Sign-ins are a bad proxy: over 120 days on THF's account 89 people generated
+  activity and only 49 generated a login event, because SSO plus long-lived
+  sessions lets an active user go months without authenticating again. Ranking
+  on sign-ins flagged 21 licensed seats as dormant where the real answer is 4.
+  `lastSignIn` is still reported as its own column — it is the right signal for
+  "when did this person last authenticate", just not for "is this seat used".
+
+  The sweep is capped, and a truncated window is reported loudly rather than
+  letting "no activity" imply coverage the run did not have.
+
+### Added
+
+- `its entra sync provision <app> --user <upn> --confirm` — forces an immediate
+  provisioning evaluation for one user instead of waiting for the next cycle,
+  and reports what the service decided. The synchronization rule ID is read
+  from the job's schema (the API rejects a request without one, and the ID is
+  per-job). Requires delegated auth — `provisionOnDemand` does not accept
+  app-only tokens, so run it with `--auth az`.
+
+  Note what it does NOT do: a user already outside the job's scoping filter is
+  **skipped**, not deprovisioned. Entra deprovisions on the transition out of
+  scope during a normal cycle and will not replay it afterwards, so the command
+  says so in plain words rather than reporting a hollow success.
+
+### Fixed
+
+- Wrike contact lookup by name took the first match. Wrike accumulates
+  duplicate contacts — deleted husks with no email alongside the live account —
+  so a name could resolve to a dead record, making `groups for` report nothing
+  and pointing a `groups remove-member` at a row that can never be the target.
+  Each match tier is now ranked: live over deleted, active over deactivated,
+  person over group, and a contact with an email over a placeholder. An exact
+  ID still wins outright.
+- Wrike audit-log paging followed a token the API will not honour. A filtered
+  query that matches nothing still returns a `nextPageToken`, and replaying it
+  fails with "Parameter 'nextPageToken' value is invalid" — which surfaced as a
+  hard error on any `audit log --user` for a person with no activity. An empty
+  page now ends the walk.
+
+### Added (SCIM provisioning + Wrike request forms)
+
+- `its entra sync status <app>` — health of an enterprise application's SCIM
+  provisioning job: quarantine, successive failures, a paused schedule, or
+  staleness judged against the job's own interval with a 3x grace. Resolves an
+  app by name, preferring the provisioning-enabled one when several match.
+- `its entra sync logs <app>` — the provisioning log, filterable by
+  `--action`, `--status` and `--user`. This is what answers "why is this leaver
+  still in the app": it distinguishes a disable the target accepted from one it
+  refused.
+- `its wrike forms list|get` — request forms and their full question schema.
+  Output routing and default assignees are NOT exposed by the Wrike API, and
+  the commands say so rather than implying otherwise.
+
+### Fixed
+
+- `its wrike access drift` counted deactivated Wrike contacts as findings. A
+  successful SCIM deprovision leaves the contact listed with `deleted: false`
+  and every profile `active: false` — that is the correct end state, not drift.
+  On THF's account the bug reported 73 findings where there are 4; 123 of 219
+  listed contacts are deactivated. The summary now reports that count instead
+  of burying the live rows under it.
+
+Note for anyone reading a provisioning job by hand: the counts under
+`lastExecution` are per cycle, so a healthy job with nothing to do reports
+zeroes. `synchronizedEntryCountByType` carries the standing figure.
+
+### Added (Wrike access posture)
+
+- `its wrike access drift` — Wrike accounts that no longer line up with Entra.
+  Two findings, reported separately: `entra-disabled` (offboarded everywhere
+  else, still live in Wrike — always wrong) and `no-entra-account` (suppliers
+  and clients — a list to review, not to action). `--licensed` narrows to paid
+  seats; `--issue disabled|no-account` to one finding. Read-only.
+- `its wrike access admins` — account admins and owners, owners first.
+
+Both join on email and index every alias on both sides — Wrike commonly holds
+an alias where Entra holds the UPN, so a UPN-only match invents "no account"
+rows. Wrike's own `external` flag is reported as a column but is deliberately
+NOT used as the company boundary: THF staff carry `external: true` while a
+leaver carries `external: false`, so filtering on it hid 71 of 73 findings.
+The Entra directory is the only trustworthy boundary.
+
+### Added (Wrike audit log + group membership)
+
+- `its wrike audit log` — the account audit trail, generalised from the
+  ticket-scoped reader. Filters by `--operations`, `--object-type`,
+  `--object-id`, `--user` (contact ID, any of their emails, or their name) and
+  `--days`. Worked examples cover deletions, external sharing and per-person
+  activity. It is the only endpoint carrying *who did what*: `tasks_history`
+  rejects `status` outright, holding cost and fee history only.
+- `its wrike groups list|members|for|add-member|remove-member` — Wrike user
+  groups. `groups for <person>` shows one person's whole group footprint;
+  the two membership writes are `--confirm`-gated and no-op when the person is
+  already in the desired state.
+- `its wrike leavers complete` gains a `wrike-groups` step: a leaver was
+  removed from every Entra group and licence while staying in every **Wrike**
+  group. Non-critical, so it never blocks ticket closure, and it states the
+  ceiling plainly — Wrike v4 has no user-deactivation method, so removal
+  revokes shared access but does not release the seat.
+
+### Changed
+
+- Wrike audit-log queries now filter **server-side**. `objectType`/`objectIds`
+  and `users` are real query parameters (max 10 ids each; `objectType` requires
+  `operations`), so `tickets audit` costs one request instead of paging the
+  whole date window. Continuation pages send `nextPageToken` alone, since it
+  overrides every other parameter.
+
+### Added (Wrike assignment provenance)
+
+- `its wrike tickets audit <id-or-permalink>` — who created, assigned and
+  unassigned a ticket, from the Wrike Enterprise audit log. Reports event date,
+  operation, acting user + email and the operation detail. A `403
+  access_forbidden` is surfaced as the permission failure it is (Enterprise +
+  "Create user activity reports" + `amReadOnlyAuditLog`), never as an empty
+  history. `--days` narrows the scan window; the default reaches back to the
+  ticket's creation date.
+- `WRIKE_USER_ID` (and a `--user-id` flag on `tickets mine` /
+  `tickets narrative`) — the Wrike contact ID that counts as "you". Optional:
+  falls back to the signed-in contact, and is only required when the token is a
+  service/robot account, which has no personal contact.
+
+### Changed (Wrike identity is an ID, not an email)
+
+- **Breaking:** `tickets mine` and `tickets narrative --mine` no longer read
+  `ITS_USER_EMAIL` and no longer accept `--email`. Wrike keys assignments by
+  immutable contact ID, and a contact's `primaryEmail` routinely differs from
+  its account profile email — so the old exact-email match silently returned
+  nothing whenever either address changed. Filtering is now on raw
+  `responsibleIds`. The `narrative` ball-is-with heuristic likewise compares
+  contact IDs rather than emails.
+- Wrike contacts keep their full identity — every `profiles[]` entry, each
+  profile email, `primaryEmail` and `me` — instead of collapsing to
+  `profiles[0]`. `email` stays as the display/lookup alias.
+- Every Wrike task command now resolves its identifier through one resolver, so
+  API task IDs, full `open.htm` permalinks and **bare numeric permalink IDs**
+  (e.g. `4541454107`) all reach the same task. The bare numeric form previously
+  went straight to `/tasks/{id}` and 404'd.
+
+### Added (composable secret handoff)
+
+- `its bw items get` / `bw password` / `bw items totp` gain `--to-file <path>` —
+  writes the secret to a mode-0600 file and prints only the byte count. Unlike
+  `--copy` it needs no TTY and no clipboard tool, so it works on a headless box.
+  The plaintext-stdout guard is unchanged; this is the sanctioned way out.
+- `its dokploy env set` gains `--from-file <path>` / `--from-stdin`, taking the
+  value for a single bare `KEY` out of band. Security fix, not ergonomics:
+  `KEY=$SECRET` on the command line is world-readable in `/proc/<pid>/cmdline`
+  and lands in shell history. Refuses an empty source rather than blanking a
+  live credential.
+
+  ```bash
+  its bw items get <id> --to-file /dev/shm/sec
+  its dokploy env set <app> CLIENT_SECRET --from-file /dev/shm/sec --deploy
+  ```
+
+- `its entra apps rotate` gains `--to-file <path>`, a fourth sink alongside
+  the keychain, Bitwarden and the env file. Counts as a storage target for
+  both the pre-mint guard and the fail-closed rollback, so a rotation whose
+  only sink is the file still rolls the credential back if the write fails.
+  Closes the loop from mint to deploy:
+
+  ```bash
+  its entra apps rotate "Entra MCP" --bw --to-file /dev/shm/sec --confirm
+  its dokploy env set <app> CLIENT_SECRET --from-file /dev/shm/sec --deploy
+  ```
+
+### Changed
+
+- The 0600 file sink is now `core/secret-sink.ts`, shared by `bw`,
+  `dokploy env reveal` and `entra apps rotate` instead of a copy each.
+- `its secrets` now names the fix when keytar can't load (libsecret on Linux)
+  rather than only reporting that `~/.its/.env` is being used instead.
+
+### Fixed
+
+- `its secrets` reported a healthy, empty keychain on a box where every write
+  fails. With libsecret installed but no unlocked login keyring, keychain
+  reads succeed and return nothing while writes throw
+  `Object does not exist at path "/org/freedesktop/secrets/collection/login"` —
+  and every accessor in `core/keychain.ts` swallowed that error. It now
+  records the cause, probes with a real write when the list comes back empty,
+  and reports "Keychain is NOT usable" with the fix instead of "0 secret(s)".
+  Storage that silently cannot store is the one thing credential handling
+  must never do.
+
 ## [0.13.7] - 2026-08-26
 
 ### Fixed (auth and trust-cert)

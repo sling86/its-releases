@@ -12,6 +12,10 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [tasks](#tasks)
 - [projects](#projects)
 - [contacts](#contacts)
+- [groups](#groups)
+- [audit](#audit)
+- [access](#access)
+- [forms](#forms)
 - [spaces](#spaces)
 - [folders](#folders)
 - [workflows](#workflows)
@@ -36,6 +40,7 @@ its wrike setup --reset   # Re-run setup (overwrite config)
 |----------|-------------|
 | `WRIKE_CLIENT_ID` | Wrike OAuth app client id — enables `its wrike auth login` (redirect URI http://localhost:8730) |
 | `WRIKE_CLIENT_SECRET` | Wrike OAuth app client secret |
+| `WRIKE_USER_ID` | Your immutable Wrike contact ID — resolves "you" for `tickets mine` and `tickets narrative --mine`. Falls back to the signed-in contact; required for service/robot tokens |
 | `WRIKE_TOKEN` | Wrike permanent access token (Apps & Integrations > API) — fallback if not using OAuth |
 
 ### Source Files
@@ -45,8 +50,10 @@ its wrike setup --reset   # Re-run setup (overwrite config)
 | `src/providers/wrike/client.ts` | API client methods |
 | `src/providers/wrike/types.ts` | TypeScript interfaces |
 | `src/providers/wrike/commands/` | Command definitions (split by resource) |
+| `src/providers/wrike/access-audit.ts` | access audit |
 | `src/providers/wrike/auth.ts` | auth |
 | `src/providers/wrike/definition.ts` | definition |
+| `src/providers/wrike/identity.ts` | identity |
 
 ## Resources
 
@@ -59,8 +66,9 @@ its wrike setup --reset   # Re-run setup (overwrite config)
 | `its wrike tickets` | List IT support tickets. Surfaces the most common fields; pass --json for raw shape. |
 | `its wrike tickets stats` | Ticket analytics — median resolve time, backlog, bus-factor risk by assignee |
 | `its wrike tickets active` | List active IT tickets — those not in a completed/cancelled state. |
-| `its wrike tickets mine` | List tickets assigned to you (reads ITS_USER_EMAIL or --email) |
+| `its wrike tickets mine` | List tickets assigned to you (--user-id, else WRIKE_USER_ID, else the signed-in Wrike contact) |
 | `its wrike tickets get <idOrPermalink>` | Get full ticket details with comments. Pass the id (or any natural identifier) as the positional arg. |
+| `its wrike tickets audit <idOrPermalink>` | Who created, assigned and unassigned a ticket — from the Wrike Enterprise audit log. Accepts a task ID, a permalink, or a bare numeric permalink ID. |
 | `its wrike tickets search <query>` | Search IT/BC support tickets by title. Substring match across the most relevant fields; case-insensitive. |
 | `its wrike tickets create` | Create a new IT support ticket. Idempotent on duplicate names — use update/edit to mutate an existing record. |
 | `its wrike tickets set-due <taskId> <dueDate>` | Set due date on a ticket (YYYY-MM-DD). Set the task's due date. |
@@ -128,19 +136,23 @@ its wrike tickets active
 
 #### `its wrike tickets mine`
 
-List tickets assigned to you (reads ITS_USER_EMAIL or --email).
+List tickets assigned to you (--user-id, else WRIKE_USER_ID, else the signed-in Wrike contact).
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--status` | `` | Filter by status (default: Active) | Active |
-| `--email` | `` | Email to match on (overrides ITS_USER_EMAIL env var) | — |
+| `--user-id` | `` | Wrike contact ID to treat as 'you' (overrides WRIKE_USER_ID) | — |
 
 **Examples:**
 
 ```bash
+# Assignments are matched on your immutable Wrike contact ID, not your email
 its wrike tickets mine
+
+# Another person's queue — find their contact ID with `its wrike contacts list`
+its wrike tickets mine --user-id KUAXXXXX
 ```
 
 #### `its wrike tickets get <idOrPermalink>`
@@ -152,6 +164,26 @@ Get full ticket details with comments. Pass the id (or any natural identifier) a
 ```bash
 # Full ticket with comments + attachments
 its wrike tickets get <task-id>
+```
+
+#### `its wrike tickets audit <idOrPermalink>`
+
+Who created, assigned and unassigned a ticket — from the Wrike Enterprise audit log. Accepts a task ID, a permalink, or a bare numeric permalink ID.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--days` | `` | Days of audit history to scan (default: back to ticket creation) | — |
+
+**Examples:**
+
+```bash
+# Creation + assignment history — needs Wrike Enterprise and the 'Create user activity reports' right
+its wrike tickets audit 4541454107
+
+# Scan only the last 7 days instead of everything since the ticket was created
+its wrike tickets audit MAAAAAEOsRcb --days 7
 ```
 
 #### `its wrike tickets search <query>`
@@ -350,8 +382,8 @@ Deep per-ticket narrative with recent comments + ball-is-with heuristic. Priorit
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--active` | `` | All active IT tickets (ignores --mine) | — |
-| `--mine` | `` | Only tickets assigned to you (via ITS_USER_EMAIL or --email) | — |
-| `--email` | `` | Email to match for --mine (overrides ITS_USER_EMAIL) | — |
+| `--mine` | `` | Only tickets assigned to you (via --user-id, WRIKE_USER_ID, or the signed-in contact) | — |
+| `--user-id` | `` | Wrike contact ID to treat as 'you' (overrides WRIKE_USER_ID) | — |
 | `--comments` | `` | Comments to show per ticket (default 3) | 3 |
 | `--limit` | `` | Maximum tickets to process for batch modes (default 25) | 25 |
 
@@ -733,6 +765,219 @@ its wrike contacts get <user-id>
 
 ---
 
+### groups
+
+> Source: `src/providers/wrike/commands/groups.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its wrike groups` | List Wrike user groups with member counts. Surfaces the most common fields; pass --json for raw shape. |
+| `its wrike groups members <group>` | List the members of one Wrike group. Pass the group ID or title as the positional arg. |
+| `its wrike groups for <contact>` | Every Wrike group one person belongs to — their group footprint. Accepts a contact ID, any of their emails, or their name. |
+| `its wrike groups add-member <group> <contact>` | Add a person to a Wrike group. Needs --confirm. |
+| `its wrike groups remove-member <group> <contact>` | Remove a person from a Wrike group — the offboarding step `leavers complete` covers automatically. Needs --confirm. |
+
+#### `its wrike groups`
+
+List Wrike user groups with member counts. Surfaces the most common fields; pass --json for raw shape.
+
+```bash
+its wrike groups
+```
+
+#### `its wrike groups members <group>`
+
+List the members of one Wrike group. Pass the group ID or title as the positional arg.
+
+```bash
+its wrike groups members <group>
+```
+
+#### `its wrike groups for <contact>`
+
+Every Wrike group one person belongs to — their group footprint. Accepts a contact ID, any of their emails, or their name.
+
+**Examples:**
+
+```bash
+# What a departing user still has access to through Wrike groups
+its wrike groups for jane.doe@example.com
+```
+
+#### `its wrike groups add-member <group> <contact>`
+
+Add a person to a Wrike group. Needs --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Actually apply the change | — |
+
+**Examples:**
+
+```bash
+# Accepts a group ID or title, and a contact ID, email or name
+its wrike groups add-member 'My Team' jane.doe@example.com --confirm
+```
+
+#### `its wrike groups remove-member <group> <contact>`
+
+Remove a person from a Wrike group — the offboarding step `leavers complete` covers automatically. Needs --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Actually apply the change | — |
+
+**Examples:**
+
+```bash
+# Revokes group access. Does not release the Wrike seat — that is an admin-UI action
+its wrike groups remove-member 'My Team' jane.doe@example.com --confirm
+```
+
+---
+
+### audit
+
+> Source: `src/providers/wrike/commands/audit.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its wrike audit log` | Account audit trail — who did what, when. Filter by operation, object type, object ID or acting user. Requires Wrike Enterprise and the 'Create user activity reports' admin right. |
+
+#### `its wrike audit log`
+
+Account audit trail — who did what, when. Filter by operation, object type, object ID or acting user. Requires Wrike Enterprise and the 'Create user activity reports' admin right.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--days` | `` | Days of history to scan (default 7) | 7 |
+| `--operations` | `` | Comma-separated operations to include (e.g. TaskDeleted,PublicLinkCreated) | — |
+| `--object-type` | `` | Restrict to one object type (needs --operations too) | — |
+| `--object-id` | `` | Comma-separated object IDs, max 10 (needs --object-type) | — |
+| `--user` | `` | Acting user — contact ID, email or name. Comma-separated, max 10 | — |
+| `--limit` | `` | Maximum events to return, newest first (default 100) | 100 |
+
+**Examples:**
+
+```bash
+# Everything logged in the last 24 hours
+its wrike audit log --days 1
+
+# Who removed work in the last month
+its wrike audit log --operations TaskDeleted,TaskErased,RecycleBinErased --days 30
+
+# Public links and shares — the data-exposure surface
+its wrike audit log --operations PublicLinkCreated,TaskShared --days 90
+
+# Everything one user did — accepts a contact ID, any of their emails, or their name
+its wrike audit log --user jane.doe@example.com --days 7
+```
+
+---
+
+### access
+
+> Source: `src/providers/wrike/commands/access.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its wrike access drift` | Live Wrike accounts that no longer line up with Entra — leavers still active in Wrike, plus people with no Entra identity. Deactivated contacts are excluded: a successful SCIM deprovision leaves those behind and they are the correct end state. Read-only. |
+| `its wrike access last-seen` | Every live Wrike person and when they were last active, longest-dormant first. Activity means any audit event, not just a sign-in — with SSO and long sessions an active user can go months without a fresh login. Needs Enterprise audit-log rights, and sweeps the whole window, so it is a slow command. |
+| `its wrike access admins` | Wrike account admins and owners — the blast radius of one compromised login. |
+
+#### `its wrike access drift`
+
+Live Wrike accounts that no longer line up with Entra — leavers still active in Wrike, plus people with no Entra identity. Deactivated contacts are excluded: a successful SCIM deprovision leaves those behind and they are the correct end state. Read-only.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--issue` | `` | Restrict to one finding | — |
+| `--licensed` | `` | Only accounts holding a paid seat (role User) | — |
+
+**Examples:**
+
+```bash
+# Only drifted accounts holding a licensed seat — Collaborators are free
+its wrike access drift --licensed
+
+# Wrike accounts whose Entra account is disabled — always wrong
+its wrike access drift --issue disabled
+
+# Suppliers, clients and stale invitations — a list to review, not to action blindly
+its wrike access drift --issue no-account
+```
+
+#### `its wrike access last-seen`
+
+Every live Wrike person and when they were last active, longest-dormant first. Activity means any audit event, not just a sign-in — with SSO and long sessions an active user can go months without a fresh login. Needs Enterprise audit-log rights, and sweeps the whole window, so it is a slow command.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--days` | `` | Window to scan (default 90). Longer is slower — roughly one request per 1000 events. | 90 |
+| `--stale-days` | `` | Only people whose last activity is older than this | — |
+| `--never` | `` | Only people with no activity inside the window | — |
+| `--licensed` | `` | Only people holding a billable seat — a regular User or an External User, not a free Collaborator | — |
+
+**Examples:**
+
+```bash
+# Licensed users with no activity for 90 days — the reclaimable spend
+its wrike access last-seen --licensed --stale-days 90
+
+# Accounts with no activity at all inside the window — provisioned and never used
+its wrike access last-seen --never
+```
+
+#### `its wrike access admins`
+
+Wrike account admins and owners — the blast radius of one compromised login.
+
+```bash
+its wrike access admins
+```
+
+---
+
+### forms
+
+> Source: `src/providers/wrike/commands/forms.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its wrike forms` | List Wrike request forms with their field counts. Output routing and default assignees are not exposed by the API — only the questions. |
+| `its wrike forms get <form>` | Every question on one request form, in page order. Pass the form ID or title. |
+
+#### `its wrike forms`
+
+List Wrike request forms with their field counts. Output routing and default assignees are not exposed by the API — only the questions.
+
+```bash
+its wrike forms
+```
+
+#### `its wrike forms get <form>`
+
+Every question on one request form, in page order. Pass the form ID or title.
+
+**Examples:**
+
+```bash
+# Field titles, types and which are mandatory — matched on ID or title
+its wrike forms get 'Design Work Request Form'
+```
+
+---
+
 ### spaces
 
 > Source: `src/providers/wrike/commands/spaces.ts`
@@ -911,7 +1156,7 @@ Orchestrate the IT offboarding flow for a leaver ticket — disable + revoke ses
 | `--confirm` | `` | Required to execute mutations — otherwise dry-run | — |
 | `--dry-run` | `` | Print the plan without running anything | — |
 | `--user` | `` | Override the resolved Entra UPN (skip ticket → user lookup) | — |
-| `--skip` | `` | Comma-separated steps to skip (disable, sessions, manager, ext13, mailbox, licences, groups, wrike) | — |
+| `--skip` | `` | Comma-separated steps to skip (disable, sessions, manager, ext13, mailbox, licences, groups, wrike-groups, wrike) | — |
 
 **Examples:**
 
