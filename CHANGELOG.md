@@ -15,6 +15,55 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.14.2] - 2026-09-03
+
+### Added
+
+- `its pa apps get <app>` — one Power App by id or display name. The BAP admin
+  surface has no cross-environment app GET, so an id with `--environment` is a
+  direct read and anything else searches every environment you can read;
+  several matches are listed rather than guessed between.
+
+- **Teardown verbs for `gh`.** `gh webhook delete <owner/repo> <id|url>` takes
+  either the id or the exact callback URL, and resolves the hook before asking
+  to confirm — so the prompt names what will go, and a mistyped URL fails as
+  not-found instead of reporting success against nothing.
+  `gh branch-protect remove <owner/repo> [--branch]` is the other half of
+  `branch-protect apply`; it does not restore the previous rules and says so.
+
+- **`outlook folders delete`** and **`outlook drafts delete`**. Deleting a
+  folder takes every message and child folder with it — Graph offers no
+  move-contents-out option — so the confirmation states both counts first.
+  `drafts delete` reads the message before acting and refuses anything that is
+  not a draft: Graph exposes one DELETE for every message, and without that
+  check the command would quietly be delete-any-mail-by-id.
+
+- **`wrike tasks delete`**. Names the task in the confirmation, and the result
+  says what recovery actually looks like: Wrike's Recycle Bin, restorable by an
+  account admin and by nobody else.
+
+- **`dokploy compose create`** and **`dokploy schedule create`**, closing a
+  teardown-without-setup asymmetry on both. `schedule create` derives the
+  parent id field from `--type`, because Dokploy accepts the wrong one and
+  stores a schedule that then never fires.
+
+- **`exo mailboxes delete`**. `Remove-Mailbox` deletes the Entra user account
+  as well as the mailbox, so a UserMailbox requires `--delete-account` on top
+  of `--confirm`, and the refusal points at the offboarding flow — converting
+  to shared and hiding from the GAL — which is what a leaver should get. A
+  shared, room or equipment mailbox needs only `--confirm`.
+
+### Fixed
+
+- Microsoft 365 service-health overviews are paginated like the issue and
+  message-centre lists. The concern was never the row count: a health list
+  that stops early reads as "nothing wrong with that service".
+
+- `its wrike folders list` no longer prints "40 folders" above six rows. The
+  table shows root folders by default and says which it is showing, `--all`
+  renders every folder including nested ones, and machine output carries all
+  of them with each row flagged `root`.
+
 ## [0.14.1] - 2026-09-03
 
 ### Added

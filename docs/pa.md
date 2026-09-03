@@ -260,6 +260,7 @@ its pa flows runs <flow-id> --environment <env-id>
 | Command | Description |
 |---------|-------------|
 | `its pa apps` | List Power Apps canvas apps. Defaults to all envs — scope with --environment <id> |
+| `its pa apps get <app>` | Get one Power App by id (the id column from `apps list`) or display name. Without --environment every environment is searched, which costs one call per environment — pass it when you know it. |
 
 #### `its pa apps`
 
@@ -278,6 +279,24 @@ its pa apps --environment <env-id>
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its pa apps --environment <env-id> --watch
+```
+
+#### `its pa apps get <app>`
+
+Get one Power App by id (the id column from `apps list`) or display name. Without --environment every environment is searched, which costs one call per environment — pass it when you know it.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--environment` | `-e` | Environment to look in (skips the cross-env search) | — |
+
+**Examples:**
+
+```bash
+its pa apps get 3f1b2c40-... --environment Default-abc123
+
+its pa apps get "Stock Take"
 ```
 
 ---

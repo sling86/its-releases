@@ -335,6 +335,7 @@ its outlook mail send --to user@example.com --subject "Welcome" --html --body-fi
 | `its outlook drafts update <draft_id>` | Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories. |
 | `its outlook drafts send <draft_id>` | Send an existing draft. |
 | `its outlook drafts` | List draft messages (convenience for `mail list --folder drafts`). |
+| `its outlook drafts delete <id>` | Delete a draft by message id. Refuses anything that is not a draft, so a mistyped id cannot delete a sent or received message through this command. Permanent — use --confirm. |
 
 #### `its outlook drafts create`
 
@@ -464,6 +465,23 @@ List draft messages (convenience for `mail list --folder drafts`).
 its outlook drafts
 ```
 
+#### `its outlook drafts delete <id>`
+
+Delete a draft by message id. Refuses anything that is not a draft, so a mistyped id cannot delete a sent or received message through this command. Permanent — use --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to perform this destructive deletion | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook drafts delete AAMkAGI2... --confirm
+```
+
 ---
 
 ### folders
@@ -475,6 +493,7 @@ its outlook drafts
 | `its outlook folders` | List mail folders with counts (totalItemCount, unreadItemCount). |
 | `its outlook folders get <folder_id>` | Get a single mail folder by ID or well-known name (inbox, sentitems, drafts, deleteditems, archive). |
 | `its outlook folders create <name>` | Create a new mail folder (optionally nested under a parent). |
+| `its outlook folders delete <folder>` | Delete a mail folder by id or display name. Graph deletes the folder AND every message and child folder inside it — there is no move-contents-out option, and no undo. Use --confirm. |
 
 #### `its outlook folders`
 
@@ -522,6 +541,23 @@ Create a new mail folder (optionally nested under a parent).
 its outlook folders create "IT Archive" --user jane.smith@example.com
 
 its outlook folders create "2026" --parent "IT Archive" --user jane.smith@example.com
+```
+
+#### `its outlook folders delete <folder>`
+
+Delete a mail folder by id or display name. Graph deletes the folder AND every message and child folder inside it — there is no move-contents-out option, and no undo. Use --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to perform this destructive deletion | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook folders delete "IT Archive" --user jane.smith@example.com --confirm
 ```
 
 ---

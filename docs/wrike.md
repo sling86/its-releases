@@ -455,6 +455,7 @@ its wrike tickets attach <task-id> ./screenshot.png
 | `its wrike tasks update-description <taskId> [text]` | Replace a task's description. Same formatting rules as add-comment: plain text by default (\n → <br>, @Name auto-mentions), --markdown for bold/italic/links/bullets, --html for raw. Wrike renders <br>, <a>, <b>, <i>, and mention anchors only. |
 | `its wrike tasks add-comment <taskId> [text]` | Add a comment to a task. Prefer --markdown (bold/italic/links/bullets + plain @Name auto-resolves to mentions). Plain text also works (\n → <br>, @Name auto-resolved). Use --html only when you need raw anchor-based mentions; the mention markup guard (ctxc 258) rejects mismatched modes unless --skip-mention-check is set. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors. |
 | `its wrike tasks attach <taskId> <filePath>` | Attach a file to a task. Upload a local file as an attachment. |
+| `its wrike tasks delete <taskId>` | Delete a task by id or permalink. Wrike moves it to the account Recycle Bin, so an account admin can restore it — you cannot, and not from this CLI. Use --confirm. |
 
 #### `its wrike tasks <folder>`
 
@@ -627,6 +628,22 @@ Attach a file to a task. Upload a local file as an attachment.
 its wrike tasks attach IEACW7BXKQ2R4KMT ./quote.pdf
 
 its wrike tasks attach <task-id> ./diagram.png
+```
+
+#### `its wrike tasks delete <taskId>`
+
+Delete a task by id or permalink. Wrike moves it to the account Recycle Bin, so an account admin can restore it — you cannot, and not from this CLI. Use --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to perform this destructive deletion | — |
+
+**Examples:**
+
+```bash
+its wrike tasks delete IEACW7BXKQ2R4KMT --confirm
 ```
 
 ---
@@ -1007,11 +1024,17 @@ its wrike spaces --watch
 
 | Command | Description |
 |---------|-------------|
-| `its wrike folders <space>` | List folders in a space (accepts space name or ID). Surfaces the most common fields; pass --json for raw shape. |
+| `its wrike folders <space>` | List folders in a space (accepts space name or ID). The table shows root folders by default — pass --all for every folder including nested ones. Machine output (--json/--ai) always carries all of them, each flagged `root`. |
 
 #### `its wrike folders <space>`
 
-List folders in a space (accepts space name or ID). Surfaces the most common fields; pass --json for raw shape.
+List folders in a space (accepts space name or ID). The table shows root folders by default — pass --all for every folder including nested ones. Machine output (--json/--ai) always carries all of them, each flagged `root`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--all` | `` | Show nested folders too, not just the root level | — |
 
 **Examples:**
 

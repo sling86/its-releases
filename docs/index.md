@@ -13,28 +13,28 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [global.md](./global.md) | Global commands — 23 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 78 commands across 18 resources |
 | [entra.md](./entra.md) | Entra ID — 112 commands across 23 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 118 commands across 25 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 120 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 40 commands across 12 resources |
 | [sp.md](./sp.md) | SharePoint — 49 commands across 11 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
-| [wrike.md](./wrike.md) | Wrike — 63 commands across 17 resources |
+| [wrike.md](./wrike.md) | Wrike — 64 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
-| [exo.md](./exo.md) | Exchange Online — 42 commands across 9 resources |
+| [exo.md](./exo.md) | Exchange Online — 43 commands across 9 resources |
 | [intune.md](./intune.md) | Intune — 45 commands across 17 resources |
 | [protect.md](./protect.md) | UniFi Protect — 9 commands across 5 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
-| [pa.md](./pa.md) | Power Platform — 12 commands across 4 resources |
+| [pa.md](./pa.md) | Power Platform — 13 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
 | [hr.md](./hr.md) | PeopleHR — 14 commands across 6 resources |
 | [bc.md](./bc.md) | Business Central — 9 commands across 7 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
-| [gh.md](./gh.md) | GitHub — 4 commands across 2 resources |
-| [outlook.md](./outlook.md) | Outlook — 42 commands across 11 resources |
+| [gh.md](./gh.md) | GitHub — 6 commands across 2 resources |
+| [outlook.md](./outlook.md) | Outlook — 44 commands across 11 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **216 resources** · **758 commands**
+**22 providers** · **216 resources** · **767 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -112,9 +112,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [github](./dokploy.md#github) | providers, repos, branches | `src/providers/dokploy/commands/github.ts` |
 | [users](./dokploy.md#users) | list, me, invite, remove | `src/providers/dokploy/commands/users.ts` |
 | [orgs](./dokploy.md#orgs) | list, active | `src/providers/dokploy/commands/users.ts` |
-| [compose](./dokploy.md#compose) | get, services, config, deploy, stop, redeploy, delete | `src/providers/dokploy/commands/compose.ts` |
+| [compose](./dokploy.md#compose) | get, services, config, deploy, stop, redeploy, delete, create | `src/providers/dokploy/commands/compose.ts` |
 | [backup](./dokploy.md#backup) | create, get, update, files, restore, run, delete | `src/providers/dokploy/commands/backup.ts` |
-| [schedule](./dokploy.md#schedule) | list, get, run, delete | `src/providers/dokploy/commands/schedule.ts` |
+| [schedule](./dokploy.md#schedule) | list, get, run, delete, create | `src/providers/dokploy/commands/schedule.ts` |
 | [git](./dokploy.md#git) | list, setup, delete | `src/providers/dokploy/commands/git.ts` |
 
 ### [Bitwarden](./bw.md)
@@ -177,7 +177,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [tickets](./wrike.md#tickets) | list, stats, active, mine, get, audit, search, create, set-due, assign, update-title, update-importance, update-status, update-description, add-comment, update-comment, delete-comment, narrative, attachments, download, attach | `src/providers/wrike/commands/tickets.ts` |
-| [tasks](./wrike.md#tasks) | list, search, get, create, set-due, update-title, update-importance, update-status, update-description, add-comment, attach | `src/providers/wrike/commands/tasks.ts` |
+| [tasks](./wrike.md#tasks) | list, search, get, create, set-due, update-title, update-importance, update-status, update-description, add-comment, attach, delete | `src/providers/wrike/commands/tasks.ts` |
 | [projects](./wrike.md#projects) | list, search, tasks | `src/providers/wrike/commands/tasks.ts` |
 | [contacts](./wrike.md#contacts) | list, search, find, get | `src/providers/wrike/commands/contacts.ts` |
 | [groups](./wrike.md#groups) | list, members, for, add-member, remove-member | `src/providers/wrike/commands/groups.ts` |
@@ -215,7 +215,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [groups](./exo.md#groups) | list, get, members, create, delete, add-member, remove-member | `src/providers/exo/commands/groups.ts` |
-| [mailboxes](./exo.md#mailboxes) | list, get, stats, create, permissions, add-permission, remove-permission, forwarding, user-access, set-forwarding, set-type, set-visibility | `src/providers/exo/commands/mailboxes.ts` |
+| [mailboxes](./exo.md#mailboxes) | list, get, stats, create, permissions, add-permission, remove-permission, forwarding, user-access, set-forwarding, set-type, set-visibility, delete | `src/providers/exo/commands/mailboxes.ts` |
 | [rules](./exo.md#rules) | list, get, audit, disable, enable | `src/providers/exo/commands/rules.ts` |
 | [domains](./exo.md#domains) | list | `src/providers/exo/commands/domains.ts` |
 | [dkim](./exo.md#dkim) | list, get, rotate, enable, disable | `src/providers/exo/commands/dkim.ts` |
@@ -273,7 +273,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [environments](./pa.md#environments) | list, get | `src/providers/pa/commands/environments.ts` |
 | [flows](./pa.md#flows) | list, get, permissions, stop, start, delete, set-owner, runs | `src/providers/pa/commands/flows.ts` |
-| [apps](./pa.md#apps) | list | `src/providers/pa/commands/apps.ts` |
+| [apps](./pa.md#apps) | list, get | `src/providers/pa/commands/apps.ts` |
 | [connections](./pa.md#connections) | list | `src/providers/pa/commands/connections.ts` |
 
 ### [Cloudflare](./cf.md)
@@ -329,16 +329,16 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [branch-protect](./gh.md#branch-protect) | apply, show | — |
-| [webhook](./gh.md#webhook) | setup, list | — |
+| [branch-protect](./gh.md#branch-protect) | apply, show, remove | — |
+| [webhook](./gh.md#webhook) | setup, list, delete | — |
 
 ### [Outlook](./outlook.md)
 
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [mail](./outlook.md#mail) | list, get, headers, search, thread, move, copy, read, unread, flag, categorise, delete, send | `src/providers/outlook/commands/mail.ts` |
-| [drafts](./outlook.md#drafts) | create, reply, forward, update, send, list | `src/providers/outlook/commands/drafts.ts` |
-| [folders](./outlook.md#folders) | list, get, create | `src/providers/outlook/commands/folders.ts` |
+| [drafts](./outlook.md#drafts) | create, reply, forward, update, send, list, delete | `src/providers/outlook/commands/drafts.ts` |
+| [folders](./outlook.md#folders) | list, get, create, delete | `src/providers/outlook/commands/folders.ts` |
 | [attachments](./outlook.md#attachments) | list, get, add, delete | `src/providers/outlook/commands/attachments.ts` |
 | [events](./outlook.md#events) | list, get, create, update, delete, respond, availability | `src/providers/outlook/commands/events.ts` |
 | [settings](./outlook.md#settings) | get | `src/providers/outlook/commands/settings.ts` |
@@ -751,7 +751,8 @@ its
 │   │   ├── deploy <composeId>
 │   │   ├── stop <composeId>
 │   │   ├── redeploy <composeId>
-│   │   └── delete <composeId>
+│   │   ├── delete <composeId>
+│   │   └── create <name> <projectId>
 │   ├── backup
 │   │   ├── create
 │   │   ├── get <backupId>
@@ -764,7 +765,8 @@ its
 │   │   ├── (list) <id>
 │   │   ├── get <scheduleId>
 │   │   ├── run <scheduleId>
-│   │   └── delete <scheduleId>
+│   │   ├── delete <scheduleId>
+│   │   └── create <id> <name> <cron> <command>
 │   └── git
 │       ├── (list)
 │       ├── setup
@@ -961,7 +963,8 @@ its
 │   │   ├── update-status <taskId> <status>
 │   │   ├── update-description <taskId> [text]
 │   │   ├── add-comment <taskId> [text]
-│   │   └── attach <taskId> <filePath>
+│   │   ├── attach <taskId> <filePath>
+│   │   └── delete <taskId>
 │   ├── projects
 │   │   ├── (list)
 │   │   ├── search <query>
@@ -1053,7 +1056,8 @@ its
 │   │   ├── user-access <user>
 │   │   ├── set-forwarding <mailbox> <target>
 │   │   ├── set-type <mailbox> <type>
-│   │   └── set-visibility <mailbox>
+│   │   ├── set-visibility <mailbox>
+│   │   └── delete <mailbox>
 │   ├── rules
 │   │   ├── (list)
 │   │   ├── get <name>
@@ -1191,7 +1195,9 @@ its
 │   │   ├── delete <flow_id>
 │   │   ├── set-owner <flow_id>
 │   │   └── runs <flow_id>
-│   ├── apps (list)
+│   ├── apps
+│   │   ├── (list)
+│   │   └── get <app>
 │   └── connections (list)
 ├── cf
 │   ├── accounts (list)
@@ -1262,10 +1268,12 @@ its
 ├── gh
 │   ├── branch-protect
 │   │   ├── apply <repo>
-│   │   └── show <repo>
+│   │   ├── show <repo>
+│   │   └── remove <repo>
 │   └── webhook
 │       ├── setup <repo> <url>
-│       └── (list) <repo>
+│       ├── (list) <repo>
+│       └── delete <repo> <hook>
 ├── outlook
 │   ├── mail
 │   │   ├── (list)
@@ -1287,11 +1295,13 @@ its
 │   │   ├── forward <message_id>
 │   │   ├── update <draft_id>
 │   │   ├── send <draft_id>
-│   │   └── (list)
+│   │   ├── (list)
+│   │   └── delete <id>
 │   ├── folders
 │   │   ├── (list)
 │   │   ├── get <folder_id>
-│   │   └── create <name>
+│   │   ├── create <name>
+│   │   └── delete <folder>
 │   ├── attachments
 │   │   ├── (list) <message_id>
 │   │   ├── get <message_id> [attachment_id]

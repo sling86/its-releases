@@ -44,24 +44,24 @@ its <provider> <resource> [action] [args] [--flags]
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 78 commands, 18 resources | [rmm.md](./rmm.md) |
 | Entra ID | `entra` | 112 commands, 23 resources | [entra.md](./entra.md) |
-| Dokploy | `dokploy` | 118 commands, 25 resources | [dokploy.md](./dokploy.md) |
+| Dokploy | `dokploy` | 120 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 40 commands, 12 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 49 commands, 11 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 43 commands, 17 resources | [unifi.md](./unifi.md) |
-| Wrike | `wrike` | 63 commands, 17 resources | [wrike.md](./wrike.md) |
+| Wrike | `wrike` | 64 commands, 17 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
-| Exchange Online | `exo` | 42 commands, 9 resources | [exo.md](./exo.md) |
+| Exchange Online | `exo` | 43 commands, 9 resources | [exo.md](./exo.md) |
 | Intune | `intune` | 45 commands, 17 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 9 commands, 5 resources | [protect.md](./protect.md) |
 | Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |
-| Power Platform | `pa` | 12 commands, 4 resources | [pa.md](./pa.md) |
+| Power Platform | `pa` | 13 commands, 4 resources | [pa.md](./pa.md) |
 | Cloudflare | `cf` | 16 commands, 5 resources | [cf.md](./cf.md) |
 | PeopleHR | `hr` | 14 commands, 6 resources | [hr.md](./hr.md) |
 | Business Central | `bc` | 9 commands, 7 resources | [bc.md](./bc.md) |
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
-| GitHub | `gh` | 4 commands, 2 resources | [gh.md](./gh.md) |
-| Outlook | `outlook` | 42 commands, 11 resources | [outlook.md](./outlook.md) |
+| GitHub | `gh` | 6 commands, 2 resources | [gh.md](./gh.md) |
+| Outlook | `outlook` | 44 commands, 11 resources | [outlook.md](./outlook.md) |
 | Microsoft 365 Health | `m365` | 3 commands, 2 resources | [m365.md](./m365.md) |
 | Teams | `teams` | 4 commands, 2 resources | [teams.md](./teams.md) |
 

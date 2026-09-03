@@ -42,6 +42,7 @@ Requires the GitHub CLI (`gh`) on PATH and authenticated against your account/or
 |---------|-------------|
 | `its gh branch-protect apply <repo>` | Apply the THF standard branch-protection block to <owner/repo> on the named branch (default `main`). 1 approving review, dismiss stale, no force push, no delete, conversation resolution required. |
 | `its gh branch-protect show <repo>` | Show current branch-protection settings for <owner/repo>@<branch>. Read-only — no mutation. |
+| `its gh branch-protect remove <repo>` | Remove ALL branch protection from <owner/repo>@<branch> (default `main`). Permanent — use --confirm. This does not restore the previous rules; re-apply with `branch-protect apply`. |
 
 #### `its gh branch-protect apply <repo>`
 
@@ -76,6 +77,23 @@ Show current branch-protection settings for <owner/repo>@<branch>. Read-only —
 its gh branch-protect show <repo>
 ```
 
+#### `its gh branch-protect remove <repo>`
+
+Remove ALL branch protection from <owner/repo>@<branch> (default `main`). Permanent — use --confirm. This does not restore the previous rules; re-apply with `branch-protect apply`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--branch` | `` | Branch to unprotect (default main) | main |
+| `--confirm` | `` | Required to perform this destructive removal | — |
+
+**Examples:**
+
+```bash
+its gh branch-protect remove acme/storefront --confirm
+```
+
 ---
 
 ### webhook
@@ -84,6 +102,7 @@ its gh branch-protect show <repo>
 |---------|-------------|
 | `its gh webhook setup <repo> <url>` | Create a push-event webhook on <owner/repo> pointing at <url>. Idempotent — bails if a hook with the same URL already exists. |
 | `its gh webhook <repo>` | List webhooks on <owner/repo> |
+| `its gh webhook delete <repo> <hook>` | Delete a webhook from <owner/repo> by id (from `webhook list`) or by its exact URL. Permanent — use --confirm. Deliveries stop immediately; GitHub keeps no undo. |
 
 #### `its gh webhook setup <repo> <url>`
 
@@ -109,6 +128,24 @@ List webhooks on <owner/repo>.
 
 ```bash
 its gh webhook <repo>
+```
+
+#### `its gh webhook delete <repo> <hook>`
+
+Delete a webhook from <owner/repo> by id (from `webhook list`) or by its exact URL. Permanent — use --confirm. Deliveries stop immediately; GitHub keeps no undo.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to perform this destructive deletion | — |
+
+**Examples:**
+
+```bash
+its gh webhook delete acme/storefront 12345678 --confirm
+
+its gh webhook delete acme/storefront https://dok.example.com/api/deploy --confirm
 ```
 
 ---
