@@ -15,6 +15,67 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.14.1] - 2026-09-03
+
+### Added
+
+- `its update --apply` updates this install in place, by the means that suit
+  how `its` got onto the machine. A source checkout fast-forwards and
+  reinstalls dependencies; a binary install runs the platform installer.
+  Telling a checkout to run the binary installer would replace the `bun link`
+  shim with a compiled binary and silently detach the CLI from the repo it is
+  developed in, so the two remedies are kept apart and tested apart. A source
+  update refuses to proceed over uncommitted tracked changes; untracked files
+  are not a reason to refuse.
+
+### Changed
+
+- Installers version-and-repoint instead of overwriting in place. Every build
+  is kept under `<installDir>/versions/<version>/` and the active one is what
+  PATH resolves, so a bad release is a copy away from undone rather than a
+  re-download. `ITS_KEEP_VERSIONS` (default 2) bounds what is retained — these
+  binaries are ~98MB each.
+
+  On Windows this is what lets `its update --apply` replace the binary it is
+  running: Windows refuses to overwrite a running executable but permits
+  renaming one, so the update moves the old `its.exe` aside and writes the new
+  one in its place. The parked file stays locked until the process using it
+  exits, so it is swept on the next run rather than immediately.
+
+- CI runs type-check, tests and the docs check on every push to `main`, not
+  only on a release tag.
+
+### Fixed
+
+- The Windows installer no longer risks leaving the machine with no `its.exe`
+  at all. Putting the new binary in place happens after the live one has been
+  parked, and that step had no rollback — a failure there (antivirus holding
+  the staged file, an interrupted run) removed the only copy, and with it any
+  way to run `its update` to recover. The parked binary is now restored before
+  the installer fails.
+
+- The Windows installer refuses a download that is not a Windows executable.
+  A proxy or captive-portal login page is served as HTTP 200 and written out
+  like any other response body; it was then copied over `its.exe` and reported
+  as a successful update. The download must now begin `MZ`. Checking the file's
+  own magic bytes, rather than requiring version metadata, keeps older releases
+  installable for a rollback.
+
+- The Windows installer sweeps staged downloads orphaned by an interrupted run,
+  not just parked predecessors. A fetch cancelled midway left ~98MB behind that
+  nothing ever removed.
+
+- `its update --apply` no longer reports "nothing was changed" when the
+  installer fails. The installer swaps the binary partway through, so a
+  non-zero exit can mean either side of that swap; the message now says how to
+  check which build is live.
+
+- `pickDownloadUrl` takes the target platform as an argument, so both the Linux
+  and Windows branches are covered from either OS. The Windows remedy had no
+  test that ran on Windows, and a release predating `install.ps1` must fall back
+  to the release page rather than offering a Windows user a `curl … | bash`
+  line.
+
 ## [0.14.0] - 2026-09-02
 
 ### Security
