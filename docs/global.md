@@ -25,7 +25,7 @@ Commands invoked as `its <command>`, with no provider. Every one of them accepts
 | [`its status`](#its-status) | Which providers are configured, and optionally whether they answer |
 | [`its trust-cert`](#its-trust-cert) | Trust-on-first-use store for self-signed TLS certificates |
 | [`its tui`](#its-tui) | Interactive browser — provider, resource, action, no flags to memorise |
-| [`its update`](#its-update) | Check for a newer release and print how to install it |
+| [`its update`](#its-update) | Check for a newer release, and apply it with --apply |
 | [`its user`](#its-user) | Everything about one person, across every system |
 | [`its version`](#its-version) | Print the bundled version and exit |
 | [`its watch`](#its-watch) | Re-run a command every N seconds with change highlighting |
@@ -390,19 +390,25 @@ its rmm -i
 
 ## its update
 
-Check for a newer release and print how to install it.
+Check for a newer release, and apply it with --apply.
 
 ```bash
 its update
+its update --apply
 its --check-updates
 ```
 
-Checks the release feed and reports whether a newer version exists, with the download for this platform. The result is cached in `~/.its/update-check.json`; a background check refreshes it, so this command forces a fresh look.
+Checks the release feed and reports whether a newer version exists. The result is cached in `~/.its/update-check.json`; a background check refreshes it, so this command forces a fresh look.
+
+The remedy follows how `its` was installed, because the two differ: a **source checkout** (`bun link`, the shim runs `src/bootstrap.ts`) updates with `git pull --ff-only && bun install`, while a **binary install** runs the platform installer. Handing a source checkout the binary installer replaces the shim with a compiled binary and silently detaches the CLI from the repo it is developed in, so the two are never confused.
+
+`--apply` performs the update rather than printing it. On a source checkout it refuses when tracked files are uncommitted — untracked scratch is fine — then fast-forwards and reinstalls dependencies; the new version is live immediately because the shim runs source. On a binary install it runs the platform installer and waits, so the exit code is the install's own. Builds are versioned rather than overwritten — POSIX repoints a symlink, Windows renames the running `its.exe` aside — so updating from inside a running `its` is safe, and the previous couple of builds stay on disk for rollback.
 
 **Examples**
 
 ```bash
 its update
+its update --apply
 ```
 
 ## its user
