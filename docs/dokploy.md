@@ -1989,6 +1989,7 @@ its dokploy orgs active
 | `its dokploy compose stop <composeId>` | Stop a compose stack. Stop the resource. Use --confirm if the action is destructive. |
 | `its dokploy compose redeploy <composeId>` | Redeploy a compose stack (rebuild + deploy). Redeploys the existing container; doesn't rebuild from source. |
 | `its dokploy compose delete <composeId>` | Delete a compose stack permanently (requires --confirm). Stops the stack first, then removes the record from Dokploy. |
+| `its dokploy compose create <name> <projectId>` | Create a compose stack in a project. Creates the record only — set the source and compose file in the UI (or with `compose config`), then `compose deploy`. |
 
 #### `its dokploy compose get <composeId>`
 
@@ -2076,6 +2077,26 @@ its dokploy compose delete cP6rZ1hN --confirm
 its dokploy compose list
 
 its dokploy compose delete <compose-id> --confirm
+```
+
+#### `its dokploy compose create <name> <projectId>`
+
+Create a compose stack in a project. Creates the record only — set the source and compose file in the UI (or with `compose config`), then `compose deploy`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--app-name` | `` | Internal app name (lowercase, no spaces — defaults to a slug of the display name) | — |
+| `--description` | `` | Optional description | — |
+| `--type` | `` | Compose runtime | docker-compose |
+
+**Examples:**
+
+```bash
+its dokploy compose create "Metrics" aB3xY7pL
+
+its dokploy compose create "Metrics" aB3xY7pL --app-name metrics --type stack
 ```
 
 ---
@@ -2237,6 +2258,7 @@ its dokploy backup delete <backup-id> --confirm
 | `its dokploy schedule get <scheduleId>` | Get a schedule by id. Pass the id (or any natural identifier) as the positional arg. |
 | `its dokploy schedule run <scheduleId>` | Trigger a schedule manually (schedule.runManually). Execute the named job/script. |
 | `its dokploy schedule delete <scheduleId>` | Delete a schedule (requires --confirm). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
+| `its dokploy schedule create <id> <name> <cron> <command>` | Create a cron schedule against an application, compose stack, or the server. The parent id field is derived from --type — passing the wrong one is accepted upstream and yields a schedule that never fires. |
 
 #### `its dokploy schedule <id>`
 
@@ -2297,6 +2319,27 @@ its dokploy schedule delete sQ2gH8mT --confirm
 its dokploy schedule list
 
 its dokploy schedule delete <schedule-id> --confirm
+```
+
+#### `its dokploy schedule create <id> <name> <cron> <command>`
+
+Create a cron schedule against an application, compose stack, or the server. The parent id field is derived from --type — passing the wrong one is accepted upstream and yields a schedule that never fires.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--type` | `` | Schedule type | application |
+| `--service` | `` | Compose service to run inside (compose schedules only) | — |
+| `--shell` | `` | Shell used to run the command | sh |
+| `--disabled` | `` | Create it switched off | — |
+
+**Examples:**
+
+```bash
+its dokploy schedule create aB3xY7pL "nightly prune" "0 3 * * *" "bun run prune"
+
+its dokploy schedule create cM9kQ2wT "db vacuum" "30 2 * * 0" "vacuumdb -az" --type compose --service postgres
 ```
 
 ---

@@ -187,6 +187,7 @@ its exo groups remove-member "All Staff" jane.smith@example.com
 | `its exo mailboxes set-forwarding <mailbox> <target>` | Configure mailbox forwarding. Set a mailbox forward. --confirm required. |
 | `its exo mailboxes set-type <mailbox> <type>` | Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared. |
 | `its exo mailboxes set-visibility <mailbox>` | Hide or show a mailbox in the global address list (GAL). Pass exactly one of --hide / --show. |
+| `its exo mailboxes delete <mailbox>` | Delete a mailbox. For a UserMailbox this ALSO deletes the Entra user account (Remove-Mailbox removes both), soft-deleted for 30 days. This is not how THF offboards a leaver — that converts to shared and hides from the GAL. The intended use is an orphaned shared, room, or equipment mailbox. Requires --confirm, and a UserMailbox additionally requires --delete-account. |
 
 #### `its exo mailboxes`
 
@@ -360,6 +361,23 @@ Hide or show a mailbox in the global address list (GAL). Pass exactly one of --h
 its exo mailboxes set-visibility helpdesk --hide
 
 its exo mailboxes set-visibility helpdesk --show
+```
+
+#### `its exo mailboxes delete <mailbox>`
+
+Delete a mailbox. For a UserMailbox this ALSO deletes the Entra user account (Remove-Mailbox removes both), soft-deleted for 30 days. This is not how THF offboards a leaver — that converts to shared and hides from the GAL. The intended use is an orphaned shared, room, or equipment mailbox. Requires --confirm, and a UserMailbox additionally requires --delete-account.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to perform this destructive deletion | — |
+| `--delete-account` | `` | Additionally required for a UserMailbox — acknowledges that the Entra user account goes too | — |
+
+**Examples:**
+
+```bash
+its exo mailboxes delete old-project@thf.co.uk --confirm
 ```
 
 ---
