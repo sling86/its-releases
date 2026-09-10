@@ -73,6 +73,8 @@ Intune reuses the same Graph API credentials as the Entra provider — no additi
 | `its intune devices primary-user <device>` | Show a device's primary user. Resolve the device by id or name. |
 | `its intune devices set-primary-user <device> <user>` | Reassign a device's primary user (requires --confirm) — the device handover step. Without --confirm it previews the change, naming the current primary user it would replace. |
 | `its intune devices noncompliant` | List devices failing compliance. Returns devices failing compliance checks. |
+| `its intune devices recovery-keys [device]` | List escrowed BitLocker recovery keys — metadata only, never key material. Pass a device to see just its keys; omit it for the tenant-wide escrow list. Reading a key's value needs the delegated-only BitlockerKey.Read.All, which this app-only provider does not hold: use the Entra portal or Company Portal for the key itself. |
+| `its intune devices rotate-bitlocker <device>` | Rotate a device's BitLocker recovery key (requires --confirm). The device rotates at its next check-in and escrows the new key; anyone holding the printed or copied old key loses access at that point. Needs DeviceManagementManagedDevices.PrivilegedOperations.All. |
 
 #### `its intune devices`
 
@@ -164,6 +166,36 @@ List devices failing compliance. Returns devices failing compliance checks.
 
 ```bash
 its intune devices noncompliant
+```
+
+#### `its intune devices recovery-keys [device]`
+
+List escrowed BitLocker recovery keys — metadata only, never key material. Pass a device to see just its keys; omit it for the tenant-wide escrow list. Reading a key's value needs the delegated-only BitlockerKey.Read.All, which this app-only provider does not hold: use the Entra portal or Company Portal for the key itself.
+
+**Examples:**
+
+```bash
+its intune devices recovery-keys THF-UD-MP27XZ31
+
+its intune devices recovery-keys
+```
+
+#### `its intune devices rotate-bitlocker <device>`
+
+Rotate a device's BitLocker recovery key (requires --confirm). The device rotates at its next check-in and escrows the new key; anyone holding the printed or copied old key loses access at that point. Needs DeviceManagementManagedDevices.PrivilegedOperations.All.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Apply the rotation | — |
+
+**Examples:**
+
+```bash
+its intune devices rotate-bitlocker THF-UD-MP27XZ31
+
+its intune devices rotate-bitlocker THF-UD-MP27XZ31 --confirm
 ```
 
 ---

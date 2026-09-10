@@ -14,13 +14,13 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [rmm.md](./rmm.md) | Tactical RMM — 78 commands across 18 resources |
 | [entra.md](./entra.md) | Entra ID — 112 commands across 23 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 120 commands across 25 resources |
-| [bw.md](./bw.md) | Bitwarden — 40 commands across 12 resources |
+| [bw.md](./bw.md) | Bitwarden — 44 commands across 12 resources |
 | [sp.md](./sp.md) | SharePoint — 49 commands across 11 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 64 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
 | [exo.md](./exo.md) | Exchange Online — 43 commands across 9 resources |
-| [intune.md](./intune.md) | Intune — 45 commands across 17 resources |
+| [intune.md](./intune.md) | Intune — 47 commands across 17 resources |
 | [protect.md](./protect.md) | UniFi Protect — 9 commands across 5 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
 | [pa.md](./pa.md) | Power Platform — 13 commands across 4 resources |
@@ -34,7 +34,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
 
-**22 providers** · **216 resources** · **767 commands**
+**22 providers** · **216 resources** · **773 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -121,7 +121,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [items](./bw.md#items) | list, search, get, totp, trash, recent, favourites, create, update, share, move, delete, restore, purge | `src/providers/bw/commands.ts` |
+| [items](./bw.md#items) | list, search, get, attachments, attach, download, detach, totp, trash, recent, favourites, create, update, share, move, delete, restore, purge | `src/providers/bw/commands.ts` |
 | [folders](./bw.md#folders) | list, get, summary, create, delete | `src/providers/bw/commands.ts` |
 | [organisations](./bw.md#organisations) | list | `src/providers/bw/commands.ts` |
 | [collections](./bw.md#collections) | list | `src/providers/bw/commands.ts` |
@@ -228,7 +228,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [devices](./intune.md#devices) | list, get, search, sync, primary-user, set-primary-user, noncompliant | `src/providers/intune/commands/devices.ts` |
+| [devices](./intune.md#devices) | list, get, search, sync, primary-user, set-primary-user, noncompliant, recovery-keys, rotate-bitlocker | `src/providers/intune/commands/devices.ts` |
 | [compliance](./intune.md#compliance) | why | `src/providers/intune/commands/compliance.ts` |
 | [apps](./intune.md#apps) | list, get, required | `src/providers/intune/commands/apps.ts` |
 | [scripts](./intune.md#scripts) | list, get, status | `src/providers/intune/commands/scripts.ts` |
@@ -533,7 +533,7 @@ its
 │   │   ├── (list)
 │   │   ├── assign <user_id>
 │   │   ├── remove <user_id>
-│   │   ├── users <sku_id>
+│   │   ├── users <sku>
 │   │   ├── unlicensed
 │   │   ├── audit
 │   │   └── waste
@@ -776,6 +776,10 @@ its
 │   │   ├── (list)
 │   │   ├── search <query>
 │   │   ├── get <id>
+│   │   ├── attachments <id>
+│   │   ├── attach <id> <file>
+│   │   ├── download <id> <attachment>
+│   │   ├── detach <id> <attachment>
 │   │   ├── totp <query>
 │   │   ├── trash
 │   │   ├── recent
@@ -1094,7 +1098,9 @@ its
 │   │   ├── sync <id>
 │   │   ├── primary-user <device>
 │   │   ├── set-primary-user <device> <user>
-│   │   └── noncompliant
+│   │   ├── noncompliant
+│   │   ├── recovery-keys [device]
+│   │   └── rotate-bitlocker <device>
 │   ├── compliance why <device>
 │   ├── apps
 │   │   ├── (list)

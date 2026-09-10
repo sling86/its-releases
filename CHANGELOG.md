@@ -15,6 +15,83 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.15.0] - 2026-09-10
+
+### Added
+
+- **`its bw` attachments** — `items attach <item> <file>`,
+  `items attachments <item>`, `items download <item> <attachment>` and
+  `items detach <item> <attachment> --confirm`. Key material (`.pfx`, `.pem`,
+  `.key`) could only be put in the vault through the web vault or the official
+  CLI. Files are encrypted locally under their own key before upload, so the
+  server sees neither the contents nor the filename; downloads land in a
+  mode-0600 file and never reach stdout. Upload is fail-closed — if the body
+  fails to upload after the server has minted an attachment id, the empty
+  attachment is removed, so an item is never left carrying a file that cannot
+  be downloaded. `detach` requires `--confirm`: attachments have no trash.
+  Single-request upload, capped at 100 MB.
+
+- **`its intune devices recovery-keys [device]`** — the escrowed BitLocker
+  keys, tenant-wide or for one device. Metadata only: reading key material
+  needs the delegated-only `BitlockerKey.Read.All`, which an app-only provider
+  cannot hold, and the description says so rather than returning a blank
+  column. Keys are escrowed against the Entra device id, not the Intune one,
+  so `devices list` now selects `azureADDeviceId` — without it a device
+  resolved by name looked like it had escrowed nothing.
+
+- **`its intune devices rotate-bitlocker <device> --confirm`**. The device
+  rotates at its next check-in, so the result says "requested", not "rotated",
+  and the preview says the current key stops working. Declares
+  `DeviceManagementManagedDevices.PrivilegedOperations.All` in
+  `manifest/entra-apps.jsonc` — run `its entra apps apply` before first use.
+
+- **`--uri-remove` on `its bw items update`**, and `--uri` now adds to an
+  item's URIs instead of replacing them. Setting a URL on an item with three
+  used to leave it with one — on the command whose own description promises
+  URIs are left intact.
+
+### Fixed
+
+- **`its bw items get` reported no attachments for an item that had three.**
+  The sync mapper never carried the attachments array, so it was gone before
+  the command saw it — reading, on a tool used to audit whether a secret is
+  backed up, as "this credential has no copy". Names are decrypted and the
+  count and filenames appear in the summary as well as the data, because the
+  human table only renders `tableRows`. `items list` and `items search` now
+  carry an `attachments` count, so `--filter attachments=0` sweeps for
+  credentials with no stored backup.
+
+- **`keyCredentials` and `passwordCredentials` came back wholly redacted.**
+  The array matched the redactor's `credentials?$` rule, taking the thumbprint,
+  key id and expiry dates with it — none of them secret, and between them the
+  only answer to "which certificate is registered and when does the
+  registration expire". These collections now recurse; the key material inside
+  (`key`, `secretText`) is still masked. A bare `secrets: [...]` is still
+  blanked whole.
+
+- **`its outlook folders list` showed only the root level and called it the
+  total.** A mailbox reporting 13 folders had 235. `--all` walks the whole
+  hierarchy, machine output flags each row `root`, and the summary says which
+  it is showing. `folders delete` now resolves against the full tree — it
+  could not see a nested folder at all, and reported "no folder matching" for
+  one that existed. When several folders share a name it lists them and
+  refuses to guess, rather than deleting whichever Graph returned first.
+
+- **`its outlook events` stopped at 100 and reported the count as complete.**
+  It now pages the window — a year that returned "100 events" has 185.
+  `--top` trims the table and the summary says when it did.
+
+- **`its teams chats` sorted one page and called it "most recent".** Graph
+  refuses `$orderby` on `/me/chats`, so the sort is client-side and has to see
+  every chat first; a chat active this morning could sit unseen on page two.
+  `--limit 0` shows all of them.
+
+- **`its entra licences` accepts a SKU part number or friendly name**, not
+  only a GUID — on `assign`, `remove` and `users`. Both the command examples
+  and the help UI already showed `--sku ENTERPRISEPACK` and
+  `licences users SPB`, which could only ever have returned a Graph 400. An
+  ambiguous name lists the candidates instead of picking one.
+
 ## [0.14.2] - 2026-09-03
 
 ### Added

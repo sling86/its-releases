@@ -490,20 +490,20 @@ its outlook drafts delete AAMkAGI2... --confirm
 
 | Command | Description |
 |---------|-------------|
-| `its outlook folders` | List mail folders with counts (totalItemCount, unreadItemCount). |
+| `its outlook folders` | List mail folders with counts (totalItemCount, unreadItemCount). Graph returns the root level only, so nested folders need --all. |
 | `its outlook folders get <folder_id>` | Get a single mail folder by ID or well-known name (inbox, sentitems, drafts, deleteditems, archive). |
 | `its outlook folders create <name>` | Create a new mail folder (optionally nested under a parent). |
 | `its outlook folders delete <folder>` | Delete a mail folder by id or display name. Graph deletes the folder AND every message and child folder inside it — there is no move-contents-out option, and no undo. Use --confirm. |
 
 #### `its outlook folders`
 
-List mail folders with counts (totalItemCount, unreadItemCount).
+List mail folders with counts (totalItemCount, unreadItemCount). Graph returns the root level only, so nested folders need --all.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--top` | `` | Max folders (default 50, max 100) | 50 |
+| `--all` | `` | Walk the whole hierarchy, not just the root level | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
@@ -676,7 +676,7 @@ List calendar events between two dates (calendarView — includes expanded recur
 |------|-------|-------------|---------|
 | `--start` | `` | Start ISO date/datetime (default: today) | — |
 | `--end` | `` | End ISO date/datetime (default: 7 days from start) | — |
-| `--top` | `` | Max events (default 50, max 100) | 50 |
+| `--top` | `` | Cap the rows shown (default: every event in the range) | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
