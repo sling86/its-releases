@@ -92,12 +92,16 @@ AI shell commands run non-interactively, so first run `its bw session unlock` yo
 | `its bw items` | List all vault items. Surfaces the most common fields; pass --json for raw shape. |
 | `its bw items search <query>` | Search vault items by name, username, URL, or notes. Substring match across the most relevant fields; case-insensitive. |
 | `its bw items get <id>` | Get a vault item by ID (includes password and fields). Pass the id (or any natural identifier) as the positional arg. The secret is redacted unless a sink is given: --copy for desk work, --to-file to hand it to another command. --field <name> targets a custom field instead of the login password. |
+| `its bw items attachments <id>` | List the files attached to a vault item. Names are decrypted locally — the server never sees them. |
+| `its bw items attach <id> <file>` | Attach a local file to a vault item. The file is encrypted locally under its own key before upload — the server never sees the contents or the filename. Additive: existing attachments are untouched. |
+| `its bw items download <id> <attachment>` | Download and decrypt one attachment to a mode-0600 file. Never prints the contents — an attachment is usually key material, so it goes straight to disk like every other secret sink. |
+| `its bw items detach <id> <attachment>` | Permanently delete one attachment from a vault item. There is no trash for attachments — this cannot be undone. Requires --confirm. |
 | `its bw items totp <query>` | Generate current TOTP code for an item. Returns the current TOTP code — refresh every 30s. |
 | `its bw items trash` | List trashed vault items. Returns soft-deleted items in the trash bin. |
 | `its bw items recent` | List recently modified vault items. Returns the N most recently modified items. |
 | `its bw items favourites` | List favourite vault items. Items the user has starred. |
 | `its bw items create <name>` | Create a new vault item (login, note, card, or identity). Idempotent on duplicate names — use update/edit to mutate an existing record. |
-| `its bw items update <id>` | Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. Use --field-remove to drop a custom field. |
+| `its bw items update <id>` | Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. --field and --uri add to what is there; use --field-remove / --uri-remove to drop one. |
 | `its bw items share <id>` | Irreversibly transfer a personal item to an organisation collection. There is no automatic rollback. |
 | `its bw items move <id>` | Move vault items to a folder. Move an item between folders. --confirm required. |
 | `its bw items delete <id>` | Move a vault item to trash (soft-delete, recoverable). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
@@ -174,6 +178,77 @@ its bw items get "server-login" --to-file /dev/shm/sec
 its bw items get "Outlook MCP" --field "API KEY" --to-file /dev/shm/sec
 
 its bw items get "Server admin"
+```
+
+#### `its bw items attachments <id>`
+
+List the files attached to a vault item. Names are decrypted locally — the server never sees them.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+its bw items attachments "Exchange Online cert"
+```
+
+#### `its bw items attach <id> <file>`
+
+Attach a local file to a vault item. The file is encrypted locally under its own key before upload — the server never sees the contents or the filename. Additive: existing attachments are untouched.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--name` | `` | Store under this filename instead of the file's own | — |
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+its bw items attach "Exchange Online cert" ./exo-auth.pfx
+
+its bw items attach 3f2b1c94-... ./key.pem --name exo-key.pem
+```
+
+#### `its bw items download <id> <attachment>`
+
+Download and decrypt one attachment to a mode-0600 file. Never prints the contents — an attachment is usually key material, so it goes straight to disk like every other secret sink.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--output` | `-o` | Where to write it (a directory keeps the vault's filename; defaults to the vault's filename in the current directory) | — |
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+its bw items download "Exchange Online cert" exo-auth.pfx --output /dev/shm/exo-auth.pfx
+
+its bw items download 3f2b1c94-... exo-key.pem --output ./certs
+```
+
+#### `its bw items detach <id> <attachment>`
+
+Permanently delete one attachment from a vault item. There is no trash for attachments — this cannot be undone. Requires --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required — attachment deletion is irreversible | — |
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+its bw items detach "Exchange Online cert" exo-key.pem --confirm
 ```
 
 #### `its bw items totp <query>`
@@ -287,7 +362,7 @@ its bw items create "API keys" --type note --notes "stuff"
 
 #### `its bw items update <id>`
 
-Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. Use --field-remove to drop a custom field.
+Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. --field and --uri add to what is there; use --field-remove / --uri-remove to drop one.
 
 **Flags:**
 
@@ -297,7 +372,8 @@ Update a vault item. Preserve-by-default: only the flags you pass change — eve
 | `--username` | `` | Login username | — |
 | `--password` | `` | Login password | — |
 | `--password-file` | `` | Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) | — |
-| `--uri` | `` | Login URL | — |
+| `--uri` | `` | Login URL to add. Appended to the item's existing URIs (no duplicate) — use --uri-remove to drop one. | — |
+| `--uri-remove` | `` | Login URL to remove from the item, matched exactly (case-insensitive). | — |
 | `--totp` | `` | TOTP secret | — |
 | `--notes` | `` | Notes | — |
 | `--notes-file` | `` | Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) | — |

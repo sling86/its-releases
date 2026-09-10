@@ -657,7 +657,7 @@ its entra groups audit-rules [group_id]
 | `its entra licences` | List all subscribed SKUs/licences. Available column gets a ⚠ marker when fewer than 10% of seats remain (or none) — useful for catching exhaustion before the next assign request fails. |
 | `its entra licences assign <user_id>` | Assign one or more licences to a user. Pass --sku as a comma-separated list to assign several atomically in a single Graph call (parallel single-assigns trip 409 Directory_ConcurrencyViolation). Idempotent. |
 | `its entra licences remove <user_id>` | Remove a licence from a user (requires --confirm). Permanent — use --confirm. |
-| `its entra licences users <sku_id>` | List users assigned a specific licence SKU. List by resource membership; use --json for the raw shape. |
+| `its entra licences users <sku>` | List users assigned a specific licence SKU, named by GUID, part number or friendly name. List by resource membership; use --json for the raw shape. |
 | `its entra licences unlicensed` | Find enabled users with no licence assignments. Read-only — useful for billing audits. |
 | `its entra licences audit` | Licence usage report with availability and over-allocation warnings |
 | `its entra licences waste` | Find disabled accounts with reclaimable licences. Read-only — useful for finding reclaimable seats. |
@@ -687,14 +687,14 @@ Assign one or more licences to a user. Pass --sku as a comma-separated list to a
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--sku` | `` | SKU ID (GUID), or comma-separated list of GUIDs | — |
+| `--sku` | `` | SKU GUID, part number (ENTERPRISEPACK) or friendly name ("Office 365 E3") — comma-separate several | — |
 
 **Examples:**
 
 ```bash
-its entra licences assign jane@x.com --sku <guid>
+its entra licences assign jane@x.com --sku ENTERPRISEPACK
 
-its entra licences assign jane@x.com --sku <guid1>,<guid2>,<guid3>
+its entra licences assign jane@x.com --sku SPE_E3,EMS,POWER_BI_PRO
 
 its entra licences assign jane.smith@example.com --sku SPB
 
@@ -710,7 +710,7 @@ Remove a licence from a user (requires --confirm). Permanent — use --confirm.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--sku` | `` | SKU ID (GUID) | — |
+| `--sku` | `` | SKU GUID, part number (ENTERPRISEPACK) or friendly name ("Office 365 E3") | — |
 | `--confirm` | `` | Confirm the removal | — |
 
 **Examples:**
@@ -727,9 +727,9 @@ its entra licences remove jane.smith@example.com --sku SPB --confirm
 its entra onboarding convert-mailbox jane.smith@example.com --confirm
 ```
 
-#### `its entra licences users <sku_id>`
+#### `its entra licences users <sku>`
 
-List users assigned a specific licence SKU. List by resource membership; use --json for the raw shape.
+List users assigned a specific licence SKU, named by GUID, part number or friendly name. List by resource membership; use --json for the raw shape.
 
 **Examples:**
 

@@ -55,14 +55,14 @@ Your recent Teams chats (1:1, group, meeting), most-recently-active first. Deleg
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--limit` | `` | Max chats to return (1-50) | 25 |
+| `--limit` | `` | Max chats to show (0 for every chat) | 25 |
 
 **Examples:**
 
 ```bash
 its teams chats
 
-its teams chats --limit 50
+its teams chats --limit 0
 ```
 
 #### `its teams chats messages <chat_id>`
