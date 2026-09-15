@@ -3,7 +3,7 @@
 Business Central (Dynamics 365) — tenant-level companies list, multi-company entity queries via OData, record get. Uses a dedicated BC app registration (BC_CLIENT_ID/BC_CLIENT_SECRET) or falls back to the shared Entra credentials (TENANT_ID/CLIENT_ID/CLIENT_SECRET); either app needs the Business Central API permission granted and an ApplicationUser with a Permission Set inside each BC company.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -143,12 +143,12 @@ its bc entities
 
 | Command | Description |
 |---------|-------------|
-| `its bc extensions` | List published AL extensions with their versions — the direct answer to "which environment is on which app version?". Reads the Automation API, so it needs the SP's BC user to hold D365 EXTENSION MGT (not the Admin Centre grant). |
+| `its bc extensions` | List published AL extensions with their versions — the direct answer to "which environment is on which app version?". Prefers the Automation API (per-company, includes per-tenant extensions); where that identity is refused, falls back to the Admin Centre route, which needs a delegated Dynamics 365 admin (--auth az) and covers AppSource apps only. The summary says which answered. |
 | `its bc extensions get <name>` | Get one extension's published version by name (substring, case-insensitive) — for gating on "is this environment on >= x.y.z?". |
 
 #### `its bc extensions`
 
-List published AL extensions with their versions — the direct answer to "which environment is on which app version?". Reads the Automation API, so it needs the SP's BC user to hold D365 EXTENSION MGT (not the Admin Centre grant).
+List published AL extensions with their versions — the direct answer to "which environment is on which app version?". Prefers the Automation API (per-company, includes per-tenant extensions); where that identity is refused, falls back to the Admin Centre route, which needs a delegated Dynamics 365 admin (--auth az) and covers AppSource apps only. The summary says which answered.
 
 **Flags:**
 

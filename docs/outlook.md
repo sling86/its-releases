@@ -3,7 +3,7 @@
 Microsoft Outlook (Graph) mailbox + calendar — list/search/send mail, manage drafts, organise folders, schedule events, check free/busy, configure auto-reply and inbox rules.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [m365](./m365.md) · [teams](./teams.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -71,7 +71,8 @@ its outlook setup --reset   # Re-run setup (overwrite config)
 | `its outlook mail flag <message_id>` | Set follow-up flag status on a message. |
 | `its outlook mail categorise <message_id> <categories>` | Set the category list on a message (replaces existing categories). |
 | `its outlook mail delete [message_id]` | Delete one or more messages (moves to Deleted Items). Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete. |
-| `its outlook mail send` | Send a new email directly (no draft step). Saves a copy in Sent Items. |
+| `its outlook mail draft` | Create a draft instead of sending. Nothing leaves the mailbox until `its outlook drafts send <id>`. Alias of `drafts create` / `drafts reply` — it lives here because `mail send` is where people look during an incident, and only finding `send` means firing straight at a third party (ctxc #11845 item 6). |
+| `its outlook mail send` | Send a new email directly (no draft step). Saves a copy in Sent Items. To review before it goes out — the safer default for anything to a third party — use `its outlook mail draft` (alias of `drafts create` / `drafts reply`), then `its outlook drafts send <id>`. |
 
 #### `its outlook mail`
 
@@ -84,7 +85,8 @@ List messages from the mailbox. Defaults to Inbox (top 25 by receivedDateTime de
 | `--folder` | `` | Folder ID or well-known name (inbox, sentitems, drafts, deleteditems, archive) | — |
 | `--top` | `` | Number of messages (max 50) | 25 |
 | `--skip` | `` | Skip first N messages (pagination) | 0 |
-| `--filter` | `` | OData $filter expression | — |
+| `--filter` | `` | OData $filter expression (or a window: today, yesterday, 7d) | — |
+| `--since` | `` | Only messages received since this window — today, yesterday, 7d, 6h, or a date | — |
 | `--search` | `` | KQL-style search query (alternative to --filter) | — |
 | `--unread` | `` | Only unread messages | — |
 | `--has-attachments` | `` | Only messages with attachments | — |
@@ -291,9 +293,39 @@ its outlook mail delete <message_id> --confirm
 its outlook mail --filter "from/emailAddress/address eq 'spammer@x'" --json | its outlook mail delete --stdin --confirm
 ```
 
+#### `its outlook mail draft`
+
+Create a draft instead of sending. Nothing leaves the mailbox until `its outlook drafts send <id>`. Alias of `drafts create` / `drafts reply` — it lives here because `mail send` is where people look during an incident, and only finding `send` means firing straight at a third party (ctxc #11845 item 6).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--reply-to` | `` | Message ID to reply to (omit for a new message) | — |
+| `--all` | `` | With --reply-to: reply to all recipients | — |
+| `--to` | `` | Comma-separated recipients (new message) | — |
+| `--cc` | `` | Comma-separated CC recipients | — |
+| `--bcc` | `` | Comma-separated BCC recipients | — |
+| `--subject` | `` | Subject line (new message) | — |
+| `--body` | `` | Body content | — |
+| `--body-file` | `` | Read body from a UTF-8 file | — |
+| `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
+| `--importance` | `` | low|normal|high | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --body "Looking into it now."
+
+its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --all --body "Adding IT."
+
+its outlook mail draft --to jane@example.com --subject "Kit request" --body "Details to follow."
+```
+
 #### `its outlook mail send`
 
-Send a new email directly (no draft step). Saves a copy in Sent Items.
+Send a new email directly (no draft step). Saves a copy in Sent Items. To review before it goes out — the safer default for anything to a third party — use `its outlook mail draft` (alias of `drafts create` / `drafts reply`), then `its outlook drafts send <id>`.
 
 **Flags:**
 

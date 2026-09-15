@@ -3,7 +3,7 @@
 Exchange Online — distribution groups, shared mailboxes, permissions, mail flow rules, accepted domains.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -38,7 +38,7 @@ its exo setup --reset   # Re-run setup (overwrite config)
 
 Requires **PowerShell 7** (`pwsh`) and the **ExchangeOnlineManagement** module. Auth uses a self-signed certificate uploaded to a dedicated Entra app registration with `Exchange.ManageAsApp` permission. Run `its exo setup` to check prerequisites and install the module.
 
-On Windows, the certificate lives in the current user's cert store (`Cert:\CurrentUser\My`) and is selected by `EXO_CERT_THUMBPRINT`. On POSIX, set `EXO_CERTIFICATE_PATH` to a PEM file containing the certificate and its private key.
+On Windows, the certificate lives in the current user's cert store (`Cert:\CurrentUser\My`) and is selected by `EXO_CERT_THUMBPRINT`. That parameter does not exist off Windows, so on Linux and macOS set `EXO_CERTIFICATE_PFX` (plus `EXO_CERTIFICATE_PASSWORD` if the .pfx has one), or `EXO_CERTIFICATE_PATH` for a PEM — adding `EXO_CERTIFICATE_KEY_PATH` when the private key sits in its own file.
 
 ### Source Files
 
