@@ -15,6 +15,73 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.16.0] - 2026-09-15
+
+### Added
+
+- **bw: official-CLI parity and a drop-in `bw` shim.** `its bwc <official argv>`
+  runs the official syntax against the its client with official-shaped output,
+  and `its bw compat install` puts it on PATH. Covers the generator, Sends,
+  export/import in the official file formats, the localhost REST API, org member
+  confirm, collection writes and all five cipher types.
+- **bw: `unlock`/`login` take the master password** and report a bw-shaped
+  version, so a GUI consumer can drive the shim.
+- **attendance: read-only factory terminal reporting.**
+- **unifi: client location evidence.**
+- **cli: closed the actionable provider backlog gaps.**
+
+### Changed
+
+- **bw is between 10x and 28x faster than the official CLI on vault reads.**
+  `list items` 4132ms -> 150ms against official's own 4132ms, `list folders`
+  2980ms -> 140ms, `status` 2989ms -> 69ms. Three separate causes, each
+  measured rather than guessed:
+  - The vault was re-downloaded on every command. `cachedSync` is module-level
+    and every invocation is a fresh process, so ~900ms of a ~1030ms command was
+    a full `GET /sync`. The raw, still-account-encrypted payload now rides in
+    the session state with a 15-minute TTL, and every mutating command drops it
+    immediately.
+  - Decryption used WebCrypto. Each `crypto.subtle` call costs ~12us of async
+    overhead regardless of payload, and a vault is tens of thousands of tiny
+    fields — 236ms against 23ms for the synchronous node:crypto equivalent over
+    9,400 verify+decrypt pairs. Same AES-256-CBC, same HMAC-SHA256, same
+    verify-then-decrypt order, `timingSafeEqual` for the MAC comparison.
+  - Session blobs are gzipped before encryption, taking the file from 4.42MB to
+    1.23MB. Blobs written earlier have no `encoding` field and still decrypt.
+
+### Fixed
+
+- **bw: a stale 2FA device-remember token permanently bricked vault unlock.**
+  Three faults compounded. Bitwarden's identity endpoint can answer a rejected
+  grant with the literal JSON `null`, which `res.json()` parses happily, so the
+  try/catch around it caught nothing and the next line threw
+  `null is not an object (evaluating 'errorData.TwoFactorProviders')`. That
+  crash landed before the code that clears a bad remember token, so the same
+  token was re-sent on every later attempt and failed identically forever.
+  Error bodies now always read back as an object (`readErrorBody`), and a grant
+  rejected while carrying a saved remember token drops that token and retries
+  once without it.
+- **bw compat: `login --method` and `--code` were parsed and then discarded.**
+  They now reach the auth flow, so a GUI caller with no TTY (the Omarchy
+  `qs-bitwarden-cli` panel) can complete a two-step login instead of falling
+  through to an interactive prompt it cannot answer. A caller-supplied method
+  is used when the server offers it.
+- **bw compat:** stdout is flushed before `process.exit` (a bare write to a pipe
+  truncated an 811KB `bw list items` at ~240KB), the session token is base64 so
+  bw-shaped validators accept it, and an unreachable keychain no longer destroys
+  a live session.
+- **bc:** `extensions` falls back to the Admin Centre route when the Automation
+  API is shut to internal admins, and logs why it refused before falling back.
+- **entra:** sign-in windows, device detail, filter shorthand and role names.
+- **exo:** cmdlet warnings kept out of the JSON, `.pfx` password in the keychain,
+  and certificate auth off Windows.
+- **outlook/wrike:** Windows paths and the draft alias; Wrike mention and flag
+  traps.
+- Writes invalidate cached reads, CA patch reports what actually stuck, and RMM
+  checks can alert.
+- Truncation names the uncapped output modes, and ctxc states it is read-only by
+  design.
+
 ## [0.15.0] - 2026-09-10
 
 ### Added

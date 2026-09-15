@@ -3,7 +3,7 @@
 Readonly access to the local ctxc memory database (`~/.claude/ctxc.db`). Provides shell-side recall without going through the MCP server — useful in scripts, cron jobs, and agent bodies. Writes (save/update/delete) still belong to the ctxc MCP plugin.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -24,7 +24,7 @@ its ctxc setup --reset   # Re-run setup (overwrite config)
 |----------|-------------|
 | `CTXC_DB_PATH` | Optional override for the ctxc database path (defaults to ~/.claude/ctxc.db) |
 
-Install the ctxc plugin (`claude plugin install ctxc`) — it owns the database at `~/.claude/ctxc.db`. This provider only reads from it.
+Install the ctxc plugin (`claude plugin install ctxc`) — it owns the database at `~/.claude/ctxc.db`. This provider only reads from it: search, recall, get, list and stats. There is deliberately no save/update/delete — writes go through the ctxc MCP server (`ctxc_save`, `ctxc_update`), which owns validation, duplicate detection and the vault export. A second writer against the same SQLite file would bypass all three.
 
 ### Source Files
 

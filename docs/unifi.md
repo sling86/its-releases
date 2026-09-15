@@ -3,7 +3,7 @@
 UniFi Network controller — devices, clients, WLANs, networks, firewall, events, alarms, vouchers.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -41,9 +41,10 @@ its unifi setup --reset   # Re-run setup (overwrite config)
 | `UNIFI_HOST` | UniFi controller URL (e.g. `https://unifi.example.com:8443`). Also accepts `UNIFI_URL`. |
 | `UNIFI_USERNAME` | UniFi controller username |
 | `UNIFI_PASSWORD` | UniFi controller password |
-| `UNIFI_SITE` | Default site name (defaults to `default`) |
+| `UNIFI_TOTP_SECRET` | Optional base32/otpauth TOTP seed for ui.com MFA. Prefer a local service account. |
+| `UNIFI_SITE` | Default site code, ID or friendly name (defaults to `default`) |
 
-Most commands accept `--site <name>` to override the default site. Use `its unifi sites` to list available sites and their site codes.
+Site-aware commands accept a site code, object ID or friendly name via `--site`. Fleet lists also accept `--all-sites`. Use `its unifi sites` to see the mapping.
 
 ### Source Files
 
@@ -94,7 +95,8 @@ Site health — WAN/WLAN/LAN subsystem status. Live health check across the reso
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -149,7 +151,8 @@ List all UniFi devices with name, MAC, IP, type, state, uptime, clients.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--type` | `` | Filter by type | — |
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site and include the site on each row | — |
 
 **Examples:**
 
@@ -327,6 +330,10 @@ its unifi devices poe
 | `its unifi clients` | List online clients. Surfaces the most common fields; pass --json for raw shape. |
 | `its unifi clients get <mac>` | Get client detail by MAC address. Pass the id (or any natural identifier) as the positional arg. |
 | `its unifi clients search <query>` | Search all known clients by name, hostname, IP, or MAC. Substring match across the most relevant fields; case-insensitive. |
+| `its unifi clients locate [query]` | Show the current site, switch/AP and switch port for matching clients. This is network-location evidence, not attendance; --include-offline returns clearly marked last-known locations. |
+| `its unifi clients inventory` | List the controller's saved client inventory, including offline devices and last AP/switch by name. Merges rest/user with stat/alluser for hostnames. |
+| `its unifi clients set-alias <mac> [alias]` | Set or clear a saved client's alias. Writes to the controller's known-client inventory. |
+| `its unifi clients set-note <mac> [note]` | Set or clear a saved client's note. Writes to the controller's known-client inventory. |
 | `its unifi clients block <mac>` | Block a client by MAC address. Blocks a client. Reversible via `unblock`. |
 | `its unifi clients unblock <mac>` | Unblock a client by MAC address. Re-allows a previously blocked client. |
 | `its unifi clients reconnect <mac>` | Force reconnect a client. Force a client to disassociate + re-auth. |
@@ -341,7 +348,8 @@ List online clients. Surfaces the most common fields; pass --json for raw shape.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--filter` | `` | Filter by connection type | all |
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site and include the site on each row | — |
 
 **Examples:**
 
@@ -377,12 +385,90 @@ Search all known clients by name, hostname, IP, or MAC. Substring match across t
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
 ```bash
 its unifi clients search "jane"
+```
+
+#### `its unifi clients locate [query]`
+
+Show the current site, switch/AP and switch port for matching clients. This is network-location evidence, not attendance; --include-offline returns clearly marked last-known locations.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
+| `--include-offline` | `` | Include saved clients at their last-known location | — |
+
+**Examples:**
+
+```bash
+its unifi clients locate scanner --all-sites
+
+its unifi clients locate --all-sites --filter type=wired
+
+its unifi clients locate tony --all-sites --include-offline
+```
+
+#### `its unifi clients inventory`
+
+List the controller's saved client inventory, including offline devices and last AP/switch by name. Merges rest/user with stat/alluser for hostnames.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
+
+```bash
+its unifi clients inventory
+```
+
+#### `its unifi clients set-alias <mac> [alias]`
+
+Set or clear a saved client's alias. Writes to the controller's known-client inventory.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--clear` | `` | Clear the alias | — |
+| `--confirm` | `` | Confirm the write | — |
+
+**Examples:**
+
+```bash
+its unifi clients set-alias aa:bb:cc:dd:ee:ff "Warehouse scanner" --confirm
+
+its unifi clients set-alias aa:bb:cc:dd:ee:ff --clear --confirm
+```
+
+#### `its unifi clients set-note <mac> [note]`
+
+Set or clear a saved client's note. Writes to the controller's known-client inventory.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--clear` | `` | Clear the note | — |
+| `--confirm` | `` | Confirm the write | — |
+
+**Examples:**
+
+```bash
+its unifi clients set-note aa:bb:cc:dd:ee:ff "Owned by Goods In" --confirm
+
+its unifi clients set-note aa:bb:cc:dd:ee:ff --clear --confirm
 ```
 
 #### `its unifi clients block <mac>`
@@ -451,7 +537,8 @@ List recently disconnected clients. Returns recently-disconnected clients.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--hours` | `` | Look-back period in hours (default 24) | 24 |
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -531,7 +618,8 @@ List networks and VLANs. Surfaces the most common fields; pass --json for raw sh
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site and include the site on each row | — |
 
 **Examples:**
 
@@ -562,7 +650,8 @@ List WiFi SSIDs. Surfaces the most common fields; pass --json for raw shape.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site and include the site on each row | — |
 
 **Examples:**
 
@@ -640,7 +729,8 @@ List firewall rules. Surfaces the most common fields; pass --json for raw shape.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site and include the site on each row | — |
 
 **Examples:**
 
@@ -659,7 +749,8 @@ List firewall groups. List groups for a resource.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site and include the site on each row | — |
 
 **Examples:**
 
@@ -685,7 +776,8 @@ List static routes. Surfaces the most common fields; pass --json for raw shape.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site and include the site on each row | — |
 
 **Examples:**
 
@@ -715,7 +807,8 @@ List every WAN port-forward rule — your inbound attack surface. Columns: WAN p
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -767,7 +860,8 @@ List every WAN port-forward rule — your inbound attack surface. Columns: WAN p
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -818,7 +912,8 @@ List every WAN port-forward rule — your inbound attack surface. Columns: WAN p
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -857,7 +952,8 @@ List recent events. Surfaces the most common fields; pass --json for raw shape.
 |------|-------|-------------|---------|
 | `--hours` | `` | Look-back period in hours (default 24) | 24 |
 | `--limit` | `` | Maximum number of events (default 50) | 50 |
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -877,7 +973,7 @@ its unifi events --hours 1 --watch
 | Command | Description |
 |---------|-------------|
 | `its unifi alarms` | List alarms with archived status. Surfaces the most common fields; pass --json for raw shape. |
-| `its unifi alarms count` | Count active (non-archived) alarms. Returns a single number — cheap for thresholds. |
+| `its unifi alarms count` | Count active (non-archived) alarms. Returns per-site and total counts with --all-sites. |
 | `its unifi alarms archive` | Archive all alarms. Archive (soft-delete) the record. Reversible. |
 
 #### `its unifi alarms`
@@ -888,7 +984,8 @@ List alarms with archived status. Surfaces the most common fields; pass --json f
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -901,13 +998,14 @@ its unifi alarms --watch
 
 #### `its unifi alarms count`
 
-Count active (non-archived) alarms. Returns a single number — cheap for thresholds.
+Count active (non-archived) alarms. Returns per-site and total counts with --all-sites.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -951,7 +1049,8 @@ List detected rogue access points. Surfaces the most common fields; pass --json 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--hours` | `` | Look-back period in hours (default 24) | 24 |
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -983,7 +1082,8 @@ List guest WiFi vouchers. Surfaces the most common fields; pass --json for raw s
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 **Examples:**
 
@@ -1084,7 +1184,8 @@ Audit RF and firewall/VLAN posture — co-channel overlap, unisolated VLANs, ins
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site name override | — |
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Sweep every site | — |
 
 ```bash
 its unifi audit

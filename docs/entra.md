@@ -3,7 +3,7 @@
 Microsoft Entra ID (Azure AD) identity management — users, groups, licences, roles, sign-ins, security, directory, onboarding.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
+Other providers: [rmm](./rmm.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -785,7 +785,7 @@ its entra licences waste
 | Command | Description |
 |---------|-------------|
 | `its entra roles` | List activated directory roles. Surfaces the most common fields; pass --json for raw shape. |
-| `its entra roles members <role_id>` | List members of a directory role. Returns direct members; nested groups aren't expanded. |
+| `its entra roles members <role>` | List members of a directory role. Returns direct members; nested groups aren't expanded. |
 | `its entra roles assign <user_id>` | Assign a directory role to a user. Idempotent — assigning twice is a no-op. |
 | `its entra roles remove <user_id>` | Remove a directory role from a user (requires --confirm). Permanent — use --confirm. |
 | `its entra roles assignments` | List all role assignments with role names. Returns the assignment record, not the principal — pair with `users get` for the readable name. |
@@ -804,7 +804,7 @@ its entra roles
 its entra roles --watch
 ```
 
-#### `its entra roles members <role_id>`
+#### `its entra roles members <role>`
 
 List members of a directory role. Returns direct members; nested groups aren't expanded.
 
@@ -937,6 +937,7 @@ List sign-ins with risk indicators. Bounded by --since; defaults to last 24h.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--days` | `` | Look-back period in days | 7 |
+| `--since` | `` | Look-back window (e.g. 6h, 7d) — same spelling as `signin list --since` | — |
 
 **Examples:**
 
@@ -1735,6 +1736,7 @@ its entra directory app-usage
 | Command | Description |
 |---------|-------------|
 | `its entra devices` | List Entra-registered and Entra-joined devices. Wider than `its intune devices`, which only sees Intune-managed ones — filter with --filter isManaged=false to find registered-but-unenrolled devices. Needs Device.Read.All. |
+| `its entra devices search <query>` | Search Entra devices by display name. Paginates matching results instead of searching only the first list page. |
 | `its entra devices get <device>` | Get one device by directory object id, deviceId, or exact display name. Needs Device.Read.All. |
 
 #### `its entra devices`
@@ -1746,7 +1748,7 @@ List Entra-registered and Entra-joined devices. Wider than `its intune devices`,
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--search` | `` | Match on display name | — |
-| `--top` | `` | Maximum devices to return | 100 |
+| `--top` | `` | Maximum devices to return (default all) | 10000 |
 
 **Examples:**
 
@@ -1756,6 +1758,20 @@ its entra devices list
 its entra devices list --search THF-UD
 
 its entra devices list --filter isManaged=false
+```
+
+#### `its entra devices search <query>`
+
+Search Entra devices by display name. Paginates matching results instead of searching only the first list page.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--top` | `` | Maximum matches (default all) | 10000 |
+
+```bash
+its entra devices search <query>
 ```
 
 #### `its entra devices get <device>`

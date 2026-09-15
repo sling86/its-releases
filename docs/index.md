@@ -12,11 +12,11 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [global.md](./global.md) | Global commands — 23 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 78 commands across 18 resources |
-| [entra.md](./entra.md) | Entra ID — 112 commands across 23 resources |
+| [entra.md](./entra.md) | Entra ID — 113 commands across 23 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 120 commands across 25 resources |
-| [bw.md](./bw.md) | Bitwarden — 44 commands across 12 resources |
+| [bw.md](./bw.md) | Bitwarden — 65 commands across 15 resources |
 | [sp.md](./sp.md) | SharePoint — 49 commands across 11 resources |
-| [unifi.md](./unifi.md) | UniFi Network — 43 commands across 17 resources |
+| [unifi.md](./unifi.md) | UniFi Network — 47 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 64 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
 | [exo.md](./exo.md) | Exchange Online — 43 commands across 9 resources |
@@ -26,15 +26,16 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [pa.md](./pa.md) | Power Platform — 13 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
 | [hr.md](./hr.md) | PeopleHR — 14 commands across 6 resources |
+| [attendance.md](./attendance.md) | Factory attendance — 4 commands across 4 resources |
 | [bc.md](./bc.md) | Business Central — 9 commands across 7 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 6 commands across 2 resources |
-| [outlook.md](./outlook.md) | Outlook — 44 commands across 11 resources |
+| [outlook.md](./outlook.md) | Outlook — 45 commands across 11 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
-| [teams.md](./teams.md) | Teams — 4 commands across 2 resources |
+| [teams.md](./teams.md) | Teams — 5 commands across 2 resources |
 
-**22 providers** · **216 resources** · **773 commands**
+**23 providers** · **223 resources** · **805 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -76,7 +77,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [audit](./entra.md#audit) | list | `src/providers/entra/commands/audit.ts` |
 | [security](./entra.md#security) | risky, mfa, admin-mfa | `src/providers/entra/commands/security.ts` |
 | [directory](./entra.md#directory) | org, domains, deleted, tree, summary, app-usage | `src/providers/entra/commands/directory.ts` |
-| [devices](./entra.md#devices) | list, get | `src/providers/entra/commands/devices.ts` |
+| [devices](./entra.md#devices) | list, search, get | `src/providers/entra/commands/devices.ts` |
 | [onboarding](./entra.md#onboarding) | summary, copy-groups, convert-mailbox | `src/providers/entra/commands/onboarding.ts` |
 | [offboarding](./entra.md#offboarding) | summary, run | `src/providers/entra/commands/onboarding.ts` |
 | [break-glass](./entra.md#break-glass) | audit | `src/providers/entra/commands/break-glass.ts` |
@@ -121,17 +122,20 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [items](./bw.md#items) | list, search, get, attachments, attach, download, detach, totp, trash, recent, favourites, create, update, share, move, delete, restore, purge | `src/providers/bw/commands.ts` |
+| [items](./bw.md#items) | list, search, find-login, get, attachments, attach, download, detach, totp, trash, recent, favourites, create, update, share, move, delete, restore, purge, export, import | `src/providers/bw/commands.ts` |
 | [folders](./bw.md#folders) | list, get, summary, create, delete | `src/providers/bw/commands.ts` |
-| [organisations](./bw.md#organisations) | list | `src/providers/bw/commands.ts` |
-| [collections](./bw.md#collections) | list | `src/providers/bw/commands.ts` |
+| [organisations](./bw.md#organisations) | list, members, confirm | `src/providers/bw/commands.ts` |
+| [collections](./bw.md#collections) | list, create, update, delete | `src/providers/bw/commands.ts` |
 | [password](./bw.md#password) | list | `src/providers/bw/commands.ts` |
 | [profile](./bw.md#profile) | list | `src/providers/bw/commands.ts` |
 | [dashboard](./bw.md#dashboard) | list | `src/providers/bw/commands.ts` |
 | [pin](./bw.md#pin) | reset | `src/providers/bw/commands.ts` |
-| [session](./bw.md#session) | unlock, lock, list | `src/providers/bw/commands.ts` |
+| [session](./bw.md#session) | unlock, lock, list, serve | `src/providers/bw/commands.ts` |
 | [vaults](./bw.md#vaults) | list, create, delete | `src/providers/bw/commands.ts` |
 | [audit](./bw.md#audit) | list, weak, reused, exposed, duplicates, unfiled, cleanup, vault-report | `src/providers/bw/commands.ts` |
+| [generate](./bw.md#generate) | password, passphrase | `src/providers/bw/commands.ts` |
+| [sends](./bw.md#sends) | list, get, create, update, delete, remove-password, receive | `src/providers/bw/commands.ts` |
+| [compat](./bw.md#compat) | status, install, uninstall | `src/providers/bw/commands.ts` |
 | [doctor](./bw.md#doctor) | list | `src/providers/bw/commands.ts` |
 
 ### [SharePoint](./sp.md)
@@ -156,7 +160,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [sites](./unifi.md#sites) | list, health, sysinfo | `src/providers/unifi/commands/sites.ts` |
 | [devices](./unifi.md#devices) | list, get, restart, locate, upgrade, provision, power-cycle, leds, poe | `src/providers/unifi/commands/devices.ts` |
-| [clients](./unifi.md#clients) | list, get, search, block, unblock, reconnect, offline | `src/providers/unifi/commands/clients.ts` |
+| [clients](./unifi.md#clients) | list, get, search, locate, inventory, set-alias, set-note, block, unblock, reconnect, offline | `src/providers/unifi/commands/clients.ts` |
 | [guests](./unifi.md#guests) | authorise, unauthorise | `src/providers/unifi/commands/clients.ts` |
 | [networks](./unifi.md#networks) | list | `src/providers/unifi/commands/networks.ts` |
 | [wlans](./unifi.md#wlans) | list, toggle, password | `src/providers/unifi/commands/networks.ts` |
@@ -297,6 +301,15 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [starters](./hr.md#starters) | list, recent | `src/providers/hr/commands.ts` |
 | [leavers](./hr.md#leavers) | list, recent | `src/providers/hr/commands.ts` |
 
+### [Factory attendance](./attendance.md)
+
+| Resource | Actions | Source |
+|----------|---------|--------|
+| [terminals](./attendance.md#terminals) | list | `src/providers/attendance/commands.ts` |
+| [events](./attendance.md#events) | list | `src/providers/attendance/commands.ts` |
+| [summary](./attendance.md#summary) | list | `src/providers/attendance/commands.ts` |
+| [exceptions](./attendance.md#exceptions) | list | `src/providers/attendance/commands.ts` |
+
 ### [Business Central](./bc.md)
 
 | Resource | Actions | Source |
@@ -336,7 +349,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [mail](./outlook.md#mail) | list, get, headers, search, thread, move, copy, read, unread, flag, categorise, delete, send | `src/providers/outlook/commands/mail.ts` |
+| [mail](./outlook.md#mail) | list, get, headers, search, thread, move, copy, read, unread, flag, categorise, delete, draft, send | `src/providers/outlook/commands/mail.ts` |
 | [drafts](./outlook.md#drafts) | create, reply, forward, update, send, list, delete | `src/providers/outlook/commands/drafts.ts` |
 | [folders](./outlook.md#folders) | list, get, create, delete | `src/providers/outlook/commands/folders.ts` |
 | [attachments](./outlook.md#attachments) | list, get, add, delete | `src/providers/outlook/commands/attachments.ts` |
@@ -359,7 +372,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [chats](./teams.md#chats) | list, messages, send | `src/providers/teams/commands/chats.ts` |
+| [chats](./teams.md#chats) | list, messages, images, send | `src/providers/teams/commands/chats.ts` |
 | [presence](./teams.md#presence) | get | `src/providers/teams/commands/chats.ts` |
 
 ## Key Source Files
@@ -393,6 +406,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | `src/providers/pa/client.ts` | Power Platform API client |
 | `src/providers/cf/client.ts` | Cloudflare API client |
 | `src/providers/hr/client.ts` | PeopleHR API client |
+| `src/providers/attendance/client.ts` | Factory attendance API client |
 | `src/providers/bc/client.ts` | Business Central API client |
 | `src/providers/ctxc/client.ts` | ctxc memories API client |
 | `src/providers/docs/client.ts` | Docs UI API client |
@@ -539,7 +553,7 @@ its
 │   │   └── waste
 │   ├── roles
 │   │   ├── (list)
-│   │   ├── members <role_id>
+│   │   ├── members <role>
 │   │   ├── assign <user_id>
 │   │   ├── remove <user_id>
 │   │   └── assignments
@@ -598,6 +612,7 @@ its
 │   │   └── app-usage
 │   ├── devices
 │   │   ├── (list)
+│   │   ├── search <query>
 │   │   └── get <device>
 │   ├── onboarding
 │   │   ├── summary <user_id>
@@ -775,6 +790,7 @@ its
 │   ├── items
 │   │   ├── (list)
 │   │   ├── search <query>
+│   │   ├── find-login [query]
 │   │   ├── get <id>
 │   │   ├── attachments <id>
 │   │   ├── attach <id> <file>
@@ -787,18 +803,27 @@ its
 │   │   ├── create <name>
 │   │   ├── update <id>
 │   │   ├── share <id>
-│   │   ├── move <id>
+│   │   ├── move <id> [folder]
 │   │   ├── delete <id>
 │   │   ├── restore <id>
-│   │   └── purge <id>
+│   │   ├── purge <id>
+│   │   ├── export
+│   │   └── import <file>
 │   ├── folders
 │   │   ├── (list)
 │   │   ├── get <name>
 │   │   ├── summary
 │   │   ├── create <name>
 │   │   └── delete <name>
-│   ├── organisations (list)
-│   ├── collections (list)
+│   ├── organisations
+│   │   ├── (list)
+│   │   ├── members <organisation>
+│   │   └── confirm <organisation> <member>
+│   ├── collections
+│   │   ├── (list)
+│   │   ├── create <organisation> <name>
+│   │   ├── update <organisation> <collection>
+│   │   └── delete <organisation> <collection>
 │   ├── password (list) <query>
 │   ├── profile (list)
 │   ├── dashboard (list)
@@ -806,7 +831,8 @@ its
 │   ├── session
 │   │   ├── unlock
 │   │   ├── lock
-│   │   └── (list)
+│   │   ├── (list)
+│   │   └── serve
 │   ├── vaults
 │   │   ├── (list)
 │   │   ├── create <name>
@@ -820,6 +846,21 @@ its
 │   │   ├── unfiled
 │   │   ├── cleanup
 │   │   └── vault-report
+│   ├── generate
+│   │   ├── password
+│   │   └── passphrase
+│   ├── sends
+│   │   ├── (list)
+│   │   ├── get <id>
+│   │   ├── create [name]
+│   │   ├── update <id>
+│   │   ├── delete <id>
+│   │   ├── remove-password <id>
+│   │   └── receive <url>
+│   ├── compat
+│   │   ├── status
+│   │   ├── install
+│   │   └── uninstall
 │   └── doctor (list)
 ├── sp
 │   ├── sites
@@ -898,6 +939,10 @@ its
 │   │   ├── (list)
 │   │   ├── get <mac>
 │   │   ├── search <query>
+│   │   ├── locate [query]
+│   │   ├── inventory
+│   │   ├── set-alias <mac> [alias]
+│   │   ├── set-note <mac> [note]
 │   │   ├── block <mac>
 │   │   ├── unblock <mac>
 │   │   ├── reconnect <mac>
@@ -1246,6 +1291,11 @@ its
 │   └── leavers
 │       ├── (list)
 │       └── recent
+├── attendance
+│   ├── terminals (list)
+│   ├── events (list)
+│   ├── summary (list)
+│   └── exceptions (list)
 ├── bc
 │   ├── companies
 │   │   ├── (list)
@@ -1294,6 +1344,7 @@ its
 │   │   ├── flag <message_id>
 │   │   ├── categorise <message_id> <categories>
 │   │   ├── delete [message_id]
+│   │   ├── draft
 │   │   └── send
 │   ├── drafts
 │   │   ├── create
@@ -1341,6 +1392,7 @@ its
     ├── chats
     │   ├── (list)
     │   ├── messages <chat_id>
+    │   ├── images <chat_id>
     │   └── send <chat_id>
     └── presence get
 ```
@@ -1386,6 +1438,7 @@ src/
 │   ├── session.ts
 │   ├── shell-dry-run.ts
 │   ├── time.ts
+│   ├── totp.ts
 │   ├── trusted-certs.ts
 │   ├── types.ts
 │   └── updates.ts
@@ -1431,6 +1484,12 @@ src/
 │   ├── topic-renderer.ts
 │   └── ws-bridge.ts
 ├── providers/
+│   ├── attendance/
+│   │   ├── client.ts
+│   │   ├── commands.ts
+│   │   ├── definition.ts
+│   │   ├── types.ts
+│   │   └── zkteco.ts
 │   ├── az/
 │   │   ├── commands/
 │   │   │   ├── account.ts
@@ -1454,11 +1513,19 @@ src/
 │   ├── bw/
 │   │   ├── audit.ts
 │   │   ├── client.ts
+│   │   ├── commands-tools.ts
 │   │   ├── commands.ts
+│   │   ├── compat-ops.ts
+│   │   ├── compat.ts
 │   │   ├── crypto.ts
 │   │   ├── definition.ts
 │   │   ├── doctor.ts
-│   │   └── types.ts
+│   │   ├── export.ts
+│   │   ├── generate.ts
+│   │   ├── serve.ts
+│   │   ├── ssh.ts
+│   │   ├── types.ts
+│   │   └── wordlist.ts
 │   ├── cf/
 │   │   ├── commands/
 │   │   │   ├── accounts.ts

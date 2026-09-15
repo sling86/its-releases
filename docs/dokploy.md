@@ -3,7 +3,7 @@
 Dokploy self-hosted PaaS management — projects, apps, databases, deployments, domains, registries, notifications.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -154,15 +154,15 @@ its dokploy projects delete <project-id> --confirm
 | `its dokploy apps get <applicationId>` | Get full detail for an application — source config, mounts, env keys, replicas, last deploy, and live container image |
 | `its dokploy apps create` | Scaffold an empty application inside a project. Wire it to a source (git, docker, dockerfile) afterwards via `dokploy apps set-source`. |
 | `its dokploy apps delete <applicationId>` | Permanently delete an application — container, build artefacts, env. Destructive — needs --confirm. The project remains. |
-| `its dokploy apps deploy <app>` | Trigger deployment, optionally wait for healthy and show logs |
+| `its dokploy apps deploy <app>` | Pull the configured source, build it and deploy. Use after a git push; waits for the new deployment with --wait. Do not trigger this while an auto-deploy webhook is still queued. |
 | `its dokploy apps stop <applicationId>` | Stop the running container without deleting it. Restart via `dokploy apps start`. |
 | `its dokploy apps start <applicationId>` | Start a previously stopped container. Idempotent — no-op if already running. |
 | `its dokploy apps restart <applicationId>` | Stop + start in one call. Doesn't rebuild — use `dokploy apps deploy` if the image needs to change. |
 | `its dokploy apps set-source <app>` | Wire an application to a source provider. --type github links a GitHub App repo; --type docker pins to a registry image. |
 | `its dokploy apps set-build <app>` | Set build type for an application (dockerfile, nixpacks, heroku_buildpacks, paketo_buildpacks, static, railpack). Dockerfile path/context configurable. |
-| `its dokploy apps rebuild <app>` | Force a fresh build from source (clones, builds image, deploys). Distinct from `redeploy` (re-uses last image) and `deploy` which is the alias for this. Internally maps to application.deploy — `application.rebuild` returns 404. |
+| `its dokploy apps rebuild <app>` | Rebuild and deploy Dokploy's last-pulled source. This maps to application.deploy and does NOT fetch a newer commit; after a git push use `apps deploy`/`apps redeploy` instead. |
 | `its dokploy apps wait-deploy <app>` | Poll an application's deployments until the latest (or --since <id>) transitions from running to done/error. Exit code reflects the final state: 0 on done, 1 on error or timeout. Suitable for GitHub Actions. See ctxc 238. |
-| `its dokploy apps redeploy <applicationId>` | Redeploy an application without rebuilding. Redeploys the existing container; doesn't rebuild from source. |
+| `its dokploy apps redeploy <applicationId>` | Pull the configured source, build it and deploy. This is the legacy direct form of `apps deploy`; use it when a webhook has not appeared after a few minutes. |
 | `its dokploy apps logs <app>` | Show container logs for an application via Dokploy API (no SSH). Pass --follow to stream live (SSH-based) or --build to read the docker build log (the build log is the only place where 'image build failed' errors are visible). |
 | `its dokploy apps monitoring <app>` | Resource-usage snapshot for a running app — CPU%, memory MB, disk, network rx/tx, block I/O. Empty arrays mean Dokploy hasn't sampled the container yet (first sample takes ~1 min). |
 | `its dokploy apps traefik <app>` | Show the Traefik routing config (router + service + middlewares) Dokploy generated for the application. Useful for debugging 404/SSL/redirect issues at the proxy layer. |
@@ -253,7 +253,7 @@ its dokploy apps delete <app-id> --confirm
 
 #### `its dokploy apps deploy <app>`
 
-Trigger deployment, optionally wait for healthy and show logs.
+Pull the configured source, build it and deploy. Use after a git push; waits for the new deployment with --wait. Do not trigger this while an auto-deploy webhook is still queued.
 
 **Flags:**
 
@@ -375,12 +375,12 @@ its dokploy apps set-build <app-id> --type dockerfile --dockerfile "./Dockerfile
 
 #### `its dokploy apps rebuild <app>`
 
-Force a fresh build from source (clones, builds image, deploys). Distinct from `redeploy` (re-uses last image) and `deploy` which is the alias for this. Internally maps to application.deploy — `application.rebuild` returns 404.
+Rebuild and deploy Dokploy's last-pulled source. This maps to application.deploy and does NOT fetch a newer commit; after a git push use `apps deploy`/`apps redeploy` instead.
 
 **Examples:**
 
 ```bash
-# Clones and builds a fresh image — slower than `redeploy`, which reuses the existing one
+# Rebuilds Dokploy's last-pulled source; it does not fetch a newer commit
 its dokploy apps rebuild storefront
 
 # Distinct from deploy — clones, builds image, deploys
@@ -411,12 +411,12 @@ its dokploy apps wait-deploy <app-id> --timeout 600
 
 #### `its dokploy apps redeploy <applicationId>`
 
-Redeploy an application without rebuilding. Redeploys the existing container; doesn't rebuild from source.
+Pull the configured source, build it and deploy. This is the legacy direct form of `apps deploy`; use it when a webhook has not appeared after a few minutes.
 
 **Examples:**
 
 ```bash
-# Restarts the existing container — no rebuild from source
+# Pulls the configured source, builds it and deploys (legacy name; same upstream action as `apps deploy`)
 its dokploy apps redeploy aB3xY7pL
 
 its dokploy apps redeploy <app-id>

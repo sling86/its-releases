@@ -3,7 +3,7 @@
 Tactical RMM endpoint management — agents, live terminal, alerts, software, services, updates, scripts, checks, tasks, policies.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
+Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -90,6 +90,7 @@ List all RMM agents with status, hostname, OS, site. Surfaces the most common fi
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
+| `--search` | `` | Match hostname, agent ID, client, site, user, serial or IP | — |
 | `--status` | `-s` | Filter by status | — |
 | `--type` | `-t` | Filter by type | — |
 | `--client` | `-c` | Filter by client name | — |
@@ -1248,6 +1249,10 @@ Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/wi
 | `--script` | `` | script: script ID | — |
 | `--timeout` | `` | script: timeout seconds (default 120) | — |
 | `--args` | `` | script: arguments (comma-separated) | — |
+| `--email-alert` | `` | Send an email when this check fails | — |
+| `--text-alert` | `` | Send an SMS when this check fails | — |
+| `--dashboard-alert` | `` | Raise a dashboard alert when this check fails | — |
+| `--alert-template` | `` | Alert template ID to attach | — |
 
 **Examples:**
 
@@ -1282,6 +1287,10 @@ Retune an existing check without delete+recreate — change interval, severity, 
 | `--warning` | `` | Warning threshold % (diskspace/cpuload/memory) | — |
 | `--timeout` | `` | Script check: timeout seconds | — |
 | `--args` | `` | Script check: comma-separated script args (replaces existing) | — |
+| `--email-alert` | `` | Send an email when this check fails | — |
+| `--text-alert` | `` | Send an SMS when this check fails | — |
+| `--dashboard-alert` | `` | Raise a dashboard alert when this check fails | — |
+| `--alert-template` | `` | Alert template ID to attach | — |
 
 **Examples:**
 
@@ -1506,6 +1515,10 @@ Add a check to a policy (applies to every agent under it). --type: diskspace/cpu
 | `--pass-if-missing` | `` | winsvc: pass when service absent | — |
 | `--script` | `` | script: Script ID | — |
 | `--timeout` | `` | script: timeout seconds (default 90) | — |
+| `--email-alert` | `` | Send an email when this check fails | — |
+| `--text-alert` | `` | Send an SMS when this check fails | — |
+| `--dashboard-alert` | `` | Raise a dashboard alert when this check fails | — |
+| `--alert-template` | `` | Alert template ID to attach | — |
 
 **Examples:**
 

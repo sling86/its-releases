@@ -3,7 +3,7 @@
 Usage, options, and output modes for the `its` CLI. For provider-specific commands, see the provider docs.
 
 [Index](./index.md) · [README](../README.md)
-Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
+Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
 
 ## Contents
 
@@ -43,11 +43,11 @@ its <provider> <resource> [action] [args] [--flags]
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 78 commands, 18 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 112 commands, 23 resources | [entra.md](./entra.md) |
+| Entra ID | `entra` | 113 commands, 23 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 120 commands, 25 resources | [dokploy.md](./dokploy.md) |
-| Bitwarden | `bw` | 44 commands, 12 resources | [bw.md](./bw.md) |
+| Bitwarden | `bw` | 65 commands, 15 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 49 commands, 11 resources | [sp.md](./sp.md) |
-| UniFi Network | `unifi` | 43 commands, 17 resources | [unifi.md](./unifi.md) |
+| UniFi Network | `unifi` | 47 commands, 17 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 64 commands, 17 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
 | Exchange Online | `exo` | 43 commands, 9 resources | [exo.md](./exo.md) |
@@ -57,13 +57,14 @@ its <provider> <resource> [action] [args] [--flags]
 | Power Platform | `pa` | 13 commands, 4 resources | [pa.md](./pa.md) |
 | Cloudflare | `cf` | 16 commands, 5 resources | [cf.md](./cf.md) |
 | PeopleHR | `hr` | 14 commands, 6 resources | [hr.md](./hr.md) |
+| Factory attendance | `attendance` | 4 commands, 4 resources | [attendance.md](./attendance.md) |
 | Business Central | `bc` | 9 commands, 7 resources | [bc.md](./bc.md) |
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
 | GitHub | `gh` | 6 commands, 2 resources | [gh.md](./gh.md) |
-| Outlook | `outlook` | 44 commands, 11 resources | [outlook.md](./outlook.md) |
+| Outlook | `outlook` | 45 commands, 11 resources | [outlook.md](./outlook.md) |
 | Microsoft 365 Health | `m365` | 3 commands, 2 resources | [m365.md](./m365.md) |
-| Teams | `teams` | 4 commands, 2 resources | [teams.md](./teams.md) |
+| Teams | `teams` | 5 commands, 2 resources | [teams.md](./teams.md) |
 
 ## Global Options
 
