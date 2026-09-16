@@ -15,6 +15,53 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.17.0] - 2026-09-16
+
+### Added
+
+- **auth: `its auth login` says which slot and account it is signing in for.**
+  A profile is only a filename — `--profile admin` never constrained which
+  account signed in, and a browser already signed in elsewhere turns the
+  account picker into a one-click confirm. That is how the admin slot came to
+  hold an ordinary user account with nothing complaining: every admin command
+  kept working through app-only fallback, so the downgrade was invisible. Login
+  now names the slot, who uses it and which account it held before, and warns
+  afterwards if the slot changed hands, naming both accounts and the command to
+  put it back.
+
+### Fixed
+
+- **auth: a rotated refresh token no longer deletes the live session.**
+- **auth: delegated refreshes are sent under the app that owns the token.** AAD
+  binds a refresh token to the app that obtained it, always `CLIENT_ID`, but
+  providers passed their own registration (`SP_CLIENT_ID`, `OUTLOOK_CLIENT_ID`
+  and three more). AAD answered `AADSTS70000: Provided grant is invalid or
+  malformed`, so every attempt failed, fell back to app-only and logged a
+  warning — SharePoint had never used delegated auth at all. Resolved once
+  inside `getDelegatedToken` rather than at a sixth call site.
+- **auth: `its auth status --profile <name>` reads the slot it was asked
+  about.** It accepted the flag and ignored it, reporting the unnamed slot's
+  state under a name it had never read — answering "signed in" for a slot that
+  did not exist.
+- **outlook: mail stays on app-only until `CLIENT_ID` carries a delegated Mail
+  scope.** A regression from the refresh fix above: making the delegated
+  attempt succeed switched the request prefix to `/me`, where `CLIENT_ID` has
+  no delegated Mail permission, and Graph answered `ErrorAccessDenied`. The
+  delegated branch is now gated behind `OUTLOOK_DELEGATED`, default off, with
+  the condition to flip it written at the branch. Worth stating: the
+  `outlook -> me` entry in `auth-map.json` does nothing today — mail is read as
+  the application. Consenting Mail.Read and Mail.Send as *delegated*
+  permissions on `CLIENT_ID` and setting `OUTLOOK_DELEGATED=1` is what makes
+  that mapping real.
+- **doctor: no delegated warning for Business Central.** It probed a swap to
+  `api.businesscentral.dynamics.com` and warned when it failed, but
+  `bc/client.ts` never calls `getDelegatedToken` — it goes straight to
+  app-only, because an admin identity is usually not provisioned as a BC user.
+  The row reported a failure for a path no provider takes, reading as a consent
+  gap that is not one; granting consent to silence it would have changed
+  production identity config for no functional gain. Reports `skip` with the
+  reason instead. Power Apps keeps its warning, which is honest.
+
 ## [0.16.0] - 2026-09-15
 
 ### Added
