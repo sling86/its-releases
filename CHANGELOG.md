@@ -15,6 +15,19 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.18.0] - 2026-09-17
+
+### Added
+
+- **exo: scope one mailbox into or out of an existing outbound forwarding policy.** `its exo forwarding allow-mailbox|remove-mailbox <mailbox> <policy> --confirm` preserves the rule's other senders, refuses policies that do not explicitly allow forwarding, and gives the exception a managed rollback path. `forwarding check` now shows the policy rules and their sender scope instead of only the policy mode.
+- **exo: inspect and remove mailbox inbox rules.** `its exo mailboxes inbox-rules <mailbox>` surfaces forwarding, redirect and delete actions. `remove-inbox-rule <mailbox> <rule> --confirm` requires an exact unambiguous match and verifies that the rule is gone.
+
+### Fixed
+
+- **`--dry-run` no longer executes Exchange Online mutations it failed to recognise.** The dry-run gate decided whether a PowerShell script changes anything by looking for a literal `Verb-Noun` cmdlet, which three ordinary shapes carry straight past: a .NET method (`$m.Delete()`), a cmdlet name built from strings (`& ($verb + $noun)`), and a command held in a variable (`$cmd = Get-Command -Verb Set; & $cmd`). Each was read as a harmless read and run for real. Measured over 26 scripts shaped from the cmdlets the provider actually issues, the scan missed 3 of 12 real mutations. Set the optional `TYPESAFE_API_KEY` and a second look now catches them — it only ever adds an interception, never clears one, it is asked only under `--dry-run` and only when the scan found nothing, and a missing key, a timeout or an API error all resolve to treating the script as a mutation. Without a key, behaviour is unchanged.
+- **`its docs search` answers questions asked in words rather than command names.** Every query token had to appear somewhere in a command's text or the command scored zero, so a search phrased as a sentence usually returned nothing at all — over a 55-query set of plain-English requests, 51 came back empty. Tokens now contribute independently, common words are dropped and plurals reach their singular; covering more of the query outranks matching one word strongly. Exact `provider resource action` queries still put their own command first.
+- **Personal and company data no longer ships.** Three surfaces leave this repo — the compiled binary, the docs published to the releases repo, and the skill published to the plugin repo — and all three carried identifying data. Doc comments in the Wrike provider named six real employees, two alongside their employment status and activity dates; each is rewritten as the shape of what was observed, keeping the whole lesson and none of the person. The RMM setup wizard shipped one organisation's infrastructure as defaults — `TACTICAL_URL` pre-filled with its API host and a `settingsUrl` that opened its dashboard in a stranger's browser — so both are gone and the operator supplies their own host, as they already do for every other provider. Real client and site names, an internal mail domain, a named cardholder, a live app-registration id and two internal hostnames are replaced with reserved-domain and obviously-fake equivalents. `tests/no-shipped-identifiers.test.ts` walks those surfaces and fails if any of it returns.
+
 ## [0.17.0] - 2026-09-16
 
 ### Added
@@ -2053,7 +2066,7 @@ The Entra directory is the only trustworthy boundary.
   use and single-organisation internal use. Redistribution,
   reverse-engineering, and hosting as a service now require explicit
   permission. See [`LICENSE`](./LICENSE).
-- **README rewritten** to drop the THF-Holdings-specific framing — the CLI
+- **README rewritten** to drop the single-organisation framing — the CLI
   is portable across any organisation. Reframed as closed-source with
   prebuilt binaries published to `sling86/its-releases`. Quick start now
   shows the binary install (one-line curl / `ItsSetup.exe`) rather than

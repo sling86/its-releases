@@ -415,7 +415,7 @@ its bw items create "Router" --username admin --password "s3cret"
 # Text + hidden custom fields. Multiple via comma: --field a=1,b=2
 its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
 
-its bw items create "Company Amex" --type card --cardholder "A Payer" --card-number 4111111111111111 --card-exp 09/2028 --card-code 1234
+its bw items create "Company Card" --type card --cardholder "A Payer" --card-number 4111111111111111 --card-exp 09/2028 --card-code 123
 
 # Public key and fingerprint are derived from the private key
 its bw items create "deploy@prod" --type ssh-key --private-key-file ~/.ssh/id_ed25519

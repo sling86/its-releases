@@ -19,7 +19,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [unifi.md](./unifi.md) | UniFi Network — 47 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 64 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
-| [exo.md](./exo.md) | Exchange Online — 43 commands across 9 resources |
+| [exo.md](./exo.md) | Exchange Online — 47 commands across 9 resources |
 | [intune.md](./intune.md) | Intune — 47 commands across 17 resources |
 | [protect.md](./protect.md) | UniFi Protect — 9 commands across 5 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
@@ -35,7 +35,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 5 commands across 2 resources |
 
-**23 providers** · **223 resources** · **805 commands**
+**23 providers** · **223 resources** · **809 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -219,14 +219,14 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [groups](./exo.md#groups) | list, get, members, create, delete, add-member, remove-member | `src/providers/exo/commands/groups.ts` |
-| [mailboxes](./exo.md#mailboxes) | list, get, stats, create, permissions, add-permission, remove-permission, forwarding, user-access, set-forwarding, set-type, set-visibility, delete | `src/providers/exo/commands/mailboxes.ts` |
+| [mailboxes](./exo.md#mailboxes) | list, get, stats, create, permissions, add-permission, remove-permission, forwarding, inbox-rules, remove-inbox-rule, user-access, set-forwarding, set-type, set-visibility, delete | `src/providers/exo/commands/mailboxes.ts` |
 | [rules](./exo.md#rules) | list, get, audit, disable, enable | `src/providers/exo/commands/rules.ts` |
 | [domains](./exo.md#domains) | list | `src/providers/exo/commands/domains.ts` |
 | [dkim](./exo.md#dkim) | list, get, rotate, enable, disable | `src/providers/exo/commands/dkim.ts` |
 | [trace](./exo.md#trace) | list, detail, historical, historical-status | `src/providers/exo/commands/trace.ts` |
 | [autoreply](./exo.md#autoreply) | get, enable, disable | `src/providers/exo/commands/autoreply.ts` |
 | [recipients](./exo.md#recipients) | search, send-as, add-send-as, remove-send-as | `src/providers/exo/commands/recipients.ts` |
-| [forwarding](./exo.md#forwarding) | check | `src/providers/exo/commands/forwarding.ts` |
+| [forwarding](./exo.md#forwarding) | check, allow-mailbox, remove-mailbox | `src/providers/exo/commands/forwarding.ts` |
 
 ### [Intune](./intune.md)
 
@@ -1102,6 +1102,8 @@ its
 │   │   ├── add-permission <mailbox> <user>
 │   │   ├── remove-permission <mailbox> <user>
 │   │   ├── forwarding <mailbox>
+│   │   ├── inbox-rules <mailbox>
+│   │   ├── remove-inbox-rule <mailbox> <rule>
 │   │   ├── user-access <user>
 │   │   ├── set-forwarding <mailbox> <target>
 │   │   ├── set-type <mailbox> <type>
@@ -1134,7 +1136,10 @@ its
 │   │   ├── send-as <identity>
 │   │   ├── add-send-as <identity> <trustee>
 │   │   └── remove-send-as <identity> <trustee>
-│   └── forwarding check [upn]
+│   └── forwarding
+│       ├── check [upn]
+│       ├── allow-mailbox <mailbox> <policy>
+│       └── remove-mailbox <mailbox> <policy>
 ├── intune
 │   ├── devices
 │   │   ├── (list)
@@ -1441,6 +1446,7 @@ src/
 │   ├── totp.ts
 │   ├── trusted-certs.ts
 │   ├── types.ts
+│   ├── typesafe.ts
 │   └── updates.ts
 ├── global/
 │   └── handlers.ts

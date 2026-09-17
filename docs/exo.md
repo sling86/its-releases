@@ -183,6 +183,8 @@ its exo groups remove-member "All Staff" jane.smith@example.com
 | `its exo mailboxes add-permission <mailbox> <user>` | Grant mailbox access to a user. Grant a new permission. Idempotent. |
 | `its exo mailboxes remove-permission <mailbox> <user>` | Remove mailbox access from a user. Revoke a permission. --confirm required. |
 | `its exo mailboxes forwarding <mailbox>` | Show forwarding configuration for a mailbox. Audit pass — find mailboxes with forwarding configured. |
+| `its exo mailboxes inbox-rules <mailbox>` | List server-side inbox rules for one mailbox, including forwarding, redirect and delete actions. |
+| `its exo mailboxes remove-inbox-rule <mailbox> <rule>` | Delete one exact server-side inbox rule from a mailbox. Refuses ambiguous names and verifies removal. --confirm required. |
 | `its exo mailboxes user-access <user>` | List all shared mailboxes a user has FullAccess to (scans all 400+ shared mailboxes, may take up to 5 minutes) |
 | `its exo mailboxes set-forwarding <mailbox> <target>` | Configure mailbox forwarding. Set a mailbox forward. --confirm required. |
 | `its exo mailboxes set-type <mailbox> <type>` | Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared. |
@@ -296,6 +298,30 @@ Show forwarding configuration for a mailbox. Audit pass — find mailboxes with 
 
 ```bash
 its exo mailboxes forwarding jane.smith@example.com
+```
+
+#### `its exo mailboxes inbox-rules <mailbox>`
+
+List server-side inbox rules for one mailbox, including forwarding, redirect and delete actions.
+
+```bash
+its exo mailboxes inbox-rules <mailbox>
+```
+
+#### `its exo mailboxes remove-inbox-rule <mailbox> <rule>`
+
+Delete one exact server-side inbox rule from a mailbox. Refuses ambiguous names and verifies removal. --confirm required.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm permanent deletion of the inbox rule | — |
+
+**Examples:**
+
+```bash
+its exo mailboxes remove-inbox-rule accounts@example.com "Forward invoices" --confirm
 ```
 
 #### `its exo mailboxes user-access <user>`
@@ -767,6 +793,8 @@ its exo recipients remove-send-as shared@example.com jane.smith@example.com
 | Command | Description |
 |---------|-------------|
 | `its exo forwarding check [upn]` | Audit auto-forwarding posture — transport rules + outbound spam policies (+ optional mailbox) |
+| `its exo forwarding allow-mailbox <mailbox> <policy>` | Add one mailbox to an existing outbound spam policy rule's direct sender scope. Reversible with `forwarding remove-mailbox`; --confirm required. |
+| `its exo forwarding remove-mailbox <mailbox> <policy>` | Remove one mailbox from an outbound spam policy rule's direct sender scope. --confirm required. |
 
 #### `its exo forwarding check [upn]`
 
@@ -777,6 +805,38 @@ Audit auto-forwarding posture — transport rules + outbound spam policies (+ op
 ```bash
 # Every mailbox with external forwarding configured
 its exo forwarding check
+```
+
+#### `its exo forwarding allow-mailbox <mailbox> <policy>`
+
+Add one mailbox to an existing outbound spam policy rule's direct sender scope. Reversible with `forwarding remove-mailbox`; --confirm required.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm allowing external auto-forwarding | — |
+
+**Examples:**
+
+```bash
+its exo forwarding allow-mailbox accounts@example.com "Allow Accountancy Forwarding" --confirm
+```
+
+#### `its exo forwarding remove-mailbox <mailbox> <policy>`
+
+Remove one mailbox from an outbound spam policy rule's direct sender scope. --confirm required.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm removing the forwarding exception | — |
+
+**Examples:**
+
+```bash
+its exo forwarding remove-mailbox accounts@example.com "Allow Accountancy Forwarding" --confirm
 ```
 
 ---

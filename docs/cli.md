@@ -50,7 +50,7 @@ its <provider> <resource> [action] [args] [--flags]
 | UniFi Network | `unifi` | 47 commands, 17 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 64 commands, 17 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
-| Exchange Online | `exo` | 43 commands, 9 resources | [exo.md](./exo.md) |
+| Exchange Online | `exo` | 47 commands, 9 resources | [exo.md](./exo.md) |
 | Intune | `intune` | 47 commands, 17 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 9 commands, 5 resources | [protect.md](./protect.md) |
 | Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |

@@ -457,6 +457,6 @@ Re-runs a command on a loop and highlights what changed between runs. `--interva
 
 ```bash
 its watch rmm agents --status online --interval 10
-its watch entra users --filter company=candle
+its watch entra users --filter company=acme
 its watch unifi clients
 ```
