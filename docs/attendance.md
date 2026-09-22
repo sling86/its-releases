@@ -12,6 +12,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [events](#events)
 - [summary](#summary)
 - [exceptions](#exceptions)
+- [headcount](#headcount)
 
 ## Setup
 
@@ -41,6 +42,7 @@ Only ZKTeco terminals accepting communication key 0 are supported. Collection fa
 | `src/providers/attendance/types.ts` | TypeScript interfaces |
 | `src/providers/attendance/commands.ts` | Command definitions |
 | `src/providers/attendance/definition.ts` | definition |
+| `src/providers/attendance/headcount.ts` | headcount |
 | `src/providers/attendance/zkteco.ts` | zkteco |
 
 ## Resources
@@ -162,6 +164,42 @@ Report single/odd-punch person-days and punches whose terminal user record has b
 its attendance exceptions --since -7d
 
 its attendance exceptions --type single-punch-day --since -30d
+```
+
+---
+
+### headcount
+
+> Source: `src/providers/attendance/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its attendance headcount` | Count how many people from each department were on site per day, against what that department typically runs. Aggregate only — no names, employee IDs or device user IDs are ever returned. `typical` is the median of complete days in the window; `onBooks` is the contracted roster and is an upper bound, not a shift plan, because holiday, sickness and authorised absence are not deducted. |
+
+#### `its attendance headcount`
+
+Count how many people from each department were on site per day, against what that department typically runs. Aggregate only — no names, employee IDs or device user IDs are ever returned. `typical` is the median of complete days in the window; `onBooks` is the contracted roster and is an upper bound, not a shift plan, because holiday, sickness and authorised absence are not deducted.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--since` | `` | Start of the local Europe/London window; default -7d, maximum 30 days | -7d |
+| `--until` | `` | End of the local Europe/London window; default now | — |
+| `--terminal` | `` | Restrict collection to one configured terminal name or host | — |
+| `--peoplehr` | `` | Join only reviewed PeopleHR TimeAndAttendanceId mappings; never guesses by name or EmployeeId | — |
+| `--refresh` | `` | Ignore the short-lived private cache and perform a fresh, count-checked transfer | — |
+| `--department` | `` | Only count this department (substring match, case-insensitive) | — |
+| `--min-group` | `` | Departments with fewer contracted staff than this are folded into one combined row so a count cannot identify anybody (default 5) | — |
+| `--all-departments` | `` | Also list departments nobody clocks for (office staff), which otherwise show a permanent, meaningless shortfall | — |
+| `--with-absence` | `` | Also fetch booked holiday, sickness and authorised absence from PeopleHR, giving expectedIn and unaccounted. SLOW: PeopleHR denies bulk absence reads to this key, so it costs up to 3 calls per person who missed a day, at 30 requests a minute. Narrow with --department and a short --since. | — |
+
+**Examples:**
+
+```bash
+its attendance headcount --since -7d
+
+its attendance headcount --since -7d --department Packing
 ```
 
 ---

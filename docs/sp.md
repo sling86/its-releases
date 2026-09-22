@@ -213,7 +213,8 @@ Get file or folder details. Pass the id (or any natural identifier) as the posit
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
+| `--item` | `` | Item ID, or a path inside the drive (e.g. "/Archive/CC&D office (ex THF)/report.pdf") | — |
+| `--path` | `` | Path inside the drive — the same as passing a path to --item, spelled explicitly | — |
 
 **Examples:**
 

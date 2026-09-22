@@ -11,6 +11,10 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [drift](#drift)
 - [absences](#absences)
 - [org](#org)
+- [timesheets](#timesheets)
+- [lates](#lates)
+- [holidays](#holidays)
+- [otherleave](#otherleave)
 - [employees](#employees)
 - [starters](#starters)
 - [leavers](#leavers)
@@ -39,8 +43,10 @@ its hr setup --reset   # Re-run setup (overwrite config)
 | `src/providers/hr/absence.ts` | absence |
 | `src/providers/hr/definition.ts` | definition |
 | `src/providers/hr/drift.ts` | drift |
+| `src/providers/hr/leave.ts` | leave |
 | `src/providers/hr/org.ts` | org |
 | `src/providers/hr/resolve.ts` | resolve |
+| `src/providers/hr/timesheet.ts` | timesheet |
 
 ## Resources
 
@@ -175,6 +181,106 @@ List employees with no manager set — the top of the tree, plus anyone PeopleHR
 
 ```bash
 its hr org leadership
+```
+
+---
+
+### timesheets
+
+> Source: `src/providers/hr/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its hr timesheets get <employee>` | Get one employee's PeopleHR timesheet rows — up to three TimeIn/TimeOut pairs per day. Read-only. Unlike raw terminal punches these carry an explicit in/out direction. Dates use YYYY-MM-DD; default range is the last 30 days. |
+
+#### `its hr timesheets get <employee>`
+
+Get one employee's PeopleHR timesheet rows — up to three TimeIn/TimeOut pairs per day. Read-only. Unlike raw terminal punches these carry an explicit in/out direction. Dates use YYYY-MM-DD; default range is the last 30 days.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--from` | `` | Start date (YYYY-MM-DD); defaults to 30 days ago | — |
+| `--to` | `` | End date (YYYY-MM-DD); defaults to today | — |
+
+```bash
+its hr timesheets get <employee>
+```
+
+---
+
+### lates
+
+> Source: `src/providers/hr/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its hr lates get <employee>` | Get one employee's recorded lateness events. Read-only — these are what a manager has logged in PeopleHR, not something inferred from clocking data. |
+
+#### `its hr lates get <employee>`
+
+Get one employee's recorded lateness events. Read-only — these are what a manager has logged in PeopleHR, not something inferred from clocking data.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--from` | `` | Start date (YYYY-MM-DD); defaults to 30 days ago | — |
+| `--to` | `` | End date (YYYY-MM-DD); defaults to today | — |
+
+```bash
+its hr lates get <employee>
+```
+
+---
+
+### holidays
+
+> Source: `src/providers/hr/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its hr holidays get <employee>` | Get one employee's booked holiday. Read-only. Cancelled, declined and rejected requests are not counted as time off. |
+
+#### `its hr holidays get <employee>`
+
+Get one employee's booked holiday. Read-only. Cancelled, declined and rejected requests are not counted as time off.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--from` | `` | Start date (YYYY-MM-DD); defaults to 30 days ago | — |
+| `--to` | `` | End date (YYYY-MM-DD); defaults to today | — |
+
+```bash
+its hr holidays get <employee>
+```
+
+---
+
+### otherleave
+
+> Source: `src/providers/hr/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its hr otherleave get <employee>` | Get one employee's non-sickness authorised absence — unpaid leave, parental, compassionate, birthday leave. Read-only. The reason is a leave-type picklist, but it can still be somebody's bereavement; treat it as personal data. |
+
+#### `its hr otherleave get <employee>`
+
+Get one employee's non-sickness authorised absence — unpaid leave, parental, compassionate, birthday leave. Read-only. The reason is a leave-type picklist, but it can still be somebody's bereavement; treat it as personal data.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--from` | `` | Start date (YYYY-MM-DD); defaults to 30 days ago | — |
+| `--to` | `` | End date (YYYY-MM-DD); defaults to today | — |
+
+```bash
+its hr otherleave get <employee>
 ```
 
 ---

@@ -15,6 +15,19 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.19.0] - 2026-09-22
+
+### Added
+
+- **attendance: department headcount without personal data.** `its attendance headcount [--since -7d] [--department packing] [--with-absence]` answers how many factory staff were on site and how many should have been, returning no name, employee ID or device user ID — names resolve a department in memory and are then discarded. Columns are `onSite`, `typical` (median of complete days, so a half-finished day cannot drag the baseline down), `vsTypical`, `shopFloor`, `clockingRoster` and `onBooks`, plus `expectedIn`, `unaccounted`, `onHoliday`, `offSick` and `otherLeave` under `--with-absence`. Disclosure control is built in: departments with fewer contracted staff than `--min-group` (default 5) fold into one combined row so no cell can be read back to an individual, and departments with no shop-floor staff are hidden unless `--all-departments` is passed rather than showing a permanent and meaningless shortfall against their roster.
+- **Shop floor is identified by the shape of the EmployeeId.** Staff on the floor carry a bare number, salaried staff a company prefix. Measured over thirty days of punches, all 171 people who clocked have a numeric ID and none of the 77 prefixed-ID staff clocked at all. This beats inferring the split from who happens to clock, because it still counts somebody who was off sick for the whole window and it does not change the answer when the window changes. Nothing else on the 50-field employee record separates the two: `EmploymentType` is a contract type, `Location` is one site for 212 of 260 people, and `Company` is a legal entity that spans both. It is a local payroll convention rather than a documented rule, so it lives behind `isShopFloorEmployeeId()` alone. `employedOn()` drops anyone whose start date has not arrived or whose leaving date has passed, so a starter due tomorrow is never reported as a no-show today.
+- **hr: read PeopleHR timesheets, holiday, other leave and lateness.** `its hr timesheets get <employee>` returns up to three `TimeIn`/`TimeOut` pairs per day — the explicit direction the ZKTeco terminals cannot supply, because the wire protocol's `inOutState` is undefined on every record. `its hr holidays get`, `its hr otherleave get` and `its hr lates get` cover booked annual leave, authorised non-sickness absence and logged lateness. All four are read-only; the write actions on those surfaces are deliberately not wired up. Cancelled, declined and rejected leave requests are not counted as time off, while a pending one is, because the person still is not expected at work.
+
+### Fixed
+
+- **The vendor's OpenAPI path labels are display strings, not routes.** Lateness is reached as category `Late`; `Employee` returns `Invalid Action (Status 4)` and `EmployeeLate` returns an HTML 404 rather than JSON. These endpoints also reject ISO dates, so input is taken as `YYYY-MM-DD` and converted to `DD/MM/YYYY` at the boundary, matching the existing Absence resource.
+- **Absence lookups no longer fan out across the whole organisation.** PeopleHR denies bulk absence reads to this tenant key, so `--with-absence` costs up to three calls per person at thirty requests a minute. A punch is proof of attendance, so `absenceCandidates()` asks only about shop-floor staff who actually missed a day, which also stops office staff's leave being pulled for a factory report at all. Leave is then counted only across shop-floor staff, so an office worker's holiday cannot move a factory number and the subtraction producing `expectedIn` stays arithmetically coherent.
+
 ## [0.18.0] - 2026-09-17
 
 ### Added

@@ -19,6 +19,7 @@ Commands invoked as `its <command>`, with no provider. Every one of them accepts
 | [`its inventory`](#its-inventory) | Cross-reference devices across RMM, Intune and UniFi to find the gaps |
 | [`its log`](#its-log) | Append a timestamped entry to today's vault daily note |
 | [`its onboard`](#its-onboard) | New-starter readiness snapshot — read-only, creates nothing |
+| [`its plan`](#its-plan) | Build a bounded TypeSafe plan from a natural-language IT request |
 | [`its resume`](#its-resume) | List open ctxc backlog and resume-prompt memories, grouped by project |
 | [`its secrets`](#its-secrets) | Manage credentials in the OS keychain |
 | [`its setup`](#its-setup) | Interactive setup wizard — configure the CLI or one provider |
@@ -267,6 +268,26 @@ Read-only prep check for a new starter. Pulls the PeopleHR record (name, role, d
 its onboard preview jane.smith@example.com
 ```
 
+## its plan
+
+Build a bounded TypeSafe plan from a natural-language IT request.
+
+**Changes state**
+
+```bash
+its plan "<request>"
+its plan --execute <plan-id> [--confirm]
+```
+
+Uses the existing provider command catalogue plus a bounded TypeSafe System One judgement to choose one provider, resource and action. Literal values stay local and are represented to Jev as C1/C2 aliases. The first call never executes; it saves a short-lived plan. A second call with the exact plan id executes it. Mutations require --confirm and are refused unless the CommandDef has deterministic fresh-read verification metadata.
+
+**Examples**
+
+```bash
+its plan "disable jane.smith@example.com and revoke sessions" --json
+its plan --execute 12345678-1234-4123-8123-123456789abc --confirm --json
+```
+
 ## its resume
 
 List open ctxc backlog and resume-prompt memories, grouped by project.
@@ -294,10 +315,11 @@ Manage credentials in the OS keychain.
 its secrets [list]
 its secrets migrate
 its secrets clear
+its secrets doctor
 its secrets audit-repos
 ```
 
-Secrets live in the OS-native credential store (Windows Credential Locker, macOS Keychain, Linux libsecret) and override any `.env` value. `list` shows which entries exist — never their values. `migrate` moves secrets out of `~/.its/.env` into the keychain. `clear` removes every entry. `audit-repos` scans local repositories for committed credentials.
+Secrets live in the OS-native credential store (Windows Credential Locker, macOS Keychain, Linux libsecret) and override any `.env` value. `list` shows which entries exist — never their values. `migrate` moves secrets out of `~/.its/.env` into the keychain. `clear` removes every entry. `doctor` is a read-only health check — it never writes, so it is safe on a box where the keyring itself is the problem. `audit-repos` scans local repositories for committed credentials.
 
 **Examples**
 

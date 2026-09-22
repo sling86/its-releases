@@ -10,7 +10,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [global.md](./global.md) | Global commands — 23 commands that take no provider |
+| [global.md](./global.md) | Global commands — 24 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 78 commands across 18 resources |
 | [entra.md](./entra.md) | Entra ID — 113 commands across 23 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 120 commands across 25 resources |
@@ -19,14 +19,14 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [unifi.md](./unifi.md) | UniFi Network — 47 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 64 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
-| [exo.md](./exo.md) | Exchange Online — 47 commands across 9 resources |
+| [exo.md](./exo.md) | Exchange Online — 53 commands across 10 resources |
 | [intune.md](./intune.md) | Intune — 47 commands across 17 resources |
 | [protect.md](./protect.md) | UniFi Protect — 9 commands across 5 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
 | [pa.md](./pa.md) | Power Platform — 13 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
-| [hr.md](./hr.md) | PeopleHR — 14 commands across 6 resources |
-| [attendance.md](./attendance.md) | Factory attendance — 4 commands across 4 resources |
+| [hr.md](./hr.md) | PeopleHR — 18 commands across 10 resources |
+| [attendance.md](./attendance.md) | Factory attendance — 5 commands across 5 resources |
 | [bc.md](./bc.md) | Business Central — 9 commands across 7 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
@@ -35,7 +35,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 5 commands across 2 resources |
 
-**23 providers** · **223 resources** · **809 commands**
+**23 providers** · **229 resources** · **820 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -227,6 +227,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [autoreply](./exo.md#autoreply) | get, enable, disable | `src/providers/exo/commands/autoreply.ts` |
 | [recipients](./exo.md#recipients) | search, send-as, add-send-as, remove-send-as | `src/providers/exo/commands/recipients.ts` |
 | [forwarding](./exo.md#forwarding) | check, allow-mailbox, remove-mailbox | `src/providers/exo/commands/forwarding.ts` |
+| [rooms](./exo.md#rooms) | list, processing, calendar-permissions, events, set-calendar-permission, diagnose | `src/providers/exo/commands/rooms.ts` |
 
 ### [Intune](./intune.md)
 
@@ -297,6 +298,10 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [drift](./hr.md#drift) | detect | `src/providers/hr/commands.ts` |
 | [absences](./hr.md#absences) | get, summary, team | `src/providers/hr/commands.ts` |
 | [org](./hr.md#org) | chain, reports, leadership | `src/providers/hr/commands.ts` |
+| [timesheets](./hr.md#timesheets) | get | `src/providers/hr/commands.ts` |
+| [lates](./hr.md#lates) | get | `src/providers/hr/commands.ts` |
+| [holidays](./hr.md#holidays) | get | `src/providers/hr/commands.ts` |
+| [otherleave](./hr.md#otherleave) | get | `src/providers/hr/commands.ts` |
 | [employees](./hr.md#employees) | list, search, get | `src/providers/hr/commands.ts` |
 | [starters](./hr.md#starters) | list, recent | `src/providers/hr/commands.ts` |
 | [leavers](./hr.md#leavers) | list, recent | `src/providers/hr/commands.ts` |
@@ -309,6 +314,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [events](./attendance.md#events) | list | `src/providers/attendance/commands.ts` |
 | [summary](./attendance.md#summary) | list | `src/providers/attendance/commands.ts` |
 | [exceptions](./attendance.md#exceptions) | list | `src/providers/attendance/commands.ts` |
+| [headcount](./attendance.md#headcount) | list | `src/providers/attendance/commands.ts` |
 
 ### [Business Central](./bc.md)
 
@@ -1136,10 +1142,17 @@ its
 │   │   ├── send-as <identity>
 │   │   ├── add-send-as <identity> <trustee>
 │   │   └── remove-send-as <identity> <trustee>
-│   └── forwarding
-│       ├── check [upn]
-│       ├── allow-mailbox <mailbox> <policy>
-│       └── remove-mailbox <mailbox> <policy>
+│   ├── forwarding
+│   │   ├── check [upn]
+│   │   ├── allow-mailbox <mailbox> <policy>
+│   │   └── remove-mailbox <mailbox> <policy>
+│   └── rooms
+│       ├── (list)
+│       ├── processing <room>
+│       ├── calendar-permissions <room>
+│       ├── events <room>
+│       ├── set-calendar-permission <room> <user>
+│       └── diagnose <room>
 ├── intune
 │   ├── devices
 │   │   ├── (list)
@@ -1286,6 +1299,10 @@ its
 │   │   ├── chain <employee>
 │   │   ├── reports <employee>
 │   │   └── leadership
+│   ├── timesheets get <employee>
+│   ├── lates get <employee>
+│   ├── holidays get <employee>
+│   ├── otherleave get <employee>
 │   ├── employees
 │   │   ├── (list)
 │   │   ├── search <query>
@@ -1300,7 +1317,8 @@ its
 │   ├── terminals (list)
 │   ├── events (list)
 │   ├── summary (list)
-│   └── exceptions (list)
+│   ├── exceptions (list)
+│   └── headcount (list)
 ├── bc
 │   ├── companies
 │   │   ├── (list)
@@ -1437,6 +1455,7 @@ src/
 │   ├── long-args.ts
 │   ├── output.ts
 │   ├── pipeline.ts
+│   ├── planner.ts
 │   ├── secret-sink.ts
 │   ├── secrets-audit.ts
 │   ├── secrets.ts
@@ -1494,6 +1513,7 @@ src/
 │   │   ├── client.ts
 │   │   ├── commands.ts
 │   │   ├── definition.ts
+│   │   ├── headcount.ts
 │   │   ├── types.ts
 │   │   └── zkteco.ts
 │   ├── az/
@@ -1627,11 +1647,13 @@ src/
 │   │   │   ├── index.ts
 │   │   │   ├── mailboxes.ts
 │   │   │   ├── recipients.ts
+│   │   │   ├── rooms.ts
 │   │   │   ├── rules.ts
 │   │   │   └── trace.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── resolve.ts
+│   │   ├── rooms-assess.ts
 │   │   └── types.ts
 │   ├── gh/
 │   │   ├── commands/
@@ -1644,8 +1666,10 @@ src/
 │   │   ├── commands.ts
 │   │   ├── definition.ts
 │   │   ├── drift.ts
+│   │   ├── leave.ts
 │   │   ├── org.ts
 │   │   ├── resolve.ts
+│   │   ├── timesheet.ts
 │   │   └── types.ts
 │   ├── intune/
 │   │   ├── commands/

@@ -575,7 +575,7 @@ Add a user to a group. Refuses dynamic-membership groups (ctxc 41) — Graph acc
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--user` | `` | User ID to add | — |
+| `--user` | `` | User ID or UPN to add | — |
 | `--force` | `` | Override the dynamic-group guard AND the leaver / disabled / namesake guard | — |
 | `--skip-leaver-check` | `` | Skip just the leaver/disabled/namesake guard (still enforces the dynamic-group guard) | — |
 
@@ -597,7 +597,7 @@ Remove a user from a group (requires --confirm). Refuses dynamic-membership grou
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--user` | `` | User ID to remove | — |
+| `--user` | `` | User ID or UPN to remove | — |
 | `--confirm` | `` | Confirm the removal | — |
 | `--force` | `` | Override the dynamic-group guard | — |
 
