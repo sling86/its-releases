@@ -24,6 +24,10 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [appconfig](#appconfig)
 - [appprotection](#appprotection)
 - [doctor](#doctor)
+- [audit](#audit)
+- [android](#android)
+- [app-configs](#app-configs)
+- [enrolment](#enrolment)
 - [graph](#graph)
 
 ## Setup
@@ -75,6 +79,9 @@ Intune reuses the same Graph API credentials as the Entra provider — no additi
 | `its intune devices noncompliant` | List devices failing compliance. Returns devices failing compliance checks. |
 | `its intune devices recovery-keys [device]` | List escrowed BitLocker recovery keys — metadata only, never key material. Pass a device to see just its keys; omit it for the tenant-wide escrow list. Reading a key's value needs the delegated-only BitlockerKey.Read.All, which this app-only provider does not hold: use the Entra portal or Company Portal for the key itself. |
 | `its intune devices rotate-bitlocker <device>` | Rotate a device's BitLocker recovery key (requires --confirm). The device rotates at its next check-in and escrows the new key; anyone holding the printed or copied old key loses access at that point. Needs DeviceManagementManagedDevices.PrivilegedOperations.All. |
+| `its intune devices wipe <device>` | Factory-reset a device. Everything on it is erased and it has to be re-enrolled — cannot be undone. Takes an EXACT device name, serial or id (never a user or partial name), and --confirm must repeat the device name. Without it, shows the target and does nothing. |
+| `its intune devices retire <device>` | Retire a device: company data, apps and management removed, personal data left. The device leaves Intune and must re-enrol to come back. EXACT device name, serial or id only, and --confirm must repeat the device name. |
+| `its intune devices rename <device> <new_name>` | Rename a managed device (Intune setDeviceName). Exact device name, serial or id only. Windows names are checked (1-15 chars, letters/digits/hyphens); the new name lands at the device's next check-in and needs a restart on Windows. |
 
 #### `its intune devices`
 
@@ -198,6 +205,55 @@ its intune devices rotate-bitlocker THF-UD-MP27XZ31
 its intune devices rotate-bitlocker THF-UD-MP27XZ31 --confirm
 ```
 
+#### `its intune devices wipe <device>`
+
+Factory-reset a device. Everything on it is erased and it has to be re-enrolled — cannot be undone. Takes an EXACT device name, serial or id (never a user or partial name), and --confirm must repeat the device name. Without it, shows the target and does nothing.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | The device's name, repeated, to carry out the wipe | — |
+| `--keep-user-data` | `` | Windows: reset but keep user files | — |
+| `--keep-enrollment` | `` | Keep enrolment state and Entra account | — |
+| `--protected` | `` | Windows: protected wipe — cannot be bypassed by a power cycle, but can leave the device unbootable if interrupted | — |
+
+**Examples:**
+
+```bash
+its intune devices wipe THF-UD-MP27XZ31
+
+its intune devices wipe THF-UD-MP27XZ31 --confirm "THF-UD-MP27XZ31"
+```
+
+#### `its intune devices retire <device>`
+
+Retire a device: company data, apps and management removed, personal data left. The device leaves Intune and must re-enrol to come back. EXACT device name, serial or id only, and --confirm must repeat the device name.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | The device's name, repeated, to carry out the retire | — |
+
+**Examples:**
+
+```bash
+its intune devices retire LEAVER-IPHONE
+
+its intune devices retire LEAVER-IPHONE --confirm "LEAVER-IPHONE"
+```
+
+#### `its intune devices rename <device> <new_name>`
+
+Rename a managed device (Intune setDeviceName). Exact device name, serial or id only. Windows names are checked (1-15 chars, letters/digits/hyphens); the new name lands at the device's next check-in and needs a restart on Windows.
+
+**Examples:**
+
+```bash
+its intune devices rename DESKTOP-8H2K1 CCD-LAP-042
+```
+
 ---
 
 ### compliance
@@ -239,6 +295,7 @@ its intune compliance why LAPTOP-042 --all
 | `its intune apps` | List managed apps. Surfaces the most common fields; pass --json for raw shape. |
 | `its intune apps get <id>` | Get app details and assignments. Pass the id (or any natural identifier) as the positional arg. |
 | `its intune apps required` | List apps with required assignments (blocks ESP). Returns apps required by Intune policy. |
+| `its intune apps assign <app>` | Add ONE group assignment to an Intune app (--intent required|available|uninstall, --exclude for an exclusion). Additive: existing assignments are kept. Refuses a group the app already targets. |
 
 #### `its intune apps`
 
@@ -280,6 +337,24 @@ List apps with required assignments (blocks ESP). Returns apps required by Intun
 ```bash
 # Assignments with intent=required
 its intune apps required
+```
+
+#### `its intune apps assign <app>`
+
+Add ONE group assignment to an Intune app (--intent required|available|uninstall, --exclude for an exclusion). Additive: existing assignments are kept. Refuses a group the app already targets.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--group` | `` | Group id or exact name | — |
+| `--intent` | `` | Assignment intent | — |
+| `--exclude` | `` | Exclude the group instead | — |
+
+**Examples:**
+
+```bash
+its intune apps assign "Company Portal" --group "All Shop Tablets" --intent required
 ```
 
 ---
@@ -527,6 +602,8 @@ its intune esp update <profile-id> --timeout 120
 | `its intune autopilot devices` | List Autopilot-registered devices. Returns devices for the resource. |
 | `its intune autopilot sync` | Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one. |
 | `its intune autopilot tag <serial> [tag]` | Set group tag on an Autopilot device. Set or clear a tag value. |
+| `its intune autopilot import` | Register devices with Autopilot from a hardware-hash CSV (Get-WindowsAutopilotInfo -OutputFile). --group-tag sets or overrides the tag. Waits for Autopilot to accept or reject each one (up to --wait seconds, default 180) and reports per device. |
+| `its intune autopilot deregister <serial>` | Remove a device's Autopilot registration by EXACT serial number (e.g. before selling or returning it). --confirm must repeat the serial. Intune refuses while the device is still enrolled — retire/delete it first. |
 
 #### `its intune autopilot`
 
@@ -596,6 +673,41 @@ its intune autopilot tag ABC1234 "Finance-Laptops"
 its intune autopilot tag ABC1234 --clear
 
 its intune autopilot tag <serial> "Office-Standard"
+```
+
+#### `its intune autopilot import`
+
+Register devices with Autopilot from a hardware-hash CSV (Get-WindowsAutopilotInfo -OutputFile). --group-tag sets or overrides the tag. Waits for Autopilot to accept or reject each one (up to --wait seconds, default 180) and reports per device.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--csv` | `` | The hardware-hash CSV | — |
+| `--group-tag` | `` | Group tag for every device (overrides the CSV column) | — |
+| `--wait` | `` | Seconds to wait for the import to settle (0 = don't wait) | — |
+
+**Examples:**
+
+```bash
+# The CSV from Get-WindowsAutopilotInfo -OutputFile
+its intune autopilot import --csv AutopilotHWID.csv --group-tag Office
+```
+
+#### `its intune autopilot deregister <serial>`
+
+Remove a device's Autopilot registration by EXACT serial number (e.g. before selling or returning it). --confirm must repeat the serial. Intune refuses while the device is still enrolled — retire/delete it first.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Repeat the serial number to proceed | — |
+
+**Examples:**
+
+```bash
+its intune autopilot deregister 5CG1234XYZ --confirm 5CG1234XYZ
 ```
 
 ---
@@ -899,6 +1011,170 @@ its intune doctor
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its intune doctor --watch
+```
+
+---
+
+### audit
+
+> Source: `src/providers/intune/commands/audit.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its intune audit` | Intune audit events — who did what, to which device, when. Covers wipes, retires, BitLocker key rotations, primary-user changes, policy and app edits. Newest first. BitLocker key READS are in the Entra directory audit, not here. |
+
+#### `its intune audit`
+
+Intune audit events — who did what, to which device, when. Covers wipes, retires, BitLocker key rotations, primary-user changes, policy and app edits. Newest first. BitLocker key READS are in the Entra directory audit, not here.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--since` | `` | How far back — 24h, 7d, 30d, or a date (default 7d) | — |
+| `--actor` | `` | Match the person or app that did it | — |
+| `--activity` | `` | Match the activity (e.g. wipe, bitlocker, delete) | — |
+| `--category` | `` | Match the category (e.g. Device, Compliance, Application) | — |
+| `--device` | `` | Match the affected resource's name or id | — |
+
+**Examples:**
+
+```bash
+its intune audit
+
+its intune audit --since 30d --activity wipe
+
+its intune audit --since 14d --actor jane.smith@example.com
+```
+
+---
+
+### android
+
+> Source: `src/providers/intune/commands/manage.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its intune android` | Android Enterprise enrolment profiles (fully managed / dedicated / COPE) with token expiry and enrolled-device count. |
+| `its intune android qr <profile>` | Save an Android Enterprise enrolment profile's QR code as a PNG (--out). The QR carries the enrolment token — anyone holding it can enrol a device, so treat the file like a password. --renew-days N mints a fresh token first (needed when it has expired). |
+
+#### `its intune android`
+
+Android Enterprise enrolment profiles (fully managed / dedicated / COPE) with token expiry and enrolled-device count.
+
+```bash
+its intune android
+```
+
+#### `its intune android qr <profile>`
+
+Save an Android Enterprise enrolment profile's QR code as a PNG (--out). The QR carries the enrolment token — anyone holding it can enrol a device, so treat the file like a password. --renew-days N mints a fresh token first (needed when it has expired).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--out` | `` | PNG file to write (default <profile>.png) | — |
+| `--renew-days` | `` | Mint a new token valid this many days (1-90) first | — |
+
+**Examples:**
+
+```bash
+its intune android qr "Shop Floor Tablets" --out qr.png
+
+its intune android qr "Shop Floor Tablets" --renew-days 90 --out qr.png
+```
+
+---
+
+### app-configs
+
+> Source: `src/providers/intune/commands/manage.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its intune app-configs` | Managed-device app configuration policies (e.g. Android managed Google Play app config). |
+| `its intune app-configs create` | Create an app configuration policy from a JSON body (--file) — the Graph mobileAppConfiguration shape, which differs per platform, so it is passed through as-is. Needs @odata.type, displayName and targetedMobileApps. |
+| `its intune app-configs assign <config_id>` | Add ONE group to an app configuration policy (--exclude to exclude it). Additive — existing assignments are kept. |
+
+#### `its intune app-configs`
+
+Managed-device app configuration policies (e.g. Android managed Google Play app config).
+
+```bash
+its intune app-configs
+```
+
+#### `its intune app-configs create`
+
+Create an app configuration policy from a JSON body (--file) — the Graph mobileAppConfiguration shape, which differs per platform, so it is passed through as-is. Needs @odata.type, displayName and targetedMobileApps.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--file` | `` | JSON body | — |
+
+**Examples:**
+
+```bash
+# Tip: copy an existing one with `its intune graph get /deviceAppManagement/mobileAppConfigurations/<id> --beta --json`, drop the id, edit
+its intune app-configs create --file chrome-kiosk.json
+```
+
+#### `its intune app-configs assign <config_id>`
+
+Add ONE group to an app configuration policy (--exclude to exclude it). Additive — existing assignments are kept.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--group` | `` | Group id or exact name | — |
+| `--exclude` | `` | Exclude the group instead | — |
+
+**Examples:**
+
+```bash
+its intune app-configs assign 3f5944e1-9e4a-4b02-9929-ca0bb290fdb4 --group "Facilities Tablets"
+```
+
+---
+
+### enrolment
+
+> Source: `src/providers/intune/commands/manage.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its intune enrolment restrictions` | Device enrolment restrictions per platform: whether the platform is blocked, personal devices blocked, and OS version limits. |
+| `its intune enrolment set-restriction <config>` | Change one platform's enrolment restriction: --block-platform true|false, --block-personal true|false. Previews before→after without --confirm. If it 403s while you are signed in, your role lacks it — add --auth app. |
+
+#### `its intune enrolment restrictions`
+
+Device enrolment restrictions per platform: whether the platform is blocked, personal devices blocked, and OS version limits.
+
+```bash
+its intune enrolment restrictions
+```
+
+#### `its intune enrolment set-restriction <config>`
+
+Change one platform's enrolment restriction: --block-platform true|false, --block-personal true|false. Previews before→after without --confirm. If it 403s while you are signed in, your role lacks it — add --auth app.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--platform` | `` | Platform | — |
+| `--block-platform` | `` | Block the whole platform | — |
+| `--block-personal` | `` | Block personally-owned devices | — |
+| `--confirm` | `` | Apply the change | — |
+
+**Examples:**
+
+```bash
+its intune enrolment set-restriction "All users and all devices" --platform androidForWork --block-personal true --confirm
 ```
 
 ---

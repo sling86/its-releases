@@ -334,6 +334,7 @@ its unifi devices poe
 | `its unifi clients inventory` | List the controller's saved client inventory, including offline devices and last AP/switch by name. Merges rest/user with stat/alluser for hostnames. |
 | `its unifi clients set-alias <mac> [alias]` | Set or clear a saved client's alias. Writes to the controller's known-client inventory. |
 | `its unifi clients set-note <mac> [note]` | Set or clear a saved client's note. Writes to the controller's known-client inventory. |
+| `its unifi clients set-fixed-ip <mac> [ip]` | Give a known client a fixed IP (a DHCP reservation), or --clear it. The network is the one whose subnet holds the IP; refuses an IP another client already has reserved. Reads it back. The client picks it up at its next DHCP renewal (reconnect it to hurry). |
 | `its unifi clients block <mac>` | Block a client by MAC address. Blocks a client. Reversible via `unblock`. |
 | `its unifi clients unblock <mac>` | Unblock a client by MAC address. Re-allows a previously blocked client. |
 | `its unifi clients reconnect <mac>` | Force reconnect a client. Force a client to disassociate + re-auth. |
@@ -469,6 +470,26 @@ Set or clear a saved client's note. Writes to the controller's known-client inve
 its unifi clients set-note aa:bb:cc:dd:ee:ff "Owned by Goods In" --confirm
 
 its unifi clients set-note aa:bb:cc:dd:ee:ff --clear --confirm
+```
+
+#### `its unifi clients set-fixed-ip <mac> [ip]`
+
+Give a known client a fixed IP (a DHCP reservation), or --clear it. The network is the one whose subnet holds the IP; refuses an IP another client already has reserved. Reads it back. The client picks it up at its next DHCP renewal (reconnect it to hurry).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--clear` | `` | Remove the fixed IP | — |
+| `--confirm` | `` | Confirm the write | — |
+
+**Examples:**
+
+```bash
+its unifi clients set-fixed-ip aa:bb:cc:dd:ee:ff 10.1.20.50 --site Head Office --confirm
+
+its unifi clients set-fixed-ip aa:bb:cc:dd:ee:ff --clear --confirm
 ```
 
 #### `its unifi clients block <mac>`

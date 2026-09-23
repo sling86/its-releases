@@ -50,6 +50,7 @@ its outlook setup --reset   # Re-run setup (overwrite config)
 | `src/providers/outlook/commands/` | Command definitions (split by resource) |
 | `src/providers/outlook/definition.ts` | definition |
 | `src/providers/outlook/helpers.ts` | helpers |
+| `src/providers/outlook/quote.ts` | quote |
 
 ## Resources
 
@@ -61,6 +62,7 @@ its outlook setup --reset   # Re-run setup (overwrite config)
 |---------|-------------|
 | `its outlook mail` | List messages from the mailbox. Defaults to Inbox (top 25 by receivedDateTime desc). Use --folder for a specific folder, --filter for OData expressions, --search to switch to keyword search. |
 | `its outlook mail get <message_id>` | Get a single message including body, recipients, and flags. |
+| `its outlook mail export <message_id>` | Save a message as a .eml file — the full raw MIME with headers, body, inline images and attachments intact (Graph /$value). Opens in Outlook or Thunderbird, and can be attached to another message. |
 | `its outlook mail headers <message_id>` | Show a message's internet headers + parsed antispam verdict (SCL/SFV/CAT/BCL + spf/dkim/dmarc/compauth). The 'why did this land in Junk' tool. Add --all for every raw header. |
 | `its outlook mail search <query>` | Keyword search across the mailbox using Graph $search (KQL syntax). |
 | `its outlook mail thread <conversation_id>` | List every message in the same conversation (entire thread). |
@@ -122,6 +124,25 @@ Get a single message including body, recipients, and flags.
 its outlook mail get <message_id>
 ```
 
+#### `its outlook mail export <message_id>`
+
+Save a message as a .eml file — the full raw MIME with headers, body, inline images and attachments intact (Graph /$value). Opens in Outlook or Thunderbird, and can be attached to another message.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--out` | `` | File to write (default <message_id>.eml) | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook mail export <message_id> --out invoice-thread.eml
+
+its outlook mail export <message_id> --user leaver@example.com --out msg.eml
+```
+
 #### `its outlook mail headers <message_id>`
 
 Show a message's internet headers + parsed antispam verdict (SCL/SFV/CAT/BCL + spf/dkim/dmarc/compauth). The 'why did this land in Junk' tool. Add --all for every raw header.
@@ -145,13 +166,15 @@ Keyword search across the mailbox using Graph $search (KQL syntax).
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--top` | `` | Max results (max 50) | 25 |
+| `--top` | `` | Max results (0 = every match, up to 2000) | 25 |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
 
 ```bash
 its outlook mail search "subject:invoice"
+
+its outlook mail search "participants:acme.com" --top 0
 
 its outlook mail search "from:boss@example.com"
 
@@ -166,7 +189,7 @@ List every message in the same conversation (entire thread).
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--top` | `` | Max messages (max 50) | 50 |
+| `--top` | `` | Max messages (0 = the whole thread) | 0 |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 ```bash
@@ -364,7 +387,7 @@ its outlook mail send --to user@example.com --subject "Welcome" --html --body-fi
 | `its outlook drafts create` | Create a draft email (does not send). |
 | `its outlook drafts reply <message_id>` | Create a reply draft. By default replies to the sender only; use --all to Reply-All. Does not send — use `drafts send <id>` after edits. |
 | `its outlook drafts forward <message_id>` | Create a forward draft. |
-| `its outlook drafts update <draft_id>` | Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories. |
+| `its outlook drafts update <draft_id>` | Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories. --body REPLACES the whole body; add --keep-quote on a reply/forward draft to replace only your part above the quoted thread. |
 | `its outlook drafts send <draft_id>` | Send an existing draft. |
 | `its outlook drafts` | List draft messages (convenience for `mail list --folder drafts`). |
 | `its outlook drafts delete <id>` | Delete a draft by message id. Refuses anything that is not a draft, so a mistyped id cannot delete a sent or received message through this command. Permanent — use --confirm. |
@@ -440,7 +463,7 @@ its outlook drafts forward AAMkAGI1AAAt0M0AAA= --to jane.smith@example.com --com
 
 #### `its outlook drafts update <draft_id>`
 
-Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories.
+Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories. --body REPLACES the whole body; add --keep-quote on a reply/forward draft to replace only your part above the quoted thread.
 
 **Flags:**
 
@@ -455,6 +478,7 @@ Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories.
 | `--bcc` | `` | Replace BCC recipients | — |
 | `--importance` | `` | low|normal|high | — |
 | `--categories` | `` | Replace categories (comma-separated) | — |
+| `--keep-quote` | `` | With --body: replace only what is ABOVE the quoted thread of a reply/forward draft, keeping the quote intact | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 | `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
@@ -462,6 +486,8 @@ Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories.
 
 ```bash
 its outlook drafts update AAMkAGDraft01 --subject "Revised: laptop ready" --user jane.smith@example.com
+
+its outlook drafts update AAMkAGDraft01 --body-file reply.html --html --keep-quote
 ```
 
 #### `its outlook drafts send <draft_id>`
@@ -601,6 +627,7 @@ its outlook folders delete "IT Archive" --user jane.smith@example.com --confirm
 | Command | Description |
 |---------|-------------|
 | `its outlook attachments <message_id>` | List attachments on a message. |
+| `its outlook attachments extract <message_id> [attachment_id]` | Readable TEXT out of an attachment — DOCX, XLSX (tab-separated per sheet), PPTX (per slide), PDF (needs pdftotext), HTML, CSV/plain text. --all does every readable attachment on the message, skipping inline images. Nothing is written to disk. |
 | `its outlook attachments get <message_id> [attachment_id]` | Get a single attachment (includes contentBytes for fileAttachment). Pass --save-all <dir> to dump every attachment on the message instead of one. |
 | `its outlook attachments add <message_id>` | Attach a file to a draft message. Pass --file <path> to read from disk, or --content-bytes (base64) directly. |
 | `its outlook attachments delete <message_id> [attachment_id]` | Delete attachment(s) from a message. Single: pass <message_id> <attachment_id>. Bulk: pass <message_id> and pipe `attachments list --json` to stdin with --stdin. |
@@ -617,6 +644,25 @@ List attachments on a message.
 
 ```bash
 its outlook attachments <message_id>
+```
+
+#### `its outlook attachments extract <message_id> [attachment_id]`
+
+Readable TEXT out of an attachment — DOCX, XLSX (tab-separated per sheet), PPTX (per slide), PDF (needs pdftotext), HTML, CSV/plain text. --all does every readable attachment on the message, skipping inline images. Nothing is written to disk.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--all` | `` | Every readable attachment on the message | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook attachments extract <message_id> <attachment_id>
+
+its outlook attachments extract <message_id> --all
 ```
 
 #### `its outlook attachments get <message_id> [attachment_id]`
@@ -935,6 +981,9 @@ its outlook autoreply set --status scheduled --start 2026-05-25T09:00:00 --end 2
 | Command | Description |
 |---------|-------------|
 | `its outlook categories` | List master categories (named colour labels available for `mail categorise`). |
+| `its outlook categories create <name>` | Add a master category. The name is fixed once created — Graph cannot rename one. |
+| `its outlook categories recolour <category>` | Change a master category's colour. Match by name or id. |
+| `its outlook categories delete <category>` | Remove a master category. Messages keep the label text but it loses its colour. --confirm required. |
 
 #### `its outlook categories`
 
@@ -948,6 +997,58 @@ List master categories (named colour labels available for `mail categorise`).
 
 ```bash
 its outlook categories
+```
+
+#### `its outlook categories create <name>`
+
+Add a master category. The name is fixed once created — Graph cannot rename one.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--colour` | `-color` | Colour name (red, blue, darkgreen…), presetN, or none | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook categories create "Waiting on supplier" --colour blue
+```
+
+#### `its outlook categories recolour <category>`
+
+Change a master category's colour. Match by name or id.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--colour` | `-color` | Colour name (red, blue, darkgreen…), presetN, or none | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook categories recolour "Waiting on supplier" --colour red
+```
+
+#### `its outlook categories delete <category>`
+
+Remove a master category. Messages keep the label text but it loses its colour. --confirm required.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm the delete | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+# Without --confirm it only shows what would be deleted
+its outlook categories delete "Waiting on supplier" --confirm
 ```
 
 ---

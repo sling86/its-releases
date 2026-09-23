@@ -72,6 +72,8 @@ its entra setup --reset   # Re-run setup (overwrite config)
 |---------|-------------|
 | `its entra users` | List users from the Entra ID directory. Defaults to first 50 — use --all to page through every user, --filter for OData expressions, or --domain for a quick UPN-suffix match. |
 | `its entra users update <id>` | Update user properties. Use named flags for common fields, --set k=v,k=v for any other Graph user property. |
+| `its entra users photo <user>` | Download a user's profile photo (JPEG/PNG) to --out, default <user>.jpg. Says so plainly when no photo is set. |
+| `its entra users set-photo <user>` | Upload a user's profile photo from a JPEG or PNG file (max 4 MB). Replaces any existing photo; reads it back to confirm. |
 | `its entra users search <query>` | Fuzzy substring search across displayName, mail, UPN, jobTitle, department. Server-side startsWith for fast filtering — best for partial-name lookups. |
 | `its entra users get <id>` | Full user profile — display fields, manager, sign-in state, employee metadata, on-prem sync flag, business phones, additional mail aliases. |
 | `its entra users groups <id>` | All groups the user is a direct member of — security, M365, distribution, mail-enabled. Doesn't expand transitive (parent-of-parent) membership; use `users transitive-groups` for that. |
@@ -162,6 +164,38 @@ its entra users update jane.smith@example.com --department "Marketing"
 its entra users update jane.smith@example.com --manager boss@example.com
 
 its entra users update jane.smith@example.com --set "officeLocation=London,jobTitle=Lead"
+```
+
+#### `its entra users photo <user>`
+
+Download a user's profile photo (JPEG/PNG) to --out, default <user>.jpg. Says so plainly when no photo is set.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--out` | `` | File to write | — |
+
+**Examples:**
+
+```bash
+its entra users photo jane.smith@example.com --out jane.jpg
+```
+
+#### `its entra users set-photo <user>`
+
+Upload a user's profile photo from a JPEG or PNG file (max 4 MB). Replaces any existing photo; reads it back to confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--file` | `` | JPEG or PNG to upload | — |
+
+**Examples:**
+
+```bash
+its entra users set-photo jane.smith@example.com --file jane.jpg
 ```
 
 #### `its entra users search <query>`
@@ -479,6 +513,7 @@ its entra users reinstate jane.smith@example.com --from-audit-minutes 120 --conf
 | `its entra groups add-member <group_id>` | Add a user to a group. Refuses dynamic-membership groups (ctxc 41) — Graph accepts the call but the dynamic engine immediately overrides. Also refuses if the candidate is disabled / a leaver / has an active namesake (lesson 326 — Adam picked the wrong Steve/Colette/Nick). Pass --force to override either guard. |
 | `its entra groups remove-member <group_id>` | Remove a user from a group (requires --confirm). Refuses dynamic-membership groups (ctxc 41); pass --force to override. |
 | `its entra groups edit-rule <group_id>` | Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants a user who doesn't match the rule); --remove-upn strips one; --set-rule replaces the whole rule. add/remove never drop existing members. --confirm required; without it, prints the current→new diff (ctxc 1052). |
+| `its entra groups make-dynamic <group_id>` | Convert a static (assigned) group to dynamic membership. Once the rule runs, Entra REMOVES every current member the rule does not match — so without --confirm this only previews. --paused converts with evaluation held (membershipRuleProcessingState=Paused); resume later with --resume. Keeps Unified (M365) type. |
 | `its entra groups audit-rules [group_id]` | Scan dynamic groups' membershipRules for dead user exceptions — hardcoded userPrincipalName/objectId/mail clauses whose account no longer exists (missing) or is disabled (a leaver still pinned). Pass a group ID to scan one; default scans all dynamic groups. --all also lists the OK refs. |
 
 #### `its entra groups`
@@ -630,6 +665,29 @@ Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants
 its entra groups edit-rule 8f1c2d3e-... --add-upn jane.smith@example.com --confirm
 
 its entra groups edit-rule 8f1c2d3e-... --remove-upn jane.smith@example.com --confirm
+```
+
+#### `its entra groups make-dynamic <group_id>`
+
+Convert a static (assigned) group to dynamic membership. Once the rule runs, Entra REMOVES every current member the rule does not match — so without --confirm this only previews. --paused converts with evaluation held (membershipRuleProcessingState=Paused); resume later with --resume. Keeps Unified (M365) type.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--rule` | `` | The membershipRule, e.g. (user.department -eq "Sales") | — |
+| `--paused` | `` | Convert with rule evaluation paused | — |
+| `--resume` | `` | Turn rule evaluation On for an already-dynamic group | — |
+| `--confirm` | `` | Apply the change | — |
+
+**Examples:**
+
+```bash
+# Shows current members and the rule; changes nothing
+its entra groups make-dynamic 8f1c2d3e-... --rule '(user.department -eq "Sales")'
+
+# Converts but holds evaluation, so membership is untouched until you resume it
+its entra groups make-dynamic 8f1c2d3e-... --rule '(user.department -eq "Sales")' --paused --confirm
 ```
 
 #### `its entra groups audit-rules [group_id]`
@@ -1032,6 +1090,7 @@ its entra tap revoke jane.smith@example.com <method-id>
 | `its entra ca exclude-user <id_or_name> <user>` | Add a user to a CA policy's excludeUsers — atomic mutation, no need to rebuild the users object |
 | `its entra ca unexclude-user <id_or_name> <user>` | Remove a user from a CA policy's excludeUsers list. Reverse of `exclude-user`. Idempotent. |
 | `its entra ca why-blocked <user>` | Show which enabled CA policies target a user, plus the grant controls each requires. Resolves group + role membership. |
+| `its entra ca report-only [policy]` | Sign-ins that report-only CA policies WOULD have blocked or interrupted if enforced (results reportOnlyFailure / reportOnlyInterrupted). The dry run before switching a policy on. Optional [policy] narrows to one policy by id or name. |
 | `its entra ca named-locations` | List trusted/named locations referenced by CA policies |
 
 #### `its entra ca`
@@ -1211,6 +1270,23 @@ Show which enabled CA policies target a user, plus the grant controls each requi
 ```bash
 # Which CA policy is blocking sign-in?
 its entra ca why-blocked jane.smith@example.com
+```
+
+#### `its entra ca report-only [policy]`
+
+Sign-ins that report-only CA policies WOULD have blocked or interrupted if enforced (results reportOnlyFailure / reportOnlyInterrupted). The dry run before switching a policy on. Optional [policy] narrows to one policy by id or name.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--since` | `` | Look-back window, e.g. 24h, 7d (sign-in logs keep 30 days) | 7d |
+| `--max-pages` | `` | Stop after this many 1000-row pages (default 20) | — |
+
+**Examples:**
+
+```bash
+its entra ca report-only "Block sign-ins from outside allowed countries" --since 7d
 ```
 
 #### `its entra ca named-locations`

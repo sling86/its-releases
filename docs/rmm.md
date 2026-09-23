@@ -26,6 +26,8 @@ Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md)
 - [custom-fields](#custom-fields)
 - [accounts](#accounts)
 - [terminal](#terminal)
+- [printers](#printers)
+- [dell](#dell)
 
 ## Setup
 
@@ -1786,6 +1788,85 @@ Revoke the Tactical dashboard token and remove the encrypted local terminal sess
 ```bash
 # Revoke the dashboard token and remove the local session
 its rmm terminal logout
+```
+
+---
+
+### printers
+
+> Source: `src/providers/rmm/commands/printers.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its rmm printers <agent>` | Printers on an agent: driver, port, shared, status, default, and how many jobs are queued. --jobs lists the queued documents too. |
+| `its rmm printers clear-queue <agent>` | Delete queued print jobs on an agent — one printer (--printer) or --all. --restart-spooler also stops the spooler, clears its spool folder and starts it again (the fix for a job that won't delete). Without --confirm, lists what would go. |
+
+#### `its rmm printers <agent>`
+
+Printers on an agent: driver, port, shared, status, default, and how many jobs are queued. --jobs lists the queued documents too.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--jobs` | `` | Include each printer's queued documents | — |
+
+**Examples:**
+
+```bash
+its rmm printers list WKS-9 --jobs
+```
+
+#### `its rmm printers clear-queue <agent>`
+
+Delete queued print jobs on an agent — one printer (--printer) or --all. --restart-spooler also stops the spooler, clears its spool folder and starts it again (the fix for a job that won't delete). Without --confirm, lists what would go.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--printer` | `` | Exact printer name | — |
+| `--all` | `` | Every printer on the agent | — |
+| `--restart-spooler` | `` | Stop spooler, empty the spool folder, start it | — |
+| `--confirm` | `` | Delete the jobs | — |
+
+**Examples:**
+
+```bash
+its rmm printers clear-queue WKS-9 --printer "Zebra ZD420" --confirm
+
+its rmm printers clear-queue WKS-9 --all --restart-spooler --confirm
+```
+
+---
+
+### dell
+
+> Source: `src/providers/rmm/commands/printers.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its rmm dell updates <agent>` | Dell Command | Update on an agent: scan for BIOS, firmware (incl. WD19/WD22 dock firmware when the dock is attached), driver and application updates, or --apply them with --confirm. Never reboots; says when one is needed. Needs Dell Command | Update installed. |
+
+#### `its rmm dell updates <agent>`
+
+Dell Command | Update on an agent: scan for BIOS, firmware (incl. WD19/WD22 dock firmware when the dock is attached), driver and application updates, or --apply them with --confirm. Never reboots; says when one is needed. Needs Dell Command | Update installed.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--type` | `` | Update types (comma-separated) | — |
+| `--apply` | `` | Install the updates found | — |
+| `--confirm` | `` | Required with --apply | — |
+| `--timeout` | `` | Seconds to allow (default 900 for --apply, 300 for scan) | — |
+
+**Examples:**
+
+```bash
+its rmm dell updates WKS-9 --type firmware
+
+its rmm dell updates WKS-9 --type firmware --apply --confirm
 ```
 
 ---

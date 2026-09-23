@@ -15,6 +15,41 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.20.0] - 2026-09-23
+
+### Added
+
+- **entra:** `users photo` / `users set-photo` (JPEG/PNG profile photos); `ca report-only [policy] --since 7d` lists sign-ins a report-only policy would have blocked or interrupted, filtered client-side because Graph accepts the server-side `any()` filter and silently returns nothing; `groups make-dynamic` converts an assigned group to dynamic, previewing first, with `--paused` / `--resume`.
+- **exo:** `mailboxes user-access` now lists SendAs as well as FullAccess (`--rights`); `mailboxes add-alias` / `remove-alias` change one proxy address and keep the rest, refusing the primary.
+- **intune:** `autopilot import --csv` (hardware hashes, waits for each to settle), `autopilot deregister`, `devices rename`, `android list` / `android qr` (enrolment QR as a PNG, `--renew-days`), `apps assign`, `app-configs list|create|assign`, `enrolment restrictions` / `set-restriction`. Assignments are added one at a time; the `/assign` action is never used because it replaces them all.
+- **unifi:** `clients set-fixed-ip` — DHCP reservations, network found from the subnet, clashes refused.
+- **rmm:** `printers list` / `printers clear-queue [--restart-spooler]`; `dell updates [--type firmware] [--apply --confirm]` drives Dell Command Update, including WD19/WD22 dock firmware, and never reboots.
+- **sp:** specific-people sharing links (`--to a@x,b@y`); `permissions links <site>` lists every sharing link on a site by scanning for items with unique permissions (a 152k-item site throttled a per-item walk within seconds); `search --type chatMessage|event` as the signed-in user, paging past the first page; `onenote notebooks|sections|pages|page` (needs delegated Notes.Read.All).
+- **outlook:** `mail export --out x.eml`; `mail search` / `thread` page with `--top 0` for everything; `mail get` counts inline images; `attachments extract` reads DOCX/XLSX/PPTX/PDF/HTML text; `drafts update --keep-quote` rewrites only what is above the quoted thread.
+- **teams:** `self` means your notes-to-self chat; chat names leave you out and mark deleted accounts; `chats delete-message`; `chats send --file`.
+- **bc:** `users list|get|permission-sets|add-permission|remove-permission` via the Automation API.
+- **manifest:** delegated Chat.ReadWrite, Files.ReadWrite and Notes.Read.All declared on the CLIENT_ID app (apply with `its entra apps apply`, then `its auth login`).
+- **hr: keep Entra ID in step with PeopleHR, from any platform.** `its hr drift apply --confirm` replaces the Windows-only PowerShell sync. It writes one PATCH per user plus a manager link where needed, narrowed with `--field` and `--user`, and runs on the same core as `its hr drift detect`, so it can only ever write what detect reports. Field coverage is employeeId, jobTitle, department, officeLocation, employeeType, companyName, employeeHireDate and manager; displayName is reported but never rewritten. Organisation-specific data is local config rather than code: `PHR_COMPANY_MAP` maps PeopleHR companies to Entra legal names, and `PHR_SYNC_EXCLUDE` names people or fields to leave alone. Without a company map entry, companyName drift is held back rather than invented.
+
+### Fixed
+
+- **`--json` redacted Graph paging tokens.** `$skiptoken` in `@odata.nextLink` matched the secret-name rule, so every page-through of Graph output failed. Paging cursors are now exempt.
+- **`entra users update --set extensionAttributeN=…` did nothing.** It was sent top-level; it now nests under `onPremisesExtensionAttributes` for every caller, and an empty value clears it.
+- **`sp search` failed under delegated auth** (region rejected, and no file scopes on the token). It now runs app-only.
+- **`dokploy databases sql --query` hung forever.** The flag is now accepted, and a session with no query and no terminal is refused instead of opening psql.
+- **`help` in an ID slot** (e.g. `teams chats messages help`) now shows help instead of querying an ID called "help".
+- **Multi-line `rmm agents run` failed wherever the PowerShell execution policy blocks scripts** (the Windows default), because it ran a temp .ps1. It now runs as a script block.
+- **Paged lists stopped at their cap silently** in sp and outlook; they now warn. `sp drives folder` reads up to 10,000 items instead of 1,000.
+- **Outlook replies with a multi-line `--comment` lost their line breaks**; the comment is now written as HTML paragraphs above the quote.
+- **A Microsoft 403 while signed in** now says `--auth app` would run it with the app's own permissions.
+- **`hr drift detect` never reported manager drift.** It compared `user.manager`, but the Entra listing it read never expanded that link, so the field was always empty and every run reported no drift. The sync now asks for it explicitly. The query stays basic because Graph will not combine `$expand` with the advanced-query mode that `$count` switches on. The first live run found 22 genuine mismatches.
+- **A blank Entra field where PeopleHR has a value is now drift.** The old check needed both sides filled in, which hid the most common real gap. A blank PeopleHR value still never blanks Entra.
+- **Hire dates no longer drift by a phantom day.** Entra stores a UK summer-time midnight as 23:00Z the day before, so comparing the raw UTC date invented a one-day difference. Six of the first run's 27 hire-date mismatches were exactly that. Dates now compare as the London calendar day.
+- **Placeholder values in PeopleHR are never written to Entra.** Values such as `TBC`, `Test` and `n/a` are reported and held back. The first run would otherwise have written "Test" into two office locations and "TBC" over two real departments.
+- **`--dry-run` can now preview any PeopleHR-backed command.** PeopleHR sends every call as a POST, reads included, so the dry-run gate treated the first roster lookup as a write and stopped. Calls whose Action starts with `Get` now go through; anything else is still intercepted, so a write action added later will still be stopped. Under `--dry-run`, `drift apply` reports each intercepted write as `would-update` rather than `failed`.
+- **More company and site data removed from the published binary.** A code comment listed real payroll id prefixes, each of which names an employer. A Bitwarden audit line printed a real site name and a private reference to every user who ran it. Help examples used a real site slug, and two further comments named sites. All now carry the lesson without the identifier. `tests/no-shipped-identifiers.test.ts` also checks for payroll id prefixes and the remaining site and company names, so none of these can come back.
+- **The attendance provider description no longer claims it never matches by name.** That is still true of the `--peoplehr` join on events and summaries, but `headcount` does resolve departments from a unique current-employee name, in memory only.
+
 ## [0.19.0] - 2026-09-22
 
 ### Added

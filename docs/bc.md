@@ -14,6 +14,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [extensions](#extensions)
 - [query](#query)
 - [record](#record)
+- [users](#users)
 - [health](#health)
 
 ## Setup
@@ -242,6 +243,105 @@ Get a single BC record by entity + ID. Pass the id (or any natural identifier) a
 
 ```bash
 its bc record get items <item-id>
+```
+
+---
+
+### users
+
+> Source: `src/providers/bc/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bc users` | Business Central users: user name, state, contact email. Automation API — if it 403s, rerun with --auth az or give the app's BC user the D365 AUTOMATION permission set. |
+| `its bc users get <user>` | One BC user and every permission set they hold (with the company each applies to — blank = all companies). |
+| `its bc users permission-sets` | Every permission set that can be assigned (system and extension-supplied). |
+| `its bc users add-permission <user>` | Give a BC user a permission set — in one company (--in-company) or all (default). Previews without --confirm; reads the user's permissions back. |
+| `its bc users remove-permission <user>` | Take a permission set off a BC user (the assignment matching --set and --in-company). Previews without --confirm. |
+
+#### `its bc users`
+
+Business Central users: user name, state, contact email. Automation API — if it 403s, rerun with --auth az or give the app's BC user the D365 AUTOMATION permission set.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--company` | `` | Company (name or id) whose API endpoint to use | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+
+```bash
+its bc users
+```
+
+#### `its bc users get <user>`
+
+One BC user and every permission set they hold (with the company each applies to — blank = all companies).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--company` | `` | Company (name or id) whose API endpoint to use | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+
+```bash
+its bc users get <user>
+```
+
+#### `its bc users permission-sets`
+
+Every permission set that can be assigned (system and extension-supplied).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--company` | `` | Company (name or id) whose API endpoint to use | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+
+```bash
+its bc users permission-sets
+```
+
+#### `its bc users add-permission <user>`
+
+Give a BC user a permission set — in one company (--in-company) or all (default). Previews without --confirm; reads the user's permissions back.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--set` | `` | Permission set id, e.g. D365 BUS FULL ACCESS | — |
+| `--in-company` | `` | Company NAME the set applies in (omit = all companies) | — |
+| `--confirm` | `` | Apply the change | — |
+| `--company` | `` | Company (name or id) whose API endpoint to use | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+
+**Examples:**
+
+```bash
+its bc users add-permission jo.bloggs@example.com --set "D365 BUS FULL ACCESS" --in-company "CRONUS UK Ltd." --confirm
+```
+
+#### `its bc users remove-permission <user>`
+
+Take a permission set off a BC user (the assignment matching --set and --in-company). Previews without --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--set` | `` | Permission set id, e.g. D365 BUS FULL ACCESS | — |
+| `--in-company` | `` | Company NAME the set applies in (omit = all companies) | — |
+| `--confirm` | `` | Apply the change | — |
+| `--company` | `` | Company (name or id) whose API endpoint to use | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+
+**Examples:**
+
+```bash
+its bc users remove-permission jo.bloggs@example.com --set "D365 BUS FULL ACCESS" --in-company "CRONUS UK Ltd." --confirm
 ```
 
 ---

@@ -1,6 +1,6 @@
 # PeopleHR (`hr`)
 
-PeopleHR — bulk employee directory, upcoming and recent starters/leavers. THF tenant key is bulk-read scoped (single-record endpoints return Access Denied), so lookups go through the bulk list + client-side filter.
+PeopleHR — bulk employee directory, upcoming and recent starters/leavers, per-employee timesheets (explicit IN/OUT pairs), booked holiday, sickness, other authorised leave and lateness, plus `drift detect` / `drift apply` to keep Entra ID in step with HR. A bulk-read scoped key denies single-record employee endpoints and bulk leave reads, so employee lookups go through the bulk list with a client-side filter, and leave is fetched one person at a time.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
 Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
@@ -32,6 +32,8 @@ its hr setup --reset   # Re-run setup (overwrite config)
 | Variable | Description |
 |----------|-------------|
 | `PEOPLEHR_API_KEY` | PeopleHR API key — bulk-read scoped |
+| `PHR_COMPANY_MAP` | Optional. JSON object mapping each PeopleHR Company value to the Entra companyName `hr drift apply` should write. Without an entry, companyName drift is reported but never written. |
+| `PHR_SYNC_EXCLUDE` | Optional. Comma list of `upn` (skip every field) or `upn:field` (skip one field) that `hr drift` should leave alone. |
 
 ### Source Files
 
@@ -46,6 +48,7 @@ its hr setup --reset   # Re-run setup (overwrite config)
 | `src/providers/hr/leave.ts` | leave |
 | `src/providers/hr/org.ts` | org |
 | `src/providers/hr/resolve.ts` | resolve |
+| `src/providers/hr/sync.ts` | sync |
 | `src/providers/hr/timesheet.ts` | timesheet |
 
 ## Resources
@@ -56,11 +59,12 @@ its hr setup --reset   # Re-run setup (overwrite config)
 
 | Command | Description |
 |---------|-------------|
-| `its hr drift detect` | Detect drift between PeopleHR and Entra ID. Reports field mismatches plus PHR-only / Entra-only orphans. Read-only. |
+| `its hr drift detect` | Detect drift between PeopleHR and Entra ID across employeeId, jobTitle, department, officeLocation, employeeType, companyName, employeeHireDate, manager and displayName, plus PHR-only / Entra-only orphans. Read-only. A blank Entra field where PeopleHR has a value counts as drift; a blank PeopleHR value never does. |
+| `its hr drift apply` | Make Entra ID agree with PeopleHR for the drift `hr drift detect` reports. Writes one PATCH per user plus a manager link where needed. Requires --confirm. Never blanks a field, never rewrites displayName, and holds back companyName unless PHR_COMPANY_MAP names the target. Preview first with `hr drift detect` or global --dry-run. |
 
 #### `its hr drift detect`
 
-Detect drift between PeopleHR and Entra ID. Reports field mismatches plus PHR-only / Entra-only orphans. Read-only.
+Detect drift between PeopleHR and Entra ID across employeeId, jobTitle, department, officeLocation, employeeType, companyName, employeeHireDate, manager and displayName, plus PHR-only / Entra-only orphans. Read-only. A blank Entra field where PeopleHR has a value counts as drift; a blank PeopleHR value never does.
 
 **Flags:**
 
@@ -70,8 +74,39 @@ Detect drift between PeopleHR and Entra ID. Reports field mismatches plus PHR-on
 | `--company` | `` | Restrict PHR side to this company (substring match against Company DisplayValue). Default: search globally. | — |
 | `--include-disabled` | `` | Include disabled Entra accounts (default: only enabled). | — |
 
+**Examples:**
+
 ```bash
 its hr drift detect
+
+its hr drift detect --domain example.com
+
+its hr drift detect --filter apply=true
+```
+
+#### `its hr drift apply`
+
+Make Entra ID agree with PeopleHR for the drift `hr drift detect` reports. Writes one PATCH per user plus a manager link where needed. Requires --confirm. Never blanks a field, never rewrites displayName, and holds back companyName unless PHR_COMPANY_MAP names the target. Preview first with `hr drift detect` or global --dry-run.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--domain` | `` | Entra UPN domain to audit (e.g. example.com). Defaults to every domain seen in active Entra users. | — |
+| `--company` | `` | Restrict PHR side to this company (substring match against Company DisplayValue). Default: search globally. | — |
+| `--include-disabled` | `` | Include disabled Entra accounts (default: only enabled). | — |
+| `--field` | `` | Only write these fields, comma-separated. One of: employeeId, jobTitle, department, officeLocation, employeeType, companyName, employeeHireDate, manager. | — |
+| `--user` | `` | Only update this UPN. | — |
+| `--confirm` | `` | Actually write to Entra ID. | — |
+
+**Examples:**
+
+```bash
+its hr drift apply --dry-run --confirm
+
+its hr drift apply --field officeLocation --confirm
+
+its hr drift apply --user someone@example.com --confirm
 ```
 
 ---

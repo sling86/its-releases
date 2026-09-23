@@ -16,6 +16,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [permissions](#permissions)
 - [groups](#groups)
 - [recycle-bin](#recycle-bin)
+- [onenote](#onenote)
 - [pages](#pages)
 - [dashboard](#dashboard)
 - [graph](#graph)
@@ -47,6 +48,7 @@ SharePoint can use dedicated credentials (`SP_CLIENT_ID`/`SP_CLIENT_SECRET`) or 
 | `src/providers/sp/commands/` | Command definitions (split by resource) |
 | `src/providers/sp/definition.ts` | definition |
 | `src/providers/sp/find-group.ts` | find group |
+| `src/providers/sp/share-scope.ts` | share scope |
 
 ## Resources
 
@@ -401,7 +403,7 @@ its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm
 | `its sp files upload <siteId>` | Upload a text file. Stream a local file to the resource. |
 | `its sp files folder <siteId>` | Create a folder under a parent item. |
 | `its sp files delete <siteId>` | Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
-| `its sp files share <siteId>` | Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked). |
+| `its sp files share <siteId>` | Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked). --to a@x,b@y makes a specific-people link only they can open. |
 | `its sp files move <siteId>` | Move or rename a file. Move an item between folders (reversible). |
 | `its sp files checkout <siteId>` | Check out a file for editing. Locks the item against concurrent edits. |
 | `its sp files checkin <siteId>` | Check in a file. Releases the lock after editing. |
@@ -501,7 +503,7 @@ its sp files delete <site-id> --drive <drive-id> --item <item-id> --confirm
 
 #### `its sp files share <siteId>`
 
-Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked).
+Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked). --to a@x,b@y makes a specific-people link only they can open.
 
 **Flags:**
 
@@ -511,6 +513,8 @@ Create a sharing link for a file/folder (Graph createLink) and return its URL. -
 | `--item` | `` | Item ID | — |
 | `--type` | `` | Link type | view |
 | `--scope` | `` | Link scope | organization |
+| `--to` | `` | Comma-separated emails — makes a specific-people link only they can open | — |
+| `--notify` | `` | With --to: email the link to the recipients | — |
 
 **Examples:**
 
@@ -630,22 +634,28 @@ its sp files restore <site-id> --item <item-id> --version <version-id>
 
 | Command | Description |
 |---------|-------------|
-| `its sp search <query>` | Search across SharePoint. Surfaces the most common fields; pass --json for raw shape. |
+| `its sp search <query>` | Microsoft Search across the tenant. --type driveItem (files, incl. OneDrive, Loop and OneNote sections), listItem, list, site run as the app and see everything; chatMessage and event run as the SIGNED-IN user and see only their own (choose whose with --profile). Mail: use `its outlook mail search`. --top pages past the first page. |
 
 #### `its sp search <query>`
 
-Search across SharePoint. Surfaces the most common fields; pass --json for raw shape.
+Microsoft Search across the tenant. --type driveItem (files, incl. OneDrive, Loop and OneNote sections), listItem, list, site run as the app and see everything; chatMessage and event run as the SIGNED-IN user and see only their own (choose whose with --profile). Mail: use `its outlook mail search`. --top pages past the first page.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--type` | `` | Entity type: driveItem, listItem, list, or site | driveItem |
-| `--top` | `` | Maximum results to return | 25 |
+| `--type` | `` | Entity type | driveItem |
+| `--top` | `` | Maximum results to return (pages as needed, up to 1000) | 25 |
 
 **Examples:**
 
 ```bash
+its sp search "holiday policy"
+
+its sp search "printer" --type chatMessage --profile me
+
+its sp search "supplier review" --type event --profile me
+
 its sp search "quarterly report"
 
 # Re-runs every 10s — handy for dashboards or incident response.
@@ -661,9 +671,11 @@ its sp search "quarterly report" --watch
 | Command | Description |
 |---------|-------------|
 | `its sp permissions find-group <groupId>` | Reverse-lookup: which sites grant an Entra group access, directly or nested inside a site's Owners/Members group. Run this before retiring a security group. Reports sites it could not read rather than counting them as clear — absence of hits only proves the group is unused if every site was readable. |
+| `its sp permissions roles [site]` | Who holds which permission level on each site's root web — users, Entra groups and SharePoint groups, with Full Control / Edit / Read etc. One site, or every team site when none is given. Reports sites it could not read. SharePoint groups are shown as themselves; use `find-group` to see an Entra group nested inside one. |
 | `its sp permissions <siteId>` | List app-level site permissions. Surfaces the most common fields; pass --json for raw shape. |
 | `its sp permissions item <siteId>` | List sharing permissions on a file or folder. Single record detail. |
 | `its sp permissions share <siteId>` | Create a sharing link. Creates a sharing link / direct grant. |
+| `its sp permissions links <siteId>` | Every sharing link on a site's document libraries — who it's for (anyone / organisation / named people), view or edit, expiry, password. Scans every library for items with their own permissions (a link breaks inheritance), then reads only those. --max-items caps the scan, with a warning. Link URLs are credentials and stay redacted unless --include-secrets. |
 | `its sp permissions grant-app <siteId>` | Grant the it-cli app (or another app via --app) a Sites.Selected role on one site. Useful for bootstrapping the role needed by `its sp groups *`. Requires Sites.FullControl.All on the CALLING credentials — typically via a separate admin app (SP_ADMIN_CLIENT_ID/SP_ADMIN_CLIENT_SECRET) or a one-off elevation. |
 | `its sp permissions remove <siteId>` | Remove a sharing permission. Permanent — use --confirm. |
 
@@ -675,7 +687,7 @@ Reverse-lookup: which sites grant an Entra group access, directly or nested insi
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--top` | `` | Maximum sites to scan (default 200) | — |
+| `--include-personal` | `` | Also scan personal OneDrive sites (skipped by default — there are usually several times more of them than team sites) | — |
 | `--concurrency` | `` | Sites scanned in parallel (default 6) | — |
 
 **Examples:**
@@ -683,7 +695,32 @@ Reverse-lookup: which sites grant an Entra group access, directly or nested insi
 ```bash
 its sp permissions find-group 462e4d2a-1f3c-4b8e-9d21-7a5e0c9b1234
 
-its sp permissions find-group <groupId> --top 50 --concurrency 10
+its sp permissions find-group <groupId> --include-personal --concurrency 10
+```
+
+#### `its sp permissions roles [site]`
+
+Who holds which permission level on each site's root web — users, Entra groups and SharePoint groups, with Full Control / Edit / Read etc. One site, or every team site when none is given. Reports sites it could not read. SharePoint groups are shown as themselves; use `find-group` to see an Entra group nested inside one.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--principal` | `` | Only principals whose name or login contains this | — |
+| `--role` | `` | Only assignments holding this level (e.g. "Full Control") | — |
+| `--include-personal` | `` | Also scan personal OneDrive sites (skipped by default — there are usually several times more of them than team sites) | — |
+| `--concurrency` | `` | Sites read in parallel (default 6) | — |
+
+**Examples:**
+
+```bash
+its sp permissions roles
+
+its sp permissions roles https://example.sharepoint.com/sites/Finance
+
+its sp permissions roles --role "Full Control"
+
+its sp permissions roles --principal jane.smith
 ```
 
 #### `its sp permissions <siteId>`
@@ -727,7 +764,9 @@ Create a sharing link. Creates a sharing link / direct grant.
 | `--drive` | `` | Drive ID | — |
 | `--item` | `` | Item ID | — |
 | `--type` | `` | Link type: view, edit, or embed | view |
-| `--scope` | `` | Link scope: anonymous or organization | organization |
+| `--scope` | `` | Link scope: anonymous, organization, or users (with --to) | organization |
+| `--to` | `` | Comma-separated emails — makes a specific-people link only they can open | — |
+| `--notify` | `` | With --to: email the link to the recipients | — |
 
 **Examples:**
 
@@ -735,6 +774,25 @@ Create a sharing link. Creates a sharing link / direct grant.
 its sp permissions share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope users
 
 its sp permissions share <site-id> --item <item-id> --type view --scope organization
+```
+
+#### `its sp permissions links <siteId>`
+
+Every sharing link on a site's document libraries — who it's for (anyone / organisation / named people), view or edit, expiry, password. Scans every library for items with their own permissions (a link breaks inheritance), then reads only those. --max-items caps the scan, with a warning. Link URLs are credentials and stay redacted unless --include-secrets.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--max-items` | `` | Stop scanning after this many files/folders (default 500000) | — |
+| `--library` | `` | Only this document library (by name) | — |
+
+**Examples:**
+
+```bash
+its sp permissions links https://example.sharepoint.com/sites/Finance
+
+its sp permissions links <site> --filter scope=anonymous
 ```
 
 #### `its sp permissions grant-app <siteId>`
@@ -854,6 +912,80 @@ List the site recycle bin. Reads classic SP REST (/_api/web/RecycleBin) — Grap
 its sp recycle-bin list <siteId>
 
 its sp recycle-bin list https://example.sharepoint.com/sites/IT
+```
+
+---
+
+### onenote
+
+> Source: `src/providers/sp/commands/onenote.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its sp onenote notebooks` | OneNote notebooks — yours by default, or a site's (--site) or group's (--group). Delegated Notes.Read.All. |
+| `its sp onenote sections <notebook_id>` | Sections in a notebook (all of them, including those inside section groups). |
+| `its sp onenote pages <section_id>` | Pages in a section, newest first. |
+| `its sp onenote page <page_id>` | One page's content as readable text (--html for the raw OneNote HTML). Ink and images are not text and are left out. |
+
+#### `its sp onenote notebooks`
+
+OneNote notebooks — yours by default, or a site's (--site) or group's (--group). Delegated Notes.Read.All.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Notebooks on this SharePoint site (id or URL) | — |
+| `--group` | `` | Notebooks of this Microsoft 365 group (id) | — |
+
+```bash
+its sp onenote notebooks
+```
+
+#### `its sp onenote sections <notebook_id>`
+
+Sections in a notebook (all of them, including those inside section groups).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Notebooks on this SharePoint site (id or URL) | — |
+| `--group` | `` | Notebooks of this Microsoft 365 group (id) | — |
+
+```bash
+its sp onenote sections <notebook_id>
+```
+
+#### `its sp onenote pages <section_id>`
+
+Pages in a section, newest first.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Notebooks on this SharePoint site (id or URL) | — |
+| `--group` | `` | Notebooks of this Microsoft 365 group (id) | — |
+
+```bash
+its sp onenote pages <section_id>
+```
+
+#### `its sp onenote page <page_id>`
+
+One page's content as readable text (--html for the raw OneNote HTML). Ink and images are not text and are left out.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Notebooks on this SharePoint site (id or URL) | — |
+| `--group` | `` | Notebooks of this Microsoft 365 group (id) | — |
+| `--html` | `` | Return the raw page HTML | — |
+
+```bash
+its sp onenote page <page_id>
 ```
 
 ---

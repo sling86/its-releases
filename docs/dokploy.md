@@ -780,6 +780,7 @@ Run SQL against a Dokploy-managed database — resolves the live container and e
 |------|-------|-------------|---------|
 | `--confirm` | `` | Required for anything that writes (INSERT/UPDATE/DDL) | — |
 | `--timeout` | `` | One-shot query timeout in seconds (default 30) | — |
+| `--query` | `` | The one-shot query, as a flag instead of positionally | — |
 
 **Examples:**
 

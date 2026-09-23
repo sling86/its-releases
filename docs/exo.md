@@ -18,6 +18,8 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [recipients](#recipients)
 - [forwarding](#forwarding)
 - [rooms](#rooms)
+- [app-access](#app-access)
+- [audit](#audit)
 
 ## Setup
 
@@ -48,6 +50,7 @@ On Windows, the certificate lives in the current user's cert store (`Cert:\Curre
 | `src/providers/exo/client.ts` | API client methods |
 | `src/providers/exo/types.ts` | TypeScript interfaces |
 | `src/providers/exo/commands/` | Command definitions (split by resource) |
+| `src/providers/exo/audit-log.ts` | audit log |
 | `src/providers/exo/definition.ts` | definition |
 | `src/providers/exo/resolve.ts` | resolve |
 | `src/providers/exo/rooms-assess.ts` | rooms assess |
@@ -180,6 +183,7 @@ its exo groups remove-member "All Staff" jane.smith@example.com
 | `its exo mailboxes` | List mailboxes (optionally filtered by type). Surfaces the most common fields; pass --json for raw shape. |
 | `its exo mailboxes get <mailbox>` | Get mailbox details (accepts partial name, alias, or email) |
 | `its exo mailboxes stats <mailbox>` | Get mailbox size and item statistics. Aggregated statistics — counts, totals, percentiles. |
+| `its exo mailboxes message-config <mailbox>` | Compose defaults for a mailbox — font name, size, colour and style, HTML or plain text, and whether a signature is auto-added. What a drafted reply has to match to read as the person's own. |
 | `its exo mailboxes create <name> <alias>` | Create a shared mailbox. Idempotent on duplicate names — use update/edit to mutate an existing record. |
 | `its exo mailboxes permissions <mailbox>` | List non-inherited permissions on a mailbox. Returns access grants on the resource. |
 | `its exo mailboxes add-permission <mailbox> <user>` | Grant mailbox access to a user. Grant a new permission. Idempotent. |
@@ -187,7 +191,9 @@ its exo groups remove-member "All Staff" jane.smith@example.com
 | `its exo mailboxes forwarding <mailbox>` | Show forwarding configuration for a mailbox. Audit pass — find mailboxes with forwarding configured. |
 | `its exo mailboxes inbox-rules <mailbox>` | List server-side inbox rules for one mailbox, including forwarding, redirect and delete actions. |
 | `its exo mailboxes remove-inbox-rule <mailbox> <rule>` | Delete one exact server-side inbox rule from a mailbox. Refuses ambiguous names and verifies removal. --confirm required. |
-| `its exo mailboxes user-access <user>` | List all shared mailboxes a user has FullAccess to (scans all 400+ shared mailboxes, may take up to 5 minutes) |
+| `its exo mailboxes user-access <user>` | What a user can get into: shared mailboxes they have FullAccess to (scans every shared mailbox — can take up to 5 minutes) and every recipient they can SendAs (quick, filtered server-side). --rights narrows to one. |
+| `its exo mailboxes add-alias <mailbox> <address>` | Add ONE secondary SMTP address to a mailbox, keeping every existing address (Set-Mailbox -EmailAddresses @{add=...}). Unlike `entra users update --set proxyAddresses`, nothing else is touched. Cloud-only mailboxes; synced ones are changed on-prem. |
+| `its exo mailboxes remove-alias <mailbox> <address>` | Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address. |
 | `its exo mailboxes set-forwarding <mailbox> <target>` | Configure mailbox forwarding. Set a mailbox forward. --confirm required. |
 | `its exo mailboxes set-type <mailbox> <type>` | Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared. |
 | `its exo mailboxes set-visibility <mailbox>` | Hide or show a mailbox in the global address list (GAL). Pass exactly one of --hide / --show. |
@@ -231,6 +237,16 @@ Get mailbox size and item statistics. Aggregated statistics — counts, totals, 
 
 ```bash
 its exo mailboxes stats jane.smith@example.com
+```
+
+#### `its exo mailboxes message-config <mailbox>`
+
+Compose defaults for a mailbox — font name, size, colour and style, HTML or plain text, and whether a signature is auto-added. What a drafted reply has to match to read as the person's own.
+
+**Examples:**
+
+```bash
+its exo mailboxes message-config jane.smith@example.com
 ```
 
 #### `its exo mailboxes create <name> <alias>`
@@ -328,13 +344,39 @@ its exo mailboxes remove-inbox-rule accounts@example.com "Forward invoices" --co
 
 #### `its exo mailboxes user-access <user>`
 
-List all shared mailboxes a user has FullAccess to (scans all 400+ shared mailboxes, may take up to 5 minutes).
+What a user can get into: shared mailboxes they have FullAccess to (scans every shared mailbox — can take up to 5 minutes) and every recipient they can SendAs (quick, filtered server-side). --rights narrows to one.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--rights` | `` | Which rights to check (default all) | — |
 
 **Examples:**
 
 ```bash
 # Every shared mailbox jane has rights on
 its exo mailboxes user-access jane.smith@example.com
+```
+
+#### `its exo mailboxes add-alias <mailbox> <address>`
+
+Add ONE secondary SMTP address to a mailbox, keeping every existing address (Set-Mailbox -EmailAddresses @{add=...}). Unlike `entra users update --set proxyAddresses`, nothing else is touched. Cloud-only mailboxes; synced ones are changed on-prem.
+
+**Examples:**
+
+```bash
+its exo mailboxes add-alias jo@example.com jo.bloggs@example.com
+```
+
+#### `its exo mailboxes remove-alias <mailbox> <address>`
+
+Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address.
+
+**Examples:**
+
+```bash
+its exo mailboxes remove-alias jo@example.com jo.bloggs@example.com
 ```
 
 #### `its exo mailboxes set-forwarding <mailbox> <target>`
@@ -942,6 +984,73 @@ Why a room declined a booking. Reads the booking policy, working hours, calendar
 its exo rooms diagnose Chi-2-RD-Meeting-Room@example.com
 
 its exo rooms diagnose Chi-2-RD-Meeting-Room@example.com --organiser jane.smith@example.com --start 2026-09-24T14:00 --end 2026-09-24T17:30
+```
+
+---
+
+### app-access
+
+> Source: `src/providers/exo/commands/app-access.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its exo app-access` | Every rule limiting which mailboxes an app can reach — legacy ApplicationAccessPolicies and RBAC-for-Applications role assignments, side by side. |
+| `its exo app-access test <appId> <mailbox>` | Can this app reach this mailbox? Asks Exchange through both mechanisms (Test-ApplicationAccessPolicy and Test-ServicePrincipalAuthorization) and says which one decided. |
+
+#### `its exo app-access`
+
+Every rule limiting which mailboxes an app can reach — legacy ApplicationAccessPolicies and RBAC-for-Applications role assignments, side by side.
+
+**Examples:**
+
+```bash
+its exo app-access list
+```
+
+#### `its exo app-access test <appId> <mailbox>`
+
+Can this app reach this mailbox? Asks Exchange through both mechanisms (Test-ApplicationAccessPolicy and Test-ServicePrincipalAuthorization) and says which one decided.
+
+**Examples:**
+
+```bash
+its exo app-access test 00000000-0000-0000-0000-000000000000 tickets@example.com
+```
+
+---
+
+### audit
+
+> Source: `src/providers/exo/commands/audit.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its exo audit search` | Search the Microsoft 365 unified audit log — SharePoint and OneDrive file access and sharing, mailbox actions, admin changes. The only route to 'who shared or downloaded what'; Graph has no equivalent. Give at least one filter. Slow on the service side for wide windows. |
+
+#### `its exo audit search`
+
+Search the Microsoft 365 unified audit log — SharePoint and OneDrive file access and sharing, mailbox actions, admin changes. The only route to 'who shared or downloaded what'; Graph has no equivalent. Give at least one filter. Slow on the service side for wide windows.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--since` | `` | Window start — 7d, 24h, or a date (default 7d) | — |
+| `--until` | `` | Window end (default now) | — |
+| `--user` | `` | ONE user address. Several at once returns zero rows without an error, so it is refused | — |
+| `--text` | `` | Free text in the event body. Misses events where the name is only in the user field — pair with --user | — |
+| `--object` | `` | Object id or URL; a trailing * matches everything under it | — |
+| `--operation` | `` | Operation name(s), comma-separated (e.g. FileDownloaded,SharingSet) | — |
+| `--cap` | `` | Stop after this many records (default 5000, max 50000) | — |
+
+**Examples:**
+
+```bash
+its exo audit search --user jane.smith@example.com --since 7d
+
+its exo audit search --object "https://example.sharepoint.com/sites/HR/*" --operation SharingSet,AnonymousLinkCreated --since 30d
+
+its exo audit search --text "Payroll 2026" --since 90d
 ```
 
 ---
