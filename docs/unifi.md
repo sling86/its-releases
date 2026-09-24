@@ -133,7 +133,8 @@ its unifi sites sysinfo
 | Command | Description |
 |---------|-------------|
 | `its unifi devices` | List all UniFi devices with name, MAC, IP, type, state, uptime, clients |
-| `its unifi devices get <mac>` | Get device detail by MAC address. Pass the id (or any natural identifier) as the positional arg. |
+| `its unifi devices get <mac>` | Get device detail by MAC address or exact device name. Ports include link speed, duplex and error counts; see `devices ports` for the full per-port table. |
+| `its unifi devices ports <device>` | Per-port link view of a switch: speed, duplex, PoE, STP state, error/drop counters and which online clients sit on each port. Flags copper ports up below 1000 Mbit or at half duplex. |
 | `its unifi devices restart <mac>` | Restart a device by MAC address. Stop + start in one call. |
 | `its unifi devices locate <mac>` | Toggle locate LED on a device. Flash the device's locate LED. |
 | `its unifi devices upgrade <mac>` | Trigger firmware upgrade on a device. Trigger a firmware upgrade. |
@@ -167,7 +168,7 @@ its unifi devices --watch
 
 #### `its unifi devices get <mac>`
 
-Get device detail by MAC address. Pass the id (or any natural identifier) as the positional arg.
+Get device detail by MAC address or exact device name. Ports include link speed, duplex and error counts; see `devices ports` for the full per-port table.
 
 **Flags:**
 
@@ -179,6 +180,26 @@ Get device detail by MAC address. Pass the id (or any natural identifier) as the
 
 ```bash
 its unifi devices get <mac>
+```
+
+#### `its unifi devices ports <device>`
+
+Per-port link view of a switch: speed, duplex, PoE, STP state, error/drop counters and which online clients sit on each port. Flags copper ports up below 1000 Mbit or at half duplex.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site name override | — |
+| `--degraded` | `` | Only ports below gigabit, at half duplex, or with errors | — |
+
+**Examples:**
+
+```bash
+# Every port with speed, duplex, errors and the online clients on it
+its unifi devices ports "Office Switch" --site hq
+
+its unifi devices ports 74:ac:b9:12:34:56 --degraded
 ```
 
 #### `its unifi devices restart <mac>`

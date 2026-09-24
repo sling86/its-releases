@@ -47,7 +47,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Dokploy | `dokploy` | 120 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 65 commands, 15 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 55 commands, 12 resources | [sp.md](./sp.md) |
-| UniFi Network | `unifi` | 48 commands, 17 resources | [unifi.md](./unifi.md) |
+| UniFi Network | `unifi` | 49 commands, 17 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 64 commands, 17 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
 | Exchange Online | `exo` | 59 commands, 12 resources | [exo.md](./exo.md) |

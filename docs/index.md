@@ -16,7 +16,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [dokploy.md](./dokploy.md) | Dokploy — 120 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 65 commands across 15 resources |
 | [sp.md](./sp.md) | SharePoint — 55 commands across 12 resources |
-| [unifi.md](./unifi.md) | UniFi Network — 48 commands across 17 resources |
+| [unifi.md](./unifi.md) | UniFi Network — 49 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 64 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
 | [exo.md](./exo.md) | Exchange Online — 59 commands across 12 resources |
@@ -35,7 +35,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 6 commands across 2 resources |
 
-**23 providers** · **239 resources** · **866 commands**
+**23 providers** · **239 resources** · **867 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -162,7 +162,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [sites](./unifi.md#sites) | list, health, sysinfo | `src/providers/unifi/commands/sites.ts` |
-| [devices](./unifi.md#devices) | list, get, restart, locate, upgrade, provision, power-cycle, leds, poe | `src/providers/unifi/commands/devices.ts` |
+| [devices](./unifi.md#devices) | list, get, ports, restart, locate, upgrade, provision, power-cycle, leds, poe | `src/providers/unifi/commands/devices.ts` |
 | [clients](./unifi.md#clients) | list, get, search, locate, inventory, set-alias, set-note, set-fixed-ip, block, unblock, reconnect, offline | `src/providers/unifi/commands/clients.ts` |
 | [guests](./unifi.md#guests) | authorise, unauthorise | `src/providers/unifi/commands/clients.ts` |
 | [networks](./unifi.md#networks) | list | `src/providers/unifi/commands/networks.ts` |
@@ -959,6 +959,7 @@ its
 │   ├── devices
 │   │   ├── (list)
 │   │   ├── get <mac>
+│   │   ├── ports <device>
 │   │   ├── restart <mac>
 │   │   ├── locate <mac>
 │   │   ├── upgrade <mac>
@@ -1664,6 +1665,7 @@ src/
 │   │   ├── client.ts
 │   │   ├── db-sql.ts
 │   │   ├── definition.ts
+│   │   ├── deploy-wait.ts
 │   │   ├── github-resolve.ts
 │   │   ├── resolve.ts
 │   │   ├── runtime.ts

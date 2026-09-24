@@ -521,7 +521,7 @@ Create a sharing link for a file/folder (Graph createLink) and return its URL. -
 ```bash
 its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope organization
 
-# Creates a link anyone with the URL can open — audit these with `its sp audit sharing-links`
+# Creates a link anyone with the URL can open — audit these with `its sp permissions links <site> --filter scope=anonymous`
 its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope anonymous
 ```
 

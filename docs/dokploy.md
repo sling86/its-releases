@@ -58,6 +58,7 @@ its dokploy setup --reset   # Re-run setup (overwrite config)
 | `src/providers/dokploy/commands/` | Command definitions (split by resource) |
 | `src/providers/dokploy/db-sql.ts` | db sql |
 | `src/providers/dokploy/definition.ts` | definition |
+| `src/providers/dokploy/deploy-wait.ts` | deploy wait |
 | `src/providers/dokploy/github-resolve.ts` | github resolve |
 | `src/providers/dokploy/resolve.ts` | resolve |
 | `src/providers/dokploy/runtime.ts` | runtime |
@@ -259,7 +260,8 @@ Pull the configured source, build it and deploy. Use after a git push; waits for
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--wait` | `` | Wait for container to become healthy | — |
+| `--wait` | `` | Wait for the deployment this trigger creates to finish (done or error) | — |
+| `--timeout` | `` | With --wait: seconds to wait, including time queued behind other builds (default 600) | 600 |
 | `--logs` | `` | Show last 50 lines of logs after deploy | — |
 
 **Examples:**
@@ -267,7 +269,7 @@ Pull the configured source, build it and deploy. Use after a git push; waits for
 ```bash
 its dokploy apps deploy storefront
 
-# Blocks until the container reports healthy, then tails the last 50 log lines
+# Blocks until the deployment this trigger created finishes, then tails the last 50 log lines
 its dokploy apps deploy storefront --wait --logs
 
 its dokploy apps deploy <app-id>
@@ -398,6 +400,7 @@ Poll an application's deployments until the latest (or --since <id>) transitions
 | `--timeout` | `` | Timeout in seconds (default 600) | 600 |
 | `--interval` | `` | Poll interval in seconds (default 5) | 5 |
 | `--since` | `` | Wait for this specific deployment ID. Avoids the race where two deploys fire close together and the latest snapshot changes mid-poll. | — |
+| `--new` | `` | Ignore deployments that exist now and wait for the next one to appear — use straight after a git push, before the webhook's deployment is listed | — |
 
 **Examples:**
 

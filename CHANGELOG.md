@@ -15,6 +15,39 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.20.1] - 2026-09-24
+
+### Added
+
+- `its unifi devices ports <switch>` — per-port link view: speed, duplex, PoE,
+  STP state, error and drop counters, and the online clients on each port.
+  Flags copper ports up below gigabit or at half duplex; `--degraded` shows only
+  those.
+- `its dokploy apps wait-deploy --new` — wait for a deployment that does not
+  exist yet (straight after a git push), instead of the newest one listed.
+- `its dokploy apps deploy --wait --timeout <s>` — room for a build queued
+  behind others.
+
+### Changed
+
+- `its unifi devices get` takes a device name as well as a MAC, and its ports
+  now carry speed, duplex, STP state and error/drop counters.
+- `its dokploy apps get` shows the Dockerfile, build context and stage, watch
+  paths, trigger type, and which GitHub App installation clones the repo.
+- `its entra apps export` also warns about declared app roles that were never
+  granted, and about granted delegated scopes that are not declared.
+- `its dokploy apps wait-deploy` warns when the deployment it picked had
+  already finished.
+
+### Fixed
+
+- `its dokploy apps deploy --wait` anchored to an older, already-finished
+  deployment while the new one was still queued, and reported success. It now
+  waits for a deployment that did not exist before the trigger, and fails
+  rather than guesses if it cannot read the list first.
+- `its sp files share` pointed at a command that does not exist
+  (`its sp audit sharing-links`); it now names `its sp permissions links`.
+
 ## [0.20.0] - 2026-09-23
 
 ### Added
