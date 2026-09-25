@@ -19,7 +19,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [unifi.md](./unifi.md) | UniFi Network — 49 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 64 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 24 commands across 11 resources |
-| [exo.md](./exo.md) | Exchange Online — 59 commands across 12 resources |
+| [exo.md](./exo.md) | Exchange Online — 64 commands across 13 resources |
 | [intune.md](./intune.md) | Intune — 61 commands across 21 resources |
 | [protect.md](./protect.md) | UniFi Protect — 9 commands across 5 resources |
 | [pbi.md](./pbi.md) | Power BI — 21 commands across 6 resources |
@@ -35,7 +35,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 6 commands across 2 resources |
 
-**23 providers** · **239 resources** · **867 commands**
+**23 providers** · **240 resources** · **872 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -233,6 +233,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [rooms](./exo.md#rooms) | list, processing, calendar-permissions, events, set-calendar-permission, diagnose | `src/providers/exo/commands/rooms.ts` |
 | [app-access](./exo.md#app-access) | list, test | `src/providers/exo/commands/app-access.ts` |
 | [audit](./exo.md#audit) | search | `src/providers/exo/commands/audit.ts` |
+| [sharing-policies](./exo.md#sharing-policies) | list, get, create, add-domain, assign | `src/providers/exo/commands/sharing.ts` |
 
 ### [Intune](./intune.md)
 
@@ -1186,7 +1187,13 @@ its
 │   ├── app-access
 │   │   ├── (list)
 │   │   └── test <appId> <mailbox>
-│   └── audit search
+│   ├── audit search
+│   └── sharing-policies
+│       ├── (list)
+│       ├── get <name>
+│       ├── create <name>
+│       ├── add-domain <name>
+│       └── assign <name>
 ├── intune
 │   ├── devices
 │   │   ├── (list)
@@ -1719,6 +1726,7 @@ src/
 │   │   │   ├── recipients.ts
 │   │   │   ├── rooms.ts
 │   │   │   ├── rules.ts
+│   │   │   ├── sharing.ts
 │   │   │   └── trace.ts
 │   │   ├── audit-log.ts
 │   │   ├── client.ts

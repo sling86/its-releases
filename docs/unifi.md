@@ -191,7 +191,7 @@ Per-port link view of a switch: speed, duplex, PoE, STP state, error/drop counte
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--site` | `` | Site name override | — |
-| `--degraded` | `` | Only ports below gigabit, at half duplex, or with errors | — |
+| `--degraded` | `` | Only ports below gigabit, at half duplex, with errors, or silent (up but nothing received) | — |
 
 **Examples:**
 

@@ -15,6 +15,25 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.20.2] - 2026-09-25
+
+### Added
+
+- `its exo sharing-policies list|get|create|add-domain|assign` — manage
+  external calendar/contacts sharing from the CLI. `get` lists every mailbox
+  on a policy; writes need `--confirm`, and `add-domain` warns when the target
+  is the default policy (it opens the domain for every mailbox).
+- `its unifi devices ports` shows rx/tx GB per port and flags a port as
+  `silent` when the link is up but nothing has ever been received — a
+  switched-off PC holding the link on Wake-on-LAN, a dead NIC or idle kit.
+  `--degraded` now includes silent ports.
+
+### Fixed
+
+- `its sp drives recent` always failed with `400 invalidRequest`: drive delta
+  does not accept `$filter`. The date window is now applied client-side,
+  newest first, without the drive root or deleted items.
+
 ## [0.20.1] - 2026-09-24
 
 ### Added
