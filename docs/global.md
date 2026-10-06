@@ -84,15 +84,19 @@ Per-provider configuration status — what is set, what is in the keychain, secr
 
 ```bash
 its config
+its config set KEY=value [KEY=value…]
+its config set SECRET_KEY --from-stdin
 ```
 
-One row per provider: whether it is configured, which of its environment variables are set, which of its secrets are held in the OS keychain, and whether a session is active. Secret values are never printed — the output is safe to paste into a ticket.
+One row per provider: whether it is configured, which of its environment variables are set, which of its secrets are held in the OS keychain, and whether a session is active. Secret values are never printed — the output is safe to paste into a ticket. `config set` writes values without the setup wizard (for scripts and agents): plain values go to ~/.its/.env, secrets to the OS keychain. A secret is refused as KEY=value — pass the bare KEY with --from-stdin, or no value in a terminal for a masked prompt.
 
 **Examples**
 
 ```bash
 its config
 its config --json
+its config set SIGNATURE_API_URL=https://signature.example.com
+its config set SIGNATURE_API_KEY --from-stdin < key.txt
 ```
 
 ## its diff

@@ -15,6 +15,70 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.21.1] - 2026-10-06
+
+### Added
+
+- `bc apps upload <file.app> --env … --accept-eula --confirm` — upload a per-tenant extension (.app up to 50 MB) and install or update it through the Admin Centre API (`pteInstall`). `--schedule` (Immediate, UpdateWindow, NextMinorUpdate, NextMajorUpdate), `--sync-mode Add|ForceSync`, `--with-dependencies`. Previews without `--confirm`; never retried. `bc apps scheduled` lists installs that haven't run yet and `bc apps operations <appId>` follows one.
+
+### Fixed
+
+- The Windows release build failed on 9 `session` tests: `bw-passkeys.test.ts` replaced `core/session` for the whole test process with `mock.module`, which left `createSession` as a no-op for other test files. `session.ts` now honours `ITS_SESSIONS_DIR` (read per call) and the passkeys test uses a temp dir instead. No runtime change. This is why v0.21.0 was tagged but never published — its changes ship in v0.21.1.
+
+## [0.21.0] - 2026-10-06
+
+_Tagged but never published: the Windows build failed on a test-isolation bug (fixed in 0.21.1). Everything below ships in 0.21.1._
+
+### Added
+
+- `teams chats send` and `edit-message`: any URL in the text now goes out as HTML with a real hyperlink (trailing punctuation, brackets and `&` in query strings handled); Markdown bare URLs are linked too and `_`/`*` inside a URL are left alone.
+- `teams chats edit-message <chat> <message> --message …` — edit one of your own messages (Graph v1.0 allows it with delegated Chat.ReadWrite). Shows before/after without `--confirm`, then reads it back; refuses anyone else's message. Takes `--html`, `--markdown`, `--mention` and `--importance`.
+- `teams chats react` / `unreact` — add or remove your emoji reaction (`--emoji 👍`, or like/heart/laugh/surprised/sad/angry). Teams keeps one reaction per person per message, so a new one replaces yours. Read back to confirm.
+- `teams chats send --markdown` (headings, bold/italic/strike, code and code blocks, links, lists, quotes, rules, tables → the HTML subset Teams renders), `--importance normal|high|urgent`, `--subject`, `--card file.json` (Adaptive Card; `Action.OpenUrl` works, `Action.Submit` does not) and `--image a.png,b.jpg` (inline images).
+- `teams chats messages` now shows edits (`✎` and an `edited` time), reactions, importance and subject.
+- `bc record create|update|delete|call` — write to any BC entity (standard or a custom `--api` route) and run bound actions. Every write needs `--env <name>` spelled out (never the default) and `--confirm`; without it you get a preview. `update`/`delete` read the record first and send its etag, so a record changed since is refused, then read it back to check. Works with the global `--dry-run`.
+- `bc environments copy|delete|operations` — Admin Centre API. `copy` makes a sandbox from an environment (the copy carries the CLI app's BC registration); `delete` refuses anything that isn't a sandbox.
+- `bc apps list|updates|install|uninstall|update` — Admin Centre App Management API, the route Microsoft is moving to as the Automation API `extensionUpload` is removed in 2027 wave 1. Install needs `--accept-eula`; update needs `--version`; dependencies are only pulled in with `--with-dependencies`; uninstall keeps data unless `--delete-data`.
+- `manifest/entra-apps.jsonc`: `its-cli-bc`, a dedicated app for `its bc` (BC_CLIENT_ID / BC_CLIENT_SECRET) so BC no longer runs as the BC MCP app.
+- `teams chats send --mention` — @mention chat members by email, full name or first name (comma-separated). Replaces `@Name` in the message, or leads with the mention; an unknown name is refused rather than sent as plain text.
+- `dokploy databases update <database> --command … --args-json '[…]' --stop-grace <s>` — change a Dokploy database's container start command, args and stop grace period (postgres, mysql, mariadb, mongo, redis; type inferred). Shows a before/after diff and saves nothing without `--confirm`; refuses a real secret in the command and masks any already stored. Record-only — `databases deploy` rolls it out.
+- `teams chats send --reply-to <message_id>` — Teams' "Reply with quote": the reply carries the quoted message's sender and preview. In your Notes chat Teams shows the quote as an empty box.
+- `bw search <query>` — shortcut for `bw items search`; `its bw search` used to fail with `Unknown command`.
+- `bw items shape <item>` (booleans and counts only — password, TOTP, passkeys and their sites, org/personal, collections; safe to paste), `bw items passkeys <item>` and `bw items remove-passkey <item> --credential-id <id> --confirm`. Passkeys are now decrypted and shown everywhere (count on list/search, metadata on get, official shape in the `bw` shim and export/import); the private key is always masked. Creating a passkey needs a browser WebAuthn ceremony and is not offered.
+- `entra authmethods user <upn>` lists a user's sign-in methods with ids; `entra authmethods remove <upn> --method-id <id> --confirm` removes one (dry by default, read back after). Signed-in admin tokens usually only read methods, so on a 403 it retries once as the app (which holds `UserAuthenticationMethod.ReadWrite.All`) and reports `ranAs`; an explicit `--auth` is respected.
+- `exo mailboxes clear-forwarding <mailbox> --confirm` — clears ForwardingAddress, ForwardingSmtpAddress and keep-a-copy, shows the current forward without `--confirm`, reads back with `verified`.
+- `outlook drafts create|reply` and `mail draft` take `--signature` / `--sign-as <upn>` — fetch the canonical signature from the signature service and put it under the body (above the quoted thread on a reply). Needs `SIGNATURE_API_URL` plus `SIGNATURE_API_KEY` or `SIGNATURE_API_BW_ITEM`; any failure stops before a draft is made.
+- `az role-assignments list|create|delete` and `az role-definitions list` — Azure RBAC over ARM, role and principal names resolved, plan without `--confirm`, read back after create.
+- `intune autopilot sync --wait` and `intune devices rotate-bitlocker --confirm --wait` poll until done, failed or timeout; rotate-bitlocker reports who ran it (`ranAs`).
+- `teams chats --with <person>` and `teams chats messages --all-chats --since <when> [--from <name>]`; chat list has a `last message` column.
+- `pbi apps users <app_id>` and `pbi access --user <upn> [--type Report|App|Dataset|Dashboard]` — everything a user can reach, not just apps.
+- `hr drift detect --skip-no-corporate`, `--with-signins` and `--alias-map <file>` (or `PHR_NAME_ALIASES`); each row carries `matchedBy` and `confidence`, and managers are bucketed match / mismatch / missing-entra / missing-phr / both-blank.
+- `its config set KEY=value [KEY=value…]` — set config without the wizard, for scripts and agents. Plain values go to `~/.its/.env`, secrets to the OS keychain; a secret is refused as `KEY=value` (shell history, `/proc`) — use `its config set KEY --from-stdin` or a masked prompt in a terminal.
+- `outlook signature test [--sign-as <upn>] [--save <file>]` — checks `--signature` is set up end to end without making a draft. `its outlook setup` now asks for `SIGNATURE_API_URL`, `SIGNATURE_API_BW_ITEM` / `SIGNATURE_API_KEY`, and `--check` says whether a draft could be signed right now (e.g. "vault is LOCKED").
+
+### Changed
+
+- Help text and docs refreshed: `bc` now describes writes, environments, apps and the per-environment registration; `teams` describes send/edit/react; the "share one Entra app" note no longer lists Business Central; `.env.example` and AGENTS.md cover the BC setup and Teams formatting rules.
+
+### Fixed
+
+- `bc users get|add-permission|remove-permission` ignored `--env` when looking the user up, so against a sandbox they used the Production user's id and failed with a misleading 404.
+- `bc apps list|updates` showed an empty app id column (the Admin Centre returns it as `id`).
+- `its outlook setup --check` paged through every mail folder one request at a time and warned the list was incomplete — the connection test passed a page size of 1.
+
+- `bw items update` (and the `bw edit item` shim, and the Entra/RMM password rotations) deleted an item's passkeys — the PUT rebuilt `login` without `fido2Credentials`. They are now carried over unless removed on purpose.
+- `bw` updates now keep an item's own encryption key (cipher-key encryption) instead of clearing it, which left the item's attachments unreadable.
+- `hr drift detect` matches on EmployeeId first, then email, UPN prefix and name, each pass finishing before the next, so a fuzzy name can't take an account an id match owns; an employeeId push that would duplicate an id on another account is held back.
+- `pbi apps --user` returned nothing for anyone — the API's `ArtifactAccessEntities` key is capitalised.
+- `teams chats` sorts on the last message, not on when the chat's details last changed; `chats delete-message` without `--confirm` puts `dryRun` and a note in `data` so `--ai`/`--json` see it.
+- `intune devices get` takes a name or serial (it passed the input straight to the API).
+- `rmm agents edit` reads the agent back and reports `verified`; an agent_id now resolves to the real hostname instead of echoing the id.
+- `help` as the only argument shows help for any command that writes or takes an id/name first — `its entra apps register help` used to create an app called "help".
+- `graph delete` prints `204 No Content — deleted <path>` instead of `undefined`.
+- 401/403 errors show Graph's full `code: message` (other bodies 500 chars, was 200); a 403 on SharePoint/OneDrive also suggests `--profile me`.
+
+- `teams chats send` — a multi-line plain-text message no longer arrives as one squashed block. Blank lines become paragraphs, `- ` / `* ` lines a bulleted list, single newlines line breaks. `--html` still sends as-is.
+
 ## [0.20.2] - 2026-09-25
 
 ### Added

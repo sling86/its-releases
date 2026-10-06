@@ -196,6 +196,7 @@ its exo groups remove-member "All Staff" jane.smith@example.com
 | `its exo mailboxes add-alias <mailbox> <address>` | Add ONE secondary SMTP address to a mailbox, keeping every existing address (Set-Mailbox -EmailAddresses @{add=...}). Unlike `entra users update --set proxyAddresses`, nothing else is touched. Cloud-only mailboxes; synced ones are changed on-prem. |
 | `its exo mailboxes remove-alias <mailbox> <address>` | Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address. |
 | `its exo mailboxes set-forwarding <mailbox> <target>` | Configure mailbox forwarding. Set a mailbox forward. --confirm required. |
+| `its exo mailboxes clear-forwarding <mailbox>` | Remove the mailbox's own forward: clears ForwardingAddress and ForwardingSmtpAddress and sets DeliverToMailboxAndForward false. Shows the current forward without --confirm; reads it back after. (The outbound spam policy exception is `exo forwarding remove-mailbox`.) |
 | `its exo mailboxes set-type <mailbox> <type>` | Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared. |
 | `its exo mailboxes set-visibility <mailbox>` | Hide or show a mailbox in the global address list (GAL). Pass exactly one of --hide / --show. |
 | `its exo mailboxes delete <mailbox>` | Delete a mailbox. For a UserMailbox this ALSO deletes the Entra user account (Remove-Mailbox removes both), soft-deleted for 30 days. This is not how THF offboards a leaver — that converts to shared and hides from the GAL. The intended use is an orphaned shared, room, or equipment mailbox. Requires --confirm, and a UserMailbox additionally requires --delete-account. |
@@ -397,6 +398,24 @@ Configure mailbox forwarding. Set a mailbox forward. --confirm required.
 its exo mailboxes set-forwarding jo@example.com manager@example.com --confirm
 
 its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy
+```
+
+#### `its exo mailboxes clear-forwarding <mailbox>`
+
+Remove the mailbox's own forward: clears ForwardingAddress and ForwardingSmtpAddress and sets DeliverToMailboxAndForward false. Shows the current forward without --confirm; reads it back after. (The outbound spam policy exception is `exo forwarding remove-mailbox`.).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to clear forwarding | — |
+
+**Examples:**
+
+```bash
+its exo mailboxes clear-forwarding jo@example.com
+
+its exo mailboxes clear-forwarding jo@example.com --confirm
 ```
 
 #### `its exo mailboxes set-type <mailbox> <type>`

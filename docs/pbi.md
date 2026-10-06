@@ -11,6 +11,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [workspaces](#workspaces)
 - [reports](#reports)
 - [apps](#apps)
+- [access](#access)
 - [licences](#licences)
 - [activity](#activity)
 - [my](#my)
@@ -212,11 +213,12 @@ its pbi reports url <report-id>
 
 | Command | Description |
 |---------|-------------|
-| `its pbi apps` | List Power BI apps. Use --user <id|upn> to list one user's app access. |
+| `its pbi apps` | List Power BI apps. Use --user <id|upn> to list one user's app access (`its pbi access --user` shows every type). |
+| `its pbi apps users <app_id>` | Who can open a Power BI app (its audience): users, groups and service principals with their access right. Admin API, 200 calls/hour. |
 
 #### `its pbi apps`
 
-List Power BI apps. Use --user <id|upn> to list one user's app access.
+List Power BI apps. Use --user <id|upn> to list one user's app access (`its pbi access --user` shows every type).
 
 **Flags:**
 
@@ -232,6 +234,45 @@ its pbi apps
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its pbi apps --watch
+```
+
+#### `its pbi apps users <app_id>`
+
+Who can open a Power BI app (its audience): users, groups and service principals with their access right. Admin API, 200 calls/hour.
+
+**Examples:**
+
+```bash
+its pbi apps users f089354e-8366-4e18-aea3-4cb4a3a50b48
+```
+
+---
+
+### access
+
+> Source: `src/providers/pbi/commands/access.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its pbi access` | Every Power BI item one user can reach (reports, apps, datasets, dashboards…) with their access right. Admin API, 200 calls/hour. |
+
+#### `its pbi access`
+
+Every Power BI item one user can reach (reports, apps, datasets, dashboards…) with their access right. Admin API, 200 calls/hour.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | User ID or UPN (required) | — |
+| `--type` | `` | Only this artifact type (filtered server-side) | — |
+
+**Examples:**
+
+```bash
+its pbi access --user jane.smith@example.com
+
+its pbi access --user jane.smith@example.com --type Report
 ```
 
 ---

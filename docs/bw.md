@@ -23,6 +23,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [sends](#sends)
 - [compat](#compat)
 - [doctor](#doctor)
+- [search](#search)
 
 ## Setup
 
@@ -104,6 +105,9 @@ AI shell commands run non-interactively, so first run `its bw session unlock` yo
 | `its bw items search <query>` | Search vault items by name, username, URL, or notes. Substring match across the most relevant fields; case-insensitive. |
 | `its bw items find-login [query]` | Rank login candidates by name, URL and username without returning secrets. Timestamps only break equal-score ties; pass an exact ID to `items get` after choosing. |
 | `its bw items get <id>` | Get a vault item by ID (includes password and fields). Pass the id (or any natural identifier) as the positional arg. The secret is redacted unless a sink is given: --copy for desk work, --to-file to hand it to another command. --field <name> targets a custom field instead of the login password. |
+| `its bw items shape <item>` | What an item holds, as booleans and counts only: has password / TOTP / username, passkey count and relying-party ids, organisation or personal, collections, field and attachment counts. Prints no secret values — safe for a transcript or a hygiene sweep. |
+| `its bw items passkeys <item>` | List the passkeys (FIDO2 credentials) on a login: relying party, user name, created date and credential id. The private key is never shown. Creating a passkey needs a WebAuthn ceremony in a browser or the Bitwarden app — not possible from here. |
+| `its bw items remove-passkey <item>` | Remove one passkey from a login by credential id (see `items passkeys`). Dry run without --confirm. The private key is gone for good once removed — the site will need a new passkey registering. Reads the item back afterwards to prove it went. |
 | `its bw items attachments <id>` | List the files attached to a vault item. Names are decrypted locally — the server never sees them. |
 | `its bw items attach <id> <file>` | Attach a local file to a vault item. The file is encrypted locally under its own key before upload — the server never sees the contents or the filename. Additive: existing attachments are untouched. |
 | `its bw items download <id> <attachment>` | Download and decrypt one attachment to a mode-0600 file. Never prints the contents — an attachment is usually key material, so it goes straight to disk like every other secret sink. |
@@ -213,6 +217,57 @@ its bw items get "server-login" --to-file /dev/shm/sec
 its bw items get "Outlook MCP" --field "API KEY" --to-file /dev/shm/sec
 
 its bw items get "Server admin"
+```
+
+#### `its bw items shape <item>`
+
+What an item holds, as booleans and counts only: has password / TOTP / username, passkey count and relying-party ids, organisation or personal, collections, field and attachment counts. Prints no secret values — safe for a transcript or a hygiene sweep.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+# Has it got its passkey, and is it in the org vault?
+its bw items shape "Break Glass 02 - Entra ID (FIDO2)"
+```
+
+#### `its bw items passkeys <item>`
+
+List the passkeys (FIDO2 credentials) on a login: relying party, user name, created date and credential id. The private key is never shown. Creating a passkey needs a WebAuthn ceremony in a browser or the Bitwarden app — not possible from here.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+```bash
+its bw items passkeys <item>
+```
+
+#### `its bw items remove-passkey <item>`
+
+Remove one passkey from a login by credential id (see `items passkeys`). Dry run without --confirm. The private key is gone for good once removed — the site will need a new passkey registering. Reads the item back afterwards to prove it went.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--credential-id` | `` | Credential id of the passkey to remove | — |
+| `--confirm` | `` | Actually remove it | — |
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+its bw items remove-passkey <item> --credential-id <id>
+
+its bw items remove-passkey <item> --credential-id <id> --confirm
 ```
 
 #### `its bw items attachments <id>`
@@ -1619,6 +1674,35 @@ its bw doctor
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its bw doctor --watch
+```
+
+---
+
+### search
+
+> Source: `src/providers/bw/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bw search <query>` | Shortcut for `its bw items search`. Search vault items by name, username, URL, or notes. Substring match across the most relevant fields; case-insensitive. |
+
+#### `its bw search <query>`
+
+Shortcut for `its bw items search`. Search vault items by name, username, URL, or notes. Substring match across the most relevant fields; case-insensitive.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--organisation` | `` | Organisation name or ID | — |
+| `--collection` | `` | Collection name or ID | — |
+| `--personal-only` | `` | Show only personal items | — |
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+its bw search "break glass"
 ```
 
 ---

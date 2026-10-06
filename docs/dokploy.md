@@ -719,6 +719,7 @@ its dokploy apps cert-status storefront
 | `its dokploy databases create` | Create a database (postgres, mysql, mariadb, mongo, or redis) |
 | `its dokploy databases deploy <databaseId>` | Deploy a database instance. Trigger a fresh deploy from the wired source. |
 | `its dokploy databases stop <databaseId>` | Stop a database instance. Stop the resource. Use --confirm if the action is destructive. |
+| `its dokploy databases update <database>` | Change a database's container start command, args and stop grace period (postgres, mysql, mariadb, mongo, redis; type is inferred). Shows a before/after diff and changes nothing unless --confirm is passed. Dokploy splits --command on spaces, so put anything quoted in --args-json; reference secrets as env vars ($REDIS_PASSWORD) — a real secret value is refused and never printed. Saves the record only: run `databases deploy` to apply it to the running service. |
 | `its dokploy databases delete <databaseId>` | Delete a database instance. Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
 
 #### `its dokploy databases`
@@ -856,6 +857,31 @@ Stop a database instance. Stop the resource. Use --confirm if the action is dest
 its dokploy databases stop dB8kW2nQ --type postgres
 
 its dokploy databases stop <db-id>
+```
+
+#### `its dokploy databases update <database>`
+
+Change a database's container start command, args and stop grace period (postgres, mysql, mariadb, mongo, redis; type is inferred). Shows a before/after diff and changes nothing unless --confirm is passed. Dokploy splits --command on spaces, so put anything quoted in --args-json; reference secrets as env vars ($REDIS_PASSWORD) — a real secret value is refused and never printed. Saves the record only: run `databases deploy` to apply it to the running service.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--command` | `` | Start command, split on spaces by Dokploy ("" = image default) | — |
+| `--args-json` | `` | Command args as a JSON array of strings ('[]' = image default) | — |
+| `--stop-grace` | `` | Seconds Swarm waits after SIGTERM before SIGKILL, or "default" | — |
+| `--confirm` | `` | Save the change (without it, only the diff is shown) | — |
+
+**Examples:**
+
+```bash
+# Shows the before/after diff only. Single-quote the JSON so your shell leaves $REDIS_PASSWORD alone; the container's sh expands it
+its dokploy databases update ccd-redis-p9ie2b --command /bin/sh --args-json '["-c","exec redis-server --requirepass \"$REDIS_PASSWORD\" --appendonly yes --appendfsync everysec"]' --stop-grace 30
+
+# Saves the record; run `databases deploy` to roll it out
+its dokploy databases update ccd-redis-p9ie2b --stop-grace 30 --confirm
+
+its dokploy databases update ccd-redis-p9ie2b --command "" --args-json '[]' --stop-grace default --confirm
 ```
 
 #### `its dokploy databases delete <databaseId>`

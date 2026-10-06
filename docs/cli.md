@@ -43,28 +43,28 @@ its <provider> <resource> [action] [args] [--flags]
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 81 commands, 20 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 117 commands, 23 resources | [entra.md](./entra.md) |
-| Dokploy | `dokploy` | 120 commands, 25 resources | [dokploy.md](./dokploy.md) |
-| Bitwarden | `bw` | 65 commands, 15 resources | [bw.md](./bw.md) |
+| Entra ID | `entra` | 119 commands, 23 resources | [entra.md](./entra.md) |
+| Dokploy | `dokploy` | 121 commands, 25 resources | [dokploy.md](./dokploy.md) |
+| Bitwarden | `bw` | 69 commands, 16 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 55 commands, 12 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 49 commands, 17 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 64 commands, 17 resources | [wrike.md](./wrike.md) |
-| Azure CLI | `az` | 24 commands, 11 resources | [az.md](./az.md) |
-| Exchange Online | `exo` | 64 commands, 13 resources | [exo.md](./exo.md) |
+| Azure CLI | `az` | 28 commands, 13 resources | [az.md](./az.md) |
+| Exchange Online | `exo` | 65 commands, 13 resources | [exo.md](./exo.md) |
 | Intune | `intune` | 61 commands, 21 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 9 commands, 5 resources | [protect.md](./protect.md) |
-| Power BI | `pbi` | 21 commands, 6 resources | [pbi.md](./pbi.md) |
+| Power BI | `pbi` | 23 commands, 7 resources | [pbi.md](./pbi.md) |
 | Power Platform | `pa` | 13 commands, 4 resources | [pa.md](./pa.md) |
 | Cloudflare | `cf` | 16 commands, 5 resources | [cf.md](./cf.md) |
 | PeopleHR | `hr` | 19 commands, 10 resources | [hr.md](./hr.md) |
 | Factory attendance | `attendance` | 5 commands, 5 resources | [attendance.md](./attendance.md) |
-| Business Central | `bc` | 14 commands, 8 resources | [bc.md](./bc.md) |
+| Business Central | `bc` | 29 commands, 9 resources | [bc.md](./bc.md) |
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
 | GitHub | `gh` | 6 commands, 2 resources | [gh.md](./gh.md) |
-| Outlook | `outlook` | 50 commands, 11 resources | [outlook.md](./outlook.md) |
+| Outlook | `outlook` | 51 commands, 12 resources | [outlook.md](./outlook.md) |
 | Microsoft 365 Health | `m365` | 3 commands, 2 resources | [m365.md](./m365.md) |
-| Teams | `teams` | 6 commands, 2 resources | [teams.md](./teams.md) |
+| Teams | `teams` | 9 commands, 2 resources | [teams.md](./teams.md) |
 
 ## Global Options
 

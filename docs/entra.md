@@ -1307,11 +1307,42 @@ its entra ca named-locations
 
 | Command | Description |
 |---------|-------------|
+| `its entra authmethods user <user_id>` | List one user's registered authentication methods (Authenticator, FIDO2, phone, OATH, email, Windows Hello, TAP, password) with the ids `authmethods remove` takes. Always reads live. |
+| `its entra authmethods remove <user_id>` | Remove one of a user's authentication methods by id (from `authmethods user`). Shows what it would delete unless --confirm is given, then reads the list back. Needs UserAuthenticationMethod.ReadWrite.All: if the signed-in token lacks it (usual — admins get .Read.All) it retries once as the app, which holds it as an app role, and says so in `ranAs`. |
 | `its entra authmethods policy` | Fetch the full Authentication Methods Policy — shows which methods (TAP, FIDO2, SMS, etc.) are enabled tenant-wide and any per-method targets |
 | `its entra authmethods get <method>` | Get a single authentication method configuration by id (TemporaryAccessPass, Fido2, Sms, MicrosoftAuthenticator, Email, Voice, X509Certificate, etc.) |
 | `its entra authmethods enable <method>` | Enable a method tenant-wide (sets state=enabled on the method configuration). Pass --target <groupId> or --target all-users to scope. |
 | `its entra authmethods disable <method>` | Disable a method tenant-wide (state=disabled). Switch to inactive state. Idempotent. |
 | `its entra authmethods patch <method>` | Patch a method configuration with a custom body (inline or @path/to/file.json) |
+
+#### `its entra authmethods user <user_id>`
+
+List one user's registered authentication methods (Authenticator, FIDO2, phone, OATH, email, Windows Hello, TAP, password) with the ids `authmethods remove` takes. Always reads live.
+
+**Examples:**
+
+```bash
+its entra authmethods user jane.smith@example.com
+```
+
+#### `its entra authmethods remove <user_id>`
+
+Remove one of a user's authentication methods by id (from `authmethods user`). Shows what it would delete unless --confirm is given, then reads the list back. Needs UserAuthenticationMethod.ReadWrite.All: if the signed-in token lacks it (usual — admins get .Read.All) it retries once as the app, which holds it as an app role, and says so in `ranAs`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--method-id` | `` | Method id from `authmethods user` | — |
+| `--confirm` | `` | Actually delete (without it, only a preview) | — |
+
+**Examples:**
+
+```bash
+its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-...
+
+its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-... --confirm
+```
 
 #### `its entra authmethods policy`
 

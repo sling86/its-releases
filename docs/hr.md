@@ -73,6 +73,9 @@ Detect drift between PeopleHR and Entra ID across employeeId, jobTitle, departme
 | `--domain` | `` | Entra UPN domain to audit (e.g. example.com). Defaults to every domain seen in active Entra users. | — |
 | `--company` | `` | Restrict PHR side to this company (substring match against Company DisplayValue). Default: search globally. | — |
 | `--include-disabled` | `` | Include disabled Entra accounts (default: only enabled). | — |
+| `--alias-map` | `` | File of first-name nicknames for name matching: JSON {"mike":"michael"} or `mike:michael` lines. Adds to the built-in set and PHR_NAME_ALIASES. | — |
+| `--skip-no-corporate` | `` | Leave out PeopleHR-only people whose email is blank or not on one of the directory's own domains (staff with no company account). | — |
+| `--with-signins` | `` | Add last sign-in to Entra-only accounts (one paged Graph call; needs AuditLog.Read.All). | — |
 
 **Examples:**
 
@@ -82,6 +85,8 @@ its hr drift detect
 its hr drift detect --domain example.com
 
 its hr drift detect --filter apply=true
+
+its hr drift detect --skip-no-corporate --with-signins
 ```
 
 #### `its hr drift apply`
@@ -95,6 +100,7 @@ Make Entra ID agree with PeopleHR for the drift `hr drift detect` reports. Write
 | `--domain` | `` | Entra UPN domain to audit (e.g. example.com). Defaults to every domain seen in active Entra users. | — |
 | `--company` | `` | Restrict PHR side to this company (substring match against Company DisplayValue). Default: search globally. | — |
 | `--include-disabled` | `` | Include disabled Entra accounts (default: only enabled). | — |
+| `--alias-map` | `` | File of first-name nicknames for name matching: JSON {"mike":"michael"} or `mike:michael` lines. Adds to the built-in set and PHR_NAME_ALIASES. | — |
 | `--field` | `` | Only write these fields, comma-separated. One of: employeeId, jobTitle, department, officeLocation, employeeType, companyName, employeeHireDate, manager. | — |
 | `--user` | `` | Only update this UPN. | — |
 | `--confirm` | `` | Actually write to Entra ID. | — |

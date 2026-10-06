@@ -71,7 +71,7 @@ Intune reuses the same Graph API credentials as the Entra provider — no additi
 | Command | Description |
 |---------|-------------|
 | `its intune devices` | List Intune-managed devices. Surfaces the most common fields; pass --json for raw shape. |
-| `its intune devices get <id>` | Get managed device details. Pass the id (or any natural identifier) as the positional arg. |
+| `its intune devices get <device>` | Get managed device details. Pass the id (or any natural identifier) as the positional arg. |
 | `its intune devices search <query>` | Search devices by name, user, or serial number. Substring match across the most relevant fields; case-insensitive. |
 | `its intune devices sync <id>` | Trigger a device sync. Force the device to sync with Intune. |
 | `its intune devices primary-user <device>` | Show a device's primary user. Resolve the device by id or name. |
@@ -104,7 +104,7 @@ its intune devices --top 50
 its intune devices --filter compliance=noncompliant
 ```
 
-#### `its intune devices get <id>`
+#### `its intune devices get <device>`
 
 Get managed device details. Pass the id (or any natural identifier) as the positional arg.
 
@@ -196,6 +196,8 @@ Rotate a device's BitLocker recovery key (requires --confirm). The device rotate
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--confirm` | `` | Apply the rotation | — |
+| `--wait` | `` | Poll the device's action results until the rotation is done or failed | — |
+| `--timeout` | `` | With --wait: seconds to wait (default 600) | 600 |
 
 **Examples:**
 
@@ -203,6 +205,8 @@ Rotate a device's BitLocker recovery key (requires --confirm). The device rotate
 its intune devices rotate-bitlocker THF-UD-MP27XZ31
 
 its intune devices rotate-bitlocker THF-UD-MP27XZ31 --confirm
+
+its intune devices rotate-bitlocker THF-UD-MP27XZ31 --confirm --wait --timeout 900
 ```
 
 #### `its intune devices wipe <device>`
@@ -600,7 +604,7 @@ its intune esp update <profile-id> --timeout 120
 |---------|-------------|
 | `its intune autopilot` | List Autopilot deployment profiles. Surfaces the most common fields; pass --json for raw shape. |
 | `its intune autopilot devices` | List Autopilot-registered devices. Returns devices for the resource. |
-| `its intune autopilot sync` | Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one. |
+| `its intune autopilot sync` | Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one, or --wait to poll until it completes or fails. |
 | `its intune autopilot tag <serial> [tag]` | Set group tag on an Autopilot device. Set or clear a tag value. |
 | `its intune autopilot import` | Register devices with Autopilot from a hardware-hash CSV (Get-WindowsAutopilotInfo -OutputFile). --group-tag sets or overrides the tag. Waits for Autopilot to accept or reject each one (up to --wait seconds, default 180) and reports per device. |
 | `its intune autopilot deregister <serial>` | Remove a device's Autopilot registration by EXACT serial number (e.g. before selling or returning it). --confirm must repeat the serial. Intune refuses while the device is still enrolled — retire/delete it first. |
@@ -637,13 +641,15 @@ its intune autopilot devices
 
 #### `its intune autopilot sync`
 
-Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one.
+Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one, or --wait to poll until it completes or fails.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--status` | `` | Report the last sync without triggering a new one | — |
+| `--wait` | `` | Poll until the sync completes or fails (also waits on one already running) | — |
+| `--timeout` | `` | With --wait: seconds to wait (default 600) | 600 |
 
 **Examples:**
 
@@ -653,6 +659,9 @@ its intune autopilot sync
 
 # Report the last sync without triggering one
 its intune autopilot sync --status
+
+# Trigger, then poll until the sync completes or fails
+its intune autopilot sync --wait --timeout 900
 ```
 
 #### `its intune autopilot tag <serial> [tag]`

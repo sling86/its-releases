@@ -19,6 +19,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [rules](#rules)
 - [contacts](#contacts)
 - [triage](#triage)
+- [signature](#signature)
 
 ## Setup
 
@@ -40,6 +41,9 @@ its outlook setup --reset   # Re-run setup (overwrite config)
 | `OUTLOOK_CLIENT_SECRET` | Outlook-specific app registration client secret |
 | `OUTLOOK_DEFAULT_USER` | UPN of the mailbox to operate on under app-only auth (ignored when delegated token is cached) |
 | `OUTLOOK_DEFAULT_TZ` | Default time zone for `events create/update` when --tz is not passed (default UTC) |
+| `SIGNATURE_API_URL` | Signature service base URL — enables --signature / --sign-as on drafts |
+| `SIGNATURE_API_BW_ITEM` | Bitwarden item id whose password is the signature API key (needs an unlocked vault) |
+| `SIGNATURE_API_KEY` | Signature API key (alternative to SIGNATURE_API_BW_ITEM) |
 
 ### Source Files
 
@@ -51,6 +55,7 @@ its outlook setup --reset   # Re-run setup (overwrite config)
 | `src/providers/outlook/definition.ts` | definition |
 | `src/providers/outlook/helpers.ts` | helpers |
 | `src/providers/outlook/quote.ts` | quote |
+| `src/providers/outlook/signature.ts` | signature |
 
 ## Resources
 
@@ -334,6 +339,8 @@ Create a draft instead of sending. Nothing leaves the mailbox until `its outlook
 | `--body-file` | `` | Read body from a UTF-8 file | — |
 | `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
 | `--importance` | `` | low|normal|high | — |
+| `--signature` | `` | Append the canonical signature for the mailbox (set up once: `its outlook setup`; check: `its outlook signature test`) | — |
+| `--sign-as` | `` | Append the signature for this send-as address (implies --signature) | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 
 **Examples:**
@@ -408,6 +415,8 @@ Create a draft email (does not send).
 | `--body-file` | `` | Read body from a UTF-8 file (use this for bodies > ~15KB — Windows command-line cap) | — |
 | `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
 | `--importance` | `` | low|normal|high | normal |
+| `--signature` | `` | Append the canonical signature for the mailbox (set up once: `its outlook setup`; check: `its outlook signature test`) | — |
+| `--sign-as` | `` | Append the signature for this send-as address (implies --signature) | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 | `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
@@ -430,6 +439,9 @@ Create a reply draft. By default replies to the sender only; use --all to Reply-
 | `--comment` | `` | Inline comment prepended to the reply body | — |
 | `--comment-file` | `` | Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) | — |
 | `--all` | `` | Reply to all recipients | — |
+| `--html` | `` | With --signature: treat --comment as HTML (default text) | — |
+| `--signature` | `` | Append the canonical signature for the mailbox (set up once: `its outlook setup`; check: `its outlook signature test`) | — |
+| `--sign-as` | `` | Append the signature for this send-as address (implies --signature) | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 | `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
 
@@ -1171,6 +1183,36 @@ Triage the unread inbox — buckets messages into ACTION REQUIRED / FYI / NOISE 
 its outlook triage
 
 its outlook triage --top 50
+```
+
+---
+
+### signature
+
+> Source: `src/providers/outlook/commands/signature.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its outlook signature test` | Check --signature is set up: says where the key comes from, then fetches the signature for the mailbox (or --sign-as) without creating a draft. Prints its size, never the key. |
+
+#### `its outlook signature test`
+
+Check --signature is set up: says where the key comes from, then fetches the signature for the mailbox (or --sign-as) without creating a draft. Prints its size, never the key.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--sign-as` | `` | Send-as address to fetch the signature for (default: the mailbox) | — |
+| `--save` | `` | Also write the signature HTML to this file to look at | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook signature test
+
+its outlook signature test --sign-as sales@example.com
 ```
 
 ---
