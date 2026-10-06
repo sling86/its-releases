@@ -165,11 +165,11 @@ its bc environments operations <name>
 
 | Command | Description |
 |---------|-------------|
-| `its bc entities` | List entity sets exposed by the BC API (OData service document) |
+| `its bc entities` | List entity sets exposed by the BC API (OData service document). Tenant-level, so --company has no effect; pass --api publisher/group/version to discover a custom API's entities (e.g. THF/platformSync/v2.0). Listing an entity is not proof you can read it — a 403 on query means the app's BC user lacks a permission set. |
 
 #### `its bc entities`
 
-List entity sets exposed by the BC API (OData service document).
+List entity sets exposed by the BC API (OData service document). Tenant-level, so --company has no effect; pass --api publisher/group/version to discover a custom API's entities (e.g. THF/platformSync/v2.0). Listing an entity is not proof you can read it — a 403 on query means the app's BC user lacks a permission set.
 
 **Flags:**
 

@@ -15,6 +15,19 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.21.2] - 2026-10-06
+
+### Fixed
+
+- `its bc query inventory` (and any entity or search word that is also an action name on another provider, e.g. `inventory`, `status`) was read as an action and failed with "Unknown command". If a resource has just one command and it only reads, the word is now taken as its first argument. A mutating single command is never run that way, and resources with several commands still report an unknown action.
+- An HTTP failure that isn't an auth problem (a 404 on an entity that isn't installed, a 400) now prints as one `API_ERROR:` line instead of a JSON stack under "Unexpected error". The message is unchanged and the exit code is still 1.
+- Teams Markdown links whose address has brackets, like `[t](https://x/Foo_(bar))`, kept only up to the first `)`.
+
+### Changed
+
+- `bc entities list` help now says it is tenant-level (`--company` has no effect), that `--api publisher/group/version` discovers a custom API's entities, and that a listed entity is not proof you can read it.
+- CI `check` workflow also runs the suite three times in shuffled order (fixed seeds 1-3): the class of bug that failed the v0.21.0 Windows build reproduces on Linux that way.
+
 ## [0.21.1] - 2026-10-06
 
 ### Added
