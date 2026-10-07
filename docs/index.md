@@ -12,22 +12,22 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [global.md](./global.md) | Global commands — 24 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 81 commands across 20 resources |
-| [entra.md](./entra.md) | Entra ID — 119 commands across 23 resources |
+| [entra.md](./entra.md) | Entra ID — 121 commands across 23 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 121 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 69 commands across 16 resources |
 | [sp.md](./sp.md) | SharePoint — 55 commands across 12 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 49 commands across 17 resources |
 | [wrike.md](./wrike.md) | Wrike — 64 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 28 commands across 13 resources |
-| [exo.md](./exo.md) | Exchange Online — 65 commands across 13 resources |
+| [exo.md](./exo.md) | Exchange Online — 73 commands across 16 resources |
 | [intune.md](./intune.md) | Intune — 61 commands across 21 resources |
-| [protect.md](./protect.md) | UniFi Protect — 9 commands across 5 resources |
-| [pbi.md](./pbi.md) | Power BI — 23 commands across 7 resources |
+| [protect.md](./protect.md) | UniFi Protect — 10 commands across 5 resources |
+| [pbi.md](./pbi.md) | Power BI — 30 commands across 9 resources |
 | [pa.md](./pa.md) | Power Platform — 13 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
 | [hr.md](./hr.md) | PeopleHR — 19 commands across 10 resources |
 | [attendance.md](./attendance.md) | Factory attendance — 5 commands across 5 resources |
-| [bc.md](./bc.md) | Business Central — 29 commands across 9 resources |
+| [bc.md](./bc.md) | Business Central — 30 commands across 9 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 6 commands across 2 resources |
@@ -35,7 +35,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
 | [teams.md](./teams.md) | Teams — 9 commands across 2 resources |
 
-**23 providers** · **246 resources** · **905 commands**
+**23 providers** · **251 resources** · **924 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -68,12 +68,12 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [users](./entra.md#users) | list, update, photo, set-photo, search, get, groups, chain, licences, invite, create, enable, bootstrap-admin, stale, disable, revoke-sessions, set-password, delete, transfer, reinstate | `src/providers/entra/commands/users.ts` |
 | [groups](./entra.md#groups) | list, search, get, members, create, add-member, remove-member, edit-rule, make-dynamic, audit-rules | `src/providers/entra/commands/groups.ts` |
-| [licences](./entra.md#licences) | list, assign, remove, users, unlicensed, audit, waste | `src/providers/entra/commands/licences.ts` |
+| [licences](./entra.md#licences) | list, assign, remove, user, users, unlicensed, audit, waste | `src/providers/entra/commands/licences.ts` |
 | [roles](./entra.md#roles) | list, members, assign, remove, assignments | `src/providers/entra/commands/roles.ts` |
 | [signin](./entra.md#signin) | list, summary, explain, suspicious | `src/providers/entra/commands/signin.ts` |
 | [tap](./entra.md#tap) | create, list, revoke | `src/providers/entra/commands/tap.ts` |
 | [ca](./entra.md#ca) | list, enabled, get, patch, exclude-guests, create, delete, exclude-user, unexclude-user, why-blocked, report-only, named-locations | `src/providers/entra/commands/ca.ts` |
-| [authmethods](./entra.md#authmethods) | user, remove, policy, get, enable, disable, patch | `src/providers/entra/commands/auth-methods.ts` |
+| [authmethods](./entra.md#authmethods) | user, remove, report, policy, get, enable, disable, patch | `src/providers/entra/commands/auth-methods.ts` |
 | [consent](./entra.md#consent) | list, add-scope, remove-scope, app-roles, app-role-grant, app-role-revoke | `src/providers/entra/commands/consent.ts` |
 | [xtenant](./entra.md#xtenant) | default, trust-mfa, trust-device, partners, partner-add, partner-set | `src/providers/entra/commands/xtenant.ts` |
 | [audit](./entra.md#audit) | list | `src/providers/entra/commands/audit.ts` |
@@ -225,7 +225,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [groups](./exo.md#groups) | list, get, members, create, delete, add-member, remove-member | `src/providers/exo/commands/groups.ts` |
-| [mailboxes](./exo.md#mailboxes) | list, get, stats, message-config, create, permissions, add-permission, remove-permission, forwarding, inbox-rules, remove-inbox-rule, user-access, add-alias, remove-alias, set-forwarding, clear-forwarding, set-type, set-visibility, delete | `src/providers/exo/commands/mailboxes.ts` |
+| [mailboxes](./exo.md#mailboxes) | list, get, stats, message-config, create, permissions, add-permission, remove-permission, forwarding, inbox-rules, remove-inbox-rule, user-access, add-alias, remove-alias, set-forwarding, clear-forwarding, set-type, set-visibility, delete, archive | `src/providers/exo/commands/mailboxes.ts` |
 | [rules](./exo.md#rules) | list, get, audit, disable, enable | `src/providers/exo/commands/rules.ts` |
 | [domains](./exo.md#domains) | list | `src/providers/exo/commands/domains.ts` |
 | [dkim](./exo.md#dkim) | list, get, rotate, enable, disable | `src/providers/exo/commands/dkim.ts` |
@@ -237,6 +237,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [app-access](./exo.md#app-access) | list, test | `src/providers/exo/commands/app-access.ts` |
 | [audit](./exo.md#audit) | search | `src/providers/exo/commands/audit.ts` |
 | [sharing-policies](./exo.md#sharing-policies) | list, get, create, add-domain, assign | `src/providers/exo/commands/sharing.ts` |
+| [quarantine](./exo.md#quarantine) | list, get, release | `src/providers/exo/commands/protection.ts` |
+| [allowblock](./exo.md#allowblock) | list, add, remove | `src/providers/exo/commands/protection.ts` |
+| [remote-domains](./exo.md#remote-domains) | list | `src/providers/exo/commands/protection.ts` |
 
 ### [Intune](./intune.md)
 
@@ -268,7 +271,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [cameras](./protect.md#cameras) | list, get, offline, snapshot | `src/providers/protect/commands/cameras.ts` |
+| [cameras](./protect.md#cameras) | list, get, stats, offline, snapshot | `src/providers/protect/commands/cameras.ts` |
 | [nvr](./protect.md#nvr) | list | `src/providers/protect/commands/nvr.ts` |
 | [events](./protect.md#events) | list, thumbnail | `src/providers/protect/commands/events.ts` |
 | [footage](./protect.md#footage) | export | `src/providers/protect/commands/footage.ts` |
@@ -284,7 +287,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [access](./pbi.md#access) | list | `src/providers/pbi/commands/access.ts` |
 | [licences](./pbi.md#licences) | list | `src/providers/pbi/commands/licences.ts` |
 | [activity](./pbi.md#activity) | list | `src/providers/pbi/commands/activity.ts` |
-| [my](./pbi.md#my) | login, logout, whoami, workspaces, reports, datasets, add-workspace-user, update-workspace-user, remove-workspace-user, refresh | `src/providers/pbi/commands/my.ts` |
+| [scan](./pbi.md#scan) | workspaces, run | `src/providers/pbi/commands/scan.ts` |
+| [api](./pbi.md#api) | get | `src/providers/pbi/commands/scan.ts` |
+| [my](./pbi.md#my) | login, logout, whoami, workspaces, reports, datasets, add-workspace-user, update-workspace-user, remove-workspace-user, refresh, refresh-schedule, refreshes, datasources, refresh-status | `src/providers/pbi/commands/my.ts` |
 
 ### [Power Platform](./pa.md)
 
@@ -340,7 +345,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [extensions](./bc.md#extensions) | list, get | `src/providers/bc/commands.ts` |
 | [query](./bc.md#query) | get | `src/providers/bc/commands.ts` |
 | [record](./bc.md#record) | get, create, update, delete, call | `src/providers/bc/commands.ts` |
-| [users](./bc.md#users) | list, get, permission-sets, add-permission, remove-permission | `src/providers/bc/commands.ts` |
+| [users](./bc.md#users) | list, get, permission-sets, update, add-permission, remove-permission | `src/providers/bc/commands.ts` |
 | [apps](./bc.md#apps) | list, updates, upload, scheduled, operations, install, uninstall, update | `src/providers/bc/commands.ts` |
 | [health](./bc.md#health) | get | `src/providers/bc/commands.ts` |
 
@@ -577,6 +582,7 @@ its
 │   │   ├── (list)
 │   │   ├── assign <user_id>
 │   │   ├── remove <user_id>
+│   │   ├── user <user_id>
 │   │   ├── users <sku>
 │   │   ├── unlicensed
 │   │   ├── audit
@@ -612,6 +618,7 @@ its
 │   ├── authmethods
 │   │   ├── user <user_id>
 │   │   ├── remove <user_id>
+│   │   ├── report
 │   │   ├── policy
 │   │   ├── get <method>
 │   │   ├── enable <method>
@@ -1164,7 +1171,8 @@ its
 │   │   ├── clear-forwarding <mailbox>
 │   │   ├── set-type <mailbox> <type>
 │   │   ├── set-visibility <mailbox>
-│   │   └── delete <mailbox>
+│   │   ├── delete <mailbox>
+│   │   └── archive <mailbox>
 │   ├── rules
 │   │   ├── (list)
 │   │   ├── get <name>
@@ -1207,12 +1215,21 @@ its
 │   │   ├── (list)
 │   │   └── test <appId> <mailbox>
 │   ├── audit search
-│   └── sharing-policies
-│       ├── (list)
-│       ├── get <name>
-│       ├── create <name>
-│       ├── add-domain <name>
-│       └── assign <name>
+│   ├── sharing-policies
+│   │   ├── (list)
+│   │   ├── get <name>
+│   │   ├── create <name>
+│   │   ├── add-domain <name>
+│   │   └── assign <name>
+│   ├── quarantine
+│   │   ├── (list)
+│   │   ├── get <identity>
+│   │   └── release <identity>
+│   ├── allowblock
+│   │   ├── (list)
+│   │   ├── add <entry>
+│   │   └── remove <id>
+│   └── remote-domains (list)
 ├── intune
 │   ├── devices
 │   │   ├── (list)
@@ -1295,6 +1312,7 @@ its
 │   ├── cameras
 │   │   ├── (list)
 │   │   ├── get <id>
+│   │   ├── stats
 │   │   ├── offline
 │   │   └── snapshot <camera_id>
 │   ├── nvr (list)
@@ -1320,6 +1338,10 @@ its
 │   ├── access (list)
 │   ├── licences (list)
 │   ├── activity (list)
+│   ├── scan
+│   │   ├── workspaces
+│   │   └── run
+│   ├── api get <path>
 │   └── my
 │       ├── login
 │       ├── logout
@@ -1330,7 +1352,11 @@ its
 │       ├── add-workspace-user <workspace_id>
 │       ├── update-workspace-user <workspace_id>
 │       ├── remove-workspace-user <workspace_id>
-│       └── refresh <dataset_id>
+│       ├── refresh <dataset_id>
+│       ├── refresh-schedule <dataset_id>
+│       ├── refreshes <dataset_id>
+│       ├── datasources <dataset_id>
+│       └── refresh-status
 ├── pa
 │   ├── environments
 │   │   ├── (list)
@@ -1425,6 +1451,7 @@ its
 │   │   ├── (list)
 │   │   ├── get <user>
 │   │   ├── permission-sets
+│   │   ├── update <user>
 │   │   ├── add-permission <user>
 │   │   └── remove-permission <user>
 │   ├── apps
@@ -1754,9 +1781,11 @@ src/
 │   │   │   └── xtenant.ts
 │   │   ├── apps-audit.ts
 │   │   ├── apps-manifest.ts
+│   │   ├── auth-methods-report.ts
 │   │   ├── auth-methods.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── licence-assignments.ts
 │   │   ├── sku-names.ts
 │   │   ├── sync-health.ts
 │   │   └── types.ts
@@ -1771,6 +1800,7 @@ src/
 │   │   │   ├── groups.ts
 │   │   │   ├── index.ts
 │   │   │   ├── mailboxes.ts
+│   │   │   ├── protection.ts
 │   │   │   ├── recipients.ts
 │   │   │   ├── rooms.ts
 │   │   │   ├── rules.ts
@@ -1779,6 +1809,7 @@ src/
 │   │   ├── audit-log.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── protection.ts
 │   │   ├── resolve.ts
 │   │   ├── rooms-assess.ts
 │   │   └── types.ts
@@ -1865,13 +1896,17 @@ src/
 │   │   │   ├── apps.ts
 │   │   │   ├── index.ts
 │   │   │   ├── licences.ts
+│   │   │   ├── my-read.ts
 │   │   │   ├── my.ts
 │   │   │   ├── reports.ts
+│   │   │   ├── scan.ts
 │   │   │   └── workspaces.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── my-auth.ts
 │   │   ├── my-client.ts
+│   │   ├── refresh.ts
+│   │   ├── scan.ts
 │   │   └── types.ts
 │   ├── protect/
 │   │   ├── commands/
@@ -1885,6 +1920,7 @@ src/
 │   │   ├── definition.ts
 │   │   ├── query.ts
 │   │   ├── sites.ts
+│   │   ├── stats.ts
 │   │   └── types.ts
 │   ├── rmm/
 │   │   ├── commands/

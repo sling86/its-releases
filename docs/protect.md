@@ -46,6 +46,7 @@ Named profiles use upper-case suffixed variables: `UNIFI_PROTECT_HOST_<SITE>`, `
 | `src/providers/protect/definition.ts` | definition |
 | `src/providers/protect/query.ts` | query |
 | `src/providers/protect/sites.ts` | sites |
+| `src/providers/protect/stats.ts` | stats |
 
 ## Resources
 
@@ -57,6 +58,7 @@ Named profiles use upper-case suffixed variables: `UNIFI_PROTECT_HOST_<SITE>`, `
 |---------|-------------|
 | `its protect cameras` | List all Protect cameras with status. Surfaces the most common fields; pass --json for raw shape. |
 | `its protect cameras get <id>` | Get camera details. Pass the id (or any natural identifier) as the positional arg. |
+| `its protect cameras stats` | Storage, recording and health for EVERY camera from one login and one download: state, recording or paused (and why), uptime, last seen, GB per day (high and low quality) and retention when the controller reports them (many do not: the summary says how many cameras have no figure), firmware update state, wifi signal, and a list of problems. Use this instead of looping `cameras get`, which logs in and downloads everything once per camera and gets rate-limited. --problems shows only cameras that need a look. |
 | `its protect cameras offline` | List disconnected/offline cameras — those whose state is not CONNECTED. |
 | `its protect cameras snapshot <camera_id>` | Get the full-resolution snapshot URL for a camera (authenticated endpoint). Pass the camera id from `cameras list`. |
 
@@ -93,6 +95,23 @@ Get camera details. Pass the id (or any natural identifier) as the positional ar
 
 ```bash
 its protect cameras get <camera-id>
+```
+
+#### `its protect cameras stats`
+
+Storage, recording and health for EVERY camera from one login and one download: state, recording or paused (and why), uptime, last seen, GB per day (high and low quality) and retention when the controller reports them (many do not: the summary says how many cameras have no figure), firmware update state, wifi signal, and a list of problems. Use this instead of looping `cameras get`, which logs in and downloads everything once per camera and gets rate-limited. --problems shows only cameras that need a look.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--problems` | `` | Only cameras with a problem | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+
+**Examples:**
+
+```bash
+its protect cameras stats --problems
 ```
 
 #### `its protect cameras offline`

@@ -385,6 +385,7 @@ its bc record call salesInvoices <id> post --env Support --confirm
 | `its bc users` | Business Central users: user name, state, contact email. Automation API — if it 403s, rerun with --auth az or give the app's BC user the D365 AUTOMATION permission set. |
 | `its bc users get <user>` | One BC user and every permission set they hold (with the company each applies to — blank = all companies). |
 | `its bc users permission-sets` | Every permission set that can be assigned (system and extension-supplied). |
+| `its bc users update <user>` | Enable or disable a BC user and/or set their expiry date (the Automation API's only user write — it cannot create users; they arrive from Entra). Needs an explicit --env. Previews without --confirm; reads the user back. |
 | `its bc users add-permission <user>` | Give a BC user a permission set — in one company (--in-company) or all (default). Previews without --confirm; reads the user's permissions back. |
 | `its bc users remove-permission <user>` | Take a permission set off a BC user (the assignment matching --set and --in-company). Previews without --confirm. |
 
@@ -431,6 +432,26 @@ Every permission set that can be assigned (system and extension-supplied).
 
 ```bash
 its bc users permission-sets
+```
+
+#### `its bc users update <user>`
+
+Enable or disable a BC user and/or set their expiry date (the Automation API's only user write — it cannot create users; they arrive from Entra). Needs an explicit --env. Previews without --confirm; reads the user back.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--state` | `` | Enabled or Disabled | — |
+| `--expiry` | `` | Expiry date (ISO, e.g. 2027-01-01), or 'none' to clear | — |
+| `--confirm` | `` | Apply the change | — |
+| `--company` | `` | Company (name or id) whose API endpoint to use | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+
+**Examples:**
+
+```bash
+its bc users update jo.bloggs@example.com --state Disabled --env Support --confirm
 ```
 
 #### `its bc users add-permission <user>`

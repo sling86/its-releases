@@ -21,6 +21,9 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [app-access](#app-access)
 - [audit](#audit)
 - [sharing-policies](#sharing-policies)
+- [quarantine](#quarantine)
+- [allowblock](#allowblock)
+- [remote-domains](#remote-domains)
 
 ## Setup
 
@@ -53,6 +56,7 @@ On Windows, the certificate lives in the current user's cert store (`Cert:\Curre
 | `src/providers/exo/commands/` | Command definitions (split by resource) |
 | `src/providers/exo/audit-log.ts` | audit log |
 | `src/providers/exo/definition.ts` | definition |
+| `src/providers/exo/protection.ts` | protection |
 | `src/providers/exo/resolve.ts` | resolve |
 | `src/providers/exo/rooms-assess.ts` | rooms assess |
 
@@ -200,6 +204,7 @@ its exo groups remove-member "All Staff" jane.smith@example.com
 | `its exo mailboxes set-type <mailbox> <type>` | Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared. |
 | `its exo mailboxes set-visibility <mailbox>` | Hide or show a mailbox in the global address list (GAL). Pass exactly one of --hide / --show. |
 | `its exo mailboxes delete <mailbox>` | Delete a mailbox. For a UserMailbox this ALSO deletes the Entra user account (Remove-Mailbox removes both), soft-deleted for 30 days. This is not how THF offboards a leaver — that converts to shared and hides from the GAL. The intended use is an orphaned shared, room, or equipment mailbox. Requires --confirm, and a UserMailbox additionally requires --delete-account. |
+| `its exo mailboxes archive <mailbox>` | Archive status, quota, size and auto-expanding setting for one mailbox (read-only). |
 
 #### `its exo mailboxes`
 
@@ -468,6 +473,16 @@ Delete a mailbox. For a UserMailbox this ALSO deletes the Entra user account (Re
 
 ```bash
 its exo mailboxes delete old-project@example.com --confirm
+```
+
+#### `its exo mailboxes archive <mailbox>`
+
+Archive status, quota, size and auto-expanding setting for one mailbox (read-only).
+
+**Examples:**
+
+```bash
+its exo mailboxes archive jo@example.com
 ```
 
 ---
@@ -1154,6 +1169,144 @@ Put one mailbox on a sharing policy (Set-Mailbox -SharingPolicy). The user then 
 
 ```bash
 its exo sharing-policies assign "Jo - contoso" --mailbox jo@example.com --confirm
+```
+
+---
+
+### quarantine
+
+> Source: `src/providers/exo/commands/protection.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its exo quarantine` | List quarantined messages (read-only). Default last 7 days, max 30. |
+| `its exo quarantine get <identity>` | One quarantined message in full (read-only). |
+| `its exo quarantine release <identity>` | Release a quarantined message to one recipient (--user) or all original recipients (--all). Shows the message without --confirm. Malware and high-confidence phish need --allow-dangerous as well. |
+
+#### `its exo quarantine`
+
+List quarantined messages (read-only). Default last 7 days, max 30.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--days` | `` | How many days back (1-30, default 7) | — |
+| `--type` | `` | Quarantine reason: Bulk|HighConfPhish|Malware|Phish|Spam|SPOMalware|TransportRule | — |
+| `--recipient` | `` | Only mail to this address | — |
+| `--sender` | `` | Only mail from this address | — |
+
+```bash
+its exo quarantine
+```
+
+#### `its exo quarantine get <identity>`
+
+One quarantined message in full (read-only).
+
+```bash
+its exo quarantine get <identity>
+```
+
+#### `its exo quarantine release <identity>`
+
+Release a quarantined message to one recipient (--user) or all original recipients (--all). Shows the message without --confirm. Malware and high-confidence phish need --allow-dangerous as well.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | Recipient to release to | — |
+| `--all` | `` | Release to every original recipient | — |
+| `--allow-dangerous` | `` | Needed for Malware, HighConfPhish, SPOMalware | — |
+| `--confirm` | `` | Required to release | — |
+
+**Examples:**
+
+```bash
+its exo quarantine release <id> --user jo@example.com --confirm
+```
+
+---
+
+### allowblock
+
+> Source: `src/providers/exo/commands/protection.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its exo allowblock` | Tenant Allow/Block List entries of one type (read-only). |
+| `its exo allowblock add <entry>` | Add a Tenant Allow/Block List entry. Expires in 30 days unless --days or --no-expiry. Preview without --confirm. |
+| `its exo allowblock remove <id>` | Remove a Tenant Allow/Block List entry by id (from `allowblock list`). Preview without --confirm. |
+
+#### `its exo allowblock`
+
+Tenant Allow/Block List entries of one type (read-only).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--type` | `` | List type: Sender|Url|FileHash|IP | — |
+
+```bash
+its exo allowblock
+```
+
+#### `its exo allowblock add <entry>`
+
+Add a Tenant Allow/Block List entry. Expires in 30 days unless --days or --no-expiry. Preview without --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--type` | `` | List type: Sender|Url|FileHash|IP | — |
+| `--action` | `` | allow or block | — |
+| `--days` | `` | Days until it expires (1-90, default 30) | — |
+| `--no-expiry` | `` | Never expires (block entries only) | — |
+| `--notes` | `` | Free-text note (500 chars) | — |
+| `--confirm` | `` | Required to add | — |
+
+**Examples:**
+
+```bash
+its exo allowblock add bad@evil.example --type Sender --action block --confirm
+```
+
+#### `its exo allowblock remove <id>`
+
+Remove a Tenant Allow/Block List entry by id (from `allowblock list`). Preview without --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--type` | `` | List type: Sender|Url|FileHash|IP | — |
+| `--confirm` | `` | Required to remove | — |
+
+**Examples:**
+
+```bash
+its exo allowblock remove <id> --type Sender --confirm
+```
+
+---
+
+### remote-domains
+
+> Source: `src/providers/exo/commands/protection.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its exo remote-domains` | Remote domain settings (auto-forward, auto-reply, OOF types). Read-only. |
+
+#### `its exo remote-domains`
+
+Remote domain settings (auto-forward, auto-reply, OOF types). Read-only.
+
+```bash
+its exo remote-domains
 ```
 
 ---

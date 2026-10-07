@@ -15,6 +15,32 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.22.0] - 2026-10-07
+
+### Added
+
+- `protect cameras stats [--problems]` — state, recording (or paused, and why), uptime, last seen, firmware update state, wifi signal and a problem list for **every** camera from one login and one download (38 cameras in under a second). GB per day and retention are shown when the controller reports them; many do not, and the summary says how many cameras have no figure.
+- `entra authmethods report` — tenant-wide sign-in method report (Graph userRegistrationDetails, needs AuditLog.Read.All): who has a phone method (SMS or voice), who has no MFA registered, which admins have no phishing-resistant method (FIDO2 key, passkey, Windows Hello). Filters `--phone`, `--no-mfa`, `--admins`, `--no-strong`; the summary line gives tenant totals. Note it cannot tell disabled accounts, shared mailboxes or guests from people.
+- `entra licences user <user>` — how one user got each licence: direct or via a group (with the group's name), its state and any error, and licences assigned more than once.
+- `pbi my refresh-schedule <dataset>`, `pbi my refreshes <dataset>`, `pbi my datasources <dataset>` and `pbi my refresh-status --workspace <id> [--failing]` — read-only delegated reads (sign in with `its pbi my login`). Schedule and history show the error **code** only, never the message (it can carry connection detail); data sources show type, server/database or URL and the connection id, never credentials. `refresh-status` lists every refreshable dataset in a workspace with its last status, last success, failures in the history, schedule and owner, and flags the ones failing right now.
+- `pbi scan run --out <dir>` — scan the tenant with the Power BI Scanner API and save the full result to files (mode 0600, directory 0700). It returns only counts plus which detail levels the tenant actually gave back (workspaces, reports, datasets, tables, measures with DAX, table queries, users per item, data sources, lineage). Covers personal "My workspace" ones, which the admin workspace list omits. Read-only (starts a metadata scan job, changes nothing); batches of 100, polls each batch. If DAX/Power Query text or users don't come back, the notes name the two tenant settings to check; nothing is changed.
+- `pbi scan workspaces` — every workspace id in the tenant, personal ones included.
+- `pbi api get <path>` — read-only raw GET against the Power BI REST API (`/v1.0/myorg/...` or `/v2.0/myorg/...` on api.powerbi.com only), using the CLI's admin token; `--to-file` saves the JSON (0600) and prints only a count.
+
+- Exchange: `exo quarantine list|get|release`, `exo allowblock list|add|remove`, `exo remote-domains list`, `exo mailboxes archive`. Release and the allow/block changes preview without `--confirm` and read back after. Releasing Malware, HighConfPhish or SPOMalware also needs `--allow-dangerous`; allow entries must expire (max 90 days). Quarantine ids, list entries and types are checked before they reach the PowerShell script.
+- `bc users update <user> --state Enabled|Disabled --expiry <date|none> --env <name>` — the one user write the BC Automation API offers (it has no create; users arrive from Entra). Previews without `--confirm`, reads back after.
+
+### Fixed
+
+- Protect: every CLI run logged in again, so a loop over `cameras get <id>` (each also downloads every camera to pick one) hit `Protect login failed (429)` after a few cameras. The sign-in is now kept for 30 minutes in the CLI's encrypted session store and reused by later runs (an expired session still recovers with one fresh login; a store that cannot be read or written never fails the command), and a 429 now says the controller is rate-limiting sign-ins.
+- `entra groups search "S&P Team"` (and `users search`) failed with a 400: Graph's `$search` cannot take an ampersand, encoded or not. A term containing `&` now uses a prefix `$filter` instead (it matches the start of the name, not any word in it); single quotes are escaped.
+- `pa connections` returned 404 and `pa apps` reported 0 apps. Both called the BAP host (`api.bap.microsoft.com`), but Power Apps' admin API for apps and connections is `api.powerapps.com` (API version 2016-11-01). On the right host the sandbox shows its apps and 26 connections with their status. `pa apps` had hidden the 404 because it skipped any "not found" environment; it now skips only environments you cannot see (with a warning per skipped environment), raises "not found", and raises if every environment refuses you instead of printing an empty list.
+- `pbi activity --since 28d` (and 29d, 30d) failed with a bare 400. Power BI documents 30 days but its activity-events API answers for the last 28 days counting today (oldest day = today minus 27). The range is now clamped and says so.
+- `pbi activity --since 1h` returned every event since midnight UTC: the API answers by whole days and nothing cut the result to the start time asked for. It now does.
+- `pbi my login` used the device-code flow, which THF's Conditional Access blocks ("Block device code flow", AADSTS53003 "You don't have access to this"), so delegated Power BI calls could not be set up at all. It now opens the browser (authorisation code + PKCE, the same flow as `its auth login`) and keeps the token in the same `pbi-my-token.json`, so refresh and every `pbi my` command are unchanged. `--device-code` keeps the old flow for tenants that allow it. `authCodeLogin` gained an optional token sink so a provider with its own token store can reuse the browser flow.
+- Intune: `intune apps` listed 16 of 89 apps because Graph v1.0 `mobileApps` leaves out app types it does not model. App list, get and assignments now use the beta endpoint, which returns all of them.
+- `--dry-run` for PowerShell (exo) did not treat `Release-*`, `Restore-*`, `Suspend-*`, `Resume-*`, `Block-*`, `Unblock-*`, `Approve-*`, `Deny-*`, `Rename-*`, `Move-*`, `Import-*`, `Send-*`, `Submit-*` or `Publish-*` as changes, so a dry run of them would have run for real. They are now caught.
+
 ## [0.21.2] - 2026-10-06
 
 ### Fixed

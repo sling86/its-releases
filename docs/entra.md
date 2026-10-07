@@ -57,8 +57,10 @@ its entra setup --reset   # Re-run setup (overwrite config)
 | `src/providers/entra/commands/` | Command definitions (split by resource) |
 | `src/providers/entra/apps-audit.ts` | apps audit |
 | `src/providers/entra/apps-manifest.ts` | apps manifest |
+| `src/providers/entra/auth-methods-report.ts` | auth methods report |
 | `src/providers/entra/auth-methods.ts` | auth methods |
 | `src/providers/entra/definition.ts` | definition |
+| `src/providers/entra/licence-assignments.ts` | licence assignments |
 | `src/providers/entra/sku-names.ts` | sku names |
 | `src/providers/entra/sync-health.ts` | sync health |
 
@@ -715,6 +717,7 @@ its entra groups audit-rules [group_id]
 | `its entra licences` | List all subscribed SKUs/licences. Available column gets a ⚠ marker when fewer than 10% of seats remain (or none) — useful for catching exhaustion before the next assign request fails. |
 | `its entra licences assign <user_id>` | Assign one or more licences to a user. Pass --sku as a comma-separated list to assign several atomically in a single Graph call (parallel single-assigns trip 409 Directory_ConcurrencyViolation). Idempotent. |
 | `its entra licences remove <user_id>` | Remove a licence from a user (requires --confirm). Permanent — use --confirm. |
+| `its entra licences user <user_id>` | How one user got each licence: assigned directly or by a group (and which group), its state, and any licence assigned more than once. Needed before removing a licence: a group-assigned one cannot be removed from the user, only by changing the group. |
 | `its entra licences users <sku>` | List users assigned a specific licence SKU, named by GUID, part number or friendly name. List by resource membership; use --json for the raw shape. |
 | `its entra licences unlicensed` | Find enabled users with no licence assignments. Read-only — useful for billing audits. |
 | `its entra licences audit` | Licence usage report with availability and over-allocation warnings |
@@ -783,6 +786,14 @@ its entra licences remove jane.smith@example.com --sku SPB --confirm
 
 # licences remove has no --all flag (only a single --sku at a time) — onboarding convert-mailbox strips every assigned SKU (and disables the account) in one call, used in offboarding.
 its entra onboarding convert-mailbox jane.smith@example.com --confirm
+```
+
+#### `its entra licences user <user_id>`
+
+How one user got each licence: assigned directly or by a group (and which group), its state, and any licence assigned more than once. Needed before removing a licence: a group-assigned one cannot be removed from the user, only by changing the group.
+
+```bash
+its entra licences user <user_id>
 ```
 
 #### `its entra licences users <sku>`
@@ -1309,6 +1320,7 @@ its entra ca named-locations
 |---------|-------------|
 | `its entra authmethods user <user_id>` | List one user's registered authentication methods (Authenticator, FIDO2, phone, OATH, email, Windows Hello, TAP, password) with the ids `authmethods remove` takes. Always reads live. |
 | `its entra authmethods remove <user_id>` | Remove one of a user's authentication methods by id (from `authmethods user`). Shows what it would delete unless --confirm is given, then reads the list back. Needs UserAuthenticationMethod.ReadWrite.All: if the signed-in token lacks it (usual — admins get .Read.All) it retries once as the app, which holds it as an app role, and says so in `ranAs`. |
+| `its entra authmethods report` | Tenant-wide report of which sign-in methods every user has registered (Graph userRegistrationDetails). Answers 'who can still be reached with a text or call?' and 'which admins have no phishing-resistant method (FIDO2, passkey, Windows Hello)?'. Needs AuditLog.Read.All. Read-only. |
 | `its entra authmethods policy` | Fetch the full Authentication Methods Policy — shows which methods (TAP, FIDO2, SMS, etc.) are enabled tenant-wide and any per-method targets |
 | `its entra authmethods get <method>` | Get a single authentication method configuration by id (TemporaryAccessPass, Fido2, Sms, MicrosoftAuthenticator, Email, Voice, X509Certificate, etc.) |
 | `its entra authmethods enable <method>` | Enable a method tenant-wide (sets state=enabled on the method configuration). Pass --target <groupId> or --target all-users to scope. |
@@ -1342,6 +1354,29 @@ Remove one of a user's authentication methods by id (from `authmethods user`). S
 its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-...
 
 its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-... --confirm
+```
+
+#### `its entra authmethods report`
+
+Tenant-wide report of which sign-in methods every user has registered (Graph userRegistrationDetails). Answers 'who can still be reached with a text or call?' and 'which admins have no phishing-resistant method (FIDO2, passkey, Windows Hello)?'. Needs AuditLog.Read.All. Read-only.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--phone` | `` | Only users with a phone method (mobile, alternate mobile or office phone: SMS or voice) | — |
+| `--no-mfa` | `` | Only users with no MFA registered | — |
+| `--admins` | `` | Only users who hold an admin role | — |
+| `--no-strong` | `` | Only users with no phishing-resistant method (FIDO2 key, passkey, Windows Hello for Business) | — |
+
+**Examples:**
+
+```bash
+its entra authmethods report --phone
+
+its entra authmethods report --admins --no-strong
+
+its entra authmethods report --no-mfa
 ```
 
 #### `its entra authmethods policy`

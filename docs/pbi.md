@@ -14,6 +14,8 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [access](#access)
 - [licences](#licences)
 - [activity](#activity)
+- [scan](#scan)
+- [api](#api)
 - [my](#my)
 
 ## Setup
@@ -48,6 +50,8 @@ Uses the same service principal as `entra`. Authenticates against the Power BI a
 | `src/providers/pbi/definition.ts` | definition |
 | `src/providers/pbi/my-auth.ts` | my auth |
 | `src/providers/pbi/my-client.ts` | my client |
+| `src/providers/pbi/refresh.ts` | refresh |
+| `src/providers/pbi/scan.ts` | scan |
 
 ## Resources
 
@@ -333,13 +337,82 @@ its pbi activity --since 24h --watch
 
 ---
 
+### scan
+
+> Source: `src/providers/pbi/commands/scan.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its pbi scan workspaces` | Every workspace id in the tenant, personal "My workspace" ones included (the plain `workspaces` list omits those). Admin API, service principal. |
+| `its pbi scan run` | Scan the tenant with the Scanner API: workspaces, items, owners, users with access, data sources, lineage, model tables, measures and Power Query text. Saves the full result under --out and prints only counts plus which detail levels the tenant returned. Read-only; limit about 500 scans an hour, 100 workspaces each. |
+
+#### `its pbi scan workspaces`
+
+Every workspace id in the tenant, personal "My workspace" ones included (the plain `workspaces` list omits those). Admin API, service principal.
+
+```bash
+its pbi scan workspaces
+```
+
+#### `its pbi scan run`
+
+Scan the tenant with the Scanner API: workspaces, items, owners, users with access, data sources, lineage, model tables, measures and Power Query text. Saves the full result under --out and prints only counts plus which detail levels the tenant returned. Read-only; limit about 500 scans an hour, 100 workspaces each.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--out` | `` | Directory for the raw scan JSON (created, mode 0700; files 0600). Required — the content is sensitive, so it never goes to the terminal | — |
+| `--workspace` | `` | Comma-separated workspace ids (default: every workspace, personal ones included) | — |
+| `--detail` | `` | Which detail to ask for: lineage, datasources, schema, expressions, users (default: all five) | — |
+| `--timeout` | `` | Seconds to wait for each batch (default 600) | 600 |
+| `--poll-interval` | `` | Seconds between status checks (default 5) | 5 |
+
+**Examples:**
+
+```bash
+its pbi scan run --out ./data/scanner
+
+its pbi scan run --workspace <id> --detail schema,expressions --out ./data/scanner
+```
+
+---
+
+### api
+
+> Source: `src/providers/pbi/commands/scan.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its pbi api get <path>` | Raw read-only GET against the Power BI REST API (api.powerbi.com): pass a /v1.0/myorg/... or /v2.0/myorg/... path. Uses the CLI's own admin token; GET only. --to-file saves the JSON (mode 0600) and prints only a count. |
+
+#### `its pbi api get <path>`
+
+Raw read-only GET against the Power BI REST API (api.powerbi.com): pass a /v1.0/myorg/... or /v2.0/myorg/... path. Uses the CLI's own admin token; GET only. --to-file saves the JSON (mode 0600) and prints only a count.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--to-file` | `` | Write the JSON here (mode 0600) instead of printing it | — |
+
+**Examples:**
+
+```bash
+its pbi api get /v1.0/myorg/admin/widelySharedArtifacts/publishedToWeb
+
+its pbi api get /v1.0/myorg/admin/datasets/<id>/datasources --to-file ./data/ds.json
+```
+
+---
+
 ### my
 
 > Source: `src/providers/pbi/commands/my.ts`
 
 | Command | Description |
 |---------|-------------|
-| `its pbi my login` | Sign in as a Power BI user via device-code flow. Tokens are cached locally (~/.its/secrets/pbi-my-token.json). |
+| `its pbi my login` | Sign in as a Power BI user. Opens your browser (authorisation code + PKCE, like `its auth login`) and caches the token locally (~/.its/secrets/pbi-my-token.json). --device-code uses the device-code flow instead, which THF's Conditional Access blocks (AADSTS53003). |
 | `its pbi my logout` | Clear the cached Power BI user token. Does not revoke it server-side. |
 | `its pbi my whoami` | Show the cached Power BI user account and token expiry. |
 | `its pbi my workspaces` | List workspaces accessible to the signed-in user. Workspaces visible to the current principal. |
@@ -349,16 +422,28 @@ its pbi activity --since 24h --watch
 | `its pbi my update-workspace-user <workspace_id>` | Update a user's access right on a workspace using the signed-in user's permissions |
 | `its pbi my remove-workspace-user <workspace_id>` | Remove a user/group/app from a workspace using the signed-in user's permissions (requires --confirm) |
 | `its pbi my refresh <dataset_id>` | Trigger a refresh of a dataset owned by the signed-in user. Force the provider to re-pull state from the upstream API. |
+| `its pbi my refresh-schedule <dataset_id>` | A dataset's scheduled refresh: enabled, days, times, time zone. Delegated (`its pbi my login`). |
+| `its pbi my refreshes <dataset_id>` | A dataset's refresh history, newest first (Power BI keeps the last 60). Shows status, start/end and the error CODE only, never the message (it can hold connection detail). Delegated. |
+| `its pbi my datasources <dataset_id>` | The data sources a dataset reads from: type, server/database or URL, and the connection id (what Power BI calls gatewayId; with no gateways it is the owner's personal cloud connection). No credentials — the API never returns them. Delegated. |
+| `its pbi my refresh-status` | Which refreshable datasets in a workspace are failing right now: last status and time, failures in the history, the most recent error code, and whether the schedule is on. Two reads per dataset, paced. Delegated. |
 
 #### `its pbi my login`
 
-Sign in as a Power BI user via device-code flow. Tokens are cached locally (~/.its/secrets/pbi-my-token.json).
+Sign in as a Power BI user. Opens your browser (authorisation code + PKCE, like `its auth login`) and caches the token locally (~/.its/secrets/pbi-my-token.json). --device-code uses the device-code flow instead, which THF's Conditional Access blocks (AADSTS53003).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--device-code` | `` | Use the device-code flow instead of the browser (blocked at THF) | — |
 
 **Examples:**
 
 ```bash
-# Device-code flow — token cached under ~/.its/secrets
+# Browser sign-in; token cached under ~/.its/secrets
 its pbi my login
+
+its pbi my login --device-code
 ```
 
 #### `its pbi my logout`
@@ -504,6 +589,66 @@ its pbi my refresh <dataset-id>
 
 # Disambiguates when the dataset isn't in your personal workspace.
 its pbi my refresh <dataset-id> --workspace <workspace-id>
+```
+
+#### `its pbi my refresh-schedule <dataset_id>`
+
+A dataset's scheduled refresh: enabled, days, times, time zone. Delegated (`its pbi my login`).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--workspace` | `` | Workspace ID that holds the dataset (needed for datasets you do not own) | — |
+
+```bash
+its pbi my refresh-schedule <dataset_id>
+```
+
+#### `its pbi my refreshes <dataset_id>`
+
+A dataset's refresh history, newest first (Power BI keeps the last 60). Shows status, start/end and the error CODE only, never the message (it can hold connection detail). Delegated.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--workspace` | `` | Workspace ID that holds the dataset (needed for datasets you do not own) | — |
+| `--top` | `` | How many runs (default 20, max 60) | 20 |
+
+```bash
+its pbi my refreshes <dataset_id>
+```
+
+#### `its pbi my datasources <dataset_id>`
+
+The data sources a dataset reads from: type, server/database or URL, and the connection id (what Power BI calls gatewayId; with no gateways it is the owner's personal cloud connection). No credentials — the API never returns them. Delegated.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--workspace` | `` | Workspace ID that holds the dataset (needed for datasets you do not own) | — |
+
+```bash
+its pbi my datasources <dataset_id>
+```
+
+#### `its pbi my refresh-status`
+
+Which refreshable datasets in a workspace are failing right now: last status and time, failures in the history, the most recent error code, and whether the schedule is on. Two reads per dataset, paced. Delegated.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--workspace` | `` | Workspace ID (required) | — |
+| `--failing` | `` | Only datasets whose latest run failed | — |
+
+**Examples:**
+
+```bash
+its pbi my refresh-status --workspace <id> --failing
 ```
 
 ---
