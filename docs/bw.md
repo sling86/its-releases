@@ -808,6 +808,8 @@ its bw folders delete "Old stuff" --confirm
 | `its bw organisations` | List organisations available to the selected vault account. |
 | `its bw organisations members <organisation>` | List an organisation's members with invite status and role. Needs an admin/owner account. |
 | `its bw organisations confirm <organisation> <member>` | Confirm a member who has accepted their invite: the organisation key is encrypted to their public key and handed over. After this they can see the collections they were granted. Requires --confirm. |
+| `its bw organisations invite <organisation> <email>` | Invite someone to an organisation by e-mail. Bitwarden e-mails them; they then accept, and you run `organisations confirm`. Starts them with the role you give and access to the --collection(s) (can edit; comma-separate several). Without --confirm it only shows what it would send. Reads the member list back afterwards. Needs an admin/owner account. |
+| `its bw organisations revoke <organisation> <member>` | Revoke a member's access to an organisation. They stay in the list as revoked and can be restored later; their own personal vault is untouched. Without --confirm it only shows who it would revoke. Reads the member back afterwards. Needs an admin/owner account. |
 
 #### `its bw organisations`
 
@@ -857,6 +859,46 @@ Confirm a member who has accepted their invite: the organisation key is encrypte
 
 ```bash
 its bw organisations confirm "THF" jane@example.com --confirm
+```
+
+#### `its bw organisations invite <organisation> <email>`
+
+Invite someone to an organisation by e-mail. Bitwarden e-mails them; they then accept, and you run `organisations confirm`. Starts them with the role you give and access to the --collection(s) (can edit; comma-separate several). Without --confirm it only shows what it would send. Reads the member list back afterwards. Needs an admin/owner account.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--type` | `` | Role: User (default), Manager or Admin | — |
+| `--collection` | `` | Collection name or id to grant; comma-separate several | — |
+| `--confirm` | `` | Confirm sending the invite | — |
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+its bw organisations invite "THF" jane@example.com --collection "IT/Servers" --dry-run
+
+its bw organisations invite "THF" jane@example.com --type Manager --collection "IT/Servers" --confirm
+```
+
+#### `its bw organisations revoke <organisation> <member>`
+
+Revoke a member's access to an organisation. They stay in the list as revoked and can be restored later; their own personal vault is untouched. Without --confirm it only shows who it would revoke. Reads the member back afterwards. Needs an admin/owner account.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm revoking the member | — |
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+its bw organisations revoke "THF" jane@example.com --dry-run
+
+its bw organisations revoke "THF" jane@example.com --confirm
 ```
 
 ---

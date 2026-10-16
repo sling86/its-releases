@@ -10,6 +10,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [Setup](#setup)
 - [chats](#chats)
 - [presence](#presence)
+- [teams](#teams)
 
 ## Setup
 
@@ -245,6 +246,49 @@ Your current Teams presence (availability + activity).
 
 ```bash
 its teams presence
+```
+
+---
+
+### teams
+
+> Source: `src/providers/teams/commands/teams.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its teams teams` | Teams you are a member of. Needs delegated Team.ReadBasic.All. |
+| `its teams teams create <name>` | Create a team (the standard template). Graph does this in the background, so this waits for it to finish (up to --timeout) and reads the team back. Without --confirm it only shows what it would create. You become the owner unless --owner says otherwise. Needs delegated Team.Create. |
+
+#### `its teams teams`
+
+Teams you are a member of. Needs delegated Team.ReadBasic.All.
+
+**Examples:**
+
+```bash
+its teams teams list
+```
+
+#### `its teams teams create <name>`
+
+Create a team (the standard template). Graph does this in the background, so this waits for it to finish (up to --timeout) and reads the team back. Without --confirm it only shows what it would create. You become the owner unless --owner says otherwise. Needs delegated Team.Create.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--description` | `` | Team description | — |
+| `--owner` | `` | Owner's UPN (default: you) | — |
+| `--visibility` | `` | private (default) or public | — |
+| `--timeout` | `` | Seconds to wait for creation (default 120) | — |
+| `--confirm` | `` | Create it | — |
+
+**Examples:**
+
+```bash
+its teams teams create "Store Ops" --description "Store ops" --visibility private --dry-run
+
+its teams teams create "Store Ops" --owner tony@example.com --confirm
 ```
 
 ---

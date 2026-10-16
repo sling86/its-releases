@@ -11,6 +11,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [groups](#groups)
 - [mailboxes](#mailboxes)
 - [rules](#rules)
+- [transport-rules](#transport-rules)
 - [domains](#domains)
 - [dkim](#dkim)
 - [trace](#trace)
@@ -23,6 +24,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [sharing-policies](#sharing-policies)
 - [quarantine](#quarantine)
 - [allowblock](#allowblock)
+- [outbound-spam](#outbound-spam)
 - [remote-domains](#remote-domains)
 
 ## Setup
@@ -58,6 +60,7 @@ On Windows, the certificate lives in the current user's cert store (`Cert:\Curre
 | `src/providers/exo/definition.ts` | definition |
 | `src/providers/exo/protection.ts` | protection |
 | `src/providers/exo/resolve.ts` | resolve |
+| `src/providers/exo/room-scripts.ts` | room scripts |
 | `src/providers/exo/rooms-assess.ts` | rooms assess |
 
 ## Resources
@@ -585,6 +588,71 @@ its exo rules enable "Block external forward" --confirm
 
 ---
 
+### transport-rules
+
+> Source: `src/providers/exo/commands/rules.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its exo transport-rules` | List mail flow (transport) rules. Surfaces the most common fields; pass --json for raw shape. |
+| `its exo transport-rules get <name>` | Get one transport rule's full condition/action shape (Get-TransportRule). Flags mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo) if present. |
+| `its exo transport-rules disable <name>` | Disable a transport rule (Disable-TransportRule) — remediate a flagged mail-exfiltration rule. Reversible with `rules enable`. Changes org mail flow — use --confirm. |
+| `its exo transport-rules enable <name>` | Enable a transport rule (Enable-TransportRule). Reversible with `rules disable`. Changes org mail flow — use --confirm. |
+
+#### `its exo transport-rules`
+
+List mail flow (transport) rules. Surfaces the most common fields; pass --json for raw shape.
+
+**Examples:**
+
+```bash
+its exo transport-rules
+```
+
+#### `its exo transport-rules get <name>`
+
+Get one transport rule's full condition/action shape (Get-TransportRule). Flags mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo) if present.
+
+**Examples:**
+
+```bash
+its exo transport-rules get "External forward block"
+```
+
+#### `its exo transport-rules disable <name>`
+
+Disable a transport rule (Disable-TransportRule) — remediate a flagged mail-exfiltration rule. Reversible with `rules enable`. Changes org mail flow — use --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm disabling the rule | — |
+
+**Examples:**
+
+```bash
+its exo transport-rules disable "Evil redirect" --confirm
+```
+
+#### `its exo transport-rules enable <name>`
+
+Enable a transport rule (Enable-TransportRule). Reversible with `rules disable`. Changes org mail flow — use --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Confirm enabling the rule | — |
+
+**Examples:**
+
+```bash
+its exo transport-rules enable "Block external forward" --confirm
+```
+
+---
+
 ### domains
 
 > Source: `src/providers/exo/commands/domains.ts`
@@ -950,6 +1018,9 @@ its exo forwarding remove-mailbox accounts@example.com "Allow Accountancy Forwar
 | `its exo rooms calendar-permissions <room>` | Calendar-folder permissions for a mailbox (Get-MailboxFolderPermission) — who can see or edit the room's calendar. The folder's localised name is resolved automatically. |
 | `its exo rooms events <room>` | What is booked in a room over a window. Same calendar Graph sees, shown room-first — start, end, subject, organiser and whether the room accepted. |
 | `its exo rooms set-calendar-permission <room> <user>` | Grant or change CALENDAR-only access to a mailbox. Use this rather than `mailboxes add-permission`, which grants FullAccess to the whole mailbox. Adds the entry or updates an existing one, then reads the result back. |
+| `its exo rooms create <name>` | Create a room mailbox (New-Mailbox -Room). Preview without --confirm; reads the room back after. |
+| `its exo rooms set-processing <room>` | Change a room's booking policy (Set-CalendarProcessing). Only the flags you give are changed. Preview without --confirm; reads the policy back after. Flags only switch things on — to turn AllowConflicts or auto-accept off, use Exchange PowerShell. |
+| `its exo rooms set-place <room>` | Change a room's place details (Set-Place) — capacity, building, floor, city. Only the flags you give are changed. Preview without --confirm; reads the place back after. |
 | `its exo rooms diagnose <room>` | Why a room declined a booking. Reads the booking policy, working hours, calendar permissions and accepted domains in one go, then names the rules that would decline. Free/busy cannot answer this — a room declines on policy, not only on conflicts. |
 
 #### `its exo rooms`
@@ -1017,6 +1088,64 @@ Grant or change CALENDAR-only access to a mailbox. Use this rather than `mailbox
 its exo rooms set-calendar-permission Chi-1-Upstairs-Meeting-Room@example.com jane.smith@example.com --role Editor
 
 its exo rooms set-calendar-permission Chi-1-Upstairs-Meeting-Room@example.com jane.smith@example.com --role Reviewer
+```
+
+#### `its exo rooms create <name>`
+
+Create a room mailbox (New-Mailbox -Room). Preview without --confirm; reads the room back after.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--email` | `` | Primary SMTP address for the room | — |
+| `--capacity` | `` | Seats (1-10000) | — |
+| `--confirm` | `` | Required to create | — |
+
+**Examples:**
+
+```bash
+its exo rooms create "Chi-3-Board-Room" --email chi-3-board@example.com --capacity 8 --confirm
+```
+
+#### `its exo rooms set-processing <room>`
+
+Change a room's booking policy (Set-CalendarProcessing). Only the flags you give are changed. Preview without --confirm; reads the policy back after. Flags only switch things on — to turn AllowConflicts or auto-accept off, use Exchange PowerShell.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--auto-accept` | `` | Set AutomateProcessing to AutoAccept | — |
+| `--allow-conflicts` | `` | Allow double-booking | — |
+| `--booking-window` | `` | How many days ahead it can be booked (0-1080) | — |
+| `--max-duration` | `` | Longest booking in minutes (1-525600) | — |
+| `--confirm` | `` | Required to change | — |
+
+**Examples:**
+
+```bash
+its exo rooms set-processing Chi-2-RD-Meeting-Room@example.com --auto-accept --booking-window 90 --max-duration 240 --confirm
+```
+
+#### `its exo rooms set-place <room>`
+
+Change a room's place details (Set-Place) — capacity, building, floor, city. Only the flags you give are changed. Preview without --confirm; reads the place back after.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--capacity` | `` | Seats (0-10000) | — |
+| `--building` | `` | Building name | — |
+| `--floor` | `` | Floor number | — |
+| `--city` | `` | City | — |
+| `--confirm` | `` | Required to change | — |
+
+**Examples:**
+
+```bash
+its exo rooms set-place Chi-2-RD-Meeting-Room@example.com --building "Main" --floor 2 --city Springfield --confirm
 ```
 
 #### `its exo rooms diagnose <room>`
@@ -1308,6 +1437,59 @@ Remove a Tenant Allow/Block List entry by id (from `allowblock list`). Preview w
 
 ```bash
 its exo allowblock remove <id> --type Sender --confirm
+```
+
+---
+
+### outbound-spam
+
+> Source: `src/providers/exo/commands/protection.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its exo outbound-spam` | Outbound spam policies with their sending limits, action and auto-forwarding mode (read-only). |
+| `its exo outbound-spam get <policy>` | One outbound spam policy in full (read-only). |
+| `its exo outbound-spam update <policy>` | Change an outbound spam policy (Set-HostedOutboundSpamFilterPolicy). Only the flags you give are changed. Preview without --confirm; reads the policy back after. |
+
+#### `its exo outbound-spam`
+
+Outbound spam policies with their sending limits, action and auto-forwarding mode (read-only).
+
+**Examples:**
+
+```bash
+its exo outbound-spam list
+```
+
+#### `its exo outbound-spam get <policy>`
+
+One outbound spam policy in full (read-only).
+
+**Examples:**
+
+```bash
+its exo outbound-spam get Default
+```
+
+#### `its exo outbound-spam update <policy>`
+
+Change an outbound spam policy (Set-HostedOutboundSpamFilterPolicy). Only the flags you give are changed. Preview without --confirm; reads the policy back after.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--recipient-limit-external` | `` | External recipients per hour (0-10000) | — |
+| `--recipient-limit-internal` | `` | Internal recipients per hour (0-10000) | — |
+| `--daily-limit` | `` | Recipients per day (0-10000) | — |
+| `--action` | `` | When a limit is hit: BlockUserForToday\|BlockUser\|Alert | — |
+| `--auto-forwarding` | `` | External auto-forwarding: On\|Off\|Automatic | — |
+| `--confirm` | `` | Required to change | — |
+
+**Examples:**
+
+```bash
+its exo outbound-spam update Default --recipient-limit-external 500 --action BlockUser --confirm
 ```
 
 ---

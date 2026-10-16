@@ -48,6 +48,7 @@ SharePoint can use dedicated credentials (`SP_CLIENT_ID`/`SP_CLIENT_SECRET`) or 
 | `src/providers/sp/commands/` | Command definitions (split by resource) |
 | `src/providers/sp/definition.ts` | definition |
 | `src/providers/sp/find-group.ts` | find group |
+| `src/providers/sp/inheritance.ts` | inheritance |
 | `src/providers/sp/share-scope.ts` | share scope |
 
 ## Resources
@@ -678,6 +679,9 @@ its sp search "quarterly report" --watch
 | `its sp permissions links <siteId>` | Every sharing link on a site's document libraries — who it's for (anyone / organisation / named people), view or edit, expiry, password. Scans every library for items with their own permissions (a link breaks inheritance), then reads only those. --max-items caps the scan, with a warning. Link URLs are credentials and stay redacted unless --include-secrets. |
 | `its sp permissions grant-app <siteId>` | Grant the it-cli app (or another app via --app) a Sites.Selected role on one site. Useful for bootstrapping the role needed by `its sp groups *`. Requires Sites.FullControl.All on the CALLING credentials — typically via a separate admin app (SP_ADMIN_CLIENT_ID/SP_ADMIN_CLIENT_SECRET) or a one-off elevation. |
 | `its sp permissions remove <siteId>` | Remove a sharing permission. Permanent — use --confirm. |
+| `its sp permissions inheritance <site> <target>` | Does a list, library, folder or file have its own permissions (inheritance broken) or inherit from its parent? Give a list or library title, or a server-relative path starting with / for a folder or file. A library's root folder has no item of its own, so use the library title for the whole library. |
+| `its sp permissions break-inheritance <site> <target>` | Stop a list, library, folder or file inheriting permissions from its parent. By default the current grants are copied across first, so nobody loses access; --no-copy starts it empty (only the person running this keeps access). Items below it that already had their own permissions are left alone. Without --confirm, shows the current state only. Reads it back. |
+| `its sp permissions restore-inheritance <site> <target>` | Make a list, library, folder or file inherit from its parent again. This THROWS AWAY its own permissions, including any sharing links made on it, so people who only had access through them lose it. Without --confirm, shows the current state only. Reads it back. |
 
 #### `its sp permissions find-group <groupId>`
 
@@ -833,6 +837,57 @@ Remove a sharing permission. Permanent — use --confirm.
 its sp permissions remove example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --permission aTowIzQuZg --confirm
 
 its sp permissions remove <site-id> --drive <drive-id> --item <item-id> --permission <permission-id> --confirm
+```
+
+#### `its sp permissions inheritance <site> <target>`
+
+Does a list, library, folder or file have its own permissions (inheritance broken) or inherit from its parent? Give a list or library title, or a server-relative path starting with / for a folder or file. A library's root folder has no item of its own, so use the library title for the whole library.
+
+**Examples:**
+
+```bash
+its sp permissions inheritance https://example.sharepoint.com/sites/Finance "Documents"
+
+its sp permissions inheritance https://example.sharepoint.com/sites/Finance "/sites/Finance/Shared Documents/Payroll"
+```
+
+#### `its sp permissions break-inheritance <site> <target>`
+
+Stop a list, library, folder or file inheriting permissions from its parent. By default the current grants are copied across first, so nobody loses access; --no-copy starts it empty (only the person running this keeps access). Items below it that already had their own permissions are left alone. Without --confirm, shows the current state only. Reads it back.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--no-copy` | `` | Start with no grants instead of copying the inherited ones | — |
+| `--confirm` | `` | Break inheritance | — |
+
+**Examples:**
+
+```bash
+its sp permissions break-inheritance https://example.sharepoint.com/sites/Finance "/sites/Finance/Shared Documents/Payroll" --dry-run
+
+its sp permissions break-inheritance https://example.sharepoint.com/sites/Finance "/sites/Finance/Shared Documents/Payroll" --confirm
+
+its sp permissions break-inheritance https://example.sharepoint.com/sites/Finance "Payroll" --no-copy --confirm
+```
+
+#### `its sp permissions restore-inheritance <site> <target>`
+
+Make a list, library, folder or file inherit from its parent again. This THROWS AWAY its own permissions, including any sharing links made on it, so people who only had access through them lose it. Without --confirm, shows the current state only. Reads it back.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Restore inheritance | — |
+
+**Examples:**
+
+```bash
+its sp permissions restore-inheritance https://example.sharepoint.com/sites/Finance "Payroll" --dry-run
+
+its sp permissions restore-inheritance https://example.sharepoint.com/sites/Finance "Payroll" --confirm
 ```
 
 ---

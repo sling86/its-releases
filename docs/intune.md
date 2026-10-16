@@ -11,6 +11,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [devices](#devices)
 - [compliance](#compliance)
 - [apps](#apps)
+- [win32-apps](#win32-apps)
 - [scripts](#scripts)
 - [remediations](#remediations)
 - [policies](#policies)
@@ -28,6 +29,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [android](#android)
 - [app-configs](#app-configs)
 - [enrolment](#enrolment)
+- [update-rings](#update-rings)
 - [graph](#graph)
 
 ## Setup
@@ -359,6 +361,30 @@ Add ONE group assignment to an Intune app (--intent required|available|uninstall
 
 ```bash
 its intune apps assign "Company Portal" --group "All Shop Tablets" --intent required
+```
+
+---
+
+### win32-apps
+
+> Source: `src/providers/intune/commands/apps.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its intune win32-apps` | List Win32 (.intunewin) apps with version and install command. For detection and requirement rules and return codes, run `apps get <id>`. |
+
+#### `its intune win32-apps`
+
+List Win32 (.intunewin) apps with version and install command. For detection and requirement rules and return codes, run `apps get <id>`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--top` | `` | Number of results (default 100) | 100 |
+
+```bash
+its intune win32-apps
 ```
 
 ---
@@ -1184,6 +1210,98 @@ Change one platform's enrolment restriction: --block-platform true|false, --bloc
 
 ```bash
 its intune enrolment set-restriction "All users and all devices" --platform androidForWork --block-personal true --confirm
+```
+
+---
+
+### update-rings
+
+> Source: `src/providers/intune/commands/update-rings.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its intune update-rings` | Windows Update rings (Update for Business profiles) with their deferrals and deadlines. |
+| `its intune update-rings get <ring>` | One update ring with its assignments. Pass the id or the exact name. |
+| `its intune update-rings create <name>` | Create a Windows Update ring. --quality-deferral (0-30) and --feature-deferral (0-365) are required; --deadline-quality, --deadline-feature (0-30) and --grace (0-7) are optional. Previews without --confirm, then reads the ring back and reports verified. Assign it with `update-rings assign`. |
+| `its intune update-rings update <ring>` | Change day settings on an update ring (same flags as create; only the ones you pass change). Previews before→after without --confirm, then reads back and reports verified. |
+| `its intune update-rings assign <ring>` | Add ONE group to an update ring (--exclude to exclude it). Additive: existing assignments are kept. Refuses a group the ring already targets. Previews without --confirm, then reads back and reports verified. |
+
+#### `its intune update-rings`
+
+Windows Update rings (Update for Business profiles) with their deferrals and deadlines.
+
+```bash
+its intune update-rings
+```
+
+#### `its intune update-rings get <ring>`
+
+One update ring with its assignments. Pass the id or the exact name.
+
+```bash
+its intune update-rings get <ring>
+```
+
+#### `its intune update-rings create <name>`
+
+Create a Windows Update ring. --quality-deferral (0-30) and --feature-deferral (0-365) are required; --deadline-quality, --deadline-feature (0-30) and --grace (0-7) are optional. Previews without --confirm, then reads the ring back and reports verified. Assign it with `update-rings assign`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--quality-deferral` | `` | Defer quality updates by N days (0-30) | — |
+| `--feature-deferral` | `` | Defer feature updates by N days (0-365) | — |
+| `--deadline-quality` | `` | Quality update deadline in days (0-30) | — |
+| `--deadline-feature` | `` | Feature update deadline in days (0-30) | — |
+| `--grace` | `` | Grace period after the deadline before a forced restart, in days (0-7) | — |
+| `--confirm` | `` | Create the ring | — |
+
+**Examples:**
+
+```bash
+its intune update-rings create "Pilot ring" --quality-deferral 7 --feature-deferral 30 --deadline-quality 3 --grace 2 --confirm
+```
+
+#### `its intune update-rings update <ring>`
+
+Change day settings on an update ring (same flags as create; only the ones you pass change). Previews before→after without --confirm, then reads back and reports verified.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--quality-deferral` | `` | Defer quality updates by N days (0-30) | — |
+| `--feature-deferral` | `` | Defer feature updates by N days (0-365) | — |
+| `--deadline-quality` | `` | Quality update deadline in days (0-30) | — |
+| `--deadline-feature` | `` | Feature update deadline in days (0-30) | — |
+| `--grace` | `` | Grace period after the deadline before a forced restart, in days (0-7) | — |
+| `--confirm` | `` | Apply the change | — |
+
+**Examples:**
+
+```bash
+its intune update-rings update "Pilot ring" --feature-deferral 60 --confirm
+```
+
+#### `its intune update-rings assign <ring>`
+
+Add ONE group to an update ring (--exclude to exclude it). Additive: existing assignments are kept. Refuses a group the ring already targets. Previews without --confirm, then reads back and reports verified.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--group` | `` | Group id or exact name | — |
+| `--exclude` | `` | Exclude the group instead | — |
+| `--confirm` | `` | Apply the assignment | — |
+
+**Examples:**
+
+```bash
+its intune update-rings assign "Pilot ring" --group "Pilot PCs" --confirm
+
+its intune update-rings assign "Pilot ring" --group "Finance PCs" --exclude --confirm
 ```
 
 ---

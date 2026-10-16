@@ -15,6 +15,39 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.24.1] - 2026-10-16
+
+v0.24.0 was tagged but never published: its Windows build failed. This release is v0.24.0 plus the changes below.
+
+### Fixed
+
+- **exo:** `outbound-spam update --action` accepts `BlockUserForToday`, Exchange's default and the value both THF policies use. It only took `BlockUser` and `Alert` before.
+- **tests:** the dead-token tests fake `USERPROFILE` as well as `HOME`, so they pass on Windows (they failed the v0.24.0 Windows build). No product code changed.
+
+## [0.24.0] - 2026-10-16
+
+### Added
+
+- `rmm printers add|remove|drivers`: add a printer (IPv4 port created first), remove one by exact name, list installed drivers. Writes need `--confirm` and read back with `Get-Printer`.
+- `rmm software uninstall <agent> <name>`: runs the inventory's uninstall string (MSI strings silent), refuses no match, duplicate names and empty strings, then refreshes the inventory and says `verified` only if the entry is gone, otherwise `not confirmed`.
+- `rmm firewall list|add|remove`: enabled rules, add by port/protocol/direction/action, remove by exact DisplayName (wildcards and duplicate names refused). Writes need `--confirm` and read back.
+- `exo rooms create|set-processing|set-place`: create a room mailbox, change its booking policy and its place details. Every value is quoted with the shared PowerShell helper, writes need `--confirm` (preview without) and read the room back. A change that did not take exits 1.
+- `exo outbound-spam list|get|update`: read and change outbound spam policy limits, action and auto-forwarding mode, with `--confirm` and a read-back.
+- `exo transport-rules list|get|enable|disable`: the same commands as `exo rules`, under the name admins look for. There is no general `create`: a rule has too many condition and action shapes to map safely.
+- `exo rules enable|disable` now read the rule back and exit 1 if the state did not change (they reported success from the request alone).
+- **intune:** `update-rings list|get|create|update|assign` — Windows Update rings (`windowsUpdateForBusinessConfiguration`). Day ranges are checked before anything is sent (quality deferral 0-30, feature deferral 0-365, deadlines 0-30, grace 0-7). Writes preview without `--confirm`, then read the ring back and report `verified` (exit 1 if Graph didn't keep it). `assign` adds one group (`--exclude` to exclude), never the replace-all.
+- **intune:** `win32-apps list`, and `apps get` now shows a Win32 app's version, install and uninstall command lines, install experience, detection and requirement rules, and return codes. Uploading a new `.intunewin` is not built (multi-step encrypted blob commit).
+- **teams:** `teams list` shows the teams you belong to. `teams create <name> [--description] [--owner <upn>] [--visibility private|public] --confirm` creates a team, waits for Graph to finish building it (`--timeout`, default 120s) and reads it back. Needs delegated `Team.Create` / `Team.ReadBasic.All`.
+- **sp:** `permissions inheritance <site> <list|path>` shows whether a list, library, folder or file has its own permissions. `permissions break-inheritance` (copies current grants unless `--no-copy`) and `permissions restore-inheritance` change it; both need `--confirm` and read it back. Classic SharePoint REST; only proved by unit tests, not against a live site.
+- **bw:** `organisations invite <org> <email> [--type User|Manager|Admin] [--collection a,b] --confirm` invites someone and reads the member list back. `organisations revoke <org> <member> --confirm` revokes a member and reads it back. Only proved by unit tests, not against a live Bitwarden org.
+- **core:** `httpRequest` takes `onResponseHeaders`, so a caller can read a 202's `Location` header.
+
+### Fixed
+
+- **auth:** a fatal refresh failure (`invalid_grant` on the login scope) now renames the token file to `<name>.dead` instead of deleting it, and writes one `token-refresh-fatal` line to `~/.its/audit.log` with the profile, scope, AAD `error`, the `AADSTS` code and the first line of `error_description` (redacted; never any token text). The error you see and the next `its auth login` are unchanged. `its auth status` and `its auth doctor` report any `.dead` file with its time and logged code. `its auth logout` still deletes. Why: a vanished admin token file left no way to tell a Conditional Access block (AADSTS53003) from an expiry.
+- **teams:** `teams create` no longer fails when Graph answers 404 on the creation job for the first few seconds (seen live: the team was made, the command said it failed). Any other error reading the job now says the team WAS created, so nobody re-runs it and makes a second one.
+- **dokploy:** `apps doctor` said `gh CLI failed: <app> has no refreshToken…` when the app had no deploy token. It now says it cannot build the deploy URL and why; only a real `gh` error gets the `gh CLI failed` label.
+
 ## [0.23.1] - 2026-10-16
 
 v0.23.0 was tagged but never published: its Windows build failed. This release is v0.23.0 plus the two changes below.
@@ -26,6 +59,11 @@ v0.23.0 was tagged but never published: its Windows build failed. This release i
 ### Fixed
 
 - **tests:** file-mode checks and the tests that run a fake POSIX `gh` script are skipped on Windows (they failed the v0.23.0 Windows build). No product code changed.
+### Fixed
+
+
+### Fixed
+
 
 ## [0.23.0] - 2026-10-16
 
