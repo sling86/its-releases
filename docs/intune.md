@@ -299,7 +299,7 @@ its intune compliance why LAPTOP-042 --all
 | `its intune apps` | List managed apps. Surfaces the most common fields; pass --json for raw shape. |
 | `its intune apps get <id>` | Get app details and assignments. Pass the id (or any natural identifier) as the positional arg. |
 | `its intune apps required` | List apps with required assignments (blocks ESP). Returns apps required by Intune policy. |
-| `its intune apps assign <app>` | Add ONE group assignment to an Intune app (--intent required|available|uninstall, --exclude for an exclusion). Additive: existing assignments are kept. Refuses a group the app already targets. |
+| `its intune apps assign <app>` | Add ONE group assignment to an Intune app (--intent required\|available\|uninstall, --exclude for an exclusion). Additive: existing assignments are kept. Refuses a group the app already targets. |
 
 #### `its intune apps`
 
@@ -757,7 +757,7 @@ Audit Intune assignments — per-target matrix (which configs/compliance/apps hi
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--top` | `` | Number of each resource type to fetch (default 100) | 100 |
+| `--top` | `` | Number of each resource type to fetch (default 1000; a warning says if the list was cut short) | 1000 |
 | `--all` | `` | Fetch up to 1000 of each resource type (overrides --top) | — |
 
 **Examples:**
@@ -860,7 +860,7 @@ its intune intents get <intent-id>
 
 | Command | Description |
 |---------|-------------|
-| `its intune updates` | List Windows Update profiles. --type feature|quality|driver (default feature) |
+| `its intune updates` | List Windows Update profiles. --type feature\|quality\|driver (default feature) |
 | `its intune updates get <id>` | Get a Windows Update profile by id (auto-detects type — pass --type to disambiguate) |
 
 #### `its intune updates`
@@ -893,7 +893,7 @@ Get a Windows Update profile by id (auto-detects type — pass --type to disambi
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--type` | `` | Profile category | feature |
+| `--type` | `` | Profile category | — |
 
 **Examples:**
 
@@ -949,7 +949,7 @@ its intune appconfig get <policy-id>
 
 | Command | Description |
 |---------|-------------|
-| `its intune appprotection` | List App Protection (MAM) policies. --platform ios|android (default ios) |
+| `its intune appprotection` | List App Protection (MAM) policies. --platform ios\|android (default ios) |
 | `its intune appprotection get <id>` | Get an App Protection policy by id. Pass the id (or any natural identifier) as the positional arg. |
 
 #### `its intune appprotection`
@@ -1157,7 +1157,7 @@ its intune app-configs assign 3f5944e1-9e4a-4b02-9929-ca0bb290fdb4 --group "Faci
 | Command | Description |
 |---------|-------------|
 | `its intune enrolment restrictions` | Device enrolment restrictions per platform: whether the platform is blocked, personal devices blocked, and OS version limits. |
-| `its intune enrolment set-restriction <config>` | Change one platform's enrolment restriction: --block-platform true|false, --block-personal true|false. Previews before→after without --confirm. If it 403s while you are signed in, your role lacks it — add --auth app. |
+| `its intune enrolment set-restriction <config>` | Change one platform's enrolment restriction: --block-platform true\|false, --block-personal true\|false. Previews before→after without --confirm. If it 403s while you are signed in, your role lacks it — add --auth app. |
 
 #### `its intune enrolment restrictions`
 
@@ -1208,6 +1208,7 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 |------|-------|-------------|---------|
 | `--beta` | `` | Use /beta instead of /v1.0 | — |
 | `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
+| `--all` | `` | Follow @odata.nextLink and merge every page's value (stops at 50 pages) | — |
 | `--raw` | `` | Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. | — |
 | `--out` | `` | Write the response to this file path instead of stdout. Implies --raw. | — |
 

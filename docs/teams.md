@@ -131,7 +131,7 @@ Send a message to one of your chats, as you. Pass a chat ID from `its teams chat
 | `--mention` | `` | @mention chat members, comma-separated: email, full name or first name. Replaces '@Name' in the message, or goes at the start | — |
 | `--reply-to` | `` | Reply with a quote of this message (its id from `chats messages`), like Teams' 'Reply with quote'. Your Notes chat (self) shows the quote as an empty box — Teams limitation | — |
 | `--file` | `` | Attach a local file (up to 4 MB): uploaded to your OneDrive 'Microsoft Teams Chat Files' and shared read-only with the chat's members. Needs Files.ReadWrite | — |
-| `--markdown` | `` | Treat the message as Markdown: # headings (h1-h3), **bold**, *italic*, ~~strike~~, `code`, ``` code blocks, [links](https://…), - and 1. lists (flat), > quotes, --- rules, | tables | | — |
+| `--markdown` | `` | Treat the message as Markdown: # headings (h1-h3), **bold**, *italic*, ~~strike~~, `code`, ``` code blocks, [links](https://…), - and 1. lists (flat), > quotes, --- rules, \| tables \| | — |
 | `--importance` | `` | Mark the message important — Teams shows a banner | — |
 | `--subject` | `` | Subject line (Graph accepts it; Teams may not show it in chats) | — |
 | `--card` | `` | Send an Adaptive Card from this JSON file. Buttons that open a URL work; Action.Submit does not (no bot to receive it). The message text, if any, goes above the card | — |

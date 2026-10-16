@@ -217,7 +217,7 @@ its pbi reports url <report-id>
 
 | Command | Description |
 |---------|-------------|
-| `its pbi apps` | List Power BI apps. Use --user <id|upn> to list one user's app access (`its pbi access --user` shows every type). |
+| `its pbi apps` | List Power BI apps. Use --user <id\|upn> to list one user's app access (`its pbi access --user` shows every type). |
 | `its pbi apps users <app_id>` | Who can open a Power BI app (its audience): users, groups and service principals with their access right. Admin API, 200 calls/hour. |
 
 #### `its pbi apps`

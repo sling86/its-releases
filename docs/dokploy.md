@@ -56,12 +56,14 @@ its dokploy setup --reset   # Re-run setup (overwrite config)
 | `src/providers/dokploy/client.ts` | API client methods |
 | `src/providers/dokploy/types.ts` | TypeScript interfaces |
 | `src/providers/dokploy/commands/` | Command definitions (split by resource) |
+| `src/providers/dokploy/created-id.ts` | created id |
 | `src/providers/dokploy/db-sql.ts` | db sql |
 | `src/providers/dokploy/definition.ts` | definition |
 | `src/providers/dokploy/deploy-wait.ts` | deploy wait |
 | `src/providers/dokploy/github-resolve.ts` | github resolve |
 | `src/providers/dokploy/resolve.ts` | resolve |
 | `src/providers/dokploy/runtime.ts` | runtime |
+| `src/providers/dokploy/soft.ts` | soft |
 | `src/providers/dokploy/ssh.ts` | ssh |
 
 ## Resources
@@ -178,6 +180,7 @@ its dokploy projects delete <project-id> --confirm
 | `its dokploy apps doctor <app>` | Run a battery of parallel checks (env, mounts, webhook, replicas, image, healthcheck, recent log scan, last build). One green/red checklist instead of probing five separate commands. |
 | `its dokploy apps bootstrap <name>` | Bootstrap a new Dokploy app end-to-end: resolves or creates the project, creates the application, wires the GitHub source, sets the build type, pushes env vars, creates the domain, and triggers the first deploy. Idempotent — re-running with the same --name skips already-completed steps. Use --dry-run first. |
 | `its dokploy apps cert-status <app>` | Read Traefik acme.json for the app's domains — surfaces certificate state, expiry, last LE error. SSH-backed (reads from the dokploy-traefik container). |
+| `its dokploy apps deploy-url <app>` | Print the deploy webhook URL (<DOKPLOY_URL>/api/deploy/<refreshToken>) for an app, for CI. It is a secret: piped stdout or --to-file only, never a terminal. |
 
 #### `its dokploy apps`
 
@@ -702,6 +705,24 @@ Read Traefik acme.json for the app's domains — surfaces certificate state, exp
 ```bash
 # Reads Traefik acme.json — surfaces expiry and the last Let's Encrypt error
 its dokploy apps cert-status storefront
+```
+
+#### `its dokploy apps deploy-url <app>`
+
+Print the deploy webhook URL (<DOKPLOY_URL>/api/deploy/<refreshToken>) for an app, for CI. It is a secret: piped stdout or --to-file only, never a terminal.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--to-file` | `` | Write the URL to this path (created 0600 / owner-only) | — |
+
+**Examples:**
+
+```bash
+its dokploy apps deploy-url my-app | gh secret set DOKPLOY_DEPLOY_URL -R org/repo
+
+its dokploy apps deploy-url my-app --to-file /dev/shm/deploy-url
 ```
 
 ---
@@ -1383,7 +1404,7 @@ its dokploy dashboard --watch
 | Command | Description |
 |---------|-------------|
 | `its dokploy mounts <app>` | List mounts (bind/volume/file) for an application. Surfaces the most common fields; pass --json for raw shape. |
-| `its dokploy mounts add <app>` | Add a mount to an application (--type bind|volume|file). Use --ensure-host-path with bind to create the host directory. |
+| `its dokploy mounts add <app>` | Add a mount to an application (--type bind\|volume\|file). Use --ensure-host-path with bind to create the host directory. |
 | `its dokploy mounts update <mountId>` | Update an existing mount. PATCH semantics — only the supplied fields change. |
 | `its dokploy mounts remove <mountId>` | Remove a mount. Permanent — use --confirm. |
 
@@ -1585,7 +1606,7 @@ its dokploy nodes stats
 
 | Command | Description |
 |---------|-------------|
-| `its dokploy cluster join-token` | Get the `docker swarm join` command for adding a manager or worker node. Pass --role manager|worker (default worker). |
+| `its dokploy cluster join-token` | Get the `docker swarm join` command for adding a manager or worker node. Pass --role manager\|worker (default worker). |
 
 #### `its dokploy cluster join-token`
 
@@ -1744,7 +1765,7 @@ its dokploy containers remove <container-id> --confirm
 | `its dokploy maintenance disk` | Docker disk usage on the Dokploy host (Images / Containers / Volumes / Build Cache) including reclaimable space |
 | `its dokploy maintenance web` | Dokploy web-server settings (server IP, HTTPS, certificate type, host) |
 | `its dokploy maintenance traefik` | Global Traefik dynamic config (Dokploy-wide, not per-app). Use `apps traefik` for a single app's routing. |
-| `its dokploy maintenance clean` | Reclaim disk on the Dokploy host. --target images|volumes|containers|builder|monitoring|all (destructive — requires --confirm). Default target is `images` (safest). |
+| `its dokploy maintenance clean` | Reclaim disk on the Dokploy host. --target images\|volumes\|containers\|builder\|monitoring\|all (destructive — requires --confirm). Default target is `images` (safest). |
 | `its dokploy maintenance time` | Server time + timezone (sanity check for cron drift / TLS errors) |
 
 #### `its dokploy maintenance disk`

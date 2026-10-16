@@ -100,7 +100,7 @@ its pa environments get <env-id>
 | `its pa flows stop <flow_id>` | Turn a flow off (admin). Stop the resource. Use --confirm if the action is destructive. |
 | `its pa flows start <flow_id>` | Turn a flow on (admin). Start the resource. Idempotent. |
 | `its pa flows delete <flow_id>` | Delete a flow (admin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
-| `its pa flows set-owner <flow_id>` | Change ownership / permissions on a cloud flow (admin). --owner <upn|guid> upserts a principal (default role CanEdit = full co-owner); --remove <upn|guid> revokes one. Idempotent. Used to reclaim flows from disabled accounts during licence reclaim (ctxc 858). |
+| `its pa flows set-owner <flow_id>` | Change ownership / permissions on a cloud flow (admin). --owner <upn\|guid> upserts a principal (default role CanEdit = full co-owner); --remove <upn\|guid> revokes one. Idempotent. Used to reclaim flows from disabled accounts during licence reclaim (ctxc 858). |
 | `its pa flows runs <flow_id>` | List recent runs for a flow. Returns historical run records. |
 
 #### `its pa flows`

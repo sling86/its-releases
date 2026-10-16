@@ -52,8 +52,10 @@ its wrike setup --reset   # Re-run setup (overwrite config)
 | `src/providers/wrike/commands/` | Command definitions (split by resource) |
 | `src/providers/wrike/access-audit.ts` | access audit |
 | `src/providers/wrike/auth.ts` | auth |
+| `src/providers/wrike/custom-fields.ts` | custom fields |
 | `src/providers/wrike/definition.ts` | definition |
 | `src/providers/wrike/identity.ts` | identity |
+| `src/providers/wrike/statuses.ts` | statuses |
 
 ## Resources
 
@@ -70,7 +72,8 @@ its wrike setup --reset   # Re-run setup (overwrite config)
 | `its wrike tickets get <idOrPermalink>` | Get full ticket details with comments. Pass the id (or any natural identifier) as the positional arg. |
 | `its wrike tickets audit <idOrPermalink>` | Who created, assigned and unassigned a ticket — from the Wrike Enterprise audit log. Accepts a task ID, a permalink, or a bare numeric permalink ID. |
 | `its wrike tickets search <query>` | Search IT/BC support tickets by title. Substring match across the most relevant fields; case-insensitive. |
-| `its wrike tickets create` | Create a new IT support ticket. Idempotent on duplicate names — use update/edit to mutate an existing record. |
+| `its wrike tickets create` | Create a new IT support ticket. If an open (Active or Deferred) ticket in the folder already has this exact title (whitespace ignored), nothing is created unless --allow-duplicate is given: the existing ticket is returned unchanged, the result lists which of --description, --assignee, --due and --importance were ignored, says whether the requested --item-type and --custom-field values differ from it, and exits 1 if they do. --item-type and --custom-field take an id or an exact title (never guessed; a wrong-type value is rejected before anything is sent) and are read back after creation. The duplicate check has no lock: two runs at the same moment can still both create. |
+| `its wrike tickets set-custom-field <taskId> <field> <value>` | Set one custom field on a ticket. The field is an id or exact title (never guessed) and the value is checked against the field type before it is sent. The ticket is read back for up to 30 seconds and the command fails if the value did not stick. |
 | `its wrike tickets set-due <taskId> <dueDate>` | Set due date on a ticket (YYYY-MM-DD). Set the task's due date. |
 | `its wrike tickets assign <taskId> <userId>` | Add an assignee to a ticket. Idempotent — assigning twice is a no-op. |
 | `its wrike tickets update-title <taskId> <title>` | Change a ticket's title. Rename the task — keeps the same ID. |
@@ -198,7 +201,7 @@ its wrike tickets search "printer"
 
 #### `its wrike tickets create`
 
-Create a new IT support ticket. Idempotent on duplicate names — use update/edit to mutate an existing record.
+Create a new IT support ticket. If an open (Active or Deferred) ticket in the folder already has this exact title (whitespace ignored), nothing is created unless --allow-duplicate is given: the existing ticket is returned unchanged, the result lists which of --description, --assignee, --due and --importance were ignored, says whether the requested --item-type and --custom-field values differ from it, and exits 1 if they do. --item-type and --custom-field take an id or an exact title (never guessed; a wrong-type value is rejected before anything is sent) and are read back after creation. The duplicate check has no lock: two runs at the same moment can still both create.
 
 **Flags:**
 
@@ -213,6 +216,9 @@ Create a new IT support ticket. Idempotent on duplicate names — use update/edi
 | `--assignee` | `-a` | Comma-separated user IDs or names (e.g. 'KUAABCDE,Jane Smith') | — |
 | `--due` | `` | Due date (YYYY-MM-DD) | — |
 | `--importance` | `` | Importance (High, Normal, Low) | Normal |
+| `--item-type` | `` | Request type (custom item type): id or exact title. Default is the standard support ticket type. | — |
+| `--custom-field` | `` | <id\|title>=<value>, repeatable. Contacts fields take a user id, exact name or exact email. | — |
+| `--allow-duplicate` | `` | Create even if an open ticket already has this title (skips the duplicate check). | — |
 
 **Examples:**
 
@@ -221,7 +227,21 @@ its wrike tickets create --title "Printer offline in Finance" --description "Lab
 
 its wrike tickets create --title "Server migration plan" --description-file ./plan.md --markdown --importance High
 
+# Find names with `its wrike item-types` and `its wrike custom-fields`. --dry-run shows what would be sent.
+its wrike tickets create --title "Leaver: Jane Smith" --item-type "<request type>" --custom-field "<field>=<value>" --custom-field "<contacts field>=jane.smith@example.com" --dry-run
+
 its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox"
+```
+
+#### `its wrike tickets set-custom-field <taskId> <field> <value>`
+
+Set one custom field on a ticket. The field is an id or exact title (never guessed) and the value is checked against the field type before it is sent. The ticket is read back for up to 30 seconds and the command fails if the value did not stick.
+
+**Examples:**
+
+```bash
+# Find field names with `its wrike custom-fields`. A Contacts field takes a user id, exact name or exact email.
+its wrike tickets set-custom-field IEACW7BXKQ2R4KMT "<field>" "<value>"
 ```
 
 #### `its wrike tickets set-due <taskId> <dueDate>`
@@ -281,6 +301,8 @@ Change ticket status. Move the task to a different workflow stage.
 
 ```bash
 its wrike tickets update-status IEACW7BXKQ2R4KMT Completed
+
+its wrike tickets update-status IEACW7BXKQ2R4KMT "Waiting"
 
 its wrike tickets update-status <task-id> "Completed"
 ```

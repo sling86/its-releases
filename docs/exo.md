@@ -198,7 +198,8 @@ its exo groups remove-member "All Staff" jane.smith@example.com
 | `its exo mailboxes remove-inbox-rule <mailbox> <rule>` | Delete one exact server-side inbox rule from a mailbox. Refuses ambiguous names and verifies removal. --confirm required. |
 | `its exo mailboxes user-access <user>` | What a user can get into: shared mailboxes they have FullAccess to (scans every shared mailbox — can take up to 5 minutes) and every recipient they can SendAs (quick, filtered server-side). --rights narrows to one. |
 | `its exo mailboxes add-alias <mailbox> <address>` | Add ONE secondary SMTP address to a mailbox, keeping every existing address (Set-Mailbox -EmailAddresses @{add=...}). Unlike `entra users update --set proxyAddresses`, nothing else is touched. Cloud-only mailboxes; synced ones are changed on-prem. |
-| `its exo mailboxes remove-alias <mailbox> <address>` | Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address. |
+| `its exo mailboxes remove-alias <mailbox> <address>` | Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address. If Exchange says the address is used as WindowsLiveId, it is also the sign-in name: run `its entra users update <id> --set userPrincipalName=<onmicrosoft address>` first, wait about 20 seconds, then remove-alias (the UPN change also makes that address primary). |
+| `its exo mailboxes set-primary <mailbox> <address>` | Make an address the PRIMARY SMTP address of a mailbox. The old primary stays as a secondary (or is dropped with --remove-old); every other address is kept. The address is added if the mailbox lacks it, and must be on an accepted domain. Cloud-only mailboxes; synced ones are refused (change them on-prem). Re-reads the mailbox and fails if the change is not there. If the old address is the account's sign-in name (WindowsLiveId), change the UPN first with `its entra users update <id> --set userPrincipalName=<onmicrosoft address>`, wait about 20 seconds, then remove the old alias with remove-alias. --remove-old does nothing when the address is already primary. |
 | `its exo mailboxes set-forwarding <mailbox> <target>` | Configure mailbox forwarding. Set a mailbox forward. --confirm required. |
 | `its exo mailboxes clear-forwarding <mailbox>` | Remove the mailbox's own forward: clears ForwardingAddress and ForwardingSmtpAddress and sets DeliverToMailboxAndForward false. Shows the current forward without --confirm; reads it back after. (The outbound spam policy exception is `exo forwarding remove-mailbox`.) |
 | `its exo mailboxes set-type <mailbox> <type>` | Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared. |
@@ -378,12 +379,30 @@ its exo mailboxes add-alias jo@example.com jo.bloggs@example.com
 
 #### `its exo mailboxes remove-alias <mailbox> <address>`
 
-Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address.
+Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address. If Exchange says the address is used as WindowsLiveId, it is also the sign-in name: run `its entra users update <id> --set userPrincipalName=<onmicrosoft address>` first, wait about 20 seconds, then remove-alias (the UPN change also makes that address primary).
 
 **Examples:**
 
 ```bash
 its exo mailboxes remove-alias jo@example.com jo.bloggs@example.com
+```
+
+#### `its exo mailboxes set-primary <mailbox> <address>`
+
+Make an address the PRIMARY SMTP address of a mailbox. The old primary stays as a secondary (or is dropped with --remove-old); every other address is kept. The address is added if the mailbox lacks it, and must be on an accepted domain. Cloud-only mailboxes; synced ones are refused (change them on-prem). Re-reads the mailbox and fails if the change is not there. If the old address is the account's sign-in name (WindowsLiveId), change the UPN first with `its entra users update <id> --set userPrincipalName=<onmicrosoft address>`, wait about 20 seconds, then remove the old alias with remove-alias. --remove-old does nothing when the address is already primary.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--remove-old` | `` | Drop the old primary instead of keeping it as a secondary | — |
+
+**Examples:**
+
+```bash
+its exo mailboxes set-primary jo@example.com jo@example.onmicrosoft.com
+
+its exo mailboxes set-primary jo@example.com jo@example.onmicrosoft.com --remove-old
 ```
 
 #### `its exo mailboxes set-forwarding <mailbox> <target>`
@@ -1192,7 +1211,7 @@ List quarantined messages (read-only). Default last 7 days, max 30.
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--days` | `` | How many days back (1-30, default 7) | — |
-| `--type` | `` | Quarantine reason: Bulk|HighConfPhish|Malware|Phish|Spam|SPOMalware|TransportRule | — |
+| `--type` | `` | Quarantine reason: Bulk\|HighConfPhish\|Malware\|Phish\|Spam\|SPOMalware\|TransportRule | — |
 | `--recipient` | `` | Only mail to this address | — |
 | `--sender` | `` | Only mail from this address | — |
 
@@ -1247,7 +1266,7 @@ Tenant Allow/Block List entries of one type (read-only).
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--type` | `` | List type: Sender|Url|FileHash|IP | — |
+| `--type` | `` | List type: Sender\|Url\|FileHash\|IP | — |
 
 ```bash
 its exo allowblock
@@ -1261,7 +1280,7 @@ Add a Tenant Allow/Block List entry. Expires in 30 days unless --days or --no-ex
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--type` | `` | List type: Sender|Url|FileHash|IP | — |
+| `--type` | `` | List type: Sender\|Url\|FileHash\|IP | — |
 | `--action` | `` | allow or block | — |
 | `--days` | `` | Days until it expires (1-90, default 30) | — |
 | `--no-expiry` | `` | Never expires (block entries only) | — |
@@ -1282,7 +1301,7 @@ Remove a Tenant Allow/Block List entry by id (from `allowblock list`). Preview w
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--type` | `` | List type: Sender|Url|FileHash|IP | — |
+| `--type` | `` | List type: Sender\|Url\|FileHash\|IP | — |
 | `--confirm` | `` | Required to remove | — |
 
 **Examples:**

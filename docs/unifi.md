@@ -681,7 +681,7 @@ its unifi networks --watch
 | Command | Description |
 |---------|-------------|
 | `its unifi wlans` | List WiFi SSIDs. Surfaces the most common fields; pass --json for raw shape. |
-| `its unifi wlans toggle <wlan_id>` | Enable or disable a WiFi SSID. Toggle a boolean state; idempotent. |
+| `its unifi wlans toggle <wlan_id>` | Enable or disable a WiFi SSID. Pass exactly one of --enable or --disable. Idempotent; reads the SSID back to confirm. |
 | `its unifi wlans password <wlan_id>` | Update WiFi password for an SSID. Rotate a PSK / passphrase. Disconnects every client on the SSID — use --confirm. |
 
 #### `its unifi wlans`
@@ -706,13 +706,14 @@ its unifi wlans --watch
 
 #### `its unifi wlans toggle <wlan_id>`
 
-Enable or disable a WiFi SSID. Toggle a boolean state; idempotent.
+Enable or disable a WiFi SSID. Pass exactly one of --enable or --disable. Idempotent; reads the SSID back to confirm.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--enable` | `` | Enable (true) or disable (false) the SSID | true |
+| `--enable` | `` | Enable the SSID | — |
+| `--disable` | `` | Disable the SSID | — |
 | `--site` | `` | Site name override | — |
 
 **Examples:**
@@ -720,7 +721,7 @@ Enable or disable a WiFi SSID. Toggle a boolean state; idempotent.
 ```bash
 its unifi wlans toggle 6f2a9c14 --enable
 
-its unifi wlans toggle 6f2a9c14
+its unifi wlans toggle 6f2a9c14 --disable
 
 # Toggles whatever the current enabled state is.
 its unifi wlans toggle <wlan-id>

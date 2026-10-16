@@ -54,6 +54,7 @@ Live terminal access additionally needs `its rmm terminal login` with a local Ta
 | `src/providers/rmm/types.ts` | TypeScript interfaces |
 | `src/providers/rmm/commands/` | Command definitions (split by resource) |
 | `src/providers/rmm/definition.ts` | definition |
+| `src/providers/rmm/readback.ts` | readback |
 | `src/providers/rmm/resolve.ts` | resolve |
 | `src/providers/rmm/terminal-auth.ts` | terminal auth |
 | `src/providers/rmm/terminal.ts` | terminal |
@@ -75,7 +76,7 @@ Live terminal access additionally needs `its rmm terminal login` with a local Ta
 | `its rmm agents reboot <agent>` | Reboot the agent's host OS. Destructive — needs --confirm. Returns immediately; the host may take 1-3 minutes to come back. |
 | `its rmm agents remove <agent>` | Permanently delete the agent record from RMM. Doesn't uninstall the local agent service — pair with the RMM uninstall script if the device is being decommissioned. |
 | `its rmm agents prune` | Bulk-remove stale agent records last seen before a threshold (and never-seen agents). Destructive — previews the target list by default and needs --confirm to delete. Doesn't uninstall the local agent service. Pair with `agents stale` to inspect first. |
-| `its rmm agents run <agent>` | Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 30s. |
+| `its rmm agents run <agent>` | Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell\|cmd\|bash; default timeout is 30s. |
 | `its rmm agents history <agent>` | Command + script execution history for one agent. Shows time, type, exit status, who ran it, and the truncated payload. |
 | `its rmm agents notes <agent>` | Free-form notes attached to the agent — common workflow is documenting incident actions or device peculiarities. |
 | `its rmm agents pending <agent>` | Queued reboots, script runs, and update installs that the agent hasn't picked up yet. Useful when a command seems to have stalled. |
@@ -610,7 +611,7 @@ its rmm processes OFFICE-PC-01 --filter name=notepad
 
 | Command | Description |
 |---------|-------------|
-| `its rmm services <agent>` | Windows / Linux service inventory for one agent. Filter with --status running|stopped|paused. |
+| `its rmm services <agent>` | Windows / Linux service inventory for one agent. Filter with --status running\|stopped\|paused. |
 | `its rmm services get <agent>` | Service detail — startup type, dependencies, current state, last exit code. |
 | `its rmm services control <agent>` | Control a service (start/stop/restart). Stop requires --confirm. |
 | `its rmm services enable <agent>` | Set startup type to Automatic and start the service if stopped. Idempotent. |
@@ -902,7 +903,7 @@ its rmm software search "Adobe"
 
 | Command | Description |
 |---------|-------------|
-| `its rmm alerts` | Active and resolved alerts across the fleet. Filter by --severity info|warning|error or --resolved. |
+| `its rmm alerts` | Active and resolved alerts across the fleet. Filter by --severity info\|warning\|error or --resolved. |
 | `its rmm alerts get <alert_id>` | Alert detail — full message, source check, snooze state, agent it fired on. |
 | `its rmm alerts resolve <alert_id>` | Mark an alert resolved (clears it from the active dashboard). Needs --confirm. |
 | `its rmm alerts snooze <alert_id>` | Suppress an alert for N days (default 1). Needs --confirm. |
@@ -1038,8 +1039,8 @@ Execute a saved RMM script on a target agent, or fan it out across a fleet with 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--script` | `` | Script ID | — |
-| `--args` | `` | Script arguments (comma-separated) | — |
-| `--timeout` | `` | Timeout in seconds | 120 |
+| `--args` | `` | Script arguments (comma-separated). Not given: the script's saved args are used. `--args ""` sends none. | — |
+| `--timeout` | `` | Timeout in seconds. Not given: the script's saved default timeout, else 120 | — |
 | `--raw` | `` | Print the script's raw stdout (and stderr) directly, instead of JSON-wrapped output with escaped \r\n (single-agent only) | — |
 | `--all-online` | `` | Fan out to every online agent | — |
 | `--client` | `` | Fan out to online agents in this client (substring) | — |
@@ -1846,7 +1847,7 @@ its rmm printers clear-queue WKS-9 --all --restart-spooler --confirm
 
 | Command | Description |
 |---------|-------------|
-| `its rmm dell updates <agent>` | Dell Command | Update on an agent: scan for BIOS, firmware (incl. WD19/WD22 dock firmware when the dock is attached), driver and application updates, or --apply them with --confirm. Never reboots; says when one is needed. Needs Dell Command | Update installed. |
+| `its rmm dell updates <agent>` | Dell Command \| Update on an agent: scan for BIOS, firmware (incl. WD19/WD22 dock firmware when the dock is attached), driver and application updates, or --apply them with --confirm. Never reboots; says when one is needed. Needs Dell Command \| Update installed. |
 
 #### `its rmm dell updates <agent>`
 

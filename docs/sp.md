@@ -403,7 +403,7 @@ its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm
 | `its sp files upload <siteId>` | Upload a text file. Stream a local file to the resource. |
 | `its sp files folder <siteId>` | Create a folder under a parent item. |
 | `its sp files delete <siteId>` | Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
-| `its sp files share <siteId>` | Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked). --to a@x,b@y makes a specific-people link only they can open. |
+| `its sp files share <siteId>` | Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view\|edit, --scope organisation\|anonymous (anonymous may be tenant-blocked). --to a@x,b@y makes a specific-people link only they can open. |
 | `its sp files move <siteId>` | Move or rename a file. Move an item between folders (reversible). |
 | `its sp files checkout <siteId>` | Check out a file for editing. Locks the item against concurrent edits. |
 | `its sp files checkin <siteId>` | Check in a file. Releases the lock after editing. |
@@ -418,7 +418,7 @@ Download a drive item to disk (--out) or pipe binary-safe to stdout. Resolves th
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Site ID (with --drive --item|--path) | — |
+| `--site` | `` | Site ID (with --drive --item\|--path) | — |
 | `--user` | `` | User UPN — operate on /users/<upn>/drive | — |
 | `--drive` | `` | Drive ID (with --item or --path) | — |
 | `--item` | `` | Drive item ID | — |
@@ -1074,6 +1074,7 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 |------|-------|-------------|---------|
 | `--beta` | `` | Use /beta instead of /v1.0 | — |
 | `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
+| `--all` | `` | Follow @odata.nextLink and merge every page's value (stops at 50 pages) | — |
 | `--raw` | `` | Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. | — |
 | `--out` | `` | Write the response to this file path instead of stdout. Implies --raw. | — |
 

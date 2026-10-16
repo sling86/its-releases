@@ -61,6 +61,7 @@ its entra setup --reset   # Re-run setup (overwrite config)
 | `src/providers/entra/auth-methods.ts` | auth methods |
 | `src/providers/entra/definition.ts` | definition |
 | `src/providers/entra/licence-assignments.ts` | licence assignments |
+| `src/providers/entra/odata.ts` | odata |
 | `src/providers/entra/sku-names.ts` | sku names |
 | `src/providers/entra/sync-health.ts` | sync health |
 
@@ -141,6 +142,7 @@ Update user properties. Use named flags for common fields, --set k=v,k=v for any
 | `--company` | `` | Company name | — |
 | `--office` | `` | Office location | — |
 | `--phone` | `` | Mobile phone | — |
+| `--business-phone` | `` | Business (desk) phone — replaces the current number; Graph holds at most one | — |
 | `--employeeId` | `` | Employee ID (PeopleHR EmployeeId) | — |
 | `--streetAddress` | `` | Street address | — |
 | `--city` | `` | City | — |
@@ -511,7 +513,10 @@ its entra users reinstate jane.smith@example.com --from-audit-minutes 120 --conf
 | `its entra groups search <query>` | Search groups by name. Substring match across the most relevant fields; case-insensitive. |
 | `its entra groups get <group_id>` | Get group details. Pass the id (or any natural identifier) as the positional arg. |
 | `its entra groups members <group_id>` | List members of a group. Pass --include-sps (or --all) to also surface service principals, nested groups, and devices — useful for groups like 'Fabric Admin API Service Principals' that the user-only view shows as empty. |
-| `its entra groups create` | Create a new security group. Idempotent on duplicate names — use update/edit to mutate an existing record. |
+| `its entra groups create` | Create a group: a security group (default) or a Microsoft 365 group (--type m365: shared mailbox, calendar and Teams-capable). Optionally set owners at creation. Idempotent on duplicate names — use update/edit to mutate an existing record. |
+| `its entra groups owners <group_id>` | List a group's owners. |
+| `its entra groups add-owner <group_id>` | Make a user an owner of a group. Reads the owners back to confirm. |
+| `its entra groups remove-owner <group_id>` | Take a user off the owners of a group. Reads the owners back to confirm. |
 | `its entra groups add-member <group_id>` | Add a user to a group. Refuses dynamic-membership groups (ctxc 41) — Graph accepts the call but the dynamic engine immediately overrides. Also refuses if the candidate is disabled / a leaver / has an active namesake (lesson 326 — Adam picked the wrong Steve/Colette/Nick). Pass --force to override either guard. |
 | `its entra groups remove-member <group_id>` | Remove a user from a group (requires --confirm). Refuses dynamic-membership groups (ctxc 41); pass --force to override. |
 | `its entra groups edit-rule <group_id>` | Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants a user who doesn't match the rule); --remove-upn strips one; --set-rule replaces the whole rule. add/remove never drop existing members. --confirm required; without it, prints the current→new diff (ctxc 1052). |
@@ -584,12 +589,14 @@ its entra groups members <group-id> --all
 
 #### `its entra groups create`
 
-Create a new security group. Idempotent on duplicate names — use update/edit to mutate an existing record.
+Create a group: a security group (default) or a Microsoft 365 group (--type m365: shared mailbox, calendar and Teams-capable). Optionally set owners at creation. Idempotent on duplicate names — use update/edit to mutate an existing record.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
+| `--type` | `` | security (default) or m365 | — |
+| `--owner` | `` | Owner(s) — UPN or GUID, comma-separated | — |
 | `--displayName` | `` | Group display name | — |
 | `--description` | `` | Group description | — |
 | `--mail` | `` | Mail-enabled | false |
@@ -602,6 +609,46 @@ its entra groups create --displayName "IT Admins" --description "IT team"
 its entra groups create --displayName "All Staff" --mail
 
 its entra groups create --displayName "Marketing"
+```
+
+#### `its entra groups owners <group_id>`
+
+List a group's owners.
+
+```bash
+its entra groups owners <group_id>
+```
+
+#### `its entra groups add-owner <group_id>`
+
+Make a user an owner of a group. Reads the owners back to confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | User UPN or GUID | — |
+
+**Examples:**
+
+```bash
+its entra groups add-owner <group-id> --user jane.smith@example.com
+```
+
+#### `its entra groups remove-owner <group_id>`
+
+Take a user off the owners of a group. Reads the owners back to confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--user` | `` | User UPN or GUID | — |
+
+**Examples:**
+
+```bash
+its entra groups remove-owner <group-id> --user jane.smith@example.com
 ```
 
 #### `its entra groups add-member <group_id>`
@@ -1103,6 +1150,7 @@ its entra tap revoke jane.smith@example.com <method-id>
 | `its entra ca why-blocked <user>` | Show which enabled CA policies target a user, plus the grant controls each requires. Resolves group + role membership. |
 | `its entra ca report-only [policy]` | Sign-ins that report-only CA policies WOULD have blocked or interrupted if enforced (results reportOnlyFailure / reportOnlyInterrupted). The dry run before switching a policy on. Optional [policy] narrows to one policy by id or name. |
 | `its entra ca named-locations` | List trusted/named locations referenced by CA policies |
+| `its entra ca create-named-location <name>` | Create a Conditional Access named location: an IP range list (--ip, CIDR, comma-separated) or countries (--countries, two-letter codes). Previews without --confirm. Creating one changes nothing until a policy uses it. |
 
 #### `its entra ca`
 
@@ -1308,6 +1356,25 @@ List trusted/named locations referenced by CA policies.
 
 ```bash
 its entra ca named-locations
+```
+
+#### `its entra ca create-named-location <name>`
+
+Create a Conditional Access named location: an IP range list (--ip, CIDR, comma-separated) or countries (--countries, two-letter codes). Previews without --confirm. Creating one changes nothing until a policy uses it.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--ip` | `` | IP ranges in CIDR form, comma-separated (e.g. 203.0.113.0/24) | — |
+| `--countries` | `` | Two-letter country codes, comma-separated (e.g. GB,IE) | — |
+| `--trusted` | `` | Mark an IP location as trusted | — |
+| `--confirm` | `` | Create it | — |
+
+**Examples:**
+
+```bash
+its entra ca create-named-location "Chi office" --ip 203.0.113.0/24 --trusted --confirm
 ```
 
 ---
@@ -1880,6 +1947,7 @@ its entra directory app-usage
 | `its entra devices` | List Entra-registered and Entra-joined devices. Wider than `its intune devices`, which only sees Intune-managed ones — filter with --filter isManaged=false to find registered-but-unenrolled devices. Needs Device.Read.All. |
 | `its entra devices search <query>` | Search Entra devices by display name. Paginates matching results instead of searching only the first list page. |
 | `its entra devices get <device>` | Get one device by directory object id, deviceId, or exact display name. Needs Device.Read.All. |
+| `its entra devices delete <device>` | Delete an Entra device RECORD (not the PC, not its Intune record). Previews without --confirm. Refuses Intune-managed devices unless --force: deleting their Entra record breaks sign-in trust and compliance until the PC re-registers. Checks the record is gone afterwards. |
 
 #### `its entra devices`
 
@@ -1926,6 +1994,25 @@ Get one device by directory object id, deviceId, or exact display name. Needs De
 its entra devices get THF-UD-MP27XZ31
 
 its entra devices get 12345678-90ab-cdef-1234-567890abcdef
+```
+
+#### `its entra devices delete <device>`
+
+Delete an Entra device RECORD (not the PC, not its Intune record). Previews without --confirm. Refuses Intune-managed devices unless --force: deleting their Entra record breaks sign-in trust and compliance until the PC re-registers. Checks the record is gone afterwards.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--force` | `` | Allow deleting the record of an Intune-managed device | — |
+| `--confirm` | `` | Delete the record | — |
+
+**Examples:**
+
+```bash
+its entra devices delete OLD-PC-01
+
+its entra devices delete OLD-PC-01 --confirm
 ```
 
 ---
@@ -2409,6 +2496,7 @@ Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
 |------|-------|-------------|---------|
 | `--beta` | `` | Use /beta instead of /v1.0 | — |
 | `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
+| `--all` | `` | Follow @odata.nextLink and merge every page's value (stops at 50 pages) | — |
 | `--raw` | `` | Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. | — |
 | `--out` | `` | Write the response to this file path instead of stdout. Implies --raw. | — |
 

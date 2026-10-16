@@ -338,7 +338,7 @@ Create a draft instead of sending. Nothing leaves the mailbox until `its outlook
 | `--body` | `` | Body content | — |
 | `--body-file` | `` | Read body from a UTF-8 file | — |
 | `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
-| `--importance` | `` | low|normal|high | — |
+| `--importance` | `` | low\|normal\|high | — |
 | `--signature` | `` | Append the canonical signature for the mailbox (set up once: `its outlook setup`; check: `its outlook signature test`) | — |
 | `--sign-as` | `` | Append the signature for this send-as address (implies --signature) | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
@@ -368,7 +368,7 @@ Send a new email directly (no draft step). Saves a copy in Sent Items. To review
 | `--body` | `` | Body content | — |
 | `--body-file` | `` | Read body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) | — |
 | `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
-| `--importance` | `` | low|normal|high | normal |
+| `--importance` | `` | low\|normal\|high | normal |
 | `--attach` | `` | File to attach. Comma-separated for multiple. `path:cid:<id>` syntax marks an attachment inline with that cid (pair with `<img src="cid:<id>">` in body). | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
 | `--var` | `` | Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read. | — |
@@ -414,7 +414,7 @@ Create a draft email (does not send).
 | `--body` | `` | Body content | — |
 | `--body-file` | `` | Read body from a UTF-8 file (use this for bodies > ~15KB — Windows command-line cap) | — |
 | `--html` | `` | Treat --body / --body-file as HTML (default text) | — |
-| `--importance` | `` | low|normal|high | normal |
+| `--importance` | `` | low\|normal\|high | normal |
 | `--signature` | `` | Append the canonical signature for the mailbox (set up once: `its outlook setup`; check: `its outlook signature test`) | — |
 | `--sign-as` | `` | Append the signature for this send-as address (implies --signature) | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
@@ -488,7 +488,7 @@ Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories. --
 | `--to` | `` | Replace To recipients (comma-separated) | — |
 | `--cc` | `` | Replace CC recipients | — |
 | `--bcc` | `` | Replace BCC recipients | — |
-| `--importance` | `` | low|normal|high | — |
+| `--importance` | `` | low\|normal\|high | — |
 | `--categories` | `` | Replace categories (comma-separated) | — |
 | `--keep-quote` | `` | With --body: replace only what is ABOVE the quoted thread of a reply/forward draft, keeping the quote intact | — |
 | `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
@@ -967,8 +967,8 @@ Configure automatic reply. Use --status to toggle disabled/alwaysEnabled/schedul
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--status` | `` | disabled | alwaysEnabled | scheduled | — |
-| `--audience` | `` | External audience: none | contactsOnly | all | — |
+| `--status` | `` | disabled \| alwaysEnabled \| scheduled | — |
+| `--audience` | `` | External audience: none \| contactsOnly \| all | — |
 | `--internal` | `` | Internal reply message | — |
 | `--external` | `` | External reply message | — |
 | `--start` | `` | Scheduled start (ISO datetime) | — |

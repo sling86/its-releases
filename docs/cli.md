@@ -43,14 +43,14 @@ its <provider> <resource> [action] [args] [--flags]
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 81 commands, 20 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 121 commands, 23 resources | [entra.md](./entra.md) |
-| Dokploy | `dokploy` | 121 commands, 25 resources | [dokploy.md](./dokploy.md) |
-| Bitwarden | `bw` | 69 commands, 16 resources | [bw.md](./bw.md) |
+| Entra ID | `entra` | 126 commands, 23 resources | [entra.md](./entra.md) |
+| Dokploy | `dokploy` | 122 commands, 25 resources | [dokploy.md](./dokploy.md) |
+| Bitwarden | `bw` | 70 commands, 17 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 55 commands, 12 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 49 commands, 17 resources | [unifi.md](./unifi.md) |
-| Wrike | `wrike` | 64 commands, 17 resources | [wrike.md](./wrike.md) |
+| Wrike | `wrike` | 65 commands, 17 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 28 commands, 13 resources | [az.md](./az.md) |
-| Exchange Online | `exo` | 73 commands, 16 resources | [exo.md](./exo.md) |
+| Exchange Online | `exo` | 74 commands, 16 resources | [exo.md](./exo.md) |
 | Intune | `intune` | 61 commands, 21 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 10 commands, 5 resources | [protect.md](./protect.md) |
 | Power BI | `pbi` | 30 commands, 9 resources | [pbi.md](./pbi.md) |

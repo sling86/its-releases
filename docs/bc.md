@@ -303,7 +303,7 @@ Create a record. Needs --env <name> spelled out (never the default) and --body '
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--company` | `` | Company name/id (default: first company) | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
 | `--env` | `` | BC environment name — REQUIRED for writes, never defaulted | — |
 | `--api` | `` | Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) | — |
 | `--body` | `` | JSON body — inline or @path/to/file.json | — |
@@ -323,7 +323,7 @@ Change fields on a record (PATCH). Reads the record first and sends its etag, so
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--company` | `` | Company name/id (default: first company) | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
 | `--env` | `` | BC environment name — REQUIRED for writes, never defaulted | — |
 | `--api` | `` | Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) | — |
 | `--body` | `` | JSON body — inline or @path/to/file.json | — |
@@ -343,7 +343,7 @@ Delete a record. Reads it first and shows what would go; sends its etag. Preview
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--company` | `` | Company name/id (default: first company) | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
 | `--env` | `` | BC environment name — REQUIRED for writes, never defaulted | — |
 | `--api` | `` | Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) | — |
 | `--confirm` | `` | Apply the change | — |
@@ -362,7 +362,7 @@ Run a bound action on a record (POST …/Microsoft.NAV.<action>), e.g. post or r
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--company` | `` | Company name/id (default: first company) | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
 | `--env` | `` | BC environment name — REQUIRED for writes, never defaulted | — |
 | `--api` | `` | Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) | — |
 | `--body` | `` | Optional JSON body for the action — inline or @file.json | — |

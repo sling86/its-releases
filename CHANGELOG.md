@@ -15,6 +15,95 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.23.1] - 2026-10-16
+
+v0.23.0 was tagged but never published: its Windows build failed. This release is v0.23.0 plus the two changes below.
+
+### Changed
+
+- **wrike:** `tickets assign`, `tickets set-due` and `tasks set-due` are now exempt from the `--confirm` warning, like comment and status writes.
+
+### Fixed
+
+- **tests:** file-mode checks and the tests that run a fake POSIX `gh` script are skipped on Windows (they failed the v0.23.0 Windows build). No product code changed.
+
+## [0.23.0] - 2026-10-16
+
+### Added
+
+- **all providers:** `--confirm` is now a global flag. **Warn-only for now:** a command that changes state and is run without `--confirm` or `--dry-run` prints one line to stderr saying a later release will refuse it, then runs as before. Commands that already require their own `--confirm` are unchanged. Wrike comment, status and @mention writes (`wrike tickets|tasks add-comment`, `tickets update-comment`, `update-status`) are exempt. Silence it for scripts with `ITS_NO_CONFIRM_WARN=1`. The hard gate comes in a later release, after the its-ops plugin and the examples are updated.
+- **tests:** a ratchet counts mutating examples that show neither `--confirm` nor `--dry-run` (382 today); the count may only go down.
+- **bw:** `its bw sync` re-downloads the vault now, ignoring the 15-minute snapshot.
+- **dokploy:** `apps deploy-url <app>` prints the CI deploy webhook URL (`<DOKPLOY_URL>/api/deploy/<refreshToken>`) for docker/GHCR-source apps. It is a secret, so it only goes to piped stdout (raw, no newline) or `--to-file <path>` (0600), and is refused on a terminal. Example: `its dokploy apps deploy-url my-app | gh secret set NAME -R org/repo`.
+- **exo:** `mailboxes set-primary <mailbox> <address> [--remove-old]` makes an address the primary SMTP address in one call, keeps every other address, and refuses domains that are not accepted and synced mailboxes.
+- `wrike tickets create --item-type <id|title> --custom-field <id|title>=<value>` (repeatable) — create a ticket with a request type (Wrike's "custom item type") and custom fields, so it behaves like one made from a request form. Names are looked up exactly (id first, then title ignoring case); no match or more than one match fails and lists the candidates. Each value is checked against the field's type before anything is sent (text, drop-down, multiple choice, plain decimal number, currency, percentage, a real date as `YYYY-MM-DD`, checkbox, and Contacts as a person's user id, exact name or exact email; groups are refused). A field title containing `=` must be given by id in `--custom-field` form. The ticket is read back and the command fails, naming the ticket, if the type or a field did not stick.
+- `wrike tickets set-custom-field <taskId> <field> <value>` — set one custom field on an existing ticket, same lookup and checks, read back for up to 30 seconds. `--dry-run` shows the change and writes nothing.
+- **Changed:** `wrike tickets create` now skips a duplicate title, as its help always said. If an **open** ticket (Active or Deferred, not Completed or Cancelled) in the folder has the same title (spaces at the ends and doubled spaces ignored), nothing is created; the existing ticket is returned unchanged and the result says whether the requested type and fields differ. Every page of results is checked. There is **no lock**: two runs at the same moment can still both create. Before this, a second create with the same title made a second ticket.
+- `wrike tickets create --allow-duplicate` — create even when an open ticket has the same title. Without it the existing ticket is returned and the summary lists which of `--description`, `--assignee`, `--due` and `--importance` were ignored. A repeat create whose `--item-type`/`--custom-field` differ from the existing ticket now exits 1 and names that ticket and the differences.
+- **Fixed:** `Multiple` custom fields are sent as a JSON array string (`["Red","Green"]`, Wrike's documented form) and read back from a JSON array, a list or commas. Before, they were sent comma-joined and the read-back could never pass.
+- **Fixed:** a `Contacts` value is matched whole first and split on commas only when nothing matched; a split that fails also shows the whole-value reason, and empty list entries are refused by name.
+- `wrike tickets get` now shows `itemTypeId` (the request type) and `dates` (start and due), so `--due` and `--item-type` can be checked from the CLI.
+- **Fixed:** `--item-type ""` (or `--item-type=`) is refused instead of quietly making a plain ticket.
+- **Fixed:** any failure after the ticket is created (due date, read-back) says `Ticket <id> (<link>) WAS created but …`.
+- **Fixed:** the custom-field read-back stops at once on auth, config, 404 and other 4xx errors (not 429) and says "could not confirm" rather than "did not take"; it now uses `core/poll.ts`.
+- The parser now keeps every value of `--custom-field` (it kept only the last of a repeated flag before).
+- `entra groups create --type m365 [--owner a,b]` — Microsoft 365 groups (Unified, mail on), and owners set at creation. New `groups owners`, `groups add-owner`, `groups remove-owner` (read back to confirm).
+- `entra devices delete <device>` — delete an Entra device **record** (not the PC or its Intune record). Previews without `--confirm`; refuses Intune-managed devices without `--force`; checks the record is gone.
+- `entra ca create-named-location <name> --ip <cidr,..> | --countries GB,IE [--trusted]` — preview, then `--confirm`.
+- `entra users get` now shows `userType`, `guestState` (PendingAcceptance / Accepted) and `businessPhones`; `entra users update --business-phone`.
+
+### Fixed
+
+- **classification:** 36 read-only commands were wrongly treated as writes because they set `cacheable: false` (`dokploy apps health|doctor|env reveal|...`, `pbi my whoami`, `attendance terminals list`, `rmm diagnostics list`, `entra apps plan|audit`, ...). They now declare `mutates: false`, so they no longer pick up the write fan-out cap or the new `--confirm` warning.
+- **tests:** the `cf` and `gh` providers had no tests. Added `tests/cf-client.test.ts` (request building, paging, error mapping, `zones list` output) and `tests/gh-client.test.ts` (fake `gh`, branch-protect and webhook commands). No provider code changed.
+- **ci:** Bun is pinned in one place, `.bun-version` (1.4.2). The workflows read it with `bun-version-file` instead of each naming the version.
+- **dokploy:** `webhook check` and `webhook setup`, and the `apps doctor` webhook check, built the deploy URL from the application ID. Dokploy's route is `/api/deploy/<refreshToken>` (checked against `apps/dokploy/pages/api/deploy/[refreshToken].ts`), so a working hook read as missing and `setup` made a hook that 404s. They now use the `refreshToken`, and show the URL with the token masked (`/api/deploy/****`).
+- **exo:** the calendar and user-access scripts put the mailbox name in a double-quoted `throw`, so `$(...)` or a backtick in a name ran as PowerShell. Now single-quoted.
+- **dokploy:** container ids from the API are quoted in the remote `docker logs` and `docker exec ... printenv` lines.
+- **az:** the token broker's Windows `cmd /c az` call now quotes its args (`&` or `|` in a resource ran as a command).
+- **core:** `its update` only runs a release-manifest URL when it is plain `https` with no shell characters; anything else falls back to the release page.
+- **cf, docs:** on Windows the browser opens with `rundll32`, not `cmd /c start`, which cut the Cloudflare token URL at the first `&`.
+- **ci:** `bun run check` now also type-checks `tests/` and `scripts/` (new `tsconfig.tests.json`). Fixed the 43 errors that hid there; no test assertion changed. Shared helpers: `tests/helpers/args.ts`, `tests/helpers/fetch.ts`.
+- **core:** a boolean flag that swallowed an argument (`move --force A B`) handed the handler `[B, A]`. The value now goes back to the slot it came from.
+- **core:** `--watch` and `its watch` refuse any command that changes things (`dokploy apps deploy X --watch 5` used to deploy every 5 seconds). `its watch` also bypasses the cache now, like `--watch`.
+- **core:** `--json --fields name --filter status=online` (and `--ai`, `--jsonl`) failed with "status is not a column". `--fields` now applies after filter, sort and limit.
+- **core:** `graph get --all` follows `@odata.nextLink` and merges the pages (50-page cap, with a warning). `--all` is no longer offered as a global flag, because it was ignored on most commands.
+- **core:** error text on stderr (including up to 500 bytes of API body) now has secrets masked. `--unsafe` turns that off.
+- **dokploy:** `mounts update --src` read the mount first and sets only the field for its type (bind → hostPath, volume → volumeName, file → filePath). It used to write all three.
+- **dokploy:** `backup run` waits up to 15 minutes instead of 30 seconds, so a working backup is no longer reported as timed out. If Dokploy still does not answer it says the backup may still be running and points at `backup files <destinationId>`. The request is never retried (a retry runs the backup twice).
+- **dokploy:** `projects create`, `apps create`, `databases create` and `domains create` return the new id (`projectId`, `applicationId`, `databaseId`, `domainId`). If Dokploy returns nothing they look it up by name once; if that fails the id is `null` and the summary says so.
+- **dokploy:** a failed side-call in `apps get`, `status`, `health`, `env-drift`, `doctor`, `domains check` and `git list` is now a `warnings` entry (and a stderr line) saying what could not be read and why, not a silent "no mounts / no deployments / no providers".
+- **security (exo, rmm):** PowerShell quoting now doubles all five quote characters PowerShell treats as a string end (U+0027, U+2018, U+2019, U+201A, U+201B), from one shared helper `core/ps-quote.ts`. Smart quotes used to break out of the string. `rmm services enable|disable` also refuse wildcard names (`sql*`) and no longer say "Disabled X" when the cmdlet failed.
+- **exo:** `trace list --subject` escapes `[ ] * ?` and scans up to 5000 messages (the summary says how many it scanned); `mailboxes stats` prints sizes instead of `{}`; `mailboxes user-access` keys on Guid and resolves the user once, skips (with a warning, and a count in the summary) a mailbox it cannot read instead of dying tenant-wide; cmdlet warnings now reach stderr instead of being thrown away.
+- **security:** `--dry-run` verb scan is case-insensitive (`remove-mailbox` was run for real); a TypeSafe answer with no usable number is treated as a mutation.
+- **security:** a `.env.local` in the current directory can no longer set URLs, PATH, secrets or `ITS_*` variables; refused keys are named on stderr.
+- **security:** the setup wizard and the first-run config migration write `~/.its/.env` as 0600 in a 0700 directory (it was 0644) and no longer mangles values containing `$&` or `$'`.
+- **security (auth):** a profile that is mapped to a provider but has a missing or corrupt token file is now an error, not a quiet switch to the app identity; a corrupt `auth-map.json` is an error (use `--auth app` to run as the app identity on purpose); token, session and auth-map writes are atomic (temp file + rename).
+- **security (az):** Windows `cmd.exe` quoting uses doubled quotes and refuses `%` and newlines (untested on a live Windows host).
+- **security:** output redaction masks `{name:"CLIENT_SECRET", value}` pairs, `pwd`/`pass`/`cookie`/`sas`/`sig=` forms and `--client-secret abc`; objects nested deeper than the limit are masked whole instead of passed through.
+- **unifi:** `clients search <ip>` also matches `last_ip` and `fixed_ip` (rows from `stat/alluser` often have no `ip`), and prints a set list of fields instead of the whole raw row.
+- **unifi:** `wlans toggle`, `wlans password` and `portforwards toggle` read the object back and report `verified` (exit 1 if the controller did not take it). **`wlans toggle` now needs `--enable` or `--disable`.** It used to default to enable, so the documented "disable" example switched the SSID on. `wlans password` never prints the passphrase; if the controller does not return it on read-back the result says "not confirmed".
+- **bc:** `record create|update|delete|call` no longer pick the first company, or the first partial name match. With more than one company in the environment `--company` is required, and it must be an exact name or id (any case). The company is pinned before the record is read, and shown in the preview and the result. Reads are unchanged.
+- **pa:** `flows list` with no `--environment` no longer reports "0 flows" when the API says not found (the `pa apps` bug fixed in 5a22a7d). Only environments you cannot see are skipped, with a warning; if every one refuses it errors.
+- **intune:** `updates get <id>` with no `--type` now tries feature, quality and driver profiles in turn (it only ever tried feature, so quality and driver ids gave 404). Only a 404 moves on to the next type; any other error stops.
+- **intune:** `autopilot tag` polls the read-back (every 3s, up to 30s) before saying "not verified", because Intune applies the change lazily. It used to exit 1 on a write that had worked.
+- **rmm:** `scripts run` now uses the script's saved `args` and `default_timeout` when `--args` / `--timeout` are not given (it sent no args and 120s before). `--args ""` still sends none. **Behaviour change:** a script with saved args that you used to run bare now runs with those args. If the script cannot be read the run is refused, not sent without them.
+- **rmm:** `custom-fields set`, `tasks edit` and `policies patch-policy` read the record back after the write and report `verified` (exit 1 and the differences if TRMM dropped it). Before they printed success on the strength of a 200.
+- **entra:** `signin list --user/--app`, `audit list` and `sync logs` double any single quote in the value they put in `$filter`, so `o'brien@…` no longer gives a 400. `users list --search "R&D"` now uses a prefix `$filter` like `users search` does (Graph `$search` cannot carry `&`).
+- **entra:** `users reinstate` no longer prints "re-added 0 group(s)" and exits 0 when the audit-log replay failed or a group could not be re-added. It says the replay failed (or names the group) and exits 1. "Already a member" is still fine.
+- **entra:** `devices delete OLD-PC` no longer falls back to a fuzzy search and deletes the one device it finds (`OLD-PC-01`). It needs an exact name or an id, and lists the near misses before refusing. `devices get` keeps the fuzzy match.
+- **entra / intune:** lists no longer stop at one page without saying. `getUserGroups` (offboarding, onboarding copy-groups, `users groups`), `groups members` and `groups make-dynamic` now follow every page; `signin suspicious` reads up to 1000 and says `1000+` if there were more; `intune apps required` and `assignments audit` look at up to 1000 (was 100). Any list that still hits its page cap now prints a warning to stderr with the row count.
+- **entra:** `ca exclude-user`, `ca unexclude-user`, `ca exclude-guests`, `users bootstrap-admin --exclude-policies` and `admin-bootstrap run` now re-read the policy after the PATCH and return what it says now plus `verified`, instead of echoing the request. A change that did not land is reported as not verified (`bootstrap-admin` and `admin-bootstrap run` also exit 1).
+- **entra / rmm / intune:** `doctor` no longer swallows a failed read into an empty list. A source it cannot load shows as `couldn't check: <reason>` in red, the checks built on it are dropped, the summary says FAIL and the exit code is 1. Before, a 403 on risky users read "no active risky users".
+- **wrike:** `leavers complete` no longer reads a Wrike API error as "no Wrike contact — nothing to remove". Only a loaded contact list with no match counts as none; any error marks the `wrike-groups` step failed, so the ticket is not closed as Completed.
+- **bw:** `items delete`, `items restore`, `items purge` and `collections update` read the item back after the call and report `verified` (exit 1 if the bulk endpoint skipped it). The `bw delete item` / `bw restore item` shim answers success exactly as before, and fails if the read-back disagrees.
+- **bw:** `audit weak|reused|exposed|list|vault-report` no longer score an item that could not be decrypted as a normal password. They skip it, say "N items could not be decrypted and were not checked" and exit 1. `audit exposed` counts a failed HIBP lookup as "not checked" (exit 1), not as 0 breaches; `bwc get exposed` errors instead of printing 0.
+- **bw:** a collection made with `collections create` and no groups was invisible to `collections list` and `items share --collection`, because `/sync` only lists collections someone is assigned to. Both now also read the organisation admin view. `collections create` reads the new collection back and fails if it is not there, and warns when no group has access.
+- **wrike:** `tickets update-status` can now set the IT Support Ticket stages. A known name (Raised, In progress, Waiting, Resolved) or a custom status ID is sent as `customStatus`; Active/Completed/Deferred/Cancelled still use `status`. An unknown name now errors with the options instead of a Wrike 400. `tickets get` shows `customStatusId`.
+- **wrike:** `--markdown` comments now treat a hyphenated first name (`@Cristina-Mihaela Marciuc`) as one mention instead of a mention plus stray text.
+- **exo:** when Exchange warns an address is used as WindowsLiveId, the error now says it is the sign-in name and gives the order: change the UPN, wait ~20s, then remove-alias. `set-primary --remove-old` on an address that is already primary now says it did nothing and lists the other `smtp:` addresses.
+- **exo:** `add-alias`, `remove-alias` and `set-primary` re-read the mailbox (with short retries) and exit non-zero, with Exchange's warnings, if the change is not there. Before, `remove-alias` printed `verified:false` and exited 0, and the script threw away Exchange's warnings.
+
 ## [0.22.0] - 2026-10-07
 
 ### Added

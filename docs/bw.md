@@ -21,6 +21,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [audit](#audit)
 - [generate](#generate)
 - [sends](#sends)
+- [sync](#sync)
 - [compat](#compat)
 - [doctor](#doctor)
 - [search](#search)
@@ -1608,6 +1609,32 @@ Open someone else's Send link. Text is printed (or sent to --to-file/--copy); a 
 its bw sends receive https://send.bitwarden.com/#abc/def
 
 its bw sends receive https://send.bitwarden.com/#abc/def --output ./downloads/
+```
+
+---
+
+### sync
+
+> Source: `src/providers/bw/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bw sync` | Re-download the vault from the server now, ignoring the 15-minute snapshot. Same as `bw sync`. |
+
+#### `its bw sync`
+
+Re-download the vault from the server now, ignoring the 15-minute snapshot. Same as `bw sync`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--vault` | `` | Named vault profile (omit for default) | — |
+
+**Examples:**
+
+```bash
+its bw sync
 ```
 
 ---
