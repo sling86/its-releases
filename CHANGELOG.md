@@ -15,6 +15,16 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.24.2] - 2026-10-17
+
+### Fixed
+
+- `rmm firewall list` (and the `add`/`remove` read-back) show `Any` for the ports of ICMP rules. Windows reports a meaningless `RPC` there.
+
+### Changed
+
+- The `check` workflow now runs on Windows as well as Linux, so Windows-only test failures show up on the PR, not at the release tag.
+
 ## [0.24.1] - 2026-10-16
 
 v0.24.0 was tagged but never published: its Windows build failed. This release is v0.24.0 plus the changes below.
