@@ -15,6 +15,18 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.25.0] - 2026-10-19
+
+### Added
+
+- `its teams files <chat> <message>` lists the files shared in a message (name, size); `its teams files download <chat> <message> <attachment> --to <path> [--max-mb 50]` saves one. Never overwrites, writes mode 600, read-only to Teams.
+- `its auth login` now signs in through a dedicated `its-cli` app (public client, delegated scopes only, no secret) instead of the shared Entra MCP Server app. `DELEGATED_CLIENT_ID` overrides it; `CLIENT_ID` is now only the app-only identity, so a wrong one there can no longer break sign-in. `TENANT_ID` and `CLIENT_ID` default to the THF values. Everyone signs in once more after upgrading. `auth login` prints the app ID it uses and `auth doctor` shows both.
+- `its yodeck` provider (read-only): `players`, `players get <id>`, `doctor`. Token in `YODECK_API_TOKEN` as `<label>:<key>`; set up with `its yodeck setup`.
+
+### Fixed
+
+- `its teams chats messages --all-chats --json` now includes each message's `attachments`.
+
 ## [0.24.2] - 2026-10-17
 
 ### Fixed

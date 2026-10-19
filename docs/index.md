@@ -33,9 +33,10 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 6 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 51 commands across 12 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
-| [teams.md](./teams.md) | Teams — 11 commands across 3 resources |
+| [teams.md](./teams.md) | Teams — 13 commands across 4 resources |
+| [yodeck.md](./yodeck.md) | Yodeck — 3 commands across 2 resources |
 
-**23 providers** · **258 resources** · **963 commands**
+**24 providers** · **261 resources** · **968 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -409,6 +410,14 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [chats](./teams.md#chats) | list, messages, images, send, delete-message, edit-message, react, unreact | `src/providers/teams/commands/chats.ts` |
 | [presence](./teams.md#presence) | get | `src/providers/teams/commands/chats.ts` |
 | [teams](./teams.md#teams) | list, create | `src/providers/teams/commands/teams.ts` |
+| [files](./teams.md#files) | list, download | `src/providers/teams/commands/files.ts` |
+
+### [Yodeck](./yodeck.md)
+
+| Resource | Actions | Source |
+|----------|---------|--------|
+| [players](./yodeck.md#players) | list, get | — |
+| [doctor](./yodeck.md#doctor) | list | — |
 
 ## Key Source Files
 
@@ -449,6 +458,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | `src/providers/outlook/client.ts` | Outlook API client |
 | `src/providers/m365health/client.ts` | Microsoft 365 Health API client |
 | `src/providers/teams/client.ts` | Teams API client |
+| `src/providers/yodeck/client.ts` | Yodeck API client |
 
 ## Command Tree
 
@@ -1599,20 +1609,28 @@ its
 │   │   ├── overview
 │   │   └── issues
 │   └── messages (list)
-└── teams
-    ├── chats
+├── teams
+│   ├── chats
+│   │   ├── (list)
+│   │   ├── messages [chat_id]
+│   │   ├── images <chat_id>
+│   │   ├── send <chat_id>
+│   │   ├── delete-message <chat_id> <message_id>
+│   │   ├── edit-message <chat_id> <message_id>
+│   │   ├── react <chat_id> <message_id>
+│   │   └── unreact <chat_id> <message_id>
+│   ├── presence get
+│   ├── teams
+│   │   ├── (list)
+│   │   └── create <name>
+│   └── files
+│       ├── (list) <chat_id> <message_id>
+│       └── download <chat_id> <message_id> <attachment_id>
+└── yodeck
+    ├── players
     │   ├── (list)
-    │   ├── messages [chat_id]
-    │   ├── images <chat_id>
-    │   ├── send <chat_id>
-    │   ├── delete-message <chat_id> <message_id>
-    │   ├── edit-message <chat_id> <message_id>
-    │   ├── react <chat_id> <message_id>
-    │   └── unreact <chat_id> <message_id>
-    ├── presence get
-    └── teams
-        ├── (list)
-        └── create <name>
+    │   └── get <id>
+    └── doctor (list)
 ```
 
 ## Source Tree
@@ -2035,6 +2053,7 @@ src/
 │   ├── teams/
 │   │   ├── commands/
 │   │   │   ├── chats.ts
+│   │   │   ├── files.ts
 │   │   │   ├── index.ts
 │   │   │   └── teams.ts
 │   │   ├── client.ts
@@ -2082,6 +2101,12 @@ src/
 │   │   ├── definition.ts
 │   │   ├── identity.ts
 │   │   ├── statuses.ts
+│   │   └── types.ts
+│   ├── yodeck/
+│   │   ├── commands/
+│   │   │   └── index.ts
+│   │   ├── client.ts
+│   │   ├── definition.ts
 │   │   └── types.ts
 │   ├── actions.ts
 │   ├── base.ts

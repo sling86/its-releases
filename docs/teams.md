@@ -3,7 +3,7 @@
 Microsoft Teams (Graph) for the logged-in user — list chats, read messages (with edits and reactions), send messages (plain text, Markdown or HTML; URLs become real links; @mentions, quote-replies, files, inline images, Adaptive Cards, importance), edit and delete your own messages, react, check your presence. Delegated-only (runs as you via `its auth login`; sending needs ChatMessage.Send, editing/reacting/deleting need Chat.ReadWrite).
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [yodeck](./yodeck.md)
 
 ## Contents
 
@@ -11,6 +11,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [chats](#chats)
 - [presence](#presence)
 - [teams](#teams)
+- [files](#files)
 
 ## Setup
 
@@ -289,6 +290,44 @@ Create a team (the standard template). Graph does this in the background, so thi
 its teams teams create "Store Ops" --description "Store ops" --visibility private --dry-run
 
 its teams teams create "Store Ops" --owner tony@example.com --confirm
+```
+
+---
+
+### files
+
+> Source: `src/providers/teams/commands/files.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its teams files <chat_id> <message_id>` | Files shared in one chat message, with size and name (resolved from the SharePoint/OneDrive link). Use the attachment id with `files download`. |
+| `its teams files download <chat_id> <message_id> <attachment_id>` | Download one file shared in a chat message (SharePoint/OneDrive-hosted) to a local path. Never overwrites; file is written mode 600. Delegated, as you. |
+
+#### `its teams files <chat_id> <message_id>`
+
+Files shared in one chat message, with size and name (resolved from the SharePoint/OneDrive link). Use the attachment id with `files download`.
+
+**Examples:**
+
+```bash
+its teams files <chatId> <messageId> --json
+```
+
+#### `its teams files download <chat_id> <message_id> <attachment_id>`
+
+Download one file shared in a chat message (SharePoint/OneDrive-hosted) to a local path. Never overwrites; file is written mode 600. Delegated, as you.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--to` | `` | Destination file path, or an existing directory | — |
+| `--max-mb` | `` | Refuse files larger than this (default 50) | 50 |
+
+**Examples:**
+
+```bash
+its teams files download <chatId> <messageId> <attachmentId> --to ./report.xlsx
 ```
 
 ---

@@ -3,7 +3,7 @@
 Usage, options, and output modes for the `its` CLI. For provider-specific commands, see the provider docs.
 
 [Index](./index.md) · [README](../README.md)
-Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md)
+Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
 
 ## Contents
 
@@ -64,7 +64,8 @@ its <provider> <resource> [action] [args] [--flags]
 | GitHub | `gh` | 6 commands, 2 resources | [gh.md](./gh.md) |
 | Outlook | `outlook` | 51 commands, 12 resources | [outlook.md](./outlook.md) |
 | Microsoft 365 Health | `m365` | 3 commands, 2 resources | [m365.md](./m365.md) |
-| Teams | `teams` | 11 commands, 3 resources | [teams.md](./teams.md) |
+| Teams | `teams` | 13 commands, 4 resources | [teams.md](./teams.md) |
+| Yodeck | `yodeck` | 3 commands, 2 resources | [yodeck.md](./yodeck.md) |
 
 ## Global Options
 
