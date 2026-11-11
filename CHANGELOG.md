@@ -15,6 +15,32 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.27.0] - 2026-11-11
+
+### Added
+
+- **`its-cli-admin` sign-in app declared** in `manifest/entra-apps.jsonc`: a public client with delegated scopes only (no secret, no app roles) carrying every scope the write commands need, including the Tier 0 ones, plus `Exchange.Manage` and Business Central `Financials.ReadWrite.All`. For admin accounts only: Assignment required, assigned to the admin-accounts group, phishing-resistant MFA sign-in rule. Nothing is applied by this change; `its entra apps plan` shows it as a create.
+- `docs/its-cli-admin-scopes.md`: each write command, the endpoint it calls and the scope it needs, plus the proposed read-only `its-cli` scopes for after the move. The live `its-cli` entry is unchanged.
+
+### Changed
+
+- **Delegated access tokens are cached on disk** (`~/.its/token-cache/<profile>/`, files 0600, folders 0700, atomic writes), so a new `its` process skips the Microsoft refresh while a token has 15+ minutes left. About 200 ms saved per delegated call. A refresh holds a cross-process lock file (works on Windows, stale after 30 s) and re-reads inside it, so parallel calls no longer race the rotating refresh token. A 401 on a cached token drops it and retries once. Login, logout, `its auth refresh` and `its entra pim activate|deactivate` clear it; `its auth doctor` shows the count. `ITS_NO_TOKEN_CACHE=1` turns it off; `--auth az|app` never use it.
+
+### Fixed
+
+- A token refresh reply with no `refresh_token` no longer wipes the saved one.
+
+### Upgrading (admin accounts)
+
+Sign your admin profile in through the new admin app, then check it:
+
+```bash
+its auth login --profile admin --client-id 659b91b2-ba02-4cd9-9e90-0539c8b252c5
+its auth status
+```
+
+Roles you hold as eligible need activating first: `its entra pim activate <role> --reason "<why>"`.
+
 ## [0.26.0] - 2026-11-11
 
 ### Read this first
