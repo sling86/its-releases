@@ -46,7 +46,7 @@ its bw setup --reset   # Re-run setup (overwrite config)
 
 The master password is stored PIN-encrypted in `~/.its/secrets/`. During setup you choose a PIN (8+ characters) that encrypts your master password locally. The PIN is required each time you use `its bw`.
 
-**Multiple vaults** — the default vault is configured via env vars (`BW_URL`, `BW_EMAIL`/`BW_CLIENTID`+`BW_CLIENTSECRET`) plus the PIN-encrypted master password at `~/.its/secrets/bw-password.enc`. For additional vaults, run `its bw vaults create <name>`; credentials are encrypted into `~/.its/secrets/bw-vault-<name>.enc`. Switch per command with `--vault <name>`, list profiles with `its bw vaults`, and remove local profile configuration with `its bw vaults delete <name> --confirm`.
+**Multiple vaults** — the default vault is configured via env vars (`BW_URL`, `BW_EMAIL`/`BW_CLIENTID`+`BW_CLIENTSECRET`) plus the PIN-encrypted master password at `~/.its/secrets/bw-password.enc`. For additional vaults, run `its bw vaults create <name>`; credentials are encrypted into `~/.its/secrets/bw-vault-<name>.enc`. Switch per command with `--vault <name>`, list profiles with `its bw vaults`, and remove local profile configuration with `its bw vaults delete <name>`.
 
 **Identity print** — every authentication prints `Authenticating <email-or-clientid> @ <host>` to stderr so a missing `--vault <name>` is visible before any command runs.
 
@@ -301,9 +301,9 @@ Attach a local file to a vault item. The file is encrypted locally under its own
 **Examples:**
 
 ```bash
-its bw items attach "Exchange Online cert" ./exo-auth.pfx
+its bw items attach "Exchange Online cert" ./exo-auth.pfx --confirm
 
-its bw items attach 3f2b1c94-... ./key.pem --name exo-key.pem
+its bw items attach 3f2b1c94-... ./key.pem --name exo-key.pem --confirm
 ```
 
 #### `its bw items download <id> <attachment>`
@@ -466,19 +466,19 @@ Create a new vault item (login, note, card, or identity). Idempotent on duplicat
 **Examples:**
 
 ```bash
-its bw items create "Router" --username admin --password "s3cret"
+its bw items create "Router" --username admin --password "s3cret" --confirm
 
 # Text + hidden custom fields. Multiple via comma: --field a=1,b=2
-its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
+its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123 --confirm
 
-its bw items create "Company Card" --type card --cardholder "A Payer" --card-number 4111111111111111 --card-exp 09/2028 --card-code 123
+its bw items create "Company Card" --type card --cardholder "A Payer" --card-number 4111111111111111 --card-exp 09/2028 --card-code 123 --confirm
 
 # Public key and fingerprint are derived from the private key
-its bw items create "deploy@prod" --type ssh-key --private-key-file ~/.ssh/id_ed25519
+its bw items create "deploy@prod" --type ssh-key --private-key-file ~/.ssh/id_ed25519 --confirm
 
-its bw items create "Server admin" --username admin --password "P@ssw0rd" --uri https://server.example.com
+its bw items create "Server admin" --username admin --password "P@ssw0rd" --uri https://server.example.com --confirm
 
-its bw items create "API keys" --type note --notes "stuff"
+its bw items create "API keys" --type note --notes "stuff" --confirm
 ```
 
 #### `its bw items update <id>`
@@ -772,9 +772,12 @@ Create a new folder. Idempotent on duplicate names — use update/edit to mutate
 **Examples:**
 
 ```bash
-its bw folders create "Infrastructure"
+its bw folders create "Infrastructure" --confirm
 
-its bw folders create "Servers"
+its bw folders create "Servers" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its bw folders create "Servers" --json --confirm
 ```
 
 #### `its bw folders delete <name>`
@@ -944,7 +947,7 @@ Create a collection in an organisation. Access can be granted to groups by id wi
 **Examples:**
 
 ```bash
-its bw collections create "THF" "IT/Servers"
+its bw collections create "THF" "IT/Servers" --confirm
 ```
 
 #### `its bw collections update <organisation> <collection>`
@@ -1106,7 +1109,10 @@ Change the PIN used to encrypt the master password. Drop the resource's state �
 **Examples:**
 
 ```bash
-its bw pin reset
+its bw pin reset --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its bw pin reset --json --confirm
 ```
 
 ---
@@ -1237,9 +1243,12 @@ Save a named vault profile — its own host, account and master password (use fo
 **Examples:**
 
 ```bash
-its bw vaults create work --url https://vault.example.com --email jane.smith@example.com
+its bw vaults create work --url https://vault.example.com --email jane.smith@example.com --confirm
 
-its bw vaults create "personal"
+its bw vaults create "personal" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its bw vaults create "personal" --json --confirm
 ```
 
 #### `its bw vaults delete <name>`
@@ -1562,9 +1571,9 @@ Create a Send — a self-expiring share link. --text for a snippet, --file for a
 **Examples:**
 
 ```bash
-its bw sends create "WiFi" --text "guest / s3cret" --delete-in 1d
+its bw sends create "WiFi" --text "guest / s3cret" --delete-in 1d --confirm
 
-its bw sends create --file ./cert.pfx --password hunter2 --max-access 1
+its bw sends create --file ./cert.pfx --password hunter2 --max-access 1 --confirm
 ```
 
 #### `its bw sends update <id>`
@@ -1648,9 +1657,9 @@ Open someone else's Send link. Text is printed (or sent to --to-file/--copy); a 
 **Examples:**
 
 ```bash
-its bw sends receive https://send.bitwarden.com/#abc/def
+its bw sends receive https://send.bitwarden.com/#abc/def --confirm
 
-its bw sends receive https://send.bitwarden.com/#abc/def --output ./downloads/
+its bw sends receive https://send.bitwarden.com/#abc/def --output ./downloads/ --confirm
 ```
 
 ---

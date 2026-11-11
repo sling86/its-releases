@@ -235,11 +235,14 @@ Toggle locate LED on a device. Flash the device's locate LED.
 **Examples:**
 
 ```bash
-its unifi devices locate 78:45:58:aa:bb:cc --enable
+its unifi devices locate 78:45:58:aa:bb:cc --enable --confirm
 
-its unifi devices locate 78:45:58:aa:bb:cc
+its unifi devices locate 78:45:58:aa:bb:cc --confirm
 
-its unifi devices locate <mac>
+its unifi devices locate <mac> --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its unifi devices locate <mac> --json --confirm
 ```
 
 #### `its unifi devices upgrade <mac>`
@@ -275,9 +278,12 @@ Force re-provision a device. Force the device to re-pull its provisioning.
 **Examples:**
 
 ```bash
-its unifi devices provision 78:45:58:aa:bb:cc
+its unifi devices provision 78:45:58:aa:bb:cc --confirm
 
-its unifi devices provision <mac>
+its unifi devices provision <mac> --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its unifi devices provision <mac> --json --confirm
 ```
 
 #### `its unifi devices power-cycle`
@@ -316,11 +322,14 @@ Toggle all site LEDs on or off. Toggle the controller's status LEDs.
 **Examples:**
 
 ```bash
-its unifi devices leds --enable
+its unifi devices leds --enable --confirm
 
-its unifi devices leds
+its unifi devices leds --confirm
 
-its unifi devices leds off
+its unifi devices leds off --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its unifi devices leds off --json --confirm
 ```
 
 #### `its unifi devices poe`
@@ -546,9 +555,12 @@ Unblock a client by MAC address. Re-allows a previously blocked client.
 **Examples:**
 
 ```bash
-its unifi clients unblock a4:83:e7:11:22:33
+its unifi clients unblock a4:83:e7:11:22:33 --confirm
 
-its unifi clients unblock <mac>
+its unifi clients unblock <mac> --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its unifi clients unblock <mac> --json --confirm
 ```
 
 #### `its unifi clients reconnect <mac>`
@@ -565,9 +577,12 @@ Force reconnect a client. Force a client to disassociate + re-auth.
 
 ```bash
 # Forces a re-associate — first thing to try for a stuck wireless client
-its unifi clients reconnect a4:83:e7:11:22:33
+its unifi clients reconnect a4:83:e7:11:22:33 --confirm
 
-its unifi clients reconnect <mac>
+its unifi clients reconnect <mac> --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its unifi clients reconnect <mac> --json --confirm
 ```
 
 #### `its unifi clients offline`
@@ -617,11 +632,14 @@ Authorise a guest WiFi client. Permits a guest network device.
 **Examples:**
 
 ```bash
-its unifi guests authorise a4:83:e7:11:22:33 --minutes 1440
+its unifi guests authorise a4:83:e7:11:22:33 --minutes 1440 --confirm
 
-its unifi guests authorise a4:83:e7:11:22:33 --minutes 480 --down 5000 --up 1000
+its unifi guests authorise a4:83:e7:11:22:33 --minutes 480 --down 5000 --up 1000 --confirm
 
-its unifi guests authorise <mac> --minutes 1440
+its unifi guests authorise <mac> --minutes 1440 --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its unifi guests authorise <mac> --minutes 1440 --json --confirm
 ```
 
 #### `its unifi guests unauthorise <mac>`
@@ -637,9 +655,12 @@ Revoke guest WiFi authorisation. Revokes a guest authorisation.
 **Examples:**
 
 ```bash
-its unifi guests unauthorise a4:83:e7:11:22:33
+its unifi guests unauthorise a4:83:e7:11:22:33 --confirm
 
-its unifi guests unauthorise <mac>
+its unifi guests unauthorise <mac> --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its unifi guests unauthorise <mac> --json --confirm
 ```
 
 ---
@@ -681,6 +702,8 @@ its unifi networks --watch
 | Command | Description |
 |---------|-------------|
 | `its unifi wlans` | List WiFi SSIDs. Surfaces the most common fields; pass --json for raw shape. |
+| `its unifi wlans get <wlan>` | Wi-Fi radio settings for one SSID: minimum data rate per band, 802.11r fast roaming, BSS transition, DTIM, U-APSD. Band steering is per AP, not per WLAN — see `devices get`. |
+| `its unifi wlans set <wlan_id>` | Change Wi-Fi radio settings on an SSID. Applying WLAN changes re-provisions the access points and drops Wi-Fi clients briefly. Previews without --confirm. |
 | `its unifi wlans toggle <wlan_id>` | Enable or disable a WiFi SSID. Pass exactly one of --enable or --disable. Idempotent; reads the SSID back to confirm. |
 | `its unifi wlans password <wlan_id>` | Update WiFi password for an SSID. Rotate a PSK / passphrase. Disconnects every client on the SSID — use --confirm. |
 
@@ -704,6 +727,48 @@ its unifi wlans
 its unifi wlans --watch
 ```
 
+#### `its unifi wlans get <wlan>`
+
+Wi-Fi radio settings for one SSID: minimum data rate per band, 802.11r fast roaming, BSS transition, DTIM, U-APSD. Band steering is per AP, not per WLAN — see `devices get`.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site name override | — |
+
+**Examples:**
+
+```bash
+its unifi wlans get 6f2a9c14
+```
+
+#### `its unifi wlans set <wlan_id>`
+
+Change Wi-Fi radio settings on an SSID. Applying WLAN changes re-provisions the access points and drops Wi-Fi clients briefly. Previews without --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--min-rate-2g` | `` | 2.4 GHz minimum data rate, kbps (1000\|2000\|5500\|6000\|9000\|11000\|12000\|18000\|24000\|36000\|48000\|54000) | — |
+| `--min-rate-5g` | `` | 5 GHz minimum data rate, kbps (6000\|9000\|12000\|18000\|24000\|36000\|48000\|54000) | — |
+| `--fast-roaming` | `` | 802.11r fast roaming | — |
+| `--bss-transition` | `` | BSS transition (802.11v) | — |
+| `--dtim-2g` | `` | 2.4 GHz DTIM period, 1-255 | — |
+| `--dtim-5g` | `` | 5 GHz DTIM period, 1-255 | — |
+| `--site` | `` | Site name override | — |
+| `--confirm` | `` | Apply the change | — |
+
+**Examples:**
+
+```bash
+# Re-provisions the APs and drops Wi-Fi clients briefly
+its unifi wlans set 6f2a9c14 --min-rate-2g 6000 --confirm
+
+its unifi wlans set 6f2a9c14 --fast-roaming on --dry-run
+```
+
 #### `its unifi wlans toggle <wlan_id>`
 
 Enable or disable a WiFi SSID. Pass exactly one of --enable or --disable. Idempotent; reads the SSID back to confirm.
@@ -719,15 +784,15 @@ Enable or disable a WiFi SSID. Pass exactly one of --enable or --disable. Idempo
 **Examples:**
 
 ```bash
-its unifi wlans toggle 6f2a9c14 --enable
+its unifi wlans toggle 6f2a9c14 --enable --confirm
 
-its unifi wlans toggle 6f2a9c14 --disable
+its unifi wlans toggle 6f2a9c14 --disable --confirm
 
 # Toggles whatever the current enabled state is.
-its unifi wlans toggle <wlan-id>
+its unifi wlans toggle <wlan-id> --confirm
 
 # Explicit on; --disable forces off.
-its unifi wlans toggle <wlan-id> --enable
+its unifi wlans toggle <wlan-id> --enable --confirm
 ```
 
 #### `its unifi wlans password <wlan_id>`
@@ -1154,9 +1219,12 @@ Create guest WiFi vouchers. Idempotent on duplicate names — use update/edit to
 **Examples:**
 
 ```bash
-its unifi vouchers create --count 10 --minutes 1440 --note "Reception"
+its unifi vouchers create --count 10 --minutes 1440 --note "Reception" --confirm
 
-its unifi vouchers create --minutes 1440 --count 5
+its unifi vouchers create --minutes 1440 --count 5 --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its unifi vouchers create --minutes 1440 --count 5 --json --confirm
 ```
 
 #### `its unifi vouchers revoke <id>`

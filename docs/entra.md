@@ -29,6 +29,7 @@ Other providers: [rmm](./rmm.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · 
 - [doctor](#doctor)
 - [apps](#apps)
 - [admin-bootstrap](#admin-bootstrap)
+- [pim](#pim)
 - [sync](#sync)
 - [graph](#graph)
 
@@ -62,6 +63,10 @@ its entra setup --reset   # Re-run setup (overwrite config)
 | `src/providers/entra/definition.ts` | definition |
 | `src/providers/entra/licence-assignments.ts` | licence assignments |
 | `src/providers/entra/odata.ts` | odata |
+| `src/providers/entra/pim-admin.ts` | pim admin |
+| `src/providers/entra/pim-policy.ts` | pim policy |
+| `src/providers/entra/pim.ts` | pim |
+| `src/providers/entra/resolve.ts` | resolve |
 | `src/providers/entra/sku-names.ts` | sku names |
 | `src/providers/entra/sync-health.ts` | sync health |
 
@@ -157,17 +162,17 @@ Update user properties. Use named flags for common fields, --set k=v,k=v for any
 **Examples:**
 
 ```bash
-its entra users update jane.smith@example.com --jobTitle "Finance Manager" --department Finance
+its entra users update jane.smith@example.com --jobTitle "Finance Manager" --department Finance --confirm
 
-its entra users update jane.smith@example.com --manager john.doe@example.com
+its entra users update jane.smith@example.com --manager john.doe@example.com --confirm
 
-its entra users update jane.smith@example.com --set extensionAttribute13=Leaver
+its entra users update jane.smith@example.com --set extensionAttribute13=Leaver --confirm
 
-its entra users update jane.smith@example.com --department "Marketing"
+its entra users update jane.smith@example.com --department "Marketing" --confirm
 
-its entra users update jane.smith@example.com --manager boss@example.com
+its entra users update jane.smith@example.com --manager boss@example.com --confirm
 
-its entra users update jane.smith@example.com --set "officeLocation=London,jobTitle=Lead"
+its entra users update jane.smith@example.com --set "officeLocation=London,jobTitle=Lead" --confirm
 ```
 
 #### `its entra users photo <user>`
@@ -199,7 +204,7 @@ Upload a user's profile photo from a JPEG or PNG file (max 4 MB). Replaces any e
 **Examples:**
 
 ```bash
-its entra users set-photo jane.smith@example.com --file jane.jpg
+its entra users set-photo jane.smith@example.com --file jane.jpg --confirm
 ```
 
 #### `its entra users search <query>`
@@ -283,15 +288,15 @@ Send a B2B guest invitation to an external user. Send an invitation; the recipie
 **Examples:**
 
 ```bash
-its entra users invite --email contractor@partner.com --name "Alex Cole"
+its entra users invite --email contractor@partner.com --name "Alex Cole" --confirm
 
 # Creates the guest and returns the redemption URL for you to send yourself
-its entra users invite --email contractor@partner.com --name "Alex Cole" --no-email
+its entra users invite --email contractor@partner.com --name "Alex Cole" --no-email --confirm
 
-its entra users invite contractor@vendor.com --redirect "https://myapps.microsoft.com"
+its entra users invite contractor@vendor.com --redirect "https://myapps.microsoft.com" --confirm
 
 # Returns the redeem URL so you can hand it over manually.
-its entra users invite contractor@vendor.com --no-email --redirect "https://myapps.microsoft.com"
+its entra users invite contractor@vendor.com --no-email --redirect "https://myapps.microsoft.com" --confirm
 ```
 
 #### `its entra users create`
@@ -314,9 +319,12 @@ Create a new user. Idempotent on duplicate names — use update/edit to mutate a
 **Examples:**
 
 ```bash
-its entra users create --displayName "Jane Smith" --upn jane.smith@example.com --department Finance
+its entra users create --displayName "Jane Smith" --upn jane.smith@example.com --department Finance --confirm
 
-its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!"
+its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --json --confirm
 ```
 
 #### `its entra users enable <id>`
@@ -326,7 +334,9 @@ Enable a user account. Switch to active state. Idempotent.
 **Examples:**
 
 ```bash
-its entra users enable jane.smith@example.com
+its entra users enable jane.smith@example.com --confirm
+
+its entra users enable jane.smith@example.com --json --confirm
 ```
 
 #### `its entra users bootstrap-admin <id>`
@@ -348,10 +358,13 @@ Macro: create a TAP for the user, then optionally exclude them from CA policies 
 ```bash
 its entra users bootstrap-admin jane.smith@example.com --dry-run
 
-its entra users bootstrap-admin jane.smith@example.com --ttl 60 --one-time
+its entra users bootstrap-admin jane.smith@example.com --ttl 60 --one-time --confirm
 
 # Creates a TAP and excludes user from blocking CA policies
-its entra users bootstrap-admin newadmin@example.com
+its entra users bootstrap-admin newadmin@example.com --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra users bootstrap-admin newadmin@example.com --json --confirm
 ```
 
 #### `its entra users stale`
@@ -604,11 +617,14 @@ Create a group: a security group (default) or a Microsoft 365 group (--type m365
 **Examples:**
 
 ```bash
-its entra groups create --displayName "IT Admins" --description "IT team"
+its entra groups create --displayName "IT Admins" --description "IT team" --confirm
 
-its entra groups create --displayName "All Staff" --mail
+its entra groups create --displayName "All Staff" --mail --confirm
 
-its entra groups create --displayName "Marketing"
+its entra groups create --displayName "Marketing" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra groups create --displayName "Marketing" --json --confirm
 ```
 
 #### `its entra groups owners <group_id>`
@@ -632,7 +648,7 @@ Make a user an owner of a group. Reads the owners back to confirm.
 **Examples:**
 
 ```bash
-its entra groups add-owner <group-id> --user jane.smith@example.com
+its entra groups add-owner <group-id> --user jane.smith@example.com --confirm
 ```
 
 #### `its entra groups remove-owner <group_id>`
@@ -648,7 +664,7 @@ Take a user off the owners of a group. Reads the owners back to confirm.
 **Examples:**
 
 ```bash
-its entra groups remove-owner <group-id> --user jane.smith@example.com
+its entra groups remove-owner <group-id> --user jane.smith@example.com --confirm
 ```
 
 #### `its entra groups add-member <group_id>`
@@ -667,10 +683,13 @@ Add a user to a group. Refuses dynamic-membership groups (ctxc 41) — Graph acc
 
 ```bash
 # Refuses dynamic-membership groups — Graph accepts the call but the member is silently dropped
-its entra groups add-member 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --user jane.smith@example.com
+its entra groups add-member 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --user jane.smith@example.com --confirm
 
 # Guards against dynamic groups, disabled users, and namesake collisions
-its entra groups add-member <group-id> --user jane.smith@example.com
+its entra groups add-member <group-id> --user jane.smith@example.com --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra groups add-member <group-id> --user jane.smith@example.com --json --confirm
 ```
 
 #### `its entra groups remove-member <group_id>`
@@ -800,14 +819,14 @@ Assign one or more licences to a user. Pass --sku as a comma-separated list to a
 **Examples:**
 
 ```bash
-its entra licences assign jane@x.com --sku ENTERPRISEPACK
+its entra licences assign jane@x.com --sku ENTERPRISEPACK --confirm
 
-its entra licences assign jane@x.com --sku SPE_E3,EMS,POWER_BI_PRO
+its entra licences assign jane@x.com --sku SPE_E3,EMS,POWER_BI_PRO --confirm
 
-its entra licences assign jane.smith@example.com --sku SPB
+its entra licences assign jane.smith@example.com --sku SPB --confirm
 
 # assign has no --location flag — set usageLocation first via its entra users update <id> --usage GB. Comma-separated --sku assigns several SKUs in one atomic Graph call.
-its entra licences assign jane.smith@example.com --sku SPB,ENTERPRISEPACK
+its entra licences assign jane.smith@example.com --sku SPB,ENTERPRISEPACK --confirm
 ```
 
 #### `its entra licences remove <user_id>`
@@ -902,8 +921,8 @@ its entra licences waste
 |---------|-------------|
 | `its entra roles` | List activated directory roles. Surfaces the most common fields; pass --json for raw shape. |
 | `its entra roles members <role>` | List members of a directory role. Returns direct members; nested groups aren't expanded. |
-| `its entra roles assign <user_id>` | Assign a directory role to a user. Idempotent — assigning twice is a no-op. |
-| `its entra roles remove <user_id>` | Remove a directory role from a user (requires --confirm). Permanent — use --confirm. |
+| `its entra roles assign <user>` | Assign a directory role to a user, permanently (always on). For a role they switch on when needed, use `its entra pim assign`. The user can be a UPN, email or ID; the role a display name or ID. --dry-run shows the resolved IDs. |
+| `its entra roles remove <user>` | Remove a directory role from a user (requires --confirm, or --dry-run to preview with resolved IDs). The user can be a UPN, email or ID; the role a display name or ID. Permanent. |
 | `its entra roles assignments` | List all role assignments with role names. Returns the assignment record, not the principal — pair with `users get` for the readable name. |
 
 #### `its entra roles`
@@ -930,33 +949,38 @@ List members of a directory role. Returns direct members; nested groups aren't e
 its entra roles members <role-id>
 ```
 
-#### `its entra roles assign <user_id>`
+#### `its entra roles assign <user>`
 
-Assign a directory role to a user. Idempotent — assigning twice is a no-op.
+Assign a directory role to a user, permanently (always on). For a role they switch on when needed, use `its entra pim assign`. The user can be a UPN, email or ID; the role a display name or ID. --dry-run shows the resolved IDs.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--role` | `` | Role definition ID | — |
+| `--role` | `` | Role display name or role definition ID | — |
 
 **Examples:**
 
 ```bash
-its entra roles assign jane.smith@example.com --role "User Administrator"
+its entra roles assign jane.smith@example.com --role "User Administrator" --confirm
 
-its entra roles assign jane.smith@example.com --role <role-def-id>
+its entra roles assign jane.smith@example.com --role "User Administrator" --dry-run
+
+its entra roles assign jane.smith@example.com --role <role-def-id> --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra roles assign jane.smith@example.com --role <role-def-id> --json --confirm
 ```
 
-#### `its entra roles remove <user_id>`
+#### `its entra roles remove <user>`
 
-Remove a directory role from a user (requires --confirm). Permanent — use --confirm.
+Remove a directory role from a user (requires --confirm, or --dry-run to preview with resolved IDs). The user can be a UPN, email or ID; the role a display name or ID. Permanent.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--role` | `` | Role definition ID | — |
+| `--role` | `` | Role display name or role definition ID | — |
 | `--confirm` | `` | Confirm the removal | — |
 
 **Examples:**
@@ -1089,11 +1113,11 @@ Create a Temporary Access Pass for a user (does not work for B2B guests).
 
 ```bash
 # Does not work for B2B guests
-its entra tap create jane.smith@example.com --ttl 60 --one-time
+its entra tap create jane.smith@example.com --ttl 60 --one-time --confirm
 
-its entra tap create jane.smith@example.com
+its entra tap create jane.smith@example.com --confirm
 
-its entra tap create jane.smith@example.com --ttl 8h
+its entra tap create jane.smith@example.com --ttl 8h --confirm
 ```
 
 #### `its entra tap <user_id>`
@@ -1209,11 +1233,11 @@ Patch a CA policy (state or full JSON body). PATCH semantics — only the suppli
 ```bash
 its entra ca patch "Block legacy auth" --state enabledForReportingButNotEnforced --dry-run
 
-its entra ca patch "Block legacy auth" --state enabled
+its entra ca patch "Block legacy auth" --state enabled --confirm
 
-its entra ca patch <policy-id> --state enabled
+its entra ca patch <policy-id> --state enabled --confirm
 
-its entra ca patch <policy-id> --state enabledForReportingButNotEnforced
+its entra ca patch <policy-id> --state enabledForReportingButNotEnforced --confirm
 ```
 
 #### `its entra ca exclude-guests <id_or_name>`
@@ -1231,7 +1255,10 @@ Add 'All guest and external users' to excludeGuestsOrExternalUsers on a policy.
 ```bash
 its entra ca exclude-guests "Require compliant device" --dry-run
 
-its entra ca exclude-guests <policy-id>
+its entra ca exclude-guests <policy-id> --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra ca exclude-guests <policy-id> --json --confirm
 ```
 
 #### `its entra ca create`
@@ -1250,7 +1277,10 @@ Create a Conditional Access policy from a JSON body or file (@path).
 ```bash
 its entra ca create --body @./policy.json --dry-run
 
-its entra ca create @./policy.json
+its entra ca create @./policy.json --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra ca create @./policy.json --json --confirm
 ```
 
 #### `its entra ca delete <id_or_name>`
@@ -1287,13 +1317,13 @@ Add a user to a CA policy's excludeUsers — atomic mutation, no need to rebuild
 
 ```bash
 # Atomic — no need to rebuild the whole users object
-its entra ca exclude-user "Require MFA" jane.smith@example.com
+its entra ca exclude-user "Require MFA" jane.smith@example.com --confirm
 
 # Use sparingly — re-include the user once the trip-cause is cleared.
-its entra ca exclude-user <policy-id> jane.smith@example.com
+its entra ca exclude-user <policy-id> jane.smith@example.com --confirm
 
 # Policy can be addressed by exact displayName instead of id.
-its entra ca exclude-user "Require MFA for admins" jane.smith@example.com
+its entra ca exclude-user "Require MFA for admins" jane.smith@example.com --confirm
 ```
 
 #### `its entra ca unexclude-user <id_or_name> <user>`
@@ -1309,9 +1339,12 @@ Remove a user from a CA policy's excludeUsers list. Reverse of `exclude-user`. I
 **Examples:**
 
 ```bash
-its entra ca unexclude-user "Require MFA" jane.smith@example.com
+its entra ca unexclude-user "Require MFA" jane.smith@example.com --confirm
 
-its entra ca unexclude-user <policy-id> jane.smith@example.com
+its entra ca unexclude-user <policy-id> jane.smith@example.com --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra ca unexclude-user <policy-id> jane.smith@example.com --json --confirm
 ```
 
 #### `its entra ca why-blocked <user>`
@@ -1581,7 +1614,10 @@ Safely add delegated scope(s) to an app — UNION with existing scope, never rep
 its entra consent add-scope 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f User.Read,Mail.Read --dry-run
 
 # Unions with existing scopes, never replaces
-its entra consent add-scope <app-id> Mail.Read
+its entra consent add-scope <app-id> Mail.Read --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra consent add-scope <app-id> Mail.Read --json --confirm
 ```
 
 #### `its entra consent remove-scope <client_app_id> <scopes>`
@@ -1601,7 +1637,10 @@ Remove delegated scope(s) from an existing grant — keeps others intact.
 ```bash
 its entra consent remove-scope 8f1c2d3e-... Mail.Read --dry-run
 
-its entra consent remove-scope <app-id> Mail.Read
+its entra consent remove-scope <app-id> Mail.Read --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra consent remove-scope <app-id> Mail.Read --json --confirm
 ```
 
 #### `its entra consent app-roles <client_app_id>`
@@ -1630,7 +1669,10 @@ Grant an application-permission (app-role) to a client app — equivalent to con
 ```bash
 its entra consent app-role-grant 8f1c2d3e-... User.Read.All --dry-run
 
-its entra consent app-role-grant <app-id> User.Read.All
+its entra consent app-role-grant <app-id> User.Read.All --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra consent app-role-grant <app-id> User.Read.All --json --confirm
 ```
 
 #### `its entra consent app-role-revoke <client_app_id> <assignment_id>`
@@ -1693,7 +1735,10 @@ Toggle inboundTrust.isMfaAccepted on the default policy.
 ```bash
 its entra xtenant trust-mfa on --dry-run
 
-its entra xtenant trust-mfa on
+its entra xtenant trust-mfa on --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra xtenant trust-mfa on --json --confirm
 ```
 
 #### `its entra xtenant trust-device <on_off>`
@@ -1711,7 +1756,10 @@ Toggle inboundTrust.isCompliantDeviceAccepted on the default policy.
 ```bash
 its entra xtenant trust-device off --dry-run
 
-its entra xtenant trust-device on
+its entra xtenant trust-device on --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra xtenant trust-device on --json --confirm
 ```
 
 #### `its entra xtenant partners`
@@ -1732,11 +1780,14 @@ Start a per-partner cross-tenant access config. Bootstraps a fresh per-partner o
 
 ```bash
 # Creates a cross-tenant partner configuration for the given tenant ID
-its entra xtenant partner-add 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+its entra xtenant partner-add 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --confirm
 
-its entra xtenant list
+its entra xtenant list --confirm
 
-its entra xtenant partner-add <partner-tenant-id>
+its entra xtenant partner-add <partner-tenant-id> --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra xtenant partner-add <partner-tenant-id> --json --confirm
 ```
 
 #### `its entra xtenant partner-set <tenant_id>`
@@ -1757,7 +1808,10 @@ Patch a partner cross-tenant access record. Patches an existing partner record.
 ```bash
 its entra xtenant partner-set 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --trust-mfa true --dry-run
 
-its entra xtenant partner-set <partner-tenant-id> --trust-mfa on
+its entra xtenant partner-set <partner-tenant-id> --trust-mfa on --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra xtenant partner-set <partner-tenant-id> --trust-mfa on --json --confirm
 ```
 
 ---
@@ -2055,9 +2109,12 @@ Copy group memberships from one user to another. Idempotent — already-shared g
 
 ```bash
 # Already-shared groups are skipped, so it is safe to re-run
-its entra onboarding copy-groups --source john.doe@example.com --target jane.smith@example.com
+its entra onboarding copy-groups --source john.doe@example.com --target jane.smith@example.com --confirm
 
-its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com
+its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com --json --confirm
 ```
 
 #### `its entra onboarding convert-mailbox <user_id>`
@@ -2231,7 +2288,7 @@ Bootstrap a new Entra app registration end-to-end — creates the application, i
 **Examples:**
 
 ```bash
-its entra apps register "its CLI" --redirect-uri http://localhost --months 12
+its entra apps register "its CLI" --redirect-uri http://localhost --months 12 --confirm
 ```
 
 #### `its entra apps add-password <app>`
@@ -2249,7 +2306,7 @@ Rotate / add a client secret on an existing app registration. The plaintext secr
 
 ```bash
 # The plaintext secret is returned once and never again — capture it now
-its entra apps add-password "its CLI" --name 2026-rotation --months 12
+its entra apps add-password "its CLI" --name 2026-rotation --months 12 --confirm
 ```
 
 #### `its entra apps secrets`
@@ -2408,6 +2465,139 @@ its entra admin-bootstrap run jane.smith@example.com --ttl 60 --one-time --dry-r
 
 ---
 
+### pim
+
+> Source: `src/providers/entra/commands/pim.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its entra pim` | My directory roles: the ones I can switch on (eligible) and the ones I hold now (active), with when each ends. Uses your own sign-in. |
+| `its entra pim activate <role>` | Switch on one of my eligible roles for --hours (default 4, max 8). A reason is required. |
+| `its entra pim deactivate <role>` | Switch off a role I switched on earlier. Permanent assignments can't be switched off. |
+| `its entra pim assign <user>` | Make a user ELIGIBLE for a directory role: they can switch it on with `pim activate`, it isn't on until they do. Permanent unless --days is given. Needs a reason. Uses your own sign-in (Privileged Role Administrator). |
+| `its entra pim unassign <user>` | Take away a user's ELIGIBILITY for a directory role. Doesn't touch a role they have switched on right now. Needs a reason. |
+| `its entra pim eligible [user]` | Who is eligible for which directory role, and when it ends. Give a user to see just theirs. Uses your own sign-in. |
+| `its entra pim settings <role>` | What a person has to do to switch a directory role on: longest time, MFA, justification, approval and who gets alerted. Uses your own sign-in. |
+| `its entra pim set <role>` | Change what it takes to switch a directory role on. Only the settings you name are touched; --dry-run shows before and after for each. Uses your own sign-in (Privileged Role Administrator). |
+
+#### `its entra pim`
+
+My directory roles: the ones I can switch on (eligible) and the ones I hold now (active), with when each ends. Uses your own sign-in.
+
+**Examples:**
+
+```bash
+its entra pim list
+```
+
+#### `its entra pim activate <role>`
+
+Switch on one of my eligible roles for --hours (default 4, max 8). A reason is required.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--hours` | `` | Hours to keep it on (1-8) | 4 |
+| `--reason` | `` | Why you need it (recorded by Entra) | — |
+
+**Examples:**
+
+```bash
+its entra pim activate "User Administrator" --hours 4 --reason "Offboarding ticket 1234" --confirm
+```
+
+#### `its entra pim deactivate <role>`
+
+Switch off a role I switched on earlier. Permanent assignments can't be switched off.
+
+**Examples:**
+
+```bash
+its entra pim deactivate "User Administrator" --confirm
+```
+
+#### `its entra pim assign <user>`
+
+Make a user ELIGIBLE for a directory role: they can switch it on with `pim activate`, it isn't on until they do. Permanent unless --days is given. Needs a reason. Uses your own sign-in (Privileged Role Administrator).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--role` | `` | Role display name or role definition ID | — |
+| `--days` | `` | Eligible for this many days, then it ends (default: no end) | — |
+| `--permanent` | `` | Eligible with no end date (the default) | — |
+| `--reason` | `` | Why (recorded by Entra) | — |
+
+**Examples:**
+
+```bash
+its entra pim assign jane@example.com --role "User Administrator" --reason "Helpdesk cover" --confirm
+
+its entra pim assign jane@example.com --role "User Administrator" --days 90 --reason "Project" --dry-run
+```
+
+#### `its entra pim unassign <user>`
+
+Take away a user's ELIGIBILITY for a directory role. Doesn't touch a role they have switched on right now. Needs a reason.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--role` | `` | Role display name or role definition ID | — |
+| `--reason` | `` | Why (recorded by Entra) | — |
+
+**Examples:**
+
+```bash
+its entra pim unassign jane@example.com --role "User Administrator" --reason "Left the team" --confirm
+```
+
+#### `its entra pim eligible [user]`
+
+Who is eligible for which directory role, and when it ends. Give a user to see just theirs. Uses your own sign-in.
+
+**Examples:**
+
+```bash
+its entra pim eligible
+```
+
+#### `its entra pim settings <role>`
+
+What a person has to do to switch a directory role on: longest time, MFA, justification, approval and who gets alerted. Uses your own sign-in.
+
+**Examples:**
+
+```bash
+its entra pim settings "User Administrator"
+```
+
+#### `its entra pim set <role>`
+
+Change what it takes to switch a directory role on. Only the settings you name are touched; --dry-run shows before and after for each. Uses your own sign-in (Privileged Role Administrator).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--max-hours` | `` | Longest it can stay on (1-24 hours) | — |
+| `--mfa` | `` | Require MFA to switch it on | — |
+| `--justification` | `` | Require a reason to switch it on | — |
+| `--approver` | `` | Require approval from these people (UPNs, comma-separated) | — |
+| `--no-approval` | `` | Don't require approval | — |
+| `--notify` | `` | Also email these addresses when it is switched on (comma-separated, or "none") | — |
+
+**Examples:**
+
+```bash
+its entra pim set "User Administrator" --max-hours 4 --mfa on --justification on --dry-run
+```
+
+---
+
 ### sync
 
 > Source: `src/providers/entra/commands/sync.ts`
@@ -2529,13 +2719,16 @@ Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
-its entra graph post /users --body '{"displayName":"Jane Smith"}'
+its entra graph post /users --body '{"displayName":"Jane Smith"}' --confirm
 
-its entra graph post /administrativeUnits --beta
+its entra graph post /administrativeUnits --beta --confirm
 
-its entra graph post /users --header ConsistencyLevel=eventual
+its entra graph post /users --header ConsistencyLevel=eventual --confirm
 
-its entra graph post "/users/$count" --body @./payload.json
+its entra graph post "/users/$count" --body @./payload.json --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra graph post "/users/$count" --body @./payload.json --json --confirm
 ```
 
 #### `its entra graph patch <path>`
@@ -2553,16 +2746,16 @@ Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
-its entra graph patch /users --body '{"displayName":"Jane Smith"}'
+its entra graph patch /users --body '{"displayName":"Jane Smith"}' --confirm
 
-its entra graph patch /administrativeUnits --beta
+its entra graph patch /administrativeUnits --beta --confirm
 
-its entra graph patch /users --header ConsistencyLevel=eventual
+its entra graph patch /users --header ConsistencyLevel=eventual --confirm
 
-its entra graph patch "/users/<id>" --body '{"jobTitle":"Lead"}'
+its entra graph patch "/users/<id>" --body '{"jobTitle":"Lead"}' --confirm
 
 # Pipe-friendly output — use with jq / scripts.
-its entra graph patch "/users/<id>" --body  --json
+its entra graph patch "/users/<id>" --body @./patch.json --json --confirm
 ```
 
 #### `its entra graph put <path>`
@@ -2580,13 +2773,16 @@ Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
-its entra graph put /users --body '{"displayName":"Jane Smith"}'
+its entra graph put /users --body '{"displayName":"Jane Smith"}' --confirm
 
-its entra graph put /administrativeUnits --beta
+its entra graph put /administrativeUnits --beta --confirm
 
-its entra graph put /users --header ConsistencyLevel=eventual
+its entra graph put /users --header ConsistencyLevel=eventual --confirm
 
-its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg
+its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg --json --confirm
 ```
 
 #### `its entra graph delete <path>`
@@ -2603,15 +2799,15 @@ Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 **Examples:**
 
 ```bash
-# No confirmation prompt — the path is sent exactly as given
-its entra graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+# Needs --confirm; the path is sent exactly as given
+its entra graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --confirm
 
-its entra graph delete /administrativeUnits --beta
+its entra graph delete /administrativeUnits --beta --confirm
 
-its entra graph delete /users --header ConsistencyLevel=eventual
+its entra graph delete /users --header ConsistencyLevel=eventual --confirm
 
 # Raw Graph passthrough — this command has no --confirm guard (unlike typed delete commands such as users delete / ca delete). Double-check the path before running; there is no dry-run.
-its entra graph delete "/users/<id>"
+its entra graph delete "/users/<id>" --confirm
 ```
 
 ---

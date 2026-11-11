@@ -57,7 +57,7 @@ Microsoft delegated sign-in — profiles, provider mapping, token diagnostics.
 **Changes state** · **Interactive** — prompts for input
 
 ```bash
-its auth login [--profile <name>] [--device-code]
+its auth login [--profile <name>] [--client-id <guid>] [--device-code]
 its auth use <profile> [--default | --provider <a,b>]
 its auth logout [--profile <name>]
 its auth status
@@ -74,6 +74,7 @@ Runs the OAuth authorisation-code flow with PKCE against the `CLIENT_ID` app and
 ```bash
 its auth login
 its auth login --profile admin
+its auth login --profile admin --client-id 11111111-2222-3333-4444-555555555555
 its auth use admin --provider entra,intune,sp
 its auth doctor
 ```

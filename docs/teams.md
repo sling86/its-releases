@@ -116,7 +116,7 @@ Download pasted and attached images from a chat using delegated Graph auth. Page
 **Examples:**
 
 ```bash
-its teams chats images 19:abc...@thread.v2 --since -1d --output ./teams-images
+its teams chats images 19:abc...@thread.v2 --since -1d --output ./teams-images --confirm
 ```
 
 #### `its teams chats send <chat_id>`
@@ -142,19 +142,19 @@ Send a message to one of your chats, as you. Pass a chat ID from `its teams chat
 **Examples:**
 
 ```bash
-its teams chats send self --markdown --importance high --message-file update.md
+its teams chats send self --markdown --importance high --message-file update.md --confirm
 
-its teams chats send 19:abc...@thread.v2 --card card.json --message 'Approval needed'
+its teams chats send 19:abc...@thread.v2 --card card.json --message 'Approval needed' --confirm
 
-its teams chats send self --file evidence.pdf --message "for the file"
+its teams chats send self --file evidence.pdf --message "for the file" --confirm
 
-its teams chats send 19:abc...@thread.v2 --message "on my way"
+its teams chats send 19:abc...@thread.v2 --message "on my way" --confirm
 
-its teams chats send 19:abc...@thread.v2 --mention enrique --message-file update.txt
+its teams chats send 19:abc...@thread.v2 --mention enrique --message-file update.txt --confirm
 
-its teams chats send 19:abc...@thread.v2 --reply-to 1790767448630 --message "agreed"
+its teams chats send 19:abc...@thread.v2 --reply-to 1790767448630 --message "agreed" --confirm
 
-its teams chats send 19:abc...@thread.v2 --html --message-file note.html
+its teams chats send 19:abc...@thread.v2 --html --message-file note.html --confirm
 ```
 
 #### `its teams chats delete-message <chat_id> <message_id>`
@@ -210,7 +210,7 @@ React to a message with an emoji, as you (default 👍). Also takes like, heart,
 **Examples:**
 
 ```bash
-its teams chats react self 1775589175306 --emoji 👍
+its teams chats react self 1775589175306 --emoji 👍 --confirm
 ```
 
 #### `its teams chats unreact <chat_id> <message_id>`
@@ -226,7 +226,7 @@ Take your reaction off a message. Give the same emoji you reacted with (default 
 **Examples:**
 
 ```bash
-its teams chats unreact self 1775589175306 --emoji 👍
+its teams chats unreact self 1775589175306 --emoji 👍 --confirm
 ```
 
 ---
@@ -259,6 +259,7 @@ its teams presence
 |---------|-------------|
 | `its teams teams` | Teams you are a member of. Needs delegated Team.ReadBasic.All. |
 | `its teams teams create <name>` | Create a team (the standard template). Graph does this in the background, so this waits for it to finish (up to --timeout) and reads the team back. Without --confirm it only shows what it would create. You become the owner unless --owner says otherwise. Needs delegated Team.Create. |
+| `its teams teams delete <teamId>` | Delete a team by its id (this deletes the Microsoft 365 group behind it: chats, files and the mailbox go with it). Without --confirm it only shows which team it would delete. Reads back to check it is gone. Entra keeps a deleted group for 30 days, so it can be restored in that time. Needs delegated Group.ReadWrite.All. |
 
 #### `its teams teams`
 
@@ -290,6 +291,24 @@ Create a team (the standard template). Graph does this in the background, so thi
 its teams teams create "Store Ops" --description "Store ops" --visibility private --dry-run
 
 its teams teams create "Store Ops" --owner tony@example.com --confirm
+```
+
+#### `its teams teams delete <teamId>`
+
+Delete a team by its id (this deletes the Microsoft 365 group behind it: chats, files and the mailbox go with it). Without --confirm it only shows which team it would delete. Reads back to check it is gone. Entra keeps a deleted group for 30 days, so it can be restored in that time. Needs delegated Group.ReadWrite.All.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Delete it | — |
+
+**Examples:**
+
+```bash
+its teams teams delete 8d8854a9-1cc2-40d9-b895-ba082fc5ad94 --dry-run
+
+its teams teams delete 8d8854a9-1cc2-40d9-b895-ba082fc5ad94 --confirm
 ```
 
 ---

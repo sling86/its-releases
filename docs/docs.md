@@ -61,10 +61,10 @@ Compile the interactive help UI browser assets (Vite build + embedded-assets man
 **Examples:**
 
 ```bash
-its docs build
+its docs build --confirm
 
 # Rebuild even if assets are present
-its docs build --force
+its docs build --force --confirm
 ```
 
 ---

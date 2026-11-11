@@ -212,13 +212,13 @@ Create a DNS record. Idempotent on duplicate names — use update/edit to mutate
 **Examples:**
 
 ```bash
-its cf dns create --zone example.com --type A --name shop --content 203.0.113.10 --proxied
+its cf dns create --zone example.com --type A --name shop --content 203.0.113.10 --proxied --confirm
 
-its cf dns create --zone example.com --type CNAME --name www --content example.com --ttl 300
+its cf dns create --zone example.com --type CNAME --name www --content example.com --ttl 300 --confirm
 
-its cf dns create --zone example.com --type A --name www --content 1.2.3.4
+its cf dns create --zone example.com --type A --name www --content 1.2.3.4 --confirm
 
-its cf dns create --zone example.com --type CNAME --name app --content app.example.dokploy.com --proxied false
+its cf dns create --zone example.com --type CNAME --name app --content app.example.dokploy.com --proxied false --confirm
 ```
 
 #### `its cf dns update <record_id>`
@@ -241,9 +241,12 @@ Patch fields on an existing DNS record. PATCH semantics — only the supplied fi
 **Examples:**
 
 ```bash
-its cf dns update 372e67954025e0ba6aaa6d586b9e0b59 --zone example.com --content 203.0.113.20
+its cf dns update 372e67954025e0ba6aaa6d586b9e0b59 --zone example.com --content 203.0.113.20 --confirm
 
-its cf dns update <record-id> --zone example.com --content 5.6.7.8
+its cf dns update <record-id> --zone example.com --content 5.6.7.8 --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its cf dns update <record-id> --zone example.com --content 5.6.7.8 --json --confirm
 ```
 
 #### `its cf dns delete <record_id>`
@@ -347,12 +350,12 @@ Delete a Cloudflare tunnel (destructive — prompts for confirmation unless --ye
 **Examples:**
 
 ```bash
-its cf tunnels delete my-tunnel --account 1a2b3c4d --yes
+its cf tunnels delete my-tunnel --account 1a2b3c4d --yes --confirm
 
 # --cascade also removes the DNS routes pointing at the tunnel
-its cf tunnels delete my-tunnel --account 1a2b3c4d --cascade --yes
+its cf tunnels delete my-tunnel --account 1a2b3c4d --cascade --yes --confirm
 
-its cf tunnels delete <tunnel-id> --yes
+its cf tunnels delete <tunnel-id> --yes --confirm
 ```
 
 #### `its cf tunnels routes <tunnel>`
@@ -414,10 +417,10 @@ Open the prefilled Cloudflare token page in the browser, then prompt for the new
 
 ```bash
 # Opens the Cloudflare dashboard, prompts for the new token, saves to keychain + .env
-its cf token request
+its cf token request --confirm
 
 # Print the prefilled URL and prompt — useful on remote shells
-its cf token request --no-open
+its cf token request --no-open --confirm
 ```
 
 ---

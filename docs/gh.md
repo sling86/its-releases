@@ -60,7 +60,7 @@ Apply the THF standard branch-protection block to <owner/repo> on the named bran
 ```bash
 its gh branch-protect apply acme/storefront --dry-run
 
-its gh branch-protect apply acme/storefront --branch main
+its gh branch-protect apply acme/storefront --branch main --confirm
 ```
 
 #### `its gh branch-protect show <repo>`
@@ -119,7 +119,7 @@ Create a push-event webhook on <owner/repo> pointing at <url>. Idempotent — ba
 
 ```bash
 # Idempotent — bails if a hook with that URL already exists
-its gh webhook setup acme/storefront https://dok.example.com/api/deploy --events push
+its gh webhook setup acme/storefront https://dok.example.com/api/deploy --events push --confirm
 ```
 
 #### `its gh webhook <repo>`

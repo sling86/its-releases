@@ -264,21 +264,21 @@ Execute a one-shot shell command on the target agent. Returns stdout + stderr + 
 **Examples:**
 
 ```bash
-its rmm agents run WKS-9 --shell powershell --cmd "Get-Service spooler"
+its rmm agents run WKS-9 --shell powershell --cmd "Get-Service spooler" --confirm
 
 # Raise --timeout above the agent-side runtime — the HTTP read timeout is derived from it
-its rmm agents run WKS-9 --shell powershell --cmd "gpupdate /force" --timeout 300
+its rmm agents run WKS-9 --shell powershell --cmd "gpupdate /force" --timeout 300 --confirm
 
 # Runs in the logged-on user's session instead of as SYSTEM. Fails if nobody is signed in
-its rmm agents run WKS-9 --shell powershell --cmd "whoami" --as-user
+its rmm agents run WKS-9 --shell powershell --cmd "whoami" --as-user --confirm
 
-its rmm agents run WKS-9 --shell powershell --file ./fix-printer.ps1
+its rmm agents run WKS-9 --shell powershell --file ./fix-printer.ps1 --confirm
 
-its rmm agents run OFFICE-PC-01 --shell powershell --cmd "Get-Process"
+its rmm agents run OFFICE-PC-01 --shell powershell --cmd "Get-Process" --confirm
 
-its rmm agents run OFFICE-PC-01 --shell cmd --cmd "ipconfig /all"
+its rmm agents run OFFICE-PC-01 --shell cmd --cmd "ipconfig /all" --confirm
 
-its rmm agents run LINUX-WEB-01 --shell bash --cmd "uname -a && uptime"
+its rmm agents run LINUX-WEB-01 --shell bash --cmd "uname -a && uptime" --confirm
 ```
 
 #### `its rmm agents history <agent>`
@@ -319,12 +319,12 @@ Send a magic packet via another online agent on the same LAN. Doesn't work acros
 
 ```bash
 # Sends the magic packet via another online agent on the same LAN — will not cross VLANs
-its rmm agents wake WKS-9
+its rmm agents wake WKS-9 --confirm
 
-its rmm agents wake OFFICE-PC-01
+its rmm agents wake OFFICE-PC-01 --confirm
 
 # No --site flag — duplicate hostnames auto-resolve to the online/most-recent match, or pass the UUID directly.
-its rmm agents wake c3e5f1a7-...
+its rmm agents wake c3e5f1a7-... --confirm
 ```
 
 #### `its rmm agents edit <agent>`
@@ -342,13 +342,13 @@ Reassign an agent's client/site or update description (PUT /agents/{id}/).
 **Examples:**
 
 ```bash
-its rmm agents edit WKS-9 --client "Acme" --site "Head Office"
+its rmm agents edit WKS-9 --client "Acme" --site "Head Office" --confirm
 
-its rmm agents edit WKS-9 --description "Finance workstation"
+its rmm agents edit WKS-9 --description "Finance workstation" --confirm
 
-its rmm agents edit OFFICE-PC-01 --site <site-id>
+its rmm agents edit OFFICE-PC-01 --site <site-id> --confirm
 
-its rmm agents edit OFFICE-PC-01 --description "Marketing — Jane's desk"
+its rmm agents edit OFFICE-PC-01 --description "Marketing — Jane's desk" --confirm
 ```
 
 #### `its rmm agents refresh <agent>`
@@ -359,10 +359,13 @@ Trigger a WMI/sysinfo refresh on an agent — repopulates hardware fields (seria
 
 ```bash
 # Repopulates hardware fields such as serial and model after a WMI cache goes stale
-its rmm agents refresh WKS-9
+its rmm agents refresh WKS-9 --confirm
 
 # Repopulates hardware fields (serial, BIOS, etc.)
-its rmm agents refresh OFFICE-PC-01
+its rmm agents refresh OFFICE-PC-01 --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its rmm agents refresh OFFICE-PC-01 --json --confirm
 ```
 
 #### `its rmm agents eventlog <agent>`
@@ -444,7 +447,7 @@ Create a client (POST /clients/). TRMM also creates its first site in the same c
 
 ```bash
 # TRMM requires an initial site — a client cannot exist without one
-its rmm clients create --name "Acme" --site "Head Office"
+its rmm clients create --name "Acme" --site "Head Office" --confirm
 ```
 
 #### `its rmm clients delete <client>`
@@ -512,7 +515,7 @@ Create a site under a client (POST /clients/sites/). Idempotent — skips if a s
 **Examples:**
 
 ```bash
-its rmm sites create --client "Acme" --name "Warehouse"
+its rmm sites create --client "Acme" --name "Warehouse" --confirm
 ```
 
 #### `its rmm sites delete <site_id>`
@@ -687,9 +690,12 @@ Set startup type to Automatic and start the service if stopped. Idempotent.
 
 ```bash
 # Sets startup to Automatic and starts it if stopped
-its rmm services enable WKS-9 --name spooler
+its rmm services enable WKS-9 --name spooler --confirm
 
-its rmm services enable OFFICE-PC-01 --name spooler
+its rmm services enable OFFICE-PC-01 --name spooler --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its rmm services enable OFFICE-PC-01 --name spooler --json --confirm
 ```
 
 #### `its rmm services disable <agent>`
@@ -1114,13 +1120,13 @@ Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output,
 
 ```bash
 # Uploads, runs, captures output, then deletes the script from TRMM — pass --keep to leave it
-its rmm scripts upload-local WKS-9 ./Fix-Printer.ps1 --timeout 300
+its rmm scripts upload-local WKS-9 ./Fix-Printer.ps1 --timeout 300 --confirm
 
-its rmm scripts upload-local WKS-9 ./Fix-Profile.ps1 --as-user
+its rmm scripts upload-local WKS-9 ./Fix-Profile.ps1 --as-user --confirm
 
-its rmm scripts upload-local ./fix-printers.ps1
+its rmm scripts upload-local ./fix-printers.ps1 --confirm
 
-its rmm scripts upload-local ./linux-housekeeping.sh --shell bash
+its rmm scripts upload-local ./linux-housekeeping.sh --shell bash --confirm
 ```
 
 #### `its rmm scripts delete <script_id>`
@@ -1162,13 +1168,16 @@ Idempotently push a local script to TRMM by name — creates if missing, updates
 **Examples:**
 
 ```bash
-its rmm scripts upsert 'Check Git Installed' C:/Scripts/Check-Git.ps1 --category 'Compliance Checks' --timeout 30
+its rmm scripts upsert 'Check Git Installed' C:/Scripts/Check-Git.ps1 --category 'Compliance Checks' --timeout 30 --confirm
 
 # Anything installing into a profile must run as the user, not SYSTEM
-its rmm scripts upsert 'Configure User Profile' ./Set-UserProfile.ps1 --run-as-user
+its rmm scripts upsert 'Configure User Profile' ./Set-UserProfile.ps1 --run-as-user --confirm
 
 # Creates if missing, updates body if name exists
-its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1
+its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1 --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1 --json --confirm
 ```
 
 ---
@@ -1245,7 +1254,7 @@ Force all of an agent's checks to run now (POST /checks/<agent>/run/) instead of
 
 ```bash
 # Re-evaluate all checks immediately (e.g. after fixing a script-check body)
-its rmm checks run OFFICE-PC
+its rmm checks run OFFICE-PC --confirm
 ```
 
 #### `its rmm checks create <agent>`
@@ -1280,17 +1289,20 @@ Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/wi
 
 ```bash
 # Alert when C: free space drops below thresholds (%)
-its rmm checks create OFFICE-PC --type diskspace --disk C: --error 10 --warning 25
+its rmm checks create OFFICE-PC --type diskspace --disk C: --error 10 --warning 25 --confirm
 
-its rmm checks create OFFICE-PC --type cpuload --error 90 --warning 75
+its rmm checks create OFFICE-PC --type cpuload --error 90 --warning 75 --confirm
 
-its rmm checks create SRV-01 --type winsvc --service Spooler --restart-if-stopped
+its rmm checks create SRV-01 --type winsvc --service Spooler --restart-if-stopped --confirm
 
-its rmm checks create SRV-01 --type ping --ip 10.10.0.1
+its rmm checks create SRV-01 --type ping --ip 10.10.0.1 --confirm
 
-its rmm checks create OFFICE-PC --script 42 --timeout 300
+its rmm checks create OFFICE-PC --script 42 --timeout 300 --confirm
 
-its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600
+its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600 --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600 --json --confirm
 ```
 
 #### `its rmm checks edit [agent]`
@@ -1318,15 +1330,15 @@ Retune an existing check without delete+recreate — change interval, severity, 
 
 ```bash
 # Change a check's thresholds (find the id via `its rmm checks <agent>`)
-its rmm checks edit OFFICE-PC --check 7 --warning 60 --error 80
+its rmm checks edit OFFICE-PC --check 7 --warning 60 --error 80 --confirm
 
-its rmm checks edit OFFICE-PC --check 7 --severity warning --fails 3
+its rmm checks edit OFFICE-PC --check 7 --severity warning --fails 3 --confirm
 
 # Change a script check's timeout + args
-its rmm checks edit OFFICE-PC --check 7 --timeout 300 --args -Verbose,-Force
+its rmm checks edit OFFICE-PC --check 7 --timeout 300 --args -Verbose,-Force --confirm
 
 # Promote a policy check from info to warning once its remediation is wired
-its rmm checks edit --check 41 --severity warning
+its rmm checks edit --check 41 --severity warning --confirm
 ```
 
 #### `its rmm checks delete [agent_id]`
@@ -1412,13 +1424,16 @@ Create an automated task that runs a script. Target an agent, or --policy <id> t
 
 ```bash
 # The house remediation pattern: when check 41 fails on any agent under policy 4, run script 433 there
-its rmm tasks create --policy 4 --on-check-failure 41 --script 433 --name 'Auto-install dev runtimes' --timeout 1800
+its rmm tasks create --policy 4 --on-check-failure 41 --script 433 --name 'Auto-install dev runtimes' --timeout 1800 --confirm
 
-its rmm tasks create --policy 4 --script 252 --daily-time 06:30
+its rmm tasks create --policy 4 --script 252 --daily-time 06:30 --confirm
 
-its rmm tasks create OFFICE-PC --script 12 --name 'Clear cache'
+its rmm tasks create OFFICE-PC --script 12 --name 'Clear cache' --confirm
 
-its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun
+its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun --json --confirm
 ```
 
 #### `its rmm tasks edit`
@@ -1440,10 +1455,10 @@ Enable or disable an existing task without delete+recreate. Recreating a policy 
 
 ```bash
 # Turn on a checkfailure task created with --disabled
-its rmm tasks edit --task 243 --enable
+its rmm tasks edit --task 243 --enable --confirm
 
 # Stop an old task without deleting it, so it stays auditable
-its rmm tasks edit --task 15 --disable
+its rmm tasks edit --task 15 --disable --confirm
 ```
 
 #### `its rmm tasks delete`
@@ -1546,13 +1561,16 @@ Add a check to a policy (applies to every agent under it). --type: diskspace/cpu
 
 ```bash
 # Add a disk-space check to every agent under policy 4
-its rmm policies add-check 4 --type diskspace --disk C: --error 10 --warning 25
+its rmm policies add-check 4 --type diskspace --disk C: --error 10 --warning 25 --confirm
 
-its rmm policies add-check 4 --type winsvc --service Spooler --restart-if-stopped
+its rmm policies add-check 4 --type winsvc --service Spooler --restart-if-stopped --confirm
 
-its rmm policies add-check 4 --script 42
+its rmm policies add-check 4 --script 42 --confirm
 
-its rmm policies add-check <policy-id> --script <script-id>
+its rmm policies add-check <policy-id> --script <script-id> --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its rmm policies add-check <policy-id> --script <script-id> --json --confirm
 ```
 
 #### `its rmm policies patch-policy <policy_id>`
@@ -1664,9 +1682,9 @@ Set a custom field value on an agent. Accepts the field by numeric id OR by exac
 **Examples:**
 
 ```bash
-its rmm custom-fields set WKS-9 "RustDesk ID" 123456789
+its rmm custom-fields set WKS-9 "RustDesk ID" 123456789 --confirm
 
-its rmm custom-fields set WKS-9 4 123456789
+its rmm custom-fields set WKS-9 4 123456789 --confirm
 ```
 
 ---
@@ -1734,7 +1752,7 @@ Create a least-privilege API key end-to-end: a role with only the permissions yo
 **Examples:**
 
 ```bash
-its rmm accounts provision shuttle-worker --permissions can_list_agents --bw
+its rmm accounts provision shuttle-worker --permissions can_list_agents --bw --confirm
 ```
 
 ---
@@ -1765,19 +1783,19 @@ Open a live interactive shell on an RMM agent over Tactical's terminal WebSocket
 
 ```bash
 # Windows: PowerShell 7, Windows PowerShell, then Command Prompt; other platforms: agent default
-its rmm terminal WKS-9
+its rmm terminal WKS-9 --confirm
 
 # Require PowerShell 7 from its standard MSI path
-its rmm terminal WKS-9 --shell 'C:\Program Files\PowerShell\7\pwsh.exe'
+its rmm terminal WKS-9 --shell 'C:\Program Files\PowerShell\7\pwsh.exe' --confirm
 
 # Require PowerShell with no automatic fallback
-its rmm terminal WKS-9 --shell powershell
+its rmm terminal WKS-9 --shell powershell --confirm
 
 # Require Windows Command Prompt
-its rmm terminal WKS-9 --shell cmd
+its rmm terminal WKS-9 --shell cmd --confirm
 
 # Open PowerShell in the signed-in user's session
-its rmm terminal WKS-9 --shell powershell --as-user
+its rmm terminal WKS-9 --shell powershell --as-user --confirm
 ```
 
 #### `its rmm terminal login`

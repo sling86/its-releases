@@ -76,6 +76,7 @@ its wrike setup --reset   # Re-run setup (overwrite config)
 | `its wrike tickets set-custom-field <taskId> <field> <value>` | Set one custom field on a ticket. The field is an id or exact title (never guessed) and the value is checked against the field type before it is sent. The ticket is read back for up to 30 seconds and the command fails if the value did not stick. |
 | `its wrike tickets set-due <taskId> <dueDate>` | Set due date on a ticket (YYYY-MM-DD). Set the task's due date. |
 | `its wrike tickets assign <taskId> <userId>` | Add an assignee to a ticket. Idempotent — assigning twice is a no-op. |
+| `its wrike tickets unassign <taskId> <userId>` | Remove an assignee from a ticket. Previews without --confirm; with it, removes then reads the ticket back to check the user is gone. Does nothing if they were not assigned. |
 | `its wrike tickets update-title <taskId> <title>` | Change a ticket's title. Rename the task — keeps the same ID. |
 | `its wrike tickets update-importance <taskId> <importance>` | Change ticket importance (High, Normal, Low). Set Low / Normal / High importance. |
 | `its wrike tickets update-status <taskId> <status>` | Change ticket status. Move the task to a different workflow stage. |
@@ -223,14 +224,17 @@ Create a new IT support ticket. If an open (Active or Deferred) ticket in the fo
 **Examples:**
 
 ```bash
-its wrike tickets create --title "Printer offline in Finance" --description "Label printer not responding"
+its wrike tickets create --title "Printer offline in Finance" --description "Label printer not responding" --confirm
 
-its wrike tickets create --title "Server migration plan" --description-file ./plan.md --markdown --importance High
+its wrike tickets create --title "Server migration plan" --description-file ./plan.md --markdown --importance High --confirm
 
 # Find names with `its wrike item-types` and `its wrike custom-fields`. --dry-run shows what would be sent.
 its wrike tickets create --title "Leaver: Jane Smith" --item-type "<request type>" --custom-field "<field>=<value>" --custom-field "<contacts field>=jane.smith@example.com" --dry-run
 
-its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox"
+its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox" --json --confirm
 ```
 
 #### `its wrike tickets set-custom-field <taskId> <field> <value>`
@@ -241,7 +245,7 @@ Set one custom field on a ticket. The field is an id or exact title (never guess
 
 ```bash
 # Find field names with `its wrike custom-fields`. A Contacts field takes a user id, exact name or exact email.
-its wrike tickets set-custom-field IEACW7BXKQ2R4KMT "<field>" "<value>"
+its wrike tickets set-custom-field IEACW7BXKQ2R4KMT "<field>" "<value>" --confirm
 ```
 
 #### `its wrike tickets set-due <taskId> <dueDate>`
@@ -269,6 +273,22 @@ its wrike tickets assign IEACW7BXKQ2R4KMT KUAEXAMP
 its wrike tickets assign <task-id> <user-id>
 ```
 
+#### `its wrike tickets unassign <taskId> <userId>`
+
+Remove an assignee from a ticket. Previews without --confirm; with it, removes then reads the ticket back to check the user is gone. Does nothing if they were not assigned.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Actually remove the assignee | — |
+
+**Examples:**
+
+```bash
+its wrike tickets unassign IEACW7BXKQ2R4KMT KUAEXAMP --confirm
+```
+
 #### `its wrike tickets update-title <taskId> <title>`
 
 Change a ticket's title. Rename the task — keeps the same ID.
@@ -276,9 +296,12 @@ Change a ticket's title. Rename the task — keeps the same ID.
 **Examples:**
 
 ```bash
-its wrike tickets update-title IEACW7BXKQ2R4KMT "Printer offline — Finance, resolved"
+its wrike tickets update-title IEACW7BXKQ2R4KMT "Printer offline — Finance, resolved" --confirm
 
-its wrike tickets update-title <task-id> "New title"
+its wrike tickets update-title <task-id> "New title" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tickets update-title <task-id> "New title" --json --confirm
 ```
 
 #### `its wrike tickets update-importance <taskId> <importance>`
@@ -288,9 +311,12 @@ Change ticket importance (High, Normal, Low). Set Low / Normal / High importance
 **Examples:**
 
 ```bash
-its wrike tickets update-importance IEACW7BXKQ2R4KMT High
+its wrike tickets update-importance IEACW7BXKQ2R4KMT High --confirm
 
-its wrike tickets update-importance <task-id> High
+its wrike tickets update-importance <task-id> High --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tickets update-importance <task-id> High --json --confirm
 ```
 
 #### `its wrike tickets update-status <taskId> <status>`
@@ -324,11 +350,14 @@ Replace a ticket's description. Same formatting rules as add-comment: plain text
 **Examples:**
 
 ```bash
-its wrike tickets update-description IEACW7BXKQ2R4KMT "**Root cause:** stale spooler" --markdown
+its wrike tickets update-description IEACW7BXKQ2R4KMT "**Root cause:** stale spooler" --markdown --confirm
 
-cat notes.md | its wrike tickets update-description IEACW7BXKQ2R4KMT --stdin --markdown
+cat notes.md | its wrike tickets update-description IEACW7BXKQ2R4KMT --stdin --markdown --confirm
 
-its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..."
+its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..." --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..." --json --confirm
 ```
 
 #### `its wrike tickets add-comment <taskId> [text]`
@@ -453,9 +482,12 @@ Attach a file to a ticket. Upload a local file as an attachment.
 **Examples:**
 
 ```bash
-its wrike tickets attach IEACW7BXKQ2R4KMT ./screenshot.png
+its wrike tickets attach IEACW7BXKQ2R4KMT ./screenshot.png --confirm
 
-its wrike tickets attach <task-id> ./screenshot.png
+its wrike tickets attach <task-id> ./screenshot.png --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tickets attach <task-id> ./screenshot.png --json --confirm
 ```
 
 ---
@@ -543,9 +575,12 @@ Create a new task in a folder or project (accepts name or ID).
 **Examples:**
 
 ```bash
-its wrike tasks create "IT Projects" --title "Roll out FIDO2 keys" --importance High
+its wrike tasks create "IT Projects" --title "Roll out FIDO2 keys" --importance High --confirm
 
-its wrike tasks create "My folder" --title "New task"
+its wrike tasks create "My folder" --title "New task" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tasks create "My folder" --title "New task" --json --confirm
 ```
 
 #### `its wrike tasks set-due <taskId> <dueDate>`
@@ -567,9 +602,12 @@ Change a task's title. Rename the task — keeps the same ID.
 **Examples:**
 
 ```bash
-its wrike tasks update-title IEACW7BXKQ2R4KMT "Roll out FIDO2 keys — phase 2"
+its wrike tasks update-title IEACW7BXKQ2R4KMT "Roll out FIDO2 keys — phase 2" --confirm
 
-its wrike tasks update-title <task-id> "New title"
+its wrike tasks update-title <task-id> "New title" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tasks update-title <task-id> "New title" --json --confirm
 ```
 
 #### `its wrike tasks update-importance <taskId> <importance>`
@@ -579,9 +617,12 @@ Change task importance (High, Normal, Low). Set Low / Normal / High importance.
 **Examples:**
 
 ```bash
-its wrike tasks update-importance IEACW7BXKQ2R4KMT Low
+its wrike tasks update-importance IEACW7BXKQ2R4KMT Low --confirm
 
-its wrike tasks update-importance <task-id> Low
+its wrike tasks update-importance <task-id> Low --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tasks update-importance <task-id> Low --json --confirm
 ```
 
 #### `its wrike tasks update-status <taskId> <status>`
@@ -613,9 +654,12 @@ Replace a task's description. Same formatting rules as add-comment: plain text b
 **Examples:**
 
 ```bash
-its wrike tasks update-description IEACW7BXKQ2R4KMT "## Plan\n- Order keys" --markdown
+its wrike tasks update-description IEACW7BXKQ2R4KMT "## Plan\n- Order keys" --markdown --confirm
 
-its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1"
+its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1" --json --confirm
 ```
 
 #### `its wrike tasks add-comment <taskId> [text]`
@@ -647,9 +691,12 @@ Attach a file to a task. Upload a local file as an attachment.
 **Examples:**
 
 ```bash
-its wrike tasks attach IEACW7BXKQ2R4KMT ./quote.pdf
+its wrike tasks attach IEACW7BXKQ2R4KMT ./quote.pdf --confirm
 
-its wrike tasks attach <task-id> ./diagram.png
+its wrike tasks attach <task-id> ./diagram.png --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its wrike tasks attach <task-id> ./diagram.png --json --confirm
 ```
 
 #### `its wrike tasks delete <taskId>`

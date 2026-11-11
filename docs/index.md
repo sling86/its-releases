@@ -12,20 +12,20 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [global.md](./global.md) | Global commands — 24 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 88 commands across 21 resources |
-| [entra.md](./entra.md) | Entra ID — 126 commands across 23 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 122 commands across 25 resources |
+| [entra.md](./entra.md) | Entra ID — 134 commands across 24 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 123 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 72 commands across 17 resources |
 | [sp.md](./sp.md) | SharePoint — 58 commands across 12 resources |
-| [unifi.md](./unifi.md) | UniFi Network — 49 commands across 17 resources |
-| [wrike.md](./wrike.md) | Wrike — 65 commands across 17 resources |
+| [unifi.md](./unifi.md) | UniFi Network — 51 commands across 17 resources |
+| [wrike.md](./wrike.md) | Wrike — 66 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 28 commands across 13 resources |
-| [exo.md](./exo.md) | Exchange Online — 84 commands across 18 resources |
-| [intune.md](./intune.md) | Intune — 67 commands across 23 resources |
-| [protect.md](./protect.md) | UniFi Protect — 10 commands across 5 resources |
+| [exo.md](./exo.md) | Exchange Online — 86 commands across 18 resources |
+| [intune.md](./intune.md) | Intune — 68 commands across 23 resources |
+| [protect.md](./protect.md) | UniFi Protect — 12 commands across 6 resources |
 | [pbi.md](./pbi.md) | Power BI — 30 commands across 9 resources |
 | [pa.md](./pa.md) | Power Platform — 13 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
-| [hr.md](./hr.md) | PeopleHR — 19 commands across 10 resources |
+| [hr.md](./hr.md) | PeopleHR — 22 commands across 11 resources |
 | [attendance.md](./attendance.md) | Factory attendance — 5 commands across 5 resources |
 | [bc.md](./bc.md) | Business Central — 30 commands across 9 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
@@ -33,10 +33,10 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 6 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 51 commands across 12 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
-| [teams.md](./teams.md) | Teams — 13 commands across 4 resources |
+| [teams.md](./teams.md) | Teams — 14 commands across 4 resources |
 | [yodeck.md](./yodeck.md) | Yodeck — 3 commands across 2 resources |
 
-**24 providers** · **261 resources** · **968 commands**
+**24 providers** · **264 resources** · **989 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -89,6 +89,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [doctor](./entra.md#doctor) | list | `src/providers/entra/commands/doctor.ts` |
 | [apps](./entra.md#apps) | register, add-password, secrets, rotate, plan, apply, permissions, export, audit | `src/providers/entra/commands/apps.ts` |
 | [admin-bootstrap](./entra.md#admin-bootstrap) | run | `src/providers/entra/commands/admin-bootstrap.ts` |
+| [pim](./entra.md#pim) | list, activate, deactivate, assign, unassign, eligible, settings, set | `src/providers/entra/commands/pim.ts` |
 | [sync](./entra.md#sync) | status, logs, provision | `src/providers/entra/commands/sync.ts` |
 | [graph](./entra.md#graph) | get, post, patch, put, delete | — |
 
@@ -97,7 +98,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [projects](./dokploy.md#projects) | list, get, create, delete | `src/providers/dokploy/commands/projects.ts` |
-| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, env-runtime, apply-env, health, env-drift, doctor, bootstrap, cert-status, deploy-url | `src/providers/dokploy/commands/apps.ts` |
+| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-auto-deploy, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, env-runtime, apply-env, health, env-drift, doctor, bootstrap, cert-status, deploy-url | `src/providers/dokploy/commands/apps.ts` |
 | [databases](./dokploy.md#databases) | list, url, get, sql, create, deploy, stop, update, delete | `src/providers/dokploy/commands/databases.ts` |
 | [deployments](./dokploy.md#deployments) | list, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
 | [domains](./dokploy.md#domains) | list, create, check, delete | `src/providers/dokploy/commands/domains.ts` |
@@ -170,7 +171,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [clients](./unifi.md#clients) | list, get, search, locate, inventory, set-alias, set-note, set-fixed-ip, block, unblock, reconnect, offline | `src/providers/unifi/commands/clients.ts` |
 | [guests](./unifi.md#guests) | authorise, unauthorise | `src/providers/unifi/commands/clients.ts` |
 | [networks](./unifi.md#networks) | list | `src/providers/unifi/commands/networks.ts` |
-| [wlans](./unifi.md#wlans) | list, toggle, password | `src/providers/unifi/commands/networks.ts` |
+| [wlans](./unifi.md#wlans) | list, get, set, toggle, password | `src/providers/unifi/commands/networks.ts` |
 | [firewall](./unifi.md#firewall) | list, groups | `src/providers/unifi/commands/networks.ts` |
 | [routes](./unifi.md#routes) | list | `src/providers/unifi/commands/networks.ts` |
 | [portforwards](./unifi.md#portforwards) | list, toggle | `src/providers/unifi/commands/portforwards.ts` |
@@ -187,7 +188,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [tickets](./wrike.md#tickets) | list, stats, active, mine, get, audit, search, create, set-custom-field, set-due, assign, update-title, update-importance, update-status, update-description, add-comment, update-comment, delete-comment, narrative, attachments, download, attach | `src/providers/wrike/commands/tickets.ts` |
+| [tickets](./wrike.md#tickets) | list, stats, active, mine, get, audit, search, create, set-custom-field, set-due, assign, unassign, update-title, update-importance, update-status, update-description, add-comment, update-comment, delete-comment, narrative, attachments, download, attach | `src/providers/wrike/commands/tickets.ts` |
 | [tasks](./wrike.md#tasks) | list, search, get, create, set-due, update-title, update-importance, update-status, update-description, add-comment, attach, delete | `src/providers/wrike/commands/tasks.ts` |
 | [projects](./wrike.md#projects) | list, search, tasks | `src/providers/wrike/commands/tasks.ts` |
 | [contacts](./wrike.md#contacts) | list, search, find, get | `src/providers/wrike/commands/contacts.ts` |
@@ -229,8 +230,8 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [groups](./exo.md#groups) | list, get, members, create, delete, add-member, remove-member | `src/providers/exo/commands/groups.ts` |
 | [mailboxes](./exo.md#mailboxes) | list, get, stats, message-config, create, permissions, add-permission, remove-permission, forwarding, inbox-rules, remove-inbox-rule, user-access, add-alias, remove-alias, set-primary, set-forwarding, clear-forwarding, set-type, set-visibility, delete, archive | `src/providers/exo/commands/mailboxes.ts` |
-| [rules](./exo.md#rules) | list, get, audit, disable, enable | `src/providers/exo/commands/rules.ts` |
-| [transport-rules](./exo.md#transport-rules) | list, get, disable, enable | `src/providers/exo/commands/rules.ts` |
+| [rules](./exo.md#rules) | list, get, audit, create, disable, enable | `src/providers/exo/commands/rules.ts` |
+| [transport-rules](./exo.md#transport-rules) | list, get, create, disable, enable | `src/providers/exo/commands/rules.ts` |
 | [domains](./exo.md#domains) | list | `src/providers/exo/commands/domains.ts` |
 | [dkim](./exo.md#dkim) | list, get, rotate, enable, disable | `src/providers/exo/commands/dkim.ts` |
 | [trace](./exo.md#trace) | list, detail, historical, historical-status | `src/providers/exo/commands/trace.ts` |
@@ -253,7 +254,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [devices](./intune.md#devices) | list, get, search, sync, primary-user, set-primary-user, noncompliant, recovery-keys, rotate-bitlocker, wipe, retire, rename | `src/providers/intune/commands/devices.ts` |
 | [compliance](./intune.md#compliance) | why | `src/providers/intune/commands/compliance.ts` |
 | [apps](./intune.md#apps) | list, get, required, assign | `src/providers/intune/commands/apps.ts` |
-| [win32-apps](./intune.md#win32-apps) | list | `src/providers/intune/commands/apps.ts` |
+| [win32-apps](./intune.md#win32-apps) | list, upload | `src/providers/intune/commands/apps.ts` |
 | [scripts](./intune.md#scripts) | list, get, status | `src/providers/intune/commands/scripts.ts` |
 | [remediations](./intune.md#remediations) | list, get, status | `src/providers/intune/commands/remediations.ts` |
 | [policies](./intune.md#policies) | list, get, configs | `src/providers/intune/commands/policies.ts` |
@@ -280,6 +281,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [cameras](./protect.md#cameras) | list, get, stats, offline, snapshot | `src/providers/protect/commands/cameras.ts` |
 | [nvr](./protect.md#nvr) | list | `src/providers/protect/commands/nvr.ts` |
+| [retention](./protect.md#retention) | list, set | `src/providers/protect/commands/nvr.ts` |
 | [events](./protect.md#events) | list, thumbnail | `src/providers/protect/commands/events.ts` |
 | [footage](./protect.md#footage) | export | `src/providers/protect/commands/footage.ts` |
 | [dashboard](./protect.md#dashboard) | list | `src/providers/protect/commands/dashboard.ts` |
@@ -326,8 +328,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [org](./hr.md#org) | chain, reports, leadership | `src/providers/hr/commands.ts` |
 | [timesheets](./hr.md#timesheets) | get | `src/providers/hr/commands.ts` |
 | [lates](./hr.md#lates) | get | `src/providers/hr/commands.ts` |
-| [holidays](./hr.md#holidays) | get | `src/providers/hr/commands.ts` |
+| [holidays](./hr.md#holidays) | get, balance, team | `src/providers/hr/commands.ts` |
 | [otherleave](./hr.md#otherleave) | get | `src/providers/hr/commands.ts` |
+| [query](./hr.md#query) | list | `src/providers/hr/commands.ts` |
 | [employees](./hr.md#employees) | list, search, get | `src/providers/hr/commands.ts` |
 | [starters](./hr.md#starters) | list, recent | `src/providers/hr/commands.ts` |
 | [leavers](./hr.md#leavers) | list, recent | `src/providers/hr/commands.ts` |
@@ -409,7 +412,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [chats](./teams.md#chats) | list, messages, images, send, delete-message, edit-message, react, unreact | `src/providers/teams/commands/chats.ts` |
 | [presence](./teams.md#presence) | get | `src/providers/teams/commands/chats.ts` |
-| [teams](./teams.md#teams) | list, create | `src/providers/teams/commands/teams.ts` |
+| [teams](./teams.md#teams) | list, create, delete | `src/providers/teams/commands/teams.ts` |
 | [files](./teams.md#files) | list, download | `src/providers/teams/commands/files.ts` |
 
 ### [Yodeck](./yodeck.md)
@@ -618,8 +621,8 @@ its
 │   ├── roles
 │   │   ├── (list)
 │   │   ├── members <role>
-│   │   ├── assign <user_id>
-│   │   ├── remove <user_id>
+│   │   ├── assign <user>
+│   │   ├── remove <user>
 │   │   └── assignments
 │   ├── signin
 │   │   ├── (list)
@@ -705,6 +708,15 @@ its
 │   │   ├── export <appIds>
 │   │   └── audit
 │   ├── admin-bootstrap run <user_id>
+│   ├── pim
+│   │   ├── (list)
+│   │   ├── activate <role>
+│   │   ├── deactivate <role>
+│   │   ├── assign <user>
+│   │   ├── unassign <user>
+│   │   ├── eligible [user]
+│   │   ├── settings <role>
+│   │   └── set <role>
 │   ├── sync
 │   │   ├── status <app>
 │   │   ├── logs <app>
@@ -730,6 +742,7 @@ its
 │   │   ├── stop <applicationId>
 │   │   ├── start <applicationId>
 │   │   ├── restart <applicationId>
+│   │   ├── set-auto-deploy <app> <state>
 │   │   ├── set-source <app>
 │   │   ├── set-build <app>
 │   │   ├── rebuild <app>
@@ -1044,6 +1057,8 @@ its
 │   ├── networks (list)
 │   ├── wlans
 │   │   ├── (list)
+│   │   ├── get <wlan>
+│   │   ├── set <wlan_id>
 │   │   ├── toggle <wlan_id>
 │   │   └── password <wlan_id>
 │   ├── firewall
@@ -1082,6 +1097,7 @@ its
 │   │   ├── set-custom-field <taskId> <field> <value>
 │   │   ├── set-due <taskId> <dueDate>
 │   │   ├── assign <taskId> <userId>
+│   │   ├── unassign <taskId> <userId>
 │   │   ├── update-title <taskId> <title>
 │   │   ├── update-importance <taskId> <importance>
 │   │   ├── update-status <taskId> <status>
@@ -1216,11 +1232,13 @@ its
 │   │   ├── (list)
 │   │   ├── get <name>
 │   │   ├── audit
+│   │   ├── create <name>
 │   │   ├── disable <name>
 │   │   └── enable <name>
 │   ├── transport-rules
 │   │   ├── (list)
 │   │   ├── get <name>
+│   │   ├── create <name>
 │   │   ├── disable <name>
 │   │   └── enable <name>
 │   ├── domains (list)
@@ -1301,7 +1319,9 @@ its
 │   │   ├── get <id>
 │   │   ├── required
 │   │   └── assign <app>
-│   ├── win32-apps (list)
+│   ├── win32-apps
+│   │   ├── (list)
+│   │   └── upload <file>
 │   ├── scripts
 │   │   ├── (list)
 │   │   ├── get <id>
@@ -1374,6 +1394,9 @@ its
 │   │   ├── offline
 │   │   └── snapshot <camera_id>
 │   ├── nvr (list)
+│   ├── retention
+│   │   ├── (list)
+│   │   └── set
 │   ├── events
 │   │   ├── (list)
 │   │   └── thumbnail <event_id>
@@ -1467,8 +1490,12 @@ its
 │   │   └── leadership
 │   ├── timesheets get <employee>
 │   ├── lates get <employee>
-│   ├── holidays get <employee>
+│   ├── holidays
+│   │   ├── get <employee>
+│   │   ├── balance <employee>
+│   │   └── team [manager]
 │   ├── otherleave get <employee>
+│   ├── query (list) <name>
 │   ├── employees
 │   │   ├── (list)
 │   │   ├── search <query>
@@ -1622,7 +1649,8 @@ its
 │   ├── presence get
 │   ├── teams
 │   │   ├── (list)
-│   │   └── create <name>
+│   │   ├── create <name>
+│   │   └── delete <teamId>
 │   └── files
 │       ├── (list) <chat_id> <message_id>
 │       └── download <chat_id> <message_id> <attachment_id>
@@ -1655,7 +1683,7 @@ src/
 │   ├── clipboard.ts
 │   ├── command-metadata.ts
 │   ├── completions.ts
-│   ├── confirm-warn.ts
+│   ├── confirm-gate.ts
 │   ├── daily-art.ts
 │   ├── delegated-auth.ts
 │   ├── env-file.ts
@@ -1670,6 +1698,7 @@ src/
 │   ├── long-args.ts
 │   ├── office-text.ts
 │   ├── output.ts
+│   ├── pin-env.ts
 │   ├── pipeline.ts
 │   ├── planner.ts
 │   ├── poll.ts
@@ -1847,6 +1876,7 @@ src/
 │   │   │   ├── index.ts
 │   │   │   ├── licences.ts
 │   │   │   ├── onboarding.ts
+│   │   │   ├── pim.ts
 │   │   │   ├── roles.ts
 │   │   │   ├── security.ts
 │   │   │   ├── signin.ts
@@ -1863,6 +1893,10 @@ src/
 │   │   ├── definition.ts
 │   │   ├── licence-assignments.ts
 │   │   ├── odata.ts
+│   │   ├── pim-admin.ts
+│   │   ├── pim-policy.ts
+│   │   ├── pim.ts
+│   │   ├── resolve.ts
 │   │   ├── sku-names.ts
 │   │   ├── sync-health.ts
 │   │   └── types.ts
@@ -1890,6 +1924,7 @@ src/
 │   │   ├── resolve.ts
 │   │   ├── room-scripts.ts
 │   │   ├── rooms-assess.ts
+│   │   ├── transport-rule-scripts.ts
 │   │   └── types.ts
 │   ├── gh/
 │   │   ├── commands/
@@ -1904,6 +1939,7 @@ src/
 │   │   ├── drift.ts
 │   │   ├── leave.ts
 │   │   ├── org.ts
+│   │   ├── query.ts
 │   │   ├── resolve.ts
 │   │   ├── sync.ts
 │   │   ├── timesheet.ts
@@ -1931,7 +1967,8 @@ src/
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── resolve.ts
-│   │   └── types.ts
+│   │   ├── types.ts
+│   │   └── win32-upload.ts
 │   ├── m365health/
 │   │   ├── commands/
 │   │   │   ├── health.ts

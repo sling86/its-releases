@@ -214,7 +214,7 @@ Move a message to another folder.
 **Examples:**
 
 ```bash
-its outlook mail move AAMkAGI1AAAt0M0AAA= AQMkAGI1Archive --user jane.smith@example.com
+its outlook mail move AAMkAGI1AAAt0M0AAA= AQMkAGI1Archive --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook mail copy <message_id> <folder_id>`
@@ -230,7 +230,7 @@ Copy a message to another folder.
 **Examples:**
 
 ```bash
-its outlook mail copy AAMkAGI1AAAt0M0AAA= AQMkAGI1Archive --user jane.smith@example.com
+its outlook mail copy AAMkAGI1AAAt0M0AAA= AQMkAGI1Archive --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook mail read <message_id>`
@@ -246,7 +246,7 @@ Mark a message as read.
 **Examples:**
 
 ```bash
-its outlook mail read AAMkAGI1AAAt0M0AAA= --user jane.smith@example.com
+its outlook mail read AAMkAGI1AAAt0M0AAA= --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook mail unread <message_id>`
@@ -262,7 +262,7 @@ Mark a message as unread.
 **Examples:**
 
 ```bash
-its outlook mail unread AAMkAGI1AAAt0M0AAA= --user jane.smith@example.com
+its outlook mail unread AAMkAGI1AAAt0M0AAA= --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook mail flag <message_id>`
@@ -279,9 +279,9 @@ Set follow-up flag status on a message.
 **Examples:**
 
 ```bash
-its outlook mail flag AAMkAGI1AAAt0M0AAA= --status flagged --user jane.smith@example.com
+its outlook mail flag AAMkAGI1AAAt0M0AAA= --status flagged --user jane.smith@example.com --confirm
 
-its outlook mail flag AAMkAGI1AAAt0M0AAA= --status complete --user jane.smith@example.com
+its outlook mail flag AAMkAGI1AAAt0M0AAA= --status complete --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook mail categorise <message_id> <categories>`
@@ -298,7 +298,7 @@ Set the category list on a message (replaces existing categories).
 
 ```bash
 # Replaces the existing category list rather than appending
-its outlook mail categorise AAMkAGI1AAAt0M0AAA= "IT,Follow up" --user jane.smith@example.com
+its outlook mail categorise AAMkAGI1AAAt0M0AAA= "IT,Follow up" --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook mail delete [message_id]`
@@ -346,11 +346,11 @@ Create a draft instead of sending. Nothing leaves the mailbox until `its outlook
 **Examples:**
 
 ```bash
-its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --body "Looking into it now."
+its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --body "Looking into it now." --confirm
 
-its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --all --body "Adding IT."
+its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --all --body "Adding IT." --confirm
 
-its outlook mail draft --to jane@example.com --subject "Kit request" --body "Details to follow."
+its outlook mail draft --to jane@example.com --subject "Kit request" --body "Details to follow." --confirm
 ```
 
 #### `its outlook mail send`
@@ -376,11 +376,11 @@ Send a new email directly (no draft step). Saves a copy in Sent Items. To review
 **Examples:**
 
 ```bash
-its outlook mail send --to user@example.com --subject "Hi" --body "Quick note"
+its outlook mail send --to user@example.com --subject "Hi" --body "Quick note" --confirm
 
-its outlook mail send --to user@example.com --subject "Report" --html --body-file report.html
+its outlook mail send --to user@example.com --subject "Report" --html --body-file report.html --confirm
 
-its outlook mail send --to user@example.com --subject "Welcome" --html --body-file welcome.html --attach "logo.png:cid:logo-1"
+its outlook mail send --to user@example.com --subject "Welcome" --html --body-file welcome.html --attach "logo.png:cid:logo-1" --confirm
 ```
 
 ---
@@ -423,9 +423,9 @@ Create a draft email (does not send).
 **Examples:**
 
 ```bash
-its outlook drafts create --to jane.smith@example.com --subject "Laptop ready" --body "Come and collect when convenient." --user jane.smith@example.com
+its outlook drafts create --to jane.smith@example.com --subject "Laptop ready" --body "Come and collect when convenient." --user jane.smith@example.com --confirm
 
-its outlook drafts create --to jane.smith@example.com --subject "Change notice" --body-file ./notice.html --html --user jane.smith@example.com
+its outlook drafts create --to jane.smith@example.com --subject "Change notice" --body-file ./notice.html --html --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook drafts reply <message_id>`
@@ -448,9 +448,9 @@ Create a reply draft. By default replies to the sender only; use --all to Reply-
 **Examples:**
 
 ```bash
-its outlook drafts reply AAMkAGI1AAAt0M0AAA= --comment "On it now." --user jane.smith@example.com
+its outlook drafts reply AAMkAGI1AAAt0M0AAA= --comment "On it now." --user jane.smith@example.com --confirm
 
-its outlook drafts reply AAMkAGI1AAAt0M0AAA= --all --comment "Adding IT." --user jane.smith@example.com
+its outlook drafts reply AAMkAGI1AAAt0M0AAA= --all --comment "Adding IT." --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook drafts forward <message_id>`
@@ -470,7 +470,7 @@ Create a forward draft.
 **Examples:**
 
 ```bash
-its outlook drafts forward AAMkAGI1AAAt0M0AAA= --to jane.smith@example.com --comment "FYI" --user jane.smith@example.com
+its outlook drafts forward AAMkAGI1AAAt0M0AAA= --to jane.smith@example.com --comment "FYI" --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook drafts update <draft_id>`
@@ -497,9 +497,9 @@ Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories. --
 **Examples:**
 
 ```bash
-its outlook drafts update AAMkAGDraft01 --subject "Revised: laptop ready" --user jane.smith@example.com
+its outlook drafts update AAMkAGDraft01 --subject "Revised: laptop ready" --user jane.smith@example.com --confirm
 
-its outlook drafts update AAMkAGDraft01 --body-file reply.html --html --keep-quote
+its outlook drafts update AAMkAGDraft01 --body-file reply.html --html --keep-quote --confirm
 ```
 
 #### `its outlook drafts send <draft_id>`
@@ -516,7 +516,7 @@ Send an existing draft.
 
 ```bash
 # Sends an existing draft — compose first with `drafts create`
-its outlook drafts send AAMkAGDraft01 --user jane.smith@example.com
+its outlook drafts send AAMkAGDraft01 --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook drafts`
@@ -608,9 +608,9 @@ Create a new mail folder (optionally nested under a parent).
 **Examples:**
 
 ```bash
-its outlook folders create "IT Archive" --user jane.smith@example.com
+its outlook folders create "IT Archive" --user jane.smith@example.com --confirm
 
-its outlook folders create "2026" --parent "IT Archive" --user jane.smith@example.com
+its outlook folders create "2026" --parent "IT Archive" --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook folders delete <folder>`
@@ -717,7 +717,7 @@ Attach a file to a draft message. Pass --file <path> to read from disk, or --con
 
 ```bash
 # Pair with body HTML containing `<img src="cid:logo-1">`
-its outlook attachments add <draft_id> --file logo.png --content-type image/png --is-inline --content-id logo-1
+its outlook attachments add <draft_id> --file logo.png --content-type image/png --is-inline --content-id logo-1 --confirm
 ```
 
 #### `its outlook attachments delete <message_id> [attachment_id]`
@@ -817,9 +817,9 @@ Create a calendar event. Times default to UTC unless --tz is set.
 **Examples:**
 
 ```bash
-its outlook events create --subject "IT catch-up" --start 2026-09-01T10:00 --end 2026-09-01T10:30 --tz Europe/London --attendees jane.smith@example.com --online --user jane.smith@example.com
+its outlook events create --subject "IT catch-up" --start 2026-09-01T10:00 --end 2026-09-01T10:30 --tz Europe/London --attendees jane.smith@example.com --online --user jane.smith@example.com --confirm
 
-its outlook events create --subject "Server migration" --start 2026-09-05 --all-day --user jane.smith@example.com
+its outlook events create --subject "Server migration" --start 2026-09-05 --all-day --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook events update <event_id>`
@@ -846,7 +846,7 @@ Update a calendar event (subject, times, location, all-day, online-meeting).
 **Examples:**
 
 ```bash
-its outlook events update AAMkAGEvent01 --start 2026-09-01T11:00 --end 2026-09-01T11:30 --tz Europe/London --user jane.smith@example.com
+its outlook events update AAMkAGEvent01 --start 2026-09-01T11:00 --end 2026-09-01T11:30 --tz Europe/London --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook events delete <event_id>`
@@ -886,9 +886,9 @@ Respond to a meeting invite — accept, decline, or tentatively accept.
 **Examples:**
 
 ```bash
-its outlook events respond AAMkAGEvent01 accept --user jane.smith@example.com
+its outlook events respond AAMkAGEvent01 accept --user jane.smith@example.com --confirm
 
-its outlook events respond AAMkAGEvent01 decline --comment "On leave" --user jane.smith@example.com
+its outlook events respond AAMkAGEvent01 decline --comment "On leave" --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook events availability <schedules>`
@@ -979,9 +979,9 @@ Configure automatic reply. Use --status to toggle disabled/alwaysEnabled/schedul
 **Examples:**
 
 ```bash
-its outlook autoreply set --status disabled
+its outlook autoreply set --status disabled --confirm
 
-its outlook autoreply set --status scheduled --start 2026-05-25T09:00:00 --end 2026-05-30T17:00:00 --tz "GMT Standard Time" --internal "Out of office, back Mon." --external "Out of office."
+its outlook autoreply set --status scheduled --start 2026-05-25T09:00:00 --end 2026-05-30T17:00:00 --tz "GMT Standard Time" --internal "Out of office, back Mon." --external "Out of office." --confirm
 ```
 
 ---
@@ -1025,7 +1025,7 @@ Add a master category. The name is fixed once created — Graph cannot rename on
 **Examples:**
 
 ```bash
-its outlook categories create "Waiting on supplier" --colour blue
+its outlook categories create "Waiting on supplier" --colour blue --confirm
 ```
 
 #### `its outlook categories recolour <category>`
@@ -1042,7 +1042,7 @@ Change a master category's colour. Match by name or id.
 **Examples:**
 
 ```bash
-its outlook categories recolour "Waiting on supplier" --colour red
+its outlook categories recolour "Waiting on supplier" --colour red --confirm
 ```
 
 #### `its outlook categories delete <category>`
@@ -1108,7 +1108,7 @@ Create an inbox rule. Conditions + actions take raw JSON (Graph schema). See htt
 
 ```bash
 # Conditions and actions take raw Graph JSON
-its outlook rules create --name "IT to folder" --conditions '{"senderContains":["helpdesk"]}' --actions '{"moveToFolder":"AQMkAGI1IT"}' --user jane.smith@example.com
+its outlook rules create --name "IT to folder" --conditions '{"senderContains":["helpdesk"]}' --actions '{"moveToFolder":"AQMkAGI1IT"}' --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook rules delete <rule_id>`

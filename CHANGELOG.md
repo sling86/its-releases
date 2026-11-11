@@ -15,6 +15,51 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.26.0] - 2026-11-11
+
+### Read this first
+
+- **BREAKING: `--confirm` is now a hard gate.** A mutating command run without `--confirm` (or `--dry-run`) is refused with exit 1 and nothing changes. Bare mutating calls in scripts, hooks and agents will break: add `--confirm`, or `--dry-run` to preview. `ITS_CONFIRM_GATE=warn` restores warn-and-run for one release. Details under Changed.
+- **Behaviour change: `exo` and `bc` now run as the signed-in person first**, and app-only (certificate / client secret) is opt-in via `ITS_APP_ONLY_FALLBACK=1` or `--auth app`. The sign-in app has `Exchange.Manage` and `Financials.ReadWrite.All` granted. Details under Added.
+- **Behaviour change: no silent app-only fallback** for `entra`, `intune`, `sp`, `pa`, `m365health` and `outlook` (with `OUTLOOK_DELEGATED=1`): not signed in now means a stop with `run its auth login`. Details under Changed.
+
+### Added
+
+- `entra pim assign <user> --role <name|id> --reason <text> [--days <n> | --permanent]`: make a user **eligible** for a directory role (they switch it on with `pim activate`). No end date unless `--days` is given. `pim unassign` takes the eligibility away. `pim eligible [<user>]` lists who is eligible for what and when it ends. Delegated only; writes need `--confirm` (or `--dry-run` to preview).
+- `entra pim settings <role>` shows what it takes to switch a role on (longest time, MFA, justification, approval, alerts) in plain words. `entra pim set <role>` changes it: `--max-hours`, `--mfa on|off`, `--justification on|off`, `--approver <upn,...>` or `--no-approval`, `--notify <email,...|none>`. Only the rules a flag touches are patched; `--dry-run` shows before and after for each, and a real run reads them back. Not yet tried against a live tenant.
+
+- `exo` and `bc` now run as the signed-in person first, like the other delegated-first providers. `exo` hands the delegated token to `Connect-ExchangeOnline -AccessToken` through the child process environment only (never argv, script text or logs), so it needs just `TENANT_ID` and `EXO_ORGANIZATION`, no certificate. `bc` tries a delegated token before app-only and needs just `TENANT_ID`. Certificate and client-secret access is now the opt-in fallback: `ITS_APP_ONLY_FALLBACK=1` or `--auth app`; with it off and no sign-in they stop and say to sign in. **The sign-in app needs two delegated permissions: `Exchange.Manage` (Office 365 Exchange Online) and `Financials.ReadWrite.All` (Dynamics 365 Business Central).** Both are now granted tenant-wide on the its-cli sign-in app (2026-11-11), so `exo` and `bc` run as the signed-in person on its-cli with no further setup. BC applies the person's own permission sets, so delegated BC writes carry their rights (the `--env`/`--confirm` guards still apply), and someone who is not a BC user in that environment gets a 401 with a line saying so.
+- A 401 or 403 from Business Central on a signed-in call now ends with "Your signed-in account may not be set up as a Business Central user (or lacks permission sets) in this environment. An admin adds it on the BC Users page." The original error is untouched; app-only calls don't get the line.
+- `auth doctor` probes Business Central like the other resources (it used to say "app-only by design") and now also checks Exchange Online.
+- `its auth login --client-id <guid>`: sign a profile in through a different app (e.g. `its-cli-admin`). The ID is saved in that profile's token file and every refresh uses it; old token files keep working on the default app. `auth status` and `auth doctor` show the app per profile.
+- `entra pim list|activate|deactivate`: switch your own directory roles on and off (PIM). `activate <role> --hours <1-8, default 4> --reason <text>`, `deactivate <role>`. Delegated only; both writes need `--confirm`.
+- A 403 from Graph on a signed-in call now ends with "Your account doesn't have the role for this. Run `its entra pim list` to see roles you can switch on." The original error text is untouched; app-only calls don't get the line.
+- `auth doctor` lists the PIM roles you hold and could switch on (for the profile `entra` runs as), plus whether `ITS_APP_ONLY_FALLBACK` is on. If the PIM call fails it says why in one line and carries on.
+- `exo transport-rules create <name>` (also `exo rules create`): makes a mail-flow rule with `New-TransportRule`. Conditions `--from`, `--from-domain`, `--sent-to`, `--subject-contains`, `--from-scope`; actions `--prepend-subject`, `--redirect-to`, `--reject`, `--set-scl`, `--add-header`. Needs one of each. Created **disabled** and in **Audit** mode unless you pass `--enable` / `--mode Enforce`. Refuses an existing name. Previews the exact cmdlet without `--confirm`; reads the rule back and exits 1 if anything differs.
+- `intune win32-apps upload <file.intunewin> --name … --install-cmd … --uninstall-cmd … --detect-msi|--detect-file`: creates a Win32 app from a packaged `.intunewin` (create, upload to Azure in 6 MB blocks, commit, set the content version), then reads it back and reports `verified`. Previews without `--confirm`. Does not assign. A failure after the app is created names its id so it can be deleted. Needs `DeviceManagementApps.ReadWrite.All`.
+- `wrike tickets unassign <ticket> <userId>`: removes an assignee (for leavers still on tickets). Without `--confirm` it previews and changes nothing. With it, removes, reads the ticket back and reports `verified`. Says so and does nothing if the user was not assigned. Not exempt from the `--confirm` gate, unlike `assign`.
+- `ITS_PIN_ENV=KEY1,KEY2`: a caller pins env vars so `~/.its/.env`, `.env.local` files and the keychain cannot overwrite them. A pinned key set to an empty string stays empty. A file cannot set `ITS_PIN_ENV` itself.
+- `teams teams delete <teamId>`: deletes a team (its Microsoft 365 group). Needs a GUID. Without `--confirm` it previews and names the team. Reads back until the team is gone. Restorable for 30 days.
+- `hr holidays balance <employee> [--year]`: allowance, taken, booked, pending and left. Read-only.
+- `hr holidays team [manager]`: each direct report's pending and booked holiday, plus working days when two or more are off. Read-only; approve in PeopleHR.
+- `unifi wlans get <wlan>`: Wi-Fi radio settings — minimum data rate per band, 802.11r, BSS transition, DTIM, U-APSD. Band steering is per AP, so it shows on `devices get`.
+- `unifi wlans set <wlan> [--min-rate-2g|--min-rate-5g <kbps>] [--fast-roaming on|off] [--bss-transition on|off] [--dtim-2g|--dtim-5g n]`: previews without `--confirm`, rejects rates the controller does not offer, reads back and reports `verified`. Applying re-provisions the APs and drops Wi-Fi clients briefly.
+- `unifi devices get` on an AP: per-radio band, channel, width, tx power, utilisation, clients, tx retries, plus `band_steering`.
+- `protect retention`: how long the NVR keeps recordings (one NVR-wide setting, no per-camera override) plus storage used and free. Read-only.
+- `protect retention set --days <n>`: previews without `--confirm`, then reads the NVR back (`verified`). Lowering it deletes older footage, so it is refused unless `--allow-shorter` is also given; the preview says how many days would go.
+
+### Fixed
+
+- `entra roles assign` and `roles remove` now take what their help says: a UPN or email for the user and a role's display name (a GUID still works for both). They used to send the typed text to Graph as IDs, which Graph rejected. An unknown or ambiguous role lists the close matches. `--dry-run` looks the IDs up and shows them in the preview.
+- `entra users update` now reads the user back after the write and reports each field as `verified` or not (it used to print what it sent). A field Graph ignores sets exit code 1 and is named in the summary; it waits up to 15s for Entra to catch up first. `--set onPremisesExtensionAttributes.extensionAttributeN=x` is now mapped to the short form `extensionAttributeN=x`, which Graph accepts.
+
+### Changed
+
+- **Behaviour change: no more silent app-only fallback.** `entra`, `intune`, `sp`, `pa`, `m365health` and `outlook` (only when `OUTLOOK_DELEGATED=1`) used to carry on as the app, using `CLIENT_SECRET`, when you were not signed in. They now stop with `not signed in … run \`its auth login\`` unless `ITS_APP_ONLY_FALLBACK=1` is set or you pass `--auth app` for that call. **A machine that should keep running as the app needs `ITS_APP_ONLY_FALLBACK=1` in `~/.its/.env`** to keep working as before. `bc`, `exo`, `rmm` and the other app-only-by-design providers are unchanged.
+- `hr holidays get` now shows pending requests as well as approved (`--status pending|approved|all`) and looks 180 days ahead by default.
+- Every `hr` command that takes an employee now accepts a unique part of a name or email. More than one match lists the candidates' ids and names.
+- **BREAKING: `--confirm` is now a hard gate.** A command that changes state and is run without `--confirm` (or `--dry-run`) is refused: exit 1, nothing changed, one line on stderr naming the command. This breaks bare mutating calls in scripts, hooks and agents. Add `--confirm` to each, or `--dry-run` to preview. Commands that declare their own `--confirm` (they preview without it) and the exempt Wrike writes (`wrike tickets|tasks add-comment`, `update-status`, `set-due`, `tickets update-comment`, `tickets assign`) and the local-only session commands (`bw session unlock|lock|serve`, `bw compat install|uninstall`, `wrike auth login|logout`, `rmm terminal login|logout`) are unchanged. `--stdin` batches are refused before the first row is read. To get the old warn-and-run behaviour back for one release, set `ITS_CONFIRM_GATE=warn`; `ITS_NO_CONFIRM_WARN=1` then silences the warning but does not lift the gate on its own. Every mutating example in the docs and help UI now carries `--confirm`.
+
 ## [0.25.0] - 2026-10-19
 
 ### Added

@@ -40,12 +40,14 @@ its exo setup --reset   # Re-run setup (overwrite config)
 | Variable | Description |
 |----------|-------------|
 | `TENANT_ID` | Microsoft Entra tenant ID (same as Entra provider) |
-| `EXO_APP_ID` | App registration with `Exchange.ManageAsApp` permission |
+| `EXO_APP_ID` | App-only fallback only: app registration with `Exchange.ManageAsApp` permission |
 | `EXO_CERT_THUMBPRINT` | SHA1 thumbprint of the certificate in the Windows cert store |
 | `EXO_CERTIFICATE_PATH` | Path to a PEM certificate containing its private key (POSIX) |
 | `EXO_ORGANIZATION` | Exchange Online organisation (e.g. `contoso.onmicrosoft.com`) |
 
-Requires **PowerShell 7** (`pwsh`) and the **ExchangeOnlineManagement** module. Auth uses a self-signed certificate uploaded to a dedicated Entra app registration with `Exchange.ManageAsApp` permission. Run `its exo setup` to check prerequisites and install the module.
+Requires **PowerShell 7** (`pwsh`) and the **ExchangeOnlineManagement** module. Runs as **you**: sign in with `its auth login` and the delegated token goes to `Connect-ExchangeOnline -AccessToken` through the child process environment (never argv), so Exchange RBAC follows your own roles. Only `TENANT_ID` and `EXO_ORGANIZATION` are needed. The sign-in app needs the delegated `Exchange.Manage` permission (Office 365 Exchange Online). Run `its exo setup` to check prerequisites and install the module.
+
+**App-only fallback (opt-in).** With no usable sign-in the client stops with an error. Set `ITS_APP_ONLY_FALLBACK=1`, or pass `--auth app` for one call, to use a self-signed certificate on a dedicated Entra app registration with `Exchange.ManageAsApp` permission instead.
 
 On Windows, the certificate lives in the current user's cert store (`Cert:\CurrentUser\My`) and is selected by `EXO_CERT_THUMBPRINT`. That parameter does not exist off Windows, so on Linux and macOS set `EXO_CERTIFICATE_PFX` (plus `EXO_CERTIFICATE_PASSWORD` if the .pfx has one), or `EXO_CERTIFICATE_PATH` for a PEM — adding `EXO_CERTIFICATE_KEY_PATH` when the private key sits in its own file.
 
@@ -62,6 +64,7 @@ On Windows, the certificate lives in the current user's cert store (`Cert:\Curre
 | `src/providers/exo/resolve.ts` | resolve |
 | `src/providers/exo/room-scripts.ts` | room scripts |
 | `src/providers/exo/rooms-assess.ts` | rooms assess |
+| `src/providers/exo/transport-rule-scripts.ts` | transport rule scripts |
 
 ## Resources
 
@@ -127,9 +130,12 @@ Create a new distribution group. Idempotent on duplicate names — use update/ed
 **Examples:**
 
 ```bash
-its exo groups create "All Finance" --alias all-finance --managed-by jane.smith@example.com
+its exo groups create "All Finance" --alias all-finance --managed-by jane.smith@example.com --confirm
 
-its exo groups create "Marketing Team" --type distribution --alias marketing
+its exo groups create "Marketing Team" --type distribution --alias marketing --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its exo groups create "Marketing Team" --type distribution --alias marketing --json --confirm
 ```
 
 #### `its exo groups delete <group>`
@@ -157,9 +163,12 @@ Add a member to a distribution group. Idempotent — already-a-member is a no-op
 **Examples:**
 
 ```bash
-its exo groups add-member "All Finance" jane.smith@example.com
+its exo groups add-member "All Finance" jane.smith@example.com --confirm
 
-its exo groups add-member "All Staff" jane.smith@example.com
+its exo groups add-member "All Staff" jane.smith@example.com --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its exo groups add-member "All Staff" jane.smith@example.com --json --confirm
 ```
 
 #### `its exo groups remove-member <group> <member>`
@@ -198,7 +207,7 @@ its exo groups remove-member "All Staff" jane.smith@example.com
 | `its exo mailboxes remove-permission <mailbox> <user>` | Remove mailbox access from a user. Revoke a permission. --confirm required. |
 | `its exo mailboxes forwarding <mailbox>` | Show forwarding configuration for a mailbox. Audit pass — find mailboxes with forwarding configured. |
 | `its exo mailboxes inbox-rules <mailbox>` | List server-side inbox rules for one mailbox, including forwarding, redirect and delete actions. |
-| `its exo mailboxes remove-inbox-rule <mailbox> <rule>` | Delete one exact server-side inbox rule from a mailbox. Refuses ambiguous names and verifies removal. --confirm required. |
+| `its exo mailboxes remove-inbox-rule <mailbox> <rule>` | Delete one exact server-side inbox rule from a mailbox. Refuses ambiguous names and verifies removal. --confirm required; --dry-run looks the rule up and shows it without removing anything. Microsoft documents that Remove-InboxRule also removes client-side Outlook rules on the mailbox; those can't be listed here, so can't be backed up from this output. |
 | `its exo mailboxes user-access <user>` | What a user can get into: shared mailboxes they have FullAccess to (scans every shared mailbox — can take up to 5 minutes) and every recipient they can SendAs (quick, filtered server-side). --rights narrows to one. |
 | `its exo mailboxes add-alias <mailbox> <address>` | Add ONE secondary SMTP address to a mailbox, keeping every existing address (Set-Mailbox -EmailAddresses @{add=...}). Unlike `entra users update --set proxyAddresses`, nothing else is touched. Cloud-only mailboxes; synced ones are changed on-prem. |
 | `its exo mailboxes remove-alias <mailbox> <address>` | Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address. If Exchange says the address is used as WindowsLiveId, it is also the sign-in name: run `its entra users update <id> --set userPrincipalName=<onmicrosoft address>` first, wait about 20 seconds, then remove-alias (the UPN change also makes that address primary). |
@@ -267,9 +276,12 @@ Create a shared mailbox. Idempotent on duplicate names — use update/edit to mu
 **Examples:**
 
 ```bash
-its exo mailboxes create "IT Helpdesk" helpdesk
+its exo mailboxes create "IT Helpdesk" helpdesk --confirm
 
-its exo mailboxes create "Support" support
+its exo mailboxes create "Support" support --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its exo mailboxes create "Support" support --json --confirm
 ```
 
 #### `its exo mailboxes permissions <mailbox>`
@@ -295,9 +307,12 @@ Grant mailbox access to a user. Grant a new permission. Idempotent.
 **Examples:**
 
 ```bash
-its exo mailboxes add-permission helpdesk jane.smith@example.com --rights FullAccess
+its exo mailboxes add-permission helpdesk jane.smith@example.com --rights FullAccess --confirm
 
-its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess
+its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess --json --confirm
 ```
 
 #### `its exo mailboxes remove-permission <mailbox> <user>`
@@ -339,13 +354,14 @@ its exo mailboxes inbox-rules <mailbox>
 
 #### `its exo mailboxes remove-inbox-rule <mailbox> <rule>`
 
-Delete one exact server-side inbox rule from a mailbox. Refuses ambiguous names and verifies removal. --confirm required.
+Delete one exact server-side inbox rule from a mailbox. Refuses ambiguous names and verifies removal. --confirm required; --dry-run looks the rule up and shows it without removing anything. Microsoft documents that Remove-InboxRule also removes client-side Outlook rules on the mailbox; those can't be listed here, so can't be backed up from this output.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--confirm` | `` | Confirm permanent deletion of the inbox rule | — |
+| `--confirm` | `` | Confirm permanent deletion of the inbox rule. Per Microsoft, this also removes client-side Outlook rules on the mailbox (not listed or backed up here) | — |
+| `--dry-run` | `` | Look up and show the rule that would be removed; removes nothing | — |
 
 **Examples:**
 
@@ -377,7 +393,7 @@ Add ONE secondary SMTP address to a mailbox, keeping every existing address (Set
 **Examples:**
 
 ```bash
-its exo mailboxes add-alias jo@example.com jo.bloggs@example.com
+its exo mailboxes add-alias jo@example.com jo.bloggs@example.com --confirm
 ```
 
 #### `its exo mailboxes remove-alias <mailbox> <address>`
@@ -387,7 +403,7 @@ Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the 
 **Examples:**
 
 ```bash
-its exo mailboxes remove-alias jo@example.com jo.bloggs@example.com
+its exo mailboxes remove-alias jo@example.com jo.bloggs@example.com --confirm
 ```
 
 #### `its exo mailboxes set-primary <mailbox> <address>`
@@ -403,9 +419,9 @@ Make an address the PRIMARY SMTP address of a mailbox. The old primary stays as 
 **Examples:**
 
 ```bash
-its exo mailboxes set-primary jo@example.com jo@example.onmicrosoft.com
+its exo mailboxes set-primary jo@example.com jo@example.onmicrosoft.com --confirm
 
-its exo mailboxes set-primary jo@example.com jo@example.onmicrosoft.com --remove-old
+its exo mailboxes set-primary jo@example.com jo@example.onmicrosoft.com --remove-old --confirm
 ```
 
 #### `its exo mailboxes set-forwarding <mailbox> <target>`
@@ -475,9 +491,9 @@ Hide or show a mailbox in the global address list (GAL). Pass exactly one of --h
 **Examples:**
 
 ```bash
-its exo mailboxes set-visibility helpdesk --hide
+its exo mailboxes set-visibility helpdesk --hide --confirm
 
-its exo mailboxes set-visibility helpdesk --show
+its exo mailboxes set-visibility helpdesk --show --confirm
 ```
 
 #### `its exo mailboxes delete <mailbox>`
@@ -504,7 +520,7 @@ Archive status, quota, size and auto-expanding setting for one mailbox (read-onl
 **Examples:**
 
 ```bash
-its exo mailboxes archive jo@example.com
+its exo mailboxes archive jo@example.com --confirm
 ```
 
 ---
@@ -518,6 +534,7 @@ its exo mailboxes archive jo@example.com
 | `its exo rules` | List mail flow (transport) rules. Surfaces the most common fields; pass --json for raw shape. |
 | `its exo rules get <name>` | Get one transport rule's full condition/action shape (Get-TransportRule). Flags mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo) if present. |
 | `its exo rules audit` | Audit every transport rule for mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo, AddToRecipients, CopyTo). A silent redirect/blind-copy to an external address is a classic data-exfiltration tripwire — review every flagged rule. |
+| `its exo rules create <name>` | Create a transport rule (New-TransportRule). Needs at least one condition and one action. Created DISABLED and in Audit mode unless you pass --enable / --mode. Preview without --confirm shows the exact cmdlet; reads the rule back after. |
 | `its exo rules disable <name>` | Disable a transport rule (Disable-TransportRule) — remediate a flagged mail-exfiltration rule. Reversible with `rules enable`. Changes org mail flow — use --confirm. |
 | `its exo rules enable <name>` | Enable a transport rule (Enable-TransportRule). Reversible with `rules disable`. Changes org mail flow — use --confirm. |
 
@@ -552,6 +569,37 @@ Audit every transport rule for mail-exfiltration verbs (RedirectMessageTo, Blind
 
 ```bash
 its exo rules audit
+```
+
+#### `its exo rules create <name>`
+
+Create a transport rule (New-TransportRule). Needs at least one condition and one action. Created DISABLED and in Audit mode unless you pass --enable / --mode. Preview without --confirm shows the exact cmdlet; reads the rule back after.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--from` | `` | Condition: sender address(es), comma-separated | — |
+| `--from-domain` | `` | Condition: sender domain(s), comma-separated | — |
+| `--sent-to` | `` | Condition: recipient address(es), comma-separated | — |
+| `--subject-contains` | `` | Condition: subject contains any of these words, comma-separated | — |
+| `--from-scope` | `` | Condition: sender is inside or outside the organisation | — |
+| `--prepend-subject` | `` | Action: text put in front of the subject | — |
+| `--redirect-to` | `` | Action: send the message to this address instead | — |
+| `--reject` | `` | Action: reject the message with this reason text | — |
+| `--set-scl` | `` | Action: spam confidence level (-1 to 9) | — |
+| `--add-header` | `` | Action: add a header, as "Name:value" | — |
+| `--priority` | `` | Rule order (0-9999, lower runs first) | — |
+| `--mode` | `` | Enforce, Audit (default) or AuditAndNotify | — |
+| `--enable` | `` | Turn the rule on (default: created disabled) | — |
+| `--confirm` | `` | Required to create | — |
+
+**Examples:**
+
+```bash
+its exo rules create "Tag external" --from-scope NotInOrganization --prepend-subject "[EXTERNAL] " --confirm
+
+its exo rules create "Block spoof" --from-domain example.com --from-scope NotInOrganization --reject "Spoofed sender" --dry-run
 ```
 
 #### `its exo rules disable <name>`
@@ -596,6 +644,7 @@ its exo rules enable "Block external forward" --confirm
 |---------|-------------|
 | `its exo transport-rules` | List mail flow (transport) rules. Surfaces the most common fields; pass --json for raw shape. |
 | `its exo transport-rules get <name>` | Get one transport rule's full condition/action shape (Get-TransportRule). Flags mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo) if present. |
+| `its exo transport-rules create <name>` | Create a transport rule (New-TransportRule). Needs at least one condition and one action. Created DISABLED and in Audit mode unless you pass --enable / --mode. Preview without --confirm shows the exact cmdlet; reads the rule back after. |
 | `its exo transport-rules disable <name>` | Disable a transport rule (Disable-TransportRule) — remediate a flagged mail-exfiltration rule. Reversible with `rules enable`. Changes org mail flow — use --confirm. |
 | `its exo transport-rules enable <name>` | Enable a transport rule (Enable-TransportRule). Reversible with `rules disable`. Changes org mail flow — use --confirm. |
 
@@ -617,6 +666,37 @@ Get one transport rule's full condition/action shape (Get-TransportRule). Flags 
 
 ```bash
 its exo transport-rules get "External forward block"
+```
+
+#### `its exo transport-rules create <name>`
+
+Create a transport rule (New-TransportRule). Needs at least one condition and one action. Created DISABLED and in Audit mode unless you pass --enable / --mode. Preview without --confirm shows the exact cmdlet; reads the rule back after.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--from` | `` | Condition: sender address(es), comma-separated | — |
+| `--from-domain` | `` | Condition: sender domain(s), comma-separated | — |
+| `--sent-to` | `` | Condition: recipient address(es), comma-separated | — |
+| `--subject-contains` | `` | Condition: subject contains any of these words, comma-separated | — |
+| `--from-scope` | `` | Condition: sender is inside or outside the organisation | — |
+| `--prepend-subject` | `` | Action: text put in front of the subject | — |
+| `--redirect-to` | `` | Action: send the message to this address instead | — |
+| `--reject` | `` | Action: reject the message with this reason text | — |
+| `--set-scl` | `` | Action: spam confidence level (-1 to 9) | — |
+| `--add-header` | `` | Action: add a header, as "Name:value" | — |
+| `--priority` | `` | Rule order (0-9999, lower runs first) | — |
+| `--mode` | `` | Enforce, Audit (default) or AuditAndNotify | — |
+| `--enable` | `` | Turn the rule on (default: created disabled) | — |
+| `--confirm` | `` | Required to create | — |
+
+**Examples:**
+
+```bash
+its exo transport-rules create "Tag external" --from-scope NotInOrganization --prepend-subject "[EXTERNAL] " --confirm
+
+its exo transport-rules create "Block spoof" --from-domain example.com --from-scope NotInOrganization --reject "Spoofed sender" --dry-run
 ```
 
 #### `its exo transport-rules disable <name>`
@@ -823,7 +903,7 @@ Submit a historical message-trace search (Start-HistoricalSearch) for the 11–9
 
 ```bash
 # Asynchronous — results are emailed to --notify when the search completes
-its exo trace historical --sender jane.smith@example.com --days 30 --notify jane.smith@example.com
+its exo trace historical --sender jane.smith@example.com --days 30 --notify jane.smith@example.com --confirm
 ```
 
 #### `its exo trace historical-status <job-id>`
@@ -872,9 +952,12 @@ Enable out-of-office auto-reply. Switch to active state. Idempotent.
 **Examples:**
 
 ```bash
-its exo autoreply enable jane.smith@example.com --internal "On leave until Monday." --external "Away, please contact helpdesk@example.com." --start 2026-09-01 --end 2026-09-08
+its exo autoreply enable jane.smith@example.com --internal "On leave until Monday." --external "Away, please contact helpdesk@example.com." --start 2026-09-01 --end 2026-09-08 --confirm
 
-its exo autoreply enable jane.smith@example.com --internal "Out of office until Monday" --external "On leave — contact support@example.com"
+its exo autoreply enable jane.smith@example.com --internal "Out of office until Monday" --external "On leave — contact support@example.com" --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its exo autoreply enable jane.smith@example.com --internal "Out of office until Monday" --external "On leave — contact support@example.com" --json --confirm
 ```
 
 #### `its exo autoreply disable <mailbox>`
@@ -884,7 +967,10 @@ Disable out-of-office auto-reply. Switch to inactive state. Idempotent.
 **Examples:**
 
 ```bash
-its exo autoreply disable jane.smith@example.com
+its exo autoreply disable jane.smith@example.com --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its exo autoreply disable jane.smith@example.com --json --confirm
 ```
 
 ---
@@ -927,9 +1013,12 @@ Grant Send-As permission. Idempotent — already-granted delegates are skipped.
 **Examples:**
 
 ```bash
-its exo recipients add-send-as helpdesk jane.smith@example.com
+its exo recipients add-send-as helpdesk jane.smith@example.com --confirm
 
-its exo recipients add-send-as shared@example.com jane.smith@example.com
+its exo recipients add-send-as shared@example.com jane.smith@example.com --confirm
+
+# Pipe-friendly output — use with jq / scripts.
+its exo recipients add-send-as shared@example.com jane.smith@example.com --json --confirm
 ```
 
 #### `its exo recipients remove-send-as <identity> <trustee>`
@@ -1085,9 +1174,9 @@ Grant or change CALENDAR-only access to a mailbox. Use this rather than `mailbox
 **Examples:**
 
 ```bash
-its exo rooms set-calendar-permission Chi-1-Upstairs-Meeting-Room@example.com jane.smith@example.com --role Editor
+its exo rooms set-calendar-permission Chi-1-Upstairs-Meeting-Room@example.com jane.smith@example.com --role Editor --confirm
 
-its exo rooms set-calendar-permission Chi-1-Upstairs-Meeting-Room@example.com jane.smith@example.com --role Reviewer
+its exo rooms set-calendar-permission Chi-1-Upstairs-Meeting-Room@example.com jane.smith@example.com --role Reviewer --confirm
 ```
 
 #### `its exo rooms create <name>`

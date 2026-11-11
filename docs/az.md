@@ -89,9 +89,9 @@ Switch active subscription. Single-value write; idempotent on no-op.
 **Examples:**
 
 ```bash
-its az account set "Production"
+its az account set "Production" --confirm
 
-its az account set <sub-id>
+its az account set <sub-id> --confirm
 ```
 
 ---

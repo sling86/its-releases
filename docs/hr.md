@@ -15,6 +15,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [lates](#lates)
 - [holidays](#holidays)
 - [otherleave](#otherleave)
+- [query](#query)
 - [employees](#employees)
 - [starters](#starters)
 - [leavers](#leavers)
@@ -47,6 +48,7 @@ its hr setup --reset   # Re-run setup (overwrite config)
 | `src/providers/hr/drift.ts` | drift |
 | `src/providers/hr/leave.ts` | leave |
 | `src/providers/hr/org.ts` | org |
+| `src/providers/hr/query.ts` | query |
 | `src/providers/hr/resolve.ts` | resolve |
 | `src/providers/hr/sync.ts` | sync |
 | `src/providers/hr/timesheet.ts` | timesheet |
@@ -165,7 +167,7 @@ Rank a manager's direct reports or a department by Bradford factor for one year.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--manager` | `` | Manager email, EmployeeId, or exact full name | — |
+| `--manager` | `` | Manager email, EmployeeId, full name, or a unique part of a name or email | — |
 | `--department` | `` | Exact department name | — |
 | `--year` | `` | Calendar year; defaults to current year | — |
 
@@ -282,21 +284,58 @@ its hr lates get <employee>
 
 | Command | Description |
 |---------|-------------|
-| `its hr holidays get <employee>` | Get one employee's booked holiday. Read-only. Cancelled, declined and rejected requests are not counted as time off. |
+| `its hr holidays get <employee>` | Get one employee's holiday, pending and approved by default (--status to filter), from 30 days ago to 180 days ahead. Read-only. Cancelled, declined and rejected requests are not counted as time off. |
+| `its hr holidays balance <employee>` | One employee's holiday balance for a year: allowance, taken, booked (approved, not yet taken), pending, and what is left. Read-only. The allowance is the figure on the employee record; carry-over and bought leave are only in it if PeopleHR has put them there. |
+| `its hr holidays team [manager]` | A manager's direct reports: pending and booked holiday in a window, and the working days when two or more are off. Holiday only (no sickness or other leave). Read-only: approve in PeopleHR. One API call per person, about two seconds each. |
 
 #### `its hr holidays get <employee>`
 
-Get one employee's booked holiday. Read-only. Cancelled, declined and rejected requests are not counted as time off.
+Get one employee's holiday, pending and approved by default (--status to filter), from 30 days ago to 180 days ahead. Read-only. Cancelled, declined and rejected requests are not counted as time off.
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--from` | `` | Start date (YYYY-MM-DD); defaults to 30 days ago | — |
-| `--to` | `` | End date (YYYY-MM-DD); defaults to today | — |
+| `--to` | `` | End date (YYYY-MM-DD); defaults to 180 days ahead | — |
+| `--status` | `` | Which requests to show; default is approved and pending, all adds rejected | — |
 
 ```bash
 its hr holidays get <employee>
+```
+
+#### `its hr holidays balance <employee>`
+
+One employee's holiday balance for a year: allowance, taken, booked (approved, not yet taken), pending, and what is left. Read-only. The allowance is the figure on the employee record; carry-over and bought leave are only in it if PeopleHR has put them there.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--year` | `` | Calendar year; defaults to this year | — |
+
+**Examples:**
+
+```bash
+its hr holidays balance smith
+```
+
+#### `its hr holidays team [manager]`
+
+A manager's direct reports: pending and booked holiday in a window, and the working days when two or more are off. Holiday only (no sickness or other leave). Read-only: approve in PeopleHR. One API call per person, about two seconds each.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--manager` | `` | Same as the argument | — |
+| `--from` | `` | Start date (YYYY-MM-DD); defaults to today | — |
+| `--to` | `` | End date (YYYY-MM-DD); defaults to 90 days ahead | — |
+
+**Examples:**
+
+```bash
+its hr holidays team
 ```
 
 ---
@@ -322,6 +361,27 @@ Get one employee's non-sickness authorised absence — unpaid leave, parental, c
 
 ```bash
 its hr otherleave get <employee>
+```
+
+---
+
+### query
+
+> Source: `src/providers/hr/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its hr query <name>` | Run a saved PeopleHR Query Builder query by its exact name and return its rows. Read-only. Columns are whatever the query defines. |
+
+#### `its hr query <name>`
+
+Run a saved PeopleHR Query Builder query by its exact name and return its rows. Read-only. Columns are whatever the query defines.
+
+**Examples:**
+
+```bash
+# Run the saved attendance query
+its hr query "Attendance Export"
 ```
 
 ---
