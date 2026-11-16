@@ -60,6 +60,7 @@ its dokploy setup --reset   # Re-run setup (overwrite config)
 | `src/providers/dokploy/created-id.ts` | created id |
 | `src/providers/dokploy/db-sql.ts` | db sql |
 | `src/providers/dokploy/definition.ts` | definition |
+| `src/providers/dokploy/deploy-logs.ts` | deploy logs |
 | `src/providers/dokploy/deploy-wait.ts` | deploy wait |
 | `src/providers/dokploy/github-resolve.ts` | github resolve |
 | `src/providers/dokploy/resolve.ts` | resolve |
@@ -1031,6 +1032,7 @@ its dokploy databases delete <db-id> --confirm
 | Command | Description |
 |---------|-------------|
 | `its dokploy deployments <applicationId>` | List deployments for an application. Surfaces the most common fields; pass --json for raw shape. |
+| `its dokploy deployments logs <deploymentId>` | Show the build log of one deployment by ID (read over SSH from the logPath on the deployment record). Default last 100 lines. |
 | `its dokploy deployments queue` | Show pending/active deployments across the whole Dokploy server (not scoped to one app). Useful when a deploy seems stuck — empty queue means the worker is idle. |
 | `its dokploy deployments kill <deploymentId>` | Kill an in-flight deployment by ID (sends SIGTERM to the build process) |
 
@@ -1046,6 +1048,23 @@ its dokploy deployments <app-id>
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its dokploy deployments <app-id> --watch
+```
+
+#### `its dokploy deployments logs <deploymentId>`
+
+Show the build log of one deployment by ID (read over SSH from the logPath on the deployment record). Default last 100 lines.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--tail` | `` | Lines from the end of the log (default 100) | — |
+
+**Examples:**
+
+```bash
+# Reads the deployment's build log from the Dokploy host over SSH. Get the id from `deployments list <app>`
+its dokploy deployments logs dep_8f1c2d3e --tail 200
 ```
 
 #### `its dokploy deployments queue`

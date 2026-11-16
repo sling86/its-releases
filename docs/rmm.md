@@ -1858,11 +1858,65 @@ its rmm terminal logout
 
 | Command | Description |
 |---------|-------------|
+| `its rmm printers set-default <agent> <printer>` | Set the default printer. It is a per-user setting, so this runs in the logged-on user's session (not SYSTEM) and fails if nobody is logged on. Reads the default back as that user. Without --confirm, previews. |
+| `its rmm printers set-driver <agent> <printer> <driver>` | Change a printer's driver. The driver must already be installed (see `printers drivers`). Reads the printer back. Without --confirm, previews. |
+| `its rmm printers set-port <agent> <printer> <port>` | Change a printer's port. An IPv4 address creates a TCP/IP port for it first if there isn't one (--tcp-port to change from 9100); anything else must be an existing port name. Reads the printer back. Without --confirm, previews. |
 | `its rmm printers <agent>` | Printers on an agent: driver, port, shared, status, default, and how many jobs are queued. --jobs lists the queued documents too. |
 | `its rmm printers clear-queue <agent>` | Delete queued print jobs on an agent — one printer (--printer) or --all. --restart-spooler also stops the spooler, clears its spool folder and starts it again (the fix for a job that won't delete). Without --confirm, lists what would go. |
 | `its rmm printers drivers <agent>` | Printer drivers installed on an agent. Use a Name from here as --driver for `printers add`. |
 | `its rmm printers add <agent>` | Add a printer to an agent. --port as an IPv4 address creates a TCP/IP port of that name first (Add-PrinterPort); anything else must be an existing port name. The driver must already be installed (see `printers drivers`). Reads the printer back with Get-Printer. Without --confirm, previews. |
 | `its rmm printers remove <agent> <name>` | Remove a printer from an agent by exact name (the port and driver stay). Reads back with Get-Printer. Without --confirm, previews. |
+
+#### `its rmm printers set-default <agent> <printer>`
+
+Set the default printer. It is a per-user setting, so this runs in the logged-on user's session (not SYSTEM) and fails if nobody is logged on. Reads the default back as that user. Without --confirm, previews.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Make the change | — |
+
+**Examples:**
+
+```bash
+its rmm printers set-default WKS-9 "Front Office" --confirm
+```
+
+#### `its rmm printers set-driver <agent> <printer> <driver>`
+
+Change a printer's driver. The driver must already be installed (see `printers drivers`). Reads the printer back. Without --confirm, previews.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Make the change | — |
+
+**Examples:**
+
+```bash
+its rmm printers set-driver WKS-9 "Front Office" "HP Universal Printing PCL 6" --confirm
+```
+
+#### `its rmm printers set-port <agent> <printer> <port>`
+
+Change a printer's port. An IPv4 address creates a TCP/IP port for it first if there isn't one (--tcp-port to change from 9100); anything else must be an existing port name. Reads the printer back. Without --confirm, previews.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--tcp-port` | `` | TCP port for a new IP port (default 9100) | — |
+| `--confirm` | `` | Make the change | — |
+
+**Examples:**
+
+```bash
+its rmm printers set-port WKS-9 "Front Office" 10.0.4.51 --confirm
+
+its rmm printers set-port WKS-9 "Zebra ZD420" USB001 --confirm
+```
 
 #### `its rmm printers <agent>`
 

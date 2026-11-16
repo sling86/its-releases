@@ -15,6 +15,21 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.29.0] - 2026-11-16
+
+### Added
+- Add mailbox archive enable and retention-policy changes with preview/read-back, plus a site-wide UniFi AP radio stats table.
+- `its intune devices delete <device> [--confirm]`: delete the Intune record (exact target, preview first, 404 read-back). `its intune filters list|get`: assignment filters, read-only.
+- `its entra authmethods mfa-state|set-mfa-state` (legacy per-user MFA, beta) and `authmethods sspr` (SSPR registration status).
+- `its bc users create` now says plainly why it can't be done (no API; users come from Entra; default company has no write API).
+- `its protect users|viewports|liveviews|backups list` (read-only, `--site all` works): console users with role and invite state, Viewports with the saved view each shows (a missing view is flagged), saved views with their camera names, and the controller's own config backups. Fills the KB's Protect gaps.
+- `its backups report [--max-age-hours N]`: one row per backup its can read (Dokploy database backups, each Protect controller's config backup), flags stale, failed, switched-off and never-run ones, exits 1 if any, and lists the systems its cannot see (Proxmox, ms-backup, Wasabi, Bitwarden export). Reads no sizes.
+- `its dokploy deployments logs <deploymentId> [--tail N]`: build log of one deployment, read over SSH from the logPath on its record (read-only). `deployments list` now shows the deployment id. Closes #25.
+- `its rmm printers set-default|set-driver|set-port`: change a printer's default (runs as the logged-on user), driver or port. Preview without `--confirm`, read back after the write. `set-port` takes an IPv4 (adds the TCP/IP port) or an existing port name, `--tcp-port` for non-9100.
+
+### Security
+- `--dry-run` previews no longer print secrets: `content`, `certificate`, `env` values, long base64 blobs, secret-named body fields and secret query params in the URL are masked. `--include-secrets` still shows the raw request.
+
 ## [0.28.0] - 2026-11-16
 
 ### Added

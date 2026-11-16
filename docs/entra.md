@@ -1421,6 +1421,9 @@ its entra ca create-named-location "Chi office" --ip 203.0.113.0/24 --trusted --
 |---------|-------------|
 | `its entra authmethods user <user_id>` | List one user's registered authentication methods (Authenticator, FIDO2, phone, OATH, email, Windows Hello, TAP, password) with the ids `authmethods remove` takes. Always reads live. |
 | `its entra authmethods remove <user_id>` | Remove one of a user's authentication methods by id (from `authmethods user`). Shows what it would delete unless --confirm is given, then reads the list back. Needs UserAuthenticationMethod.ReadWrite.All: if the signed-in token lacks it (usual — admins get .Read.All) it retries once as the app, which holds it as an app role, and says so in `ranAs`. |
+| `its entra authmethods mfa-state <user_id>` | One user's legacy per-user MFA state (disabled, enabled or enforced) from beta /authentication/requirements, next to whether they have an MFA method registered. This is the old per-user MFA setting, not Conditional Access. Read-only; always live. |
+| `its entra authmethods set-mfa-state <user_id>` | Set a user's legacy per-user MFA state: disabled, enabled or enforced (beta, PATCH /authentication/requirements). Previews current → new unless --confirm, then reads back. Needs Policy.ReadWrite.AuthenticationMethod. Setting `enabled` on someone who already has an MFA method becomes `enforced` by itself — that counts as success. Don't set `enforced` for a user with no method registered: they get locked into registration at next sign-in. |
+| `its entra authmethods sspr <user_id>` | One user's self-service password reset (SSPR) status from Graph userRegistrationDetails: registered, enabled by policy, capable, plus MFA readiness and methods. The report can lag up to 36 hours. Needs AuditLog.Read.All. Read-only. |
 | `its entra authmethods report` | Tenant-wide report of which sign-in methods every user has registered (Graph userRegistrationDetails). Answers 'who can still be reached with a text or call?' and 'which admins have no phishing-resistant method (FIDO2, passkey, Windows Hello)?'. Needs AuditLog.Read.All. Read-only. |
 | `its entra authmethods policy` | Fetch the full Authentication Methods Policy — shows which methods (TAP, FIDO2, SMS, etc.) are enabled tenant-wide and any per-method targets |
 | `its entra authmethods get <method>` | Get a single authentication method configuration by id (TemporaryAccessPass, Fido2, Sms, MicrosoftAuthenticator, Email, Voice, X509Certificate, etc.) |
@@ -1455,6 +1458,45 @@ Remove one of a user's authentication methods by id (from `authmethods user`). S
 its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-...
 
 its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-... --confirm
+```
+
+#### `its entra authmethods mfa-state <user_id>`
+
+One user's legacy per-user MFA state (disabled, enabled or enforced) from beta /authentication/requirements, next to whether they have an MFA method registered. This is the old per-user MFA setting, not Conditional Access. Read-only; always live.
+
+**Examples:**
+
+```bash
+its entra authmethods mfa-state jane.smith@example.com
+```
+
+#### `its entra authmethods set-mfa-state <user_id>`
+
+Set a user's legacy per-user MFA state: disabled, enabled or enforced (beta, PATCH /authentication/requirements). Previews current → new unless --confirm, then reads back. Needs Policy.ReadWrite.AuthenticationMethod. Setting `enabled` on someone who already has an MFA method becomes `enforced` by itself — that counts as success. Don't set `enforced` for a user with no method registered: they get locked into registration at next sign-in.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--state` | `` | New state | — |
+| `--confirm` | `` | Apply the change (without it, only a preview) | — |
+
+**Examples:**
+
+```bash
+its entra authmethods set-mfa-state jane.smith@example.com --state disabled
+
+its entra authmethods set-mfa-state jane.smith@example.com --state disabled --confirm
+```
+
+#### `its entra authmethods sspr <user_id>`
+
+One user's self-service password reset (SSPR) status from Graph userRegistrationDetails: registered, enabled by policy, capable, plus MFA readiness and methods. The report can lag up to 36 hours. Needs AuditLog.Read.All. Read-only.
+
+**Examples:**
+
+```bash
+its entra authmethods sspr jane.smith@example.com
 ```
 
 #### `its entra authmethods report`

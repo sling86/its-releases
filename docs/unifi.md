@@ -9,6 +9,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 
 - [Setup](#setup)
 - [sites](#sites)
+- [aps](#aps)
 - [devices](#devices)
 - [clients](#clients)
 - [guests](#guests)
@@ -124,6 +125,31 @@ Controller version, uptime, and IP addresses. Returns the controller version + u
 
 ```bash
 its unifi sites sysinfo
+```
+
+---
+
+### aps
+
+> Source: `src/providers/unifi/commands/devices.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its unifi aps` | AP radio stats across a site: channel, transmit power, utilisation, clients, retries and satisfaction. One row per radio; unavailable stats stay unknown. |
+
+#### `its unifi aps`
+
+AP radio stats across a site: channel, transmit power, utilisation, clients, retries and satisfaction. One row per radio; unavailable stats stay unknown.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site code, ID or friendly name | — |
+| `--all-sites` | `` | Read every site | — |
+
+```bash
+its unifi aps
 ```
 
 ---

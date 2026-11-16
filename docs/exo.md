@@ -217,7 +217,9 @@ its exo groups remove-member "All Staff" jane.smith@example.com
 | `its exo mailboxes set-type <mailbox> <type>` | Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared. |
 | `its exo mailboxes set-visibility <mailbox>` | Hide or show a mailbox in the global address list (GAL). Pass exactly one of --hide / --show. |
 | `its exo mailboxes delete <mailbox>` | Delete a mailbox. For a UserMailbox this ALSO deletes the Entra user account (Remove-Mailbox removes both), soft-deleted for 30 days. This is not how THF offboards a leaver — that converts to shared and hides from the GAL. The intended use is an orphaned shared, room, or equipment mailbox. Requires --confirm, and a UserMailbox additionally requires --delete-account. |
-| `its exo mailboxes archive <mailbox>` | Archive status, quota, size and auto-expanding setting for one mailbox (read-only). |
+| `its exo mailboxes archive <mailbox-or-enable> [mailbox]` | Read archive status, quota, size and retention policy. Use archive enable <mailbox> to enable it; --auto-expanding also enables auto-expansion (cannot be turned off). Writes preview without --confirm and read back afterwards. |
+| `its exo mailboxes retention-policy <mailbox>` | Show the mailbox's assigned MRM retention policy (also shown by mailboxes archive). |
+| `its exo mailboxes set-retention-policy <mailbox> <policy>` | Assign an existing MRM retention policy. Previews without --confirm; reads back after the write. |
 
 #### `its exo mailboxes`
 
@@ -513,14 +515,47 @@ Delete a mailbox. For a UserMailbox this ALSO deletes the Entra user account (Re
 its exo mailboxes delete old-project@example.com --confirm
 ```
 
-#### `its exo mailboxes archive <mailbox>`
+#### `its exo mailboxes archive <mailbox-or-enable> [mailbox]`
 
-Archive status, quota, size and auto-expanding setting for one mailbox (read-only).
+Read archive status, quota, size and retention policy. Use archive enable <mailbox> to enable it; --auto-expanding also enables auto-expansion (cannot be turned off). Writes preview without --confirm and read back afterwards.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--auto-expanding` | `` | Also enable auto-expansion; cannot be turned off | — |
+| `--confirm` | `` | Apply the archive change | — |
 
 **Examples:**
 
 ```bash
-its exo mailboxes archive jo@example.com --confirm
+its exo mailboxes archive jo@example.com
+
+its exo mailboxes archive enable jo@example.com --confirm
+```
+
+#### `its exo mailboxes retention-policy <mailbox>`
+
+Show the mailbox's assigned MRM retention policy (also shown by mailboxes archive).
+
+```bash
+its exo mailboxes retention-policy <mailbox>
+```
+
+#### `its exo mailboxes set-retention-policy <mailbox> <policy>`
+
+Assign an existing MRM retention policy. Previews without --confirm; reads back after the write.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Apply the policy | — |
+
+**Examples:**
+
+```bash
+its exo mailboxes set-retention-policy jo@example.com "Default MRM Policy" --confirm
 ```
 
 ---

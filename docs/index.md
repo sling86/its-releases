@@ -10,24 +10,24 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|-------------|
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
-| [global.md](./global.md) | Global commands — 24 commands that take no provider |
-| [rmm.md](./rmm.md) | Tactical RMM — 89 commands across 21 resources |
-| [entra.md](./entra.md) | Entra ID — 135 commands across 24 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 125 commands across 25 resources |
+| [global.md](./global.md) | Global commands — 25 commands that take no provider |
+| [rmm.md](./rmm.md) | Tactical RMM — 92 commands across 21 resources |
+| [entra.md](./entra.md) | Entra ID — 138 commands across 24 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 126 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 72 commands across 17 resources |
 | [sp.md](./sp.md) | SharePoint — 58 commands across 12 resources |
-| [unifi.md](./unifi.md) | UniFi Network — 52 commands across 18 resources |
+| [unifi.md](./unifi.md) | UniFi Network — 53 commands across 19 resources |
 | [wrike.md](./wrike.md) | Wrike — 66 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 30 commands across 14 resources |
-| [exo.md](./exo.md) | Exchange Online — 86 commands across 18 resources |
-| [intune.md](./intune.md) | Intune — 68 commands across 23 resources |
-| [protect.md](./protect.md) | UniFi Protect — 12 commands across 6 resources |
+| [exo.md](./exo.md) | Exchange Online — 88 commands across 18 resources |
+| [intune.md](./intune.md) | Intune — 71 commands across 24 resources |
+| [protect.md](./protect.md) | UniFi Protect — 16 commands across 10 resources |
 | [pbi.md](./pbi.md) | Power BI — 30 commands across 9 resources |
 | [pa.md](./pa.md) | Power Platform — 13 commands across 4 resources |
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
 | [hr.md](./hr.md) | PeopleHR — 22 commands across 11 resources |
 | [attendance.md](./attendance.md) | Factory attendance — 5 commands across 5 resources |
-| [bc.md](./bc.md) | Business Central — 30 commands across 9 resources |
+| [bc.md](./bc.md) | Business Central — 31 commands across 9 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 6 commands across 2 resources |
@@ -37,7 +37,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [yodeck.md](./yodeck.md) | Yodeck — 3 commands across 2 resources |
 | [purview.md](./purview.md) | Purview — 2 commands across 2 resources |
 
-**25 providers** · **270 resources** · **1004 commands**
+**25 providers** · **276 resources** · **1022 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -61,7 +61,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [custom-fields](./rmm.md#custom-fields) | list, set | `src/providers/rmm/commands/custom-fields.ts` |
 | [accounts](./rmm.md#accounts) | roles, users, apikeys, provision | `src/providers/rmm/commands/accounts.ts` |
 | [terminal](./rmm.md#terminal) | list, login, status, logout | `src/providers/rmm/commands/terminal.ts` |
-| [printers](./rmm.md#printers) | list, clear-queue, drivers, add, remove | `src/providers/rmm/commands/printers.ts` |
+| [printers](./rmm.md#printers) | set-default, set-driver, set-port, list, clear-queue, drivers, add, remove | `src/providers/rmm/commands/printers.ts` |
 | [dell](./rmm.md#dell) | updates | `src/providers/rmm/commands/printers.ts` |
 | [firewall](./rmm.md#firewall) | list, add, remove | `src/providers/rmm/commands/firewall.ts` |
 
@@ -76,7 +76,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [signin](./entra.md#signin) | list, summary, explain, suspicious | `src/providers/entra/commands/signin.ts` |
 | [tap](./entra.md#tap) | create, list, revoke | `src/providers/entra/commands/tap.ts` |
 | [ca](./entra.md#ca) | list, enabled, get, patch, exclude-guests, create, delete, exclude-user, unexclude-user, why-blocked, report-only, named-locations, create-named-location | `src/providers/entra/commands/ca.ts` |
-| [authmethods](./entra.md#authmethods) | user, remove, report, policy, get, enable, disable, patch | `src/providers/entra/commands/auth-methods.ts` |
+| [authmethods](./entra.md#authmethods) | user, remove, mfa-state, set-mfa-state, sspr, report, policy, get, enable, disable, patch | `src/providers/entra/commands/auth-methods.ts` |
 | [consent](./entra.md#consent) | list, add-scope, remove-scope, app-roles, app-role-grant, app-role-revoke | `src/providers/entra/commands/consent.ts` |
 | [xtenant](./entra.md#xtenant) | default, trust-mfa, trust-device, partners, partner-add, partner-set | `src/providers/entra/commands/xtenant.ts` |
 | [audit](./entra.md#audit) | list | `src/providers/entra/commands/audit.ts` |
@@ -101,7 +101,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [projects](./dokploy.md#projects) | list, get, create, delete | `src/providers/dokploy/commands/projects.ts` |
 | [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-auto-deploy, set-registry, set-limits, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, env-runtime, apply-env, health, env-drift, doctor, bootstrap, cert-status, deploy-url | `src/providers/dokploy/commands/apps.ts` |
 | [databases](./dokploy.md#databases) | list, url, get, sql, create, deploy, stop, update, delete | `src/providers/dokploy/commands/databases.ts` |
-| [deployments](./dokploy.md#deployments) | list, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
+| [deployments](./dokploy.md#deployments) | list, logs, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
 | [domains](./dokploy.md#domains) | list, create, check, delete | `src/providers/dokploy/commands/domains.ts` |
 | [env](./dokploy.md#env) | list, push, set, unset, pull, copy, reveal | `src/providers/dokploy/commands/env.ts` |
 | [environments](./dokploy.md#environments) | list, env, push, pull, set | `src/providers/dokploy/commands/environments.ts` |
@@ -168,6 +168,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [sites](./unifi.md#sites) | list, health, sysinfo | `src/providers/unifi/commands/sites.ts` |
+| [aps](./unifi.md#aps) | list | `src/providers/unifi/commands/devices.ts` |
 | [devices](./unifi.md#devices) | list, get, ports, restart, locate, upgrade, provision, power-cycle, leds, poe | `src/providers/unifi/commands/devices.ts` |
 | [clients](./unifi.md#clients) | list, get, search, locate, inventory, set-alias, set-note, set-fixed-ip, block, unblock, reconnect, offline | `src/providers/unifi/commands/clients.ts` |
 | [guests](./unifi.md#guests) | authorise, unauthorise | `src/providers/unifi/commands/clients.ts` |
@@ -232,7 +233,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [groups](./exo.md#groups) | list, get, members, create, delete, add-member, remove-member | `src/providers/exo/commands/groups.ts` |
-| [mailboxes](./exo.md#mailboxes) | list, get, stats, message-config, create, permissions, add-permission, remove-permission, forwarding, inbox-rules, remove-inbox-rule, user-access, add-alias, remove-alias, set-primary, set-forwarding, clear-forwarding, set-type, set-visibility, delete, archive | `src/providers/exo/commands/mailboxes.ts` |
+| [mailboxes](./exo.md#mailboxes) | list, get, stats, message-config, create, permissions, add-permission, remove-permission, forwarding, inbox-rules, remove-inbox-rule, user-access, add-alias, remove-alias, set-primary, set-forwarding, clear-forwarding, set-type, set-visibility, delete, archive, retention-policy, set-retention-policy | `src/providers/exo/commands/mailboxes.ts` |
 | [rules](./exo.md#rules) | list, get, audit, create, disable, enable | `src/providers/exo/commands/rules.ts` |
 | [transport-rules](./exo.md#transport-rules) | list, get, create, disable, enable | `src/providers/exo/commands/rules.ts` |
 | [domains](./exo.md#domains) | list | `src/providers/exo/commands/domains.ts` |
@@ -254,7 +255,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [devices](./intune.md#devices) | list, get, search, sync, primary-user, set-primary-user, noncompliant, recovery-keys, rotate-bitlocker, wipe, retire, rename | `src/providers/intune/commands/devices.ts` |
+| [devices](./intune.md#devices) | list, get, search, sync, primary-user, set-primary-user, noncompliant, recovery-keys, rotate-bitlocker, delete, wipe, retire, rename | `src/providers/intune/commands/devices.ts` |
 | [compliance](./intune.md#compliance) | why | `src/providers/intune/commands/compliance.ts` |
 | [apps](./intune.md#apps) | list, get, required, assign | `src/providers/intune/commands/apps.ts` |
 | [win32-apps](./intune.md#win32-apps) | list, upload | `src/providers/intune/commands/apps.ts` |
@@ -276,6 +277,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [app-configs](./intune.md#app-configs) | list, create, assign | `src/providers/intune/commands/manage.ts` |
 | [enrolment](./intune.md#enrolment) | restrictions, set-restriction | `src/providers/intune/commands/manage.ts` |
 | [update-rings](./intune.md#update-rings) | list, get, create, update, assign | `src/providers/intune/commands/update-rings.ts` |
+| [filters](./intune.md#filters) | list, get | `src/providers/intune/commands/filters.ts` |
 | [graph](./intune.md#graph) | get, post, patch, put, delete | — |
 
 ### [UniFi Protect](./protect.md)
@@ -288,6 +290,10 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [events](./protect.md#events) | list, thumbnail | `src/providers/protect/commands/events.ts` |
 | [footage](./protect.md#footage) | export | `src/providers/protect/commands/footage.ts` |
 | [dashboard](./protect.md#dashboard) | list | `src/providers/protect/commands/dashboard.ts` |
+| [users](./protect.md#users) | list | `src/providers/protect/commands/admin.ts` |
+| [liveviews](./protect.md#liveviews) | list | `src/providers/protect/commands/admin.ts` |
+| [viewports](./protect.md#viewports) | list | `src/providers/protect/commands/admin.ts` |
+| [backups](./protect.md#backups) | list | `src/providers/protect/commands/admin.ts` |
 
 ### [Power BI](./pbi.md)
 
@@ -358,7 +364,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [extensions](./bc.md#extensions) | list, get | `src/providers/bc/commands.ts` |
 | [query](./bc.md#query) | get | `src/providers/bc/commands.ts` |
 | [record](./bc.md#record) | get, create, update, delete, call | `src/providers/bc/commands.ts` |
-| [users](./bc.md#users) | list, get, permission-sets, update, add-permission, remove-permission | `src/providers/bc/commands.ts` |
+| [users](./bc.md#users) | list, get, permission-sets, create, update, add-permission, remove-permission | `src/providers/bc/commands.ts` |
 | [apps](./bc.md#apps) | list, updates, upload, scheduled, operations, install, uninstall, update | `src/providers/bc/commands.ts` |
 | [health](./bc.md#health) | get | `src/providers/bc/commands.ts` |
 
@@ -577,6 +583,9 @@ its
 │   │   ├── status
 │   │   └── logout
 │   ├── printers
+│   │   ├── set-default <agent> <printer>
+│   │   ├── set-driver <agent> <printer> <driver>
+│   │   ├── set-port <agent> <printer> <port>
 │   │   ├── (list) <agent>
 │   │   ├── clear-queue <agent>
 │   │   ├── drivers <agent>
@@ -664,6 +673,9 @@ its
 │   ├── authmethods
 │   │   ├── user <user_id>
 │   │   ├── remove <user_id>
+│   │   ├── mfa-state <user_id>
+│   │   ├── set-mfa-state <user_id>
+│   │   ├── sspr <user_id>
 │   │   ├── report
 │   │   ├── policy
 │   │   ├── get <method>
@@ -792,6 +804,7 @@ its
 │   │   └── delete <databaseId>
 │   ├── deployments
 │   │   ├── (list) <applicationId>
+│   │   ├── logs <deploymentId>
 │   │   ├── queue
 │   │   └── kill <deploymentId>
 │   ├── domains
@@ -1044,6 +1057,7 @@ its
 │   │   ├── (list)
 │   │   ├── health
 │   │   └── sysinfo
+│   ├── aps (list)
 │   ├── devices
 │   │   ├── (list)
 │   │   ├── get <mac>
@@ -1248,7 +1262,9 @@ its
 │   │   ├── set-type <mailbox> <type>
 │   │   ├── set-visibility <mailbox>
 │   │   ├── delete <mailbox>
-│   │   └── archive <mailbox>
+│   │   ├── archive <mailbox-or-enable> [mailbox]
+│   │   ├── retention-policy <mailbox>
+│   │   └── set-retention-policy <mailbox> <policy>
 │   ├── rules
 │   │   ├── (list)
 │   │   ├── get <name>
@@ -1331,6 +1347,7 @@ its
 │   │   ├── noncompliant
 │   │   ├── recovery-keys [device]
 │   │   ├── rotate-bitlocker <device>
+│   │   ├── delete <device>
 │   │   ├── wipe <device>
 │   │   ├── retire <device>
 │   │   └── rename <device> <new_name>
@@ -1401,6 +1418,9 @@ its
 │   │   ├── create <name>
 │   │   ├── update <ring>
 │   │   └── assign <ring>
+│   ├── filters
+│   │   ├── (list)
+│   │   └── get <filter>
 │   └── graph
 │       ├── get <path>
 │       ├── post <path>
@@ -1422,7 +1442,11 @@ its
 │   │   ├── (list)
 │   │   └── thumbnail <event_id>
 │   ├── footage export <camera>
-│   └── dashboard (list)
+│   ├── dashboard (list)
+│   ├── users (list)
+│   ├── liveviews (list)
+│   ├── viewports (list)
+│   └── backups (list)
 ├── pbi
 │   ├── workspaces
 │   │   ├── (list)
@@ -1557,6 +1581,7 @@ its
 │   │   ├── (list)
 │   │   ├── get <user>
 │   │   ├── permission-sets
+│   │   ├── create
 │   │   ├── update <user>
 │   │   ├── add-permission <user>
 │   │   └── remove-permission <user>
@@ -1710,6 +1735,7 @@ src/
 │   ├── auth-scopes.ts
 │   ├── auth.ts
 │   ├── az-broker.ts
+│   ├── backup-report.ts
 │   ├── cache.ts
 │   ├── client-assertion.ts
 │   ├── clipboard.ts
@@ -1747,6 +1773,7 @@ src/
 │   ├── typesafe.ts
 │   └── updates.ts
 ├── global/
+│   ├── backups.ts
 │   ├── error-text.ts
 │   ├── handlers.ts
 │   └── watch.ts
@@ -1886,6 +1913,7 @@ src/
 │   │   ├── created-id.ts
 │   │   ├── db-sql.ts
 │   │   ├── definition.ts
+│   │   ├── deploy-logs.ts
 │   │   ├── deploy-wait.ts
 │   │   ├── github-resolve.ts
 │   │   ├── resolve.ts
@@ -1992,6 +2020,7 @@ src/
 │   │   │   ├── devices.ts
 │   │   │   ├── doctor.ts
 │   │   │   ├── esp.ts
+│   │   │   ├── filters.ts
 │   │   │   ├── index.ts
 │   │   │   ├── lifecycle.ts
 │   │   │   ├── lookup.ts
@@ -2063,6 +2092,7 @@ src/
 │   │   └── types.ts
 │   ├── protect/
 │   │   ├── commands/
+│   │   │   ├── admin.ts
 │   │   │   ├── cameras.ts
 │   │   │   ├── dashboard.ts
 │   │   │   ├── events.ts

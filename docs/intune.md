@@ -30,6 +30,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [app-configs](#app-configs)
 - [enrolment](#enrolment)
 - [update-rings](#update-rings)
+- [filters](#filters)
 - [graph](#graph)
 
 ## Setup
@@ -82,6 +83,7 @@ Intune reuses the same Graph API credentials as the Entra provider — no additi
 | `its intune devices noncompliant` | List devices failing compliance. Returns devices failing compliance checks. |
 | `its intune devices recovery-keys [device]` | List escrowed BitLocker recovery keys — metadata only, never key material. Pass a device to see just its keys; omit it for the tenant-wide escrow list. Reading a key's value needs the delegated-only BitlockerKey.Read.All, which this app-only provider does not hold: use the Entra portal or Company Portal for the key itself. |
 | `its intune devices rotate-bitlocker <device>` | Rotate a device's BitLocker recovery key (requires --confirm). The device rotates at its next check-in and escrows the new key; anyone holding the printed or copied old key loses access at that point. Needs DeviceManagementManagedDevices.PrivilegedOperations.All. |
+| `its intune devices delete <device>` | Delete a device's record from Intune. Takes an EXACT device name, serial or id. Without --confirm, previews the name, serial, user and last sync and changes nothing; with it, deletes and reads back (a 404 proves it went). Does not wipe the device. |
 | `its intune devices wipe <device>` | Factory-reset a device. Everything on it is erased and it has to be re-enrolled — cannot be undone. Takes an EXACT device name, serial or id (never a user or partial name), and --confirm must repeat the device name. Without it, shows the target and does nothing. |
 | `its intune devices retire <device>` | Retire a device: company data, apps and management removed, personal data left. The device leaves Intune and must re-enrol to come back. EXACT device name, serial or id only, and --confirm must repeat the device name. |
 | `its intune devices rename <device> <new_name>` | Rename a managed device (Intune setDeviceName). Exact device name, serial or id only. Windows names are checked (1-15 chars, letters/digits/hyphens); the new name lands at the device's next check-in and needs a restart on Windows. |
@@ -213,6 +215,24 @@ its intune devices rotate-bitlocker THF-UD-MP27XZ31
 its intune devices rotate-bitlocker THF-UD-MP27XZ31 --confirm
 
 its intune devices rotate-bitlocker THF-UD-MP27XZ31 --confirm --wait --timeout 900
+```
+
+#### `its intune devices delete <device>`
+
+Delete a device's record from Intune. Takes an EXACT device name, serial or id. Without --confirm, previews the name, serial, user and last sync and changes nothing; with it, deletes and reads back (a 404 proves it went). Does not wipe the device.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Carry out the delete (without it, only a preview) | — |
+
+**Examples:**
+
+```bash
+its intune devices delete THF-UD-MP27XZ31
+
+its intune devices delete THF-UD-MP27XZ31 --confirm
 ```
 
 #### `its intune devices wipe <device>`
@@ -1342,6 +1362,37 @@ Add ONE group to an update ring (--exclude to exclude it). Additive: existing as
 its intune update-rings assign "Pilot ring" --group "Pilot PCs" --confirm
 
 its intune update-rings assign "Pilot ring" --group "Finance PCs" --exclude --confirm
+```
+
+---
+
+### filters
+
+> Source: `src/providers/intune/commands/filters.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its intune filters` | List Intune assignment filters (the include/exclude rules used on app and policy assignments): name, platform, rule. Beta Graph endpoint. Read-only. |
+| `its intune filters get <filter>` | Show one assignment filter by id or exact name, including its rule. Read-only. |
+
+#### `its intune filters`
+
+List Intune assignment filters (the include/exclude rules used on app and policy assignments): name, platform, rule. Beta Graph endpoint. Read-only.
+
+**Examples:**
+
+```bash
+its intune filters list
+```
+
+#### `its intune filters get <filter>`
+
+Show one assignment filter by id or exact name, including its rule. Read-only.
+
+**Examples:**
+
+```bash
+its intune filters get "Windows - Autopilot"
 ```
 
 ---

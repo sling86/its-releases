@@ -14,6 +14,10 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [events](#events)
 - [footage](#footage)
 - [dashboard](#dashboard)
+- [users](#users)
+- [liveviews](#liveviews)
+- [viewports](#viewports)
+- [backups](#backups)
 
 ## Setup
 
@@ -336,6 +340,102 @@ its protect dashboard
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its protect dashboard --watch
+```
+
+---
+
+### users
+
+> Source: `src/providers/protect/commands/admin.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its protect users` | List the console's users: role, whether the invite was accepted, last sign-in. Read-only. Names and emails are as Protect holds them. |
+
+#### `its protect users`
+
+List the console's users: role, whether the invite was accepted, last sign-in. Read-only. Names and emails are as Protect holds them.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+
+```bash
+its protect users
+```
+
+---
+
+### liveviews
+
+> Source: `src/providers/protect/commands/admin.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its protect liveviews` | List saved views (liveviews) with the cameras each one shows. |
+
+#### `its protect liveviews`
+
+List saved views (liveviews) with the cameras each one shows.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+
+```bash
+its protect liveviews
+```
+
+---
+
+### viewports
+
+> Source: `src/providers/protect/commands/admin.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its protect viewports` | List Viewports (the TV boxes) with their state and which saved view each is set to. |
+
+#### `its protect viewports`
+
+List Viewports (the TV boxes) with their state and which saved view each is set to.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+
+```bash
+its protect viewports
+```
+
+---
+
+### backups
+
+> Source: `src/providers/protect/commands/admin.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its protect backups` | List the controller's own config backups (newest first) and whether automatic backups are on. This is Protect's backup, not ms-backup's protect-bootstrap.json copy, and not footage. |
+
+#### `its protect backups`
+
+List the controller's own config backups (newest first) and whether automatic backups are on. This is Protect's backup, not ms-backup's protect-bootstrap.json copy, and not footage.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+
+```bash
+its protect backups
 ```
 
 ---
