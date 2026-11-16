@@ -46,6 +46,7 @@ SharePoint can use dedicated credentials (`SP_CLIENT_ID`/`SP_CLIENT_SECRET`) or 
 | `src/providers/sp/client.ts` | API client methods |
 | `src/providers/sp/types.ts` | TypeScript interfaces |
 | `src/providers/sp/commands/` | Command definitions (split by resource) |
+| `src/providers/sp/copy.ts` | copy |
 | `src/providers/sp/definition.ts` | definition |
 | `src/providers/sp/find-group.ts` | find group |
 | `src/providers/sp/inheritance.ts` | inheritance |
@@ -405,6 +406,7 @@ its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm
 | `its sp files folder <siteId>` | Create a folder under a parent item. |
 | `its sp files delete <siteId>` | Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
 | `its sp files share <siteId>` | Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view\|edit, --scope organisation\|anonymous (anonymous may be tenant-blocked). --to a@x,b@y makes a specific-people link only they can open. |
+| `its sp files copy <siteId>` | Copy a file or folder, including across drives/sites. Preview without --confirm; wait for the background copy and return the new item. A timeout does not cancel the copy. Paths start with /; replace overwrites existing files (not folders). |
 | `its sp files move <siteId>` | Move or rename a file. Move an item between folders (reversible). |
 | `its sp files checkout <siteId>` | Check out a file for editing. Locks the item against concurrent edits. |
 | `its sp files checkin <siteId>` | Check in a file. Releases the lock after editing. |
@@ -530,6 +532,29 @@ its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEF
 
 # Creates a link anyone with the URL can open — audit these with `its sp permissions links <site> --filter scope=anonymous`
 its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope anonymous --confirm
+```
+
+#### `its sp files copy <siteId>`
+
+Copy a file or folder, including across drives/sites. Preview without --confirm; wait for the background copy and return the new item. A timeout does not cancel the copy. Paths start with /; replace overwrites existing files (not folders).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--drive` | `` | Source drive ID | — |
+| `--item` | `` | Source item ID | — |
+| `--to-drive` | `` | Target drive ID (default source drive) | — |
+| `--to-folder` | `` | Target folder ID or /path (default source parent, or root in another drive) | — |
+| `--name` | `` | New name (default source name) | — |
+| `--conflict` | `` | Name conflict behaviour | fail |
+| `--timeout` | `` | Maximum seconds to wait for the copy (does not cancel it) | 300 |
+| `--confirm` | `` | Run the copy | — |
+
+**Examples:**
+
+```bash
+its sp files copy <site> --drive <drive> --item <item> --to-drive <target-drive> --to-folder /Archive --name "Copy.docx" --confirm
 ```
 
 #### `its sp files move <siteId>`

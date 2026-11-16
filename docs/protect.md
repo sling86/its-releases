@@ -75,7 +75,7 @@ List all Protect cameras with status. Surfaces the most common fields; pass --js
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -94,7 +94,7 @@ Get camera details. Pass the id (or any natural identifier) as the positional ar
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -111,7 +111,7 @@ Storage, recording and health for EVERY camera from one login and one download: 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
 | `--problems` | `` | Only cameras with a problem | — |
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -127,7 +127,7 @@ List disconnected/offline cameras — those whose state is not CONNECTED.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -145,7 +145,7 @@ Get the full-resolution snapshot URL for a camera (authenticated endpoint). Pass
 |------|-------|-------------|---------|
 | `--width` | `` | Snapshot width in px | 1920 |
 | `--height` | `` | Snapshot height in px | 1080 |
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect cameras snapshot <camera_id>
@@ -169,7 +169,7 @@ Show NVR status, storage, and capacity. Surfaces the most common fields; pass --
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -200,7 +200,7 @@ Show how long the NVR keeps recordings (one NVR-wide setting; Protect has no per
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -219,7 +219,7 @@ Set how many days the NVR keeps recordings. Previews without --confirm. Lowering
 | `--days` | `` | Days to keep recordings (whole number, 1-3650) | — |
 | `--confirm` | `` | Apply the change | — |
 | `--allow-shorter` | `` | Allow a lower value — footage older than the new limit is deleted | — |
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -256,7 +256,7 @@ List Protect events (motion, smart detections). Surfaces the most common fields;
 | `--smart` | `` | Smart-detection labels, filtered client-side (the NVR ignores the query param) | — |
 | `--all` | `` | Page through the whole window — the fix for silently truncated busy sites | — |
 | `--limit` | `` | Maximum events to return (default 30, ignored with --all) | 30 |
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -279,7 +279,7 @@ Download the historical still for an event. Identifiable imagery — --output is
 |------|-------|-------------|---------|
 | `--output` | `` | File to write the JPEG to | — |
 | `--width` | `` | Thumbnail width in px | 640 |
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect events thumbnail <event_id>
@@ -307,7 +307,7 @@ Export MP4 footage for one camera over an exact window. Identifiable footage —
 | `--end` | `` | Window end (default: now) | — |
 | `--minutes` | `` | Window length from --start when --end is omitted | — |
 | `--output` | `` | File to write the MP4 to | — |
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect footage export <camera>
@@ -331,7 +331,7 @@ Protect overview — NVR, cameras, storage, recent motion. Surfaces the most com
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 **Examples:**
 
@@ -360,7 +360,7 @@ List the console's users: role, whether the invite was accepted, last sign-in. R
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect users
@@ -384,7 +384,7 @@ List saved views (liveviews) with the cameras each one shows.
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect liveviews
@@ -408,7 +408,7 @@ List Viewports (the TV boxes) with their state and which saved view each is set 
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect viewports
@@ -432,7 +432,7 @@ List the controller's own config backups (newest first) and whether automatic ba
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site | — |
+| `--site` | `` | Named Protect profile (UNIFI_PROTECT_*_<SITE>, case-insensitive), or `all` to fan out across every configured site | — |
 
 ```bash
 its protect backups

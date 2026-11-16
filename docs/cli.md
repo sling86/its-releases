@@ -43,10 +43,10 @@ its <provider> <resource> [action] [args] [--flags]
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
 | Tactical RMM | `rmm` | 92 commands, 21 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 138 commands, 24 resources | [entra.md](./entra.md) |
+| Entra ID | `entra` | 139 commands, 24 resources | [entra.md](./entra.md) |
 | Dokploy | `dokploy` | 126 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 72 commands, 17 resources | [bw.md](./bw.md) |
-| SharePoint | `sp` | 58 commands, 12 resources | [sp.md](./sp.md) |
+| SharePoint | `sp` | 59 commands, 12 resources | [sp.md](./sp.md) |
 | UniFi Network | `unifi` | 53 commands, 19 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 66 commands, 17 resources | [wrike.md](./wrike.md) |
 | Azure CLI | `az` | 30 commands, 14 resources | [az.md](./az.md) |
@@ -62,9 +62,9 @@ its <provider> <resource> [action] [args] [--flags]
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
 | GitHub | `gh` | 6 commands, 2 resources | [gh.md](./gh.md) |
-| Outlook | `outlook` | 51 commands, 12 resources | [outlook.md](./outlook.md) |
+| Outlook | `outlook` | 53 commands, 12 resources | [outlook.md](./outlook.md) |
 | Microsoft 365 Health | `m365` | 3 commands, 2 resources | [m365.md](./m365.md) |
-| Teams | `teams` | 20 commands, 6 resources | [teams.md](./teams.md) |
+| Teams | `teams` | 24 commands, 7 resources | [teams.md](./teams.md) |
 | Yodeck | `yodeck` | 3 commands, 2 resources | [yodeck.md](./yodeck.md) |
 | Purview | `purview` | 2 commands, 2 resources | [purview.md](./purview.md) |
 

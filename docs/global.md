@@ -336,13 +336,15 @@ Manage credentials in the OS keychain.
 
 ```bash
 its secrets [list]
+its secrets set <KEY> [--from-file <path> | --from-stdin] [--force-name]
+its secrets unset <KEY> --confirm [--force-name]
 its secrets migrate
 its secrets clear
-its secrets doctor
+its secrets doctor [--fix]
 its secrets audit-repos
 ```
 
-Secrets live in the OS-native credential store (Windows Credential Locker, macOS Keychain, Linux libsecret) and override any `.env` value. `list` shows which entries exist — never their values. `migrate` moves secrets out of `~/.its/.env` into the keychain. `clear` removes every entry. `doctor` is a read-only health check — it never writes, so it is safe on a box where the keyring itself is the problem. `audit-repos` scans local repositories for committed credentials.
+Secrets live in the OS-native credential store (Windows Credential Locker, macOS Keychain, Linux libsecret) and override any `.env` value. `list` shows which entries exist — never their values. `migrate` moves secrets out of `~/.its/.env` into the keychain. `clear` removes every entry. `set` reads a value from a hidden TTY prompt, a file or stdin (one trailing newline stripped), never argv; it prints the key name and a short SHA-256 fingerprint. Known secret names and their profile suffixes are accepted; custom names need `--force-name` and are stored but not loaded into the environment. `unset` requires `--confirm`. `doctor` reports entries missing from the account index; `--fix` adds them. Discovery bulk-reads the keyring like `list` and may hit keytar native failures on damaged entries; known unreadable entries stop discovery. Without `--fix`, doctor never writes. `audit-repos` scans local repositories for committed credentials.
 
 **Examples**
 

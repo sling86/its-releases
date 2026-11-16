@@ -12,10 +12,10 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [global.md](./global.md) | Global commands — 25 commands that take no provider |
 | [rmm.md](./rmm.md) | Tactical RMM — 92 commands across 21 resources |
-| [entra.md](./entra.md) | Entra ID — 138 commands across 24 resources |
+| [entra.md](./entra.md) | Entra ID — 139 commands across 24 resources |
 | [dokploy.md](./dokploy.md) | Dokploy — 126 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 72 commands across 17 resources |
-| [sp.md](./sp.md) | SharePoint — 58 commands across 12 resources |
+| [sp.md](./sp.md) | SharePoint — 59 commands across 12 resources |
 | [unifi.md](./unifi.md) | UniFi Network — 53 commands across 19 resources |
 | [wrike.md](./wrike.md) | Wrike — 66 commands across 17 resources |
 | [az.md](./az.md) | Azure CLI — 30 commands across 14 resources |
@@ -31,13 +31,13 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 6 commands across 2 resources |
-| [outlook.md](./outlook.md) | Outlook — 51 commands across 12 resources |
+| [outlook.md](./outlook.md) | Outlook — 53 commands across 12 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
-| [teams.md](./teams.md) | Teams — 20 commands across 6 resources |
+| [teams.md](./teams.md) | Teams — 24 commands across 7 resources |
 | [yodeck.md](./yodeck.md) | Yodeck — 3 commands across 2 resources |
 | [purview.md](./purview.md) | Purview — 2 commands across 2 resources |
 
-**25 providers** · **276 resources** · **1022 commands**
+**25 providers** · **277 resources** · **1030 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -88,7 +88,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [break-glass](./entra.md#break-glass) | audit | `src/providers/entra/commands/break-glass.ts` |
 | [whoami](./entra.md#whoami) | show | `src/providers/entra/commands/whoami.ts` |
 | [doctor](./entra.md#doctor) | list | `src/providers/entra/commands/doctor.ts` |
-| [apps](./entra.md#apps) | register, add-password, secrets, rotate, plan, apply, permissions, export, audit, usage | `src/providers/entra/commands/apps.ts` |
+| [apps](./entra.md#apps) | register, add-cert, add-password, secrets, rotate, plan, apply, permissions, export, audit, usage | `src/providers/entra/commands/apps.ts` |
 | [admin-bootstrap](./entra.md#admin-bootstrap) | run | `src/providers/entra/commands/admin-bootstrap.ts` |
 | [pim](./entra.md#pim) | list, activate, deactivate, assign, unassign, eligible, settings, set | `src/providers/entra/commands/pim.ts` |
 | [sync](./entra.md#sync) | status, logs, provision | `src/providers/entra/commands/sync.ts` |
@@ -153,7 +153,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [sites](./sp.md#sites) | list, get, search, root, subsites, structure, storage | `src/providers/sp/commands/sites.ts` |
 | [drives](./sp.md#drives) | list, root, folder, get, recent | `src/providers/sp/commands/drives.ts` |
 | [lists](./sp.md#lists) | list, get, columns, items, create-item, update-item, delete-item | `src/providers/sp/commands/lists.ts` |
-| [files](./sp.md#files) | download, upload, folder, delete, share, move, checkout, checkin, versions, restore | `src/providers/sp/commands/files.ts` |
+| [files](./sp.md#files) | download, upload, folder, delete, share, copy, move, checkout, checkin, versions, restore | `src/providers/sp/commands/files.ts` |
 | [search](./sp.md#search) | list | `src/providers/sp/commands/search.ts` |
 | [permissions](./sp.md#permissions) | find-group, roles, list, item, share, links, grant-app, remove, inheritance, break-inheritance, restore-inheritance | `src/providers/sp/commands/permissions.ts` |
 | [groups](./sp.md#groups) | list, members, add-member, remove-member | `src/providers/sp/commands/groups.ts` |
@@ -395,9 +395,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [mail](./outlook.md#mail) | list, get, export, headers, search, thread, move, copy, read, unread, flag, categorise, delete, draft, send | `src/providers/outlook/commands/mail.ts` |
+| [mail](./outlook.md#mail) | list, get, export, headers, search, thread, move, copy, read, unread, flag, categorise, delete, restore, draft, send | `src/providers/outlook/commands/mail.ts` |
 | [drafts](./outlook.md#drafts) | create, reply, forward, update, send, list, delete | `src/providers/outlook/commands/drafts.ts` |
-| [folders](./outlook.md#folders) | list, get, create, delete | `src/providers/outlook/commands/folders.ts` |
+| [folders](./outlook.md#folders) | list, get, create, rename, delete | `src/providers/outlook/commands/folders.ts` |
 | [attachments](./outlook.md#attachments) | list, extract, get, add, delete | `src/providers/outlook/commands/attachments.ts` |
 | [events](./outlook.md#events) | list, get, create, update, delete, respond, availability | `src/providers/outlook/commands/events.ts` |
 | [settings](./outlook.md#settings) | get | `src/providers/outlook/commands/settings.ts` |
@@ -419,8 +419,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [chats](./teams.md#chats) | list, messages, images, send, delete-message, edit-message, react, unreact | `src/providers/teams/commands/chats.ts` |
+| [chats](./teams.md#chats) | list, messages, images, send, delete-message, edit-message, react, unreact, create | `src/providers/teams/commands/chats.ts` |
 | [presence](./teams.md#presence) | get | `src/providers/teams/commands/chats.ts` |
+| [meetings](./teams.md#meetings) | list, transcripts, transcript | `src/providers/teams/commands/meetings.ts` |
 | [teams](./teams.md#teams) | list, create, delete | `src/providers/teams/commands/teams.ts` |
 | [channels](./teams.md#channels) | list, messages, replies, send, edit-message | `src/providers/teams/commands/channels.ts` |
 | [files](./teams.md#files) | list, download | `src/providers/teams/commands/files.ts` |
@@ -725,6 +726,7 @@ its
 │   ├── doctor (list)
 │   ├── apps
 │   │   ├── register <name>
+│   │   ├── add-cert <app>
 │   │   ├── add-password <app>
 │   │   ├── secrets
 │   │   ├── rotate <app>
@@ -1013,6 +1015,7 @@ its
 │   │   ├── folder <siteId>
 │   │   ├── delete <siteId>
 │   │   ├── share <siteId>
+│   │   ├── copy <siteId>
 │   │   ├── move <siteId>
 │   │   ├── checkout <siteId>
 │   │   ├── checkin <siteId>
@@ -1632,6 +1635,7 @@ its
 │   │   ├── flag <message_id>
 │   │   ├── categorise <message_id> <categories>
 │   │   ├── delete [message_id]
+│   │   ├── restore [message_id]
 │   │   ├── draft
 │   │   └── send
 │   ├── drafts
@@ -1646,6 +1650,7 @@ its
 │   │   ├── (list)
 │   │   ├── get <folder_id>
 │   │   ├── create <name>
+│   │   ├── rename <folder> <newName>
 │   │   └── delete <folder>
 │   ├── attachments
 │   │   ├── (list) <message_id>
@@ -1691,8 +1696,13 @@ its
 │   │   ├── delete-message <chat_id> <message_id>
 │   │   ├── edit-message <chat_id> <message_id>
 │   │   ├── react <chat_id> <message_id>
-│   │   └── unreact <chat_id> <message_id>
+│   │   ├── unreact <chat_id> <message_id>
+│   │   └── create
 │   ├── presence get
+│   ├── meetings
+│   │   ├── (list)
+│   │   ├── transcripts <meeting>
+│   │   └── transcript <meeting>
 │   ├── teams
 │   │   ├── (list)
 │   │   ├── create <name>
@@ -1763,6 +1773,7 @@ src/
 │   ├── ps-quote.ts
 │   ├── secret-sink.ts
 │   ├── secrets-audit.ts
+│   ├── secrets-command.ts
 │   ├── secrets.ts
 │   ├── session.ts
 │   ├── shell-dry-run.ts
@@ -1950,6 +1961,7 @@ src/
 │   │   │   ├── whoami.ts
 │   │   │   └── xtenant.ts
 │   │   ├── apps-audit.ts
+│   │   ├── apps-hardening.ts
 │   │   ├── apps-manifest.ts
 │   │   ├── apps-usage.ts
 │   │   ├── auth-methods-report.ts
@@ -2057,6 +2069,7 @@ src/
 │   │   │   └── triage.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── deleted-journal.ts
 │   │   ├── helpers.ts
 │   │   ├── quote.ts
 │   │   ├── signature.ts
@@ -2156,6 +2169,7 @@ src/
 │   │   │   ├── search.ts
 │   │   │   └── sites.ts
 │   │   ├── client.ts
+│   │   ├── copy.ts
 │   │   ├── definition.ts
 │   │   ├── find-group.ts
 │   │   ├── inheritance.ts
@@ -2164,15 +2178,19 @@ src/
 │   ├── teams/
 │   │   ├── commands/
 │   │   │   ├── channels.ts
+│   │   │   ├── chat-create.ts
 │   │   │   ├── chats.ts
 │   │   │   ├── files.ts
 │   │   │   ├── index.ts
+│   │   │   ├── meetings.ts
 │   │   │   ├── policies.ts
 │   │   │   └── teams.ts
+│   │   ├── chat-create.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── format.ts
 │   │   ├── policies.ts
+│   │   ├── transcripts.ts
 │   │   └── types.ts
 │   ├── unifi/
 │   │   ├── commands/

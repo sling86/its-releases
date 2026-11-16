@@ -53,6 +53,7 @@ its outlook setup --reset   # Re-run setup (overwrite config)
 | `src/providers/outlook/types.ts` | TypeScript interfaces |
 | `src/providers/outlook/commands/` | Command definitions (split by resource) |
 | `src/providers/outlook/definition.ts` | definition |
+| `src/providers/outlook/deleted-journal.ts` | deleted journal |
 | `src/providers/outlook/helpers.ts` | helpers |
 | `src/providers/outlook/quote.ts` | quote |
 | `src/providers/outlook/signature.ts` | signature |
@@ -77,7 +78,8 @@ its outlook setup --reset   # Re-run setup (overwrite config)
 | `its outlook mail unread <message_id>` | Mark a message as unread. |
 | `its outlook mail flag <message_id>` | Set follow-up flag status on a message. |
 | `its outlook mail categorise <message_id> <categories>` | Set the category list on a message (replaces existing categories). |
-| `its outlook mail delete [message_id]` | Delete one or more messages (moves to Deleted Items). Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete. |
+| `its outlook mail delete [message_id]` | Delete one or more messages (moves to Deleted Items) and notes which folder each came from, so `mail restore` can put it back. A message already in Deleted Items is deleted permanently and cannot be restored. Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete. |
+| `its outlook mail restore [message_id]` | Move deleted messages back to the folder each came from. Uses the local journal `mail delete` writes (~/.its/state/outlook-deleted.jsonl, kept 30 days); for a message with no entry, --to <folder> says where it goes. Pass ids, --stdin, --last N or --since 1h. Without --confirm it only shows the plan. |
 | `its outlook mail draft` | Create a draft instead of sending. Nothing leaves the mailbox until `its outlook drafts send <id>`. Alias of `drafts create` / `drafts reply` — it lives here because `mail send` is where people look during an incident, and only finding `send` means firing straight at a third party (ctxc #11845 item 6). |
 | `its outlook mail send` | Send a new email directly (no draft step). Saves a copy in Sent Items. To review before it goes out — the safer default for anything to a third party — use `its outlook mail draft` (alias of `drafts create` / `drafts reply`), then `its outlook drafts send <id>`. |
 
@@ -303,7 +305,7 @@ its outlook mail categorise AAMkAGI1AAAt0M0AAA= "IT,Follow up" --user jane.smith
 
 #### `its outlook mail delete [message_id]`
 
-Delete one or more messages (moves to Deleted Items). Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete.
+Delete one or more messages (moves to Deleted Items) and notes which folder each came from, so `mail restore` can put it back. A message already in Deleted Items is deleted permanently and cannot be restored. Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete.
 
 **Flags:**
 
@@ -319,6 +321,31 @@ Delete one or more messages (moves to Deleted Items). Pass a single id positiona
 its outlook mail delete <message_id> --confirm
 
 its outlook mail --filter "from/emailAddress/address eq 'spammer@x'" --json | its outlook mail delete --stdin --confirm
+```
+
+#### `its outlook mail restore [message_id]`
+
+Move deleted messages back to the folder each came from. Uses the local journal `mail delete` writes (~/.its/state/outlook-deleted.jsonl, kept 30 days); for a message with no entry, --to <folder> says where it goes. Pass ids, --stdin, --last N or --since 1h. Without --confirm it only shows the plan.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to move anything | — |
+| `--stdin` | `` | Read message ids from stdin | — |
+| `--last` | `` | The N most recent deletes in the journal | — |
+| `--since` | `` | Deletes in the journal since a window (1h, 2d, today, a date) | — |
+| `--to` | `` | Folder (id or name) for messages the journal has no entry for | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook mail restore <id_in_deleted_items> --confirm
+
+its outlook mail restore --since 1h --confirm
+
+its outlook mail restore <id> --to inbox --confirm
 ```
 
 #### `its outlook mail draft`
@@ -563,6 +590,7 @@ its outlook drafts delete AAMkAGI2... --confirm
 | `its outlook folders` | List mail folders with counts (totalItemCount, unreadItemCount). Graph returns the root level only, so nested folders need --all. |
 | `its outlook folders get <folder_id>` | Get a single mail folder by ID or well-known name (inbox, sentitems, drafts, deleteditems, archive). |
 | `its outlook folders create <name>` | Create a new mail folder (optionally nested under a parent). |
+| `its outlook folders rename <folder> <newName>` | Rename a mail folder (by id or display name). Built-in folders (inbox, sentitems, drafts, deleteditems, junkemail, archive, outbox) are refused. Reads the folder back. Use --confirm. |
 | `its outlook folders delete <folder>` | Delete a mail folder by id or display name. Graph deletes the folder AND every message and child folder inside it — there is no move-contents-out option, and no undo. Use --confirm. |
 
 #### `its outlook folders`
@@ -611,6 +639,23 @@ Create a new mail folder (optionally nested under a parent).
 its outlook folders create "IT Archive" --user jane.smith@example.com --confirm
 
 its outlook folders create "2026" --parent "IT Archive" --user jane.smith@example.com --confirm
+```
+
+#### `its outlook folders rename <folder> <newName>`
+
+Rename a mail folder (by id or display name). Built-in folders (inbox, sentitems, drafts, deleteditems, junkemail, archive, outbox) are refused. Reads the folder back. Use --confirm.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Required to rename | — |
+| `--user` | `` | Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. | — |
+
+**Examples:**
+
+```bash
+its outlook folders rename "IT Archive" "IT Archive 2026" --user jane.smith@example.com --confirm
 ```
 
 #### `its outlook folders delete <folder>`

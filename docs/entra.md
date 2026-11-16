@@ -57,6 +57,7 @@ its entra setup --reset   # Re-run setup (overwrite config)
 | `src/providers/entra/types.ts` | TypeScript interfaces |
 | `src/providers/entra/commands/` | Command definitions (split by resource) |
 | `src/providers/entra/apps-audit.ts` | apps audit |
+| `src/providers/entra/apps-hardening.ts` | apps hardening |
 | `src/providers/entra/apps-manifest.ts` | apps manifest |
 | `src/providers/entra/apps-usage.ts` | apps usage |
 | `src/providers/entra/auth-methods-report.ts` | auth methods report |
@@ -2305,6 +2306,7 @@ its entra doctor --watch
 | Command | Description |
 |---------|-------------|
 | `its entra apps register <name>` | Bootstrap a new Entra app registration end-to-end — creates the application, its service principal, and a 12-month client secret. Returns the appId, objectId, SP id, and the plaintext secret (only shown once). |
+| `its entra apps add-cert <app>` | Add a certificate credential to an app registration WITHOUT dropping the existing ones (Graph replaces the whole keyCredentials list, so this sends existing + new). Refuses a certificate whose thumbprint is already on the app. Reads back and prints the thumbprint and expiry. |
 | `its entra apps add-password <app>` | Rotate / add a client secret on an existing app registration. The plaintext secretText is only returned once. |
 | `its entra apps secrets` | Credential expiry dashboard — every client secret and certificate across all app registrations, with days-left and a status of EXPIRED, expiring (within --warn-days), long-lived (>2y), or ok. |
 | `its entra apps rotate <app>` | Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key), Bitwarden (--bw), and/or a mode-0600 file (--to-file, for handing straight to `dokploy env set --from-file`). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). Fails closed: if every storage target fails (locked vault, unavailable keychain) the new credential is rolled back and nothing is printed — pass --include-secrets to accept the secret on stderr instead. |
@@ -2328,11 +2330,30 @@ Bootstrap a new Entra app registration end-to-end — creates the application, i
 | `--secret-name` | `` | Display name for the client secret | its-cli generated |
 | `--months` | `` | Client secret lifetime in months | 12 |
 | `--no-secret` | `` | Skip generating a client secret | — |
+| `--cert` | `` | Certificate (PEM or DER) to add instead of a secret — implies --no-secret. Only the public part is sent. | — |
 
 **Examples:**
 
 ```bash
 its entra apps register "its CLI" --redirect-uri http://localhost --months 12 --confirm
+```
+
+#### `its entra apps add-cert <app>`
+
+Add a certificate credential to an app registration WITHOUT dropping the existing ones (Graph replaces the whole keyCredentials list, so this sends existing + new). Refuses a certificate whose thumbprint is already on the app. Reads back and prints the thumbprint and expiry.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--cert` | `` | Certificate file (PEM or DER). Private key, if present, is never sent. | — |
+| `--name` | `` | Display name for the credential | its-cli certificate |
+
+**Examples:**
+
+```bash
+# Existing certificates are kept. A PEM that also holds a private key is fine — only the public certificate is sent.
+its entra apps add-cert its-sp-groups-reader --cert ./its-sp.pem --name its-sp-2026 --confirm
 ```
 
 #### `its entra apps add-password <app>`
@@ -2429,6 +2450,7 @@ Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever 
 | `--manifest` | `` | Path to the JSONC apps manifest | — |
 | `--app` | `` | Only apply one manifest entry (by name or appId) | — |
 | `--confirm` | `` | Skip the interactive confirmation | — |
+| `--write-appid` | `` | After creating an app, insert its appId into the manifest entry (so a re-run cannot create a duplicate) | — |
 
 **Examples:**
 

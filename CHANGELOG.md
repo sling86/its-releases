@@ -15,7 +15,24 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.30.0] - 2026-11-16
+
+### Added
+- `its sp files copy`: preview and copy files or folders across drives/sites, with name conflict control and a bounded wait for the new item.
+- `its outlook folders rename` (built-in folders refused, read back). `its outlook mail delete` now notes each message's original folder in `~/.its/state/outlook-deleted.jsonl` (30 days) and `its outlook mail restore` moves messages back (`--last N`, `--since 1h`, `--to <folder>` fallback).
+- `its teams meetings list|transcripts|transcript`: your online meetings and their transcripts (text or WebVTT, `--to-file`, `--max-chars`). Needs the delegated scopes OnlineMeetings.Read and OnlineMeetingTranscript.Read.All.
+- `its teams chats create --with <people>`: start a 1:1 (an existing one is reused) or a group chat, with an optional first message. Previews without `--confirm`. Needs Chat.Create.
+- `secrets set` reads hidden input, a file or stdin; `secrets unset` removes one entry with confirmation. `secrets doctor --fix` repairs missing account-index entries.
+- `its entra apps add-cert <app> --cert <pem|crt>` adds a certificate without dropping existing ones (refuses a duplicate thumbprint, never sends a private key). `apps register --cert` registers with no secret and adds the certificate. `apps apply --write-appid` pins a created app's appId in the manifest.
+
+### Fixed
+- `its entra apps apply` retries create-sp and the steps after it for up to 60s while Entra replicates a new app, refuses to create an app whose name already exists, and prints the appId to pin.
+- Protect site profiles accept mixed-case site suffixes and show the exact keys needed. Unreachable controllers stop waiting for headers after five seconds and name the site and host; backup reports keep the other sites.
+
 ## [0.29.0] - 2026-11-16
+
+### Fixed
+- RMM printer commands now refuse offline or overdue agents before sending scripts, including previews. TRMM contact failures give a clear error without retrying.
 
 ### Added
 - Add mailbox archive enable and retention-policy changes with preview/read-back, plus a site-wide UniFi AP radio stats table.
