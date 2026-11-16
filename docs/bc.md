@@ -17,6 +17,8 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [users](#users)
 - [apps](#apps)
 - [health](#health)
+- [warehouse](#warehouse)
+- [jobqueue](#jobqueue)
 
 ## Setup
 
@@ -47,6 +49,8 @@ In addition to the Entra app permissions, Business Central requires the app regi
 | `src/providers/bc/types.ts` | TypeScript interfaces |
 | `src/providers/bc/commands.ts` | Command definitions |
 | `src/providers/bc/definition.ts` | definition |
+| `src/providers/bc/read-commands.ts` | read commands |
+| `src/providers/bc/reads.ts` | reads |
 | `src/providers/bc/write-guards.ts` | write guards |
 
 ## Resources
@@ -390,6 +394,8 @@ its bc record call salesInvoices <id> post --env Support --confirm
 | `its bc users update <user>` | Enable or disable a BC user and/or set their expiry date (the Automation API's only user write — it cannot create users; they arrive from Entra). Needs an explicit --env. Previews without --confirm; reads the user back. |
 | `its bc users add-permission <user>` | Give a BC user a permission set — in one company (--in-company) or all (default). Previews without --confirm; reads the user's permissions back. |
 | `its bc users remove-permission <user>` | Take a permission set off a BC user (the assignment matching --set and --in-company). Previews without --confirm. |
+| `its bc users user-setup [user]` | User Setup: posting date limits, approval and time sheet admin, responsibility centre filters. Reads THF/mcpDiagnostics/v2.0 (userSetups). |
+| `its bc users warehouse-employees [user]` | Which locations a user works at as a warehouse employee, and their default. Reads THF/mcpDiagnostics/v2.0 (warehouseEmployees). |
 
 #### `its bc users`
 
@@ -502,6 +508,38 @@ Take a permission set off a BC user (the assignment matching --set and --in-comp
 
 ```bash
 its bc users remove-permission jo.bloggs@example.com --set "D365 BUS FULL ACCESS" --in-company "CRONUS UK Ltd." --confirm
+```
+
+#### `its bc users user-setup [user]`
+
+User Setup: posting date limits, approval and time sheet admin, responsibility centre filters. Reads THF/mcpDiagnostics/v2.0 (userSetups).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--top` | `` | Max rows (default 50) | 50 |
+
+```bash
+its bc users user-setup [user]
+```
+
+#### `its bc users warehouse-employees [user]`
+
+Which locations a user works at as a warehouse employee, and their default. Reads THF/mcpDiagnostics/v2.0 (warehouseEmployees).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--top` | `` | Max rows (default 50) | 50 |
+
+```bash
+its bc users warehouse-employees [user]
 ```
 
 ---
@@ -679,6 +717,159 @@ Probe BC connectivity by listing companies. Takes no positional argument; use --
 
 ```bash
 its bc health
+```
+
+---
+
+### warehouse
+
+> Source: `src/providers/bc/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bc warehouse bins` | Warehouse bins. Reads THF/platformSync/v2.0 (bins). |
+| `its bc warehouse bin-contents` | Which items each bin is set up for, and whether movement is blocked. This route has no on-hand quantity — use `warehouse entries` for movements. Reads THF/mcp/v2.0 (binContents). |
+| `its bc warehouse picks` | Warehouse pick lines (Take and Place). Reads THF/mcp/v2.0 (warehouseActivityLineDetails, activity type Pick). |
+| `its bc warehouse entries` | Registered warehouse entries (movements), oldest first (BC cannot sort this route; narrow with --item, --location, --from). Reads THF/mcp/v2.0 (warehouseEntries). |
+| `its bc warehouse reservations` | Reservation entries, oldest first (BC cannot sort this route). --source-doc matches the source document number (sourceId). Reads THF/platformSync/v2.0 (reservationEntries). |
+
+#### `its bc warehouse bins`
+
+Warehouse bins. Reads THF/platformSync/v2.0 (bins).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--location` | `` | Location code | — |
+| `--bin` | `` | Bin code | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--top` | `` | Max rows (default 50) | 50 |
+
+```bash
+its bc warehouse bins
+```
+
+#### `its bc warehouse bin-contents`
+
+Which items each bin is set up for, and whether movement is blocked. This route has no on-hand quantity — use `warehouse entries` for movements. Reads THF/mcp/v2.0 (binContents).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--item` | `` | Item number | — |
+| `--bin` | `` | Bin code | — |
+| `--location` | `` | Location code | — |
+| `--blocked` | `` | Only bin contents with movement blocked | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--top` | `` | Max rows (default 50) | 50 |
+
+```bash
+its bc warehouse bin-contents
+```
+
+#### `its bc warehouse picks`
+
+Warehouse pick lines (Take and Place). Reads THF/mcp/v2.0 (warehouseActivityLineDetails, activity type Pick).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--status` | `` | open (nothing handled), started (part handled) or done | — |
+| `--location` | `` | Location code | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--top` | `` | Max rows (default 50) | 50 |
+
+```bash
+its bc warehouse picks
+```
+
+#### `its bc warehouse entries`
+
+Registered warehouse entries (movements), oldest first (BC cannot sort this route; narrow with --item, --location, --from). Reads THF/mcp/v2.0 (warehouseEntries).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--item` | `` | Item number | — |
+| `--from` | `` | Registered on or after this date (YYYY-MM-DD) | — |
+| `--location` | `` | Location code | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--top` | `` | Max rows (default 50) | 50 |
+
+```bash
+its bc warehouse entries
+```
+
+#### `its bc warehouse reservations`
+
+Reservation entries, oldest first (BC cannot sort this route). --source-doc matches the source document number (sourceId). Reads THF/platformSync/v2.0 (reservationEntries).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--item` | `` | Item number | — |
+| `--source-doc` | `` | Source document number | — |
+| `--location` | `` | Location code | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--top` | `` | Max rows (default 50) | 50 |
+
+```bash
+its bc warehouse reservations
+```
+
+---
+
+### jobqueue
+
+> Source: `src/providers/bc/commands.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its bc jobqueue` | Job queue entries, most recently changed first. Reads standard v2.0 (jobQueueEntries). |
+| `its bc jobqueue errors` | Failed job queue runs with the error text, newest first. Default window is the last 24 hours. Reads standard v2.0 (jobQueueLogEntries, status Error). |
+
+#### `its bc jobqueue`
+
+Job queue entries, most recently changed first. Reads standard v2.0 (jobQueueEntries).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--status` | `` | Only this status | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--top` | `` | Max rows (default 50) | 50 |
+
+```bash
+its bc jobqueue
+```
+
+#### `its bc jobqueue errors`
+
+Failed job queue runs with the error text, newest first. Default window is the last 24 hours. Reads standard v2.0 (jobQueueLogEntries, status Error).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--since` | `` | Window start: -24h, -7d, a date or an ISO time (default -24h) | — |
+| `--company` | `` | Company name or id, exact (REQUIRED when the environment has more than one company) | — |
+| `--env` | `` | BC environment name (default: BC_ENVIRONMENT) | — |
+| `--top` | `` | Max rows (default 50) | 50 |
+
+```bash
+its bc jobqueue errors
 ```
 
 ---

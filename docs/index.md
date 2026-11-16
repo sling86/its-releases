@@ -27,7 +27,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [cf.md](./cf.md) | Cloudflare — 16 commands across 5 resources |
 | [hr.md](./hr.md) | PeopleHR — 22 commands across 11 resources |
 | [attendance.md](./attendance.md) | Factory attendance — 5 commands across 5 resources |
-| [bc.md](./bc.md) | Business Central — 31 commands across 9 resources |
+| [bc.md](./bc.md) | Business Central — 40 commands across 11 resources |
 | [ctxc.md](./ctxc.md) | ctxc memories — 5 commands across 1 resources |
 | [docs.md](./docs.md) | Docs UI — 5 commands across 5 resources |
 | [gh.md](./gh.md) | GitHub — 6 commands across 2 resources |
@@ -37,7 +37,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [yodeck.md](./yodeck.md) | Yodeck — 3 commands across 2 resources |
 | [purview.md](./purview.md) | Purview — 2 commands across 2 resources |
 
-**25 providers** · **277 resources** · **1030 commands**
+**25 providers** · **279 resources** · **1039 commands**
 
 ### [Tactical RMM](./rmm.md)
 
@@ -364,9 +364,11 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [extensions](./bc.md#extensions) | list, get | `src/providers/bc/commands.ts` |
 | [query](./bc.md#query) | get | `src/providers/bc/commands.ts` |
 | [record](./bc.md#record) | get, create, update, delete, call | `src/providers/bc/commands.ts` |
-| [users](./bc.md#users) | list, get, permission-sets, create, update, add-permission, remove-permission | `src/providers/bc/commands.ts` |
+| [users](./bc.md#users) | list, get, permission-sets, create, update, add-permission, remove-permission, user-setup, warehouse-employees | `src/providers/bc/commands.ts` |
 | [apps](./bc.md#apps) | list, updates, upload, scheduled, operations, install, uninstall, update | `src/providers/bc/commands.ts` |
 | [health](./bc.md#health) | get | `src/providers/bc/commands.ts` |
+| [warehouse](./bc.md#warehouse) | bins, bin-contents, picks, entries, reservations | `src/providers/bc/commands.ts` |
+| [jobqueue](./bc.md#jobqueue) | list, errors | `src/providers/bc/commands.ts` |
 
 ### [ctxc memories](./ctxc.md)
 
@@ -1587,7 +1589,9 @@ its
 │   │   ├── create
 │   │   ├── update <user>
 │   │   ├── add-permission <user>
-│   │   └── remove-permission <user>
+│   │   ├── remove-permission <user>
+│   │   ├── user-setup [user]
+│   │   └── warehouse-employees [user]
 │   ├── apps
 │   │   ├── (list)
 │   │   ├── updates
@@ -1597,7 +1601,16 @@ its
 │   │   ├── install <appId>
 │   │   ├── uninstall <appId>
 │   │   └── update <appId>
-│   └── health get
+│   ├── health get
+│   ├── warehouse
+│   │   ├── bins
+│   │   ├── bin-contents
+│   │   ├── picks
+│   │   ├── entries
+│   │   └── reservations
+│   └── jobqueue
+│       ├── (list)
+│       └── errors
 ├── ctxc
 │   └── memories
 │       ├── search <query>
@@ -1857,6 +1870,8 @@ src/
 │   │   ├── client.ts
 │   │   ├── commands.ts
 │   │   ├── definition.ts
+│   │   ├── read-commands.ts
+│   │   ├── reads.ts
 │   │   ├── types.ts
 │   │   └── write-guards.ts
 │   ├── bw/

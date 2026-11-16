@@ -58,7 +58,7 @@ its <provider> <resource> [action] [args] [--flags]
 | Cloudflare | `cf` | 16 commands, 5 resources | [cf.md](./cf.md) |
 | PeopleHR | `hr` | 22 commands, 11 resources | [hr.md](./hr.md) |
 | Factory attendance | `attendance` | 5 commands, 5 resources | [attendance.md](./attendance.md) |
-| Business Central | `bc` | 31 commands, 9 resources | [bc.md](./bc.md) |
+| Business Central | `bc` | 40 commands, 11 resources | [bc.md](./bc.md) |
 | ctxc memories | `ctxc` | 5 commands, 1 resources | [ctxc.md](./ctxc.md) |
 | Docs UI | `docs` | 5 commands, 5 resources | [docs.md](./docs.md) |
 | GitHub | `gh` | 6 commands, 2 resources | [gh.md](./gh.md) |

@@ -15,6 +15,14 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.31.0] - 2026-11-16
+
+### Added
+- `its bc warehouse bins|bin-contents|picks|entries|reservations`, `its bc jobqueue list|errors` and `its bc users user-setup|warehouse-employees`: read-only views over BC's custom API routes (platformSync, mcp, mcpDiagnostics, standard v2.0), each naming its route in `--help`. They need `--company` (exact) when the environment has more than one, and a 401/403/404 names the route and permission set to grant.
+
+### Fixed
+- SharePoint file calls given a site URL now address tenant-unique drives directly, fixing uploads, deletes and other item calls; other colon paths use a resolved site id.
+
 ## [0.30.0] - 2026-11-16
 
 ### Added
