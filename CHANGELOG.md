@@ -15,6 +15,29 @@ HEAD (conventional-commit prefixes only: `feat`, `fix`, `perf`,
 
 _Nothing yet._
 
+## [0.28.0] - 2026-11-16
+
+### Added
+- `its purview retention list` and `its purview labels list` (new `purview` provider, read-only, `Connect-IPPSSession` with the `exo` certificate; needs a compliance role on the app) and `its teams policies meeting [--user <upn>]` (read-only, MicrosoftTeams module with a certificate app: `TEAMS_ADMIN_APP_ID`, `TEAMS_ADMIN_CERTIFICATE_PFX`). Closes #23.
+- `sp`: unattended site-group calls (`sp groups members` and the other classic `_api/web` calls) can now use a certificate app-only token when nobody is signed in (`SP_CERTIFICATE_PATH`, optional `SP_CERTIFICATE_KEY_PATH` / `SP_CERTIFICATE_PASSWORD` / `SP_CERTIFICATE_APP_ID`). SharePoint REST refuses client-secret app tokens. Delegated stays first.
+- `its entra apps usage <name|appId> --since 30d`: per-app assignees plus interactive and non-interactive sign-ins, sliced into 5-day windows, with failed slices flagged as INCOMPLETE.
+- `az appinsights list|query`: list components and run read-only KQL with an API time window, schema-based tables and visible partial errors.
+- `dokploy apps set-registry <app> <registryId|none>` and `apps set-limits <app> [--memory-limit 1g] [--memory-reservation 512m] [--cpu-limit 1] [--cpu-reservation 0.25]` (`none` clears). `apps get` shows `registryId` and the four limits (memory in bytes, CPU in nano-CPUs). Dokploy units are from memory, not checked against a live app.
+- `unifi devices ports` now shows each port's profile, native network and tagged VLANs (all | none | list), worked out from the port override and profile rather than the misleading raw `forward`. New `unifi port-profiles list`; `unifi wlans list` shows each SSID's network. All read-only.
+- `bc query <ServiceName> --odata-v4 --company <exact name>` reads published ODataV4 web services with filter/select/top/orderby and paging, using the existing BC sign-in path.
+- `rmm agents update <agent...> [--confirm]`: queue the Tactical RMM agent self-update (POST `/agents/update/`). Without `--confirm` it previews hostname and current version and changes nothing. The server picks the target version and skips agents already on it.
+- `intune win32-apps upload --detect-registry` (registry detection rule) and `--install-as user|system`; restart behaviour is now `suppress`.
+- `teams channels list|messages|replies|send|edit-message`: work with team channels as you. Post (Markdown or HTML, mentions, importance, subject), reply in a thread with `--reply-to`, edit your own message. Reading messages needs `ChannelMessage.Read.All` consented on the sign-in app; the rest runs on `Group.ReadWrite.All`. A licence 403 now says which account ran the call.
+
+### Fixed
+- Asset fields: RMM agent detail now reads serial and user from the detail payload and includes Windows inventory MAC addresses; Intune lists include Wi-Fi MACs and device detail explicitly requests Ethernet and Wi-Fi MACs.
+- `pbi api get`: encode query values with spaces and quotes, and report the actual reason for an invalid path.
+- `teams chats delete-message`: lead the human preview with "Nothing deleted — preview only, add --confirm".
+- `dokploy apps clone` works on Dokploy v0.30+: the project and environment come from the environment tree, and the clone lands in the source's environment.
+- `dokploy env set|push` accept `*` as a value. The redaction guard still catches `***REDACTED***` and any run of 2+ asterisks, but a lone `*` is a real value (also affects `env-file` and pipeline checks).
+- `bw items create|update` refuse `***REDACTED***` as `--password`.
+- `intune win32-apps upload`: Put Block and Put Block List no longer send `x-ms-blob-type` (Put Blob only); Azure answered 400 on the storage step.
+
 ## [0.27.0] - 2026-11-11
 
 ### Added
@@ -195,6 +218,8 @@ v0.23.0 was tagged but never published: its Windows build failed. This release i
 - **core:** `its update` only runs a release-manifest URL when it is plain `https` with no shell characters; anything else falls back to the release page.
 - **cf, docs:** on Windows the browser opens with `rundll32`, not `cmd /c start`, which cut the Cloudflare token URL at the first `&`.
 - **ci:** `bun run check` now also type-checks `tests/` and `scripts/` (new `tsconfig.tests.json`). Fixed the 43 errors that hid there; no test assertion changed. Shared helpers: `tests/helpers/args.ts`, `tests/helpers/fetch.ts`.
+- **wrike:** an email address in a comment, description or ticket body (`robert@example.com`) no longer counts as an @mention, so it stops raising the "did not resolve to a Wrike contact" warning. Real `@Name` mentions still resolve, and unresolved ones still warn.
+- **core:** the "boolean flag takes no value" warning now says to drop the value (`add-comment <id> --markdown "text"` still works, as before).
 - **core:** a boolean flag that swallowed an argument (`move --force A B`) handed the handler `[B, A]`. The value now goes back to the slot it came from.
 - **core:** `--watch` and `its watch` refuse any command that changes things (`dokploy apps deploy X --watch 5` used to deploy every 5 seconds). `its watch` also bypasses the cache now, like `--watch`.
 - **core:** `--json --fields name --filter status=online` (and `--ai`, `--jsonl`) failed with "status is not a column". `--fields` now applies after filter, sort and limit.

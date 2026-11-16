@@ -3,7 +3,7 @@
 UniFi Network controller — devices, clients, WLANs, networks, firewall, events, alarms, vouchers.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md) · [purview](./purview.md)
 
 ## Contents
 
@@ -24,6 +24,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [rogue](#rogue)
 - [vouchers](#vouchers)
 - [dashboard](#dashboard)
+- [port-profiles](#port-profiles)
 - [audit](#audit)
 
 ## Setup
@@ -55,6 +56,7 @@ Site-aware commands accept a site code, object ID or friendly name via `--site`.
 | `src/providers/unifi/commands/` | Command definitions (split by resource) |
 | `src/providers/unifi/audit.ts` | audit |
 | `src/providers/unifi/definition.ts` | definition |
+| `src/providers/unifi/port-vlans.ts` | port vlans |
 
 ## Resources
 
@@ -134,7 +136,7 @@ its unifi sites sysinfo
 |---------|-------------|
 | `its unifi devices` | List all UniFi devices with name, MAC, IP, type, state, uptime, clients |
 | `its unifi devices get <mac>` | Get device detail by MAC address or exact device name. Ports include link speed, duplex and error counts; see `devices ports` for the full per-port table. |
-| `its unifi devices ports <device>` | Per-port link view of a switch: speed, duplex, PoE, STP state, error/drop counters and which online clients sit on each port. Flags copper ports up below 1000 Mbit or at half duplex. |
+| `its unifi devices ports <device>` | Per-port view of a switch: speed, duplex, PoE, STP state, port profile, native VLAN and tagged VLANs (all \| none \| list), error/drop counters and which online clients sit on each port. Flags copper ports up below 1000 Mbit or at half duplex. |
 | `its unifi devices restart <mac>` | Restart a device by MAC address. Stop + start in one call. |
 | `its unifi devices locate <mac>` | Toggle locate LED on a device. Flash the device's locate LED. |
 | `its unifi devices upgrade <mac>` | Trigger firmware upgrade on a device. Trigger a firmware upgrade. |
@@ -184,7 +186,7 @@ its unifi devices get <mac>
 
 #### `its unifi devices ports <device>`
 
-Per-port link view of a switch: speed, duplex, PoE, STP state, error/drop counters and which online clients sit on each port. Flags copper ports up below 1000 Mbit or at half duplex.
+Per-port view of a switch: speed, duplex, PoE, STP state, port profile, native VLAN and tagged VLANs (all | none | list), error/drop counters and which online clients sit on each port. Flags copper ports up below 1000 Mbit or at half duplex.
 
 **Flags:**
 
@@ -1275,6 +1277,33 @@ its unifi dashboard
 
 # Re-runs every 10s — handy for dashboards or incident response.
 its unifi dashboard --watch
+```
+
+---
+
+### port-profiles
+
+> Source: `src/providers/unifi/commands/port-profiles.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its unifi port-profiles` | List switch port profiles with what they forward, their native network and tagged VLANs (all \| none \| list). |
+
+#### `its unifi port-profiles`
+
+List switch port profiles with what they forward, their native network and tagged VLANs (all | none | list).
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--site` | `` | Site name override | — |
+| `--all-sites` | `` | List across every site | — |
+
+**Examples:**
+
+```bash
+its unifi port-profiles list --site hq
 ```
 
 ---

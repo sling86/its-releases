@@ -3,7 +3,7 @@
 Usage, options, and output modes for the `its` CLI. For provider-specific commands, see the provider docs.
 
 [Index](./index.md) · [README](../README.md)
-Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
+Providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md) · [purview](./purview.md)
 
 ## Contents
 
@@ -42,14 +42,14 @@ its <provider> <resource> [action] [args] [--flags]
 
 | Provider | Alias | Commands | Docs |
 |----------|-------|----------|------|
-| Tactical RMM | `rmm` | 88 commands, 21 resources | [rmm.md](./rmm.md) |
-| Entra ID | `entra` | 134 commands, 24 resources | [entra.md](./entra.md) |
-| Dokploy | `dokploy` | 123 commands, 25 resources | [dokploy.md](./dokploy.md) |
+| Tactical RMM | `rmm` | 89 commands, 21 resources | [rmm.md](./rmm.md) |
+| Entra ID | `entra` | 135 commands, 24 resources | [entra.md](./entra.md) |
+| Dokploy | `dokploy` | 125 commands, 25 resources | [dokploy.md](./dokploy.md) |
 | Bitwarden | `bw` | 72 commands, 17 resources | [bw.md](./bw.md) |
 | SharePoint | `sp` | 58 commands, 12 resources | [sp.md](./sp.md) |
-| UniFi Network | `unifi` | 51 commands, 17 resources | [unifi.md](./unifi.md) |
+| UniFi Network | `unifi` | 52 commands, 18 resources | [unifi.md](./unifi.md) |
 | Wrike | `wrike` | 66 commands, 17 resources | [wrike.md](./wrike.md) |
-| Azure CLI | `az` | 28 commands, 13 resources | [az.md](./az.md) |
+| Azure CLI | `az` | 30 commands, 14 resources | [az.md](./az.md) |
 | Exchange Online | `exo` | 86 commands, 18 resources | [exo.md](./exo.md) |
 | Intune | `intune` | 68 commands, 23 resources | [intune.md](./intune.md) |
 | UniFi Protect | `protect` | 12 commands, 6 resources | [protect.md](./protect.md) |
@@ -64,8 +64,9 @@ its <provider> <resource> [action] [args] [--flags]
 | GitHub | `gh` | 6 commands, 2 resources | [gh.md](./gh.md) |
 | Outlook | `outlook` | 51 commands, 12 resources | [outlook.md](./outlook.md) |
 | Microsoft 365 Health | `m365` | 3 commands, 2 resources | [m365.md](./m365.md) |
-| Teams | `teams` | 14 commands, 4 resources | [teams.md](./teams.md) |
+| Teams | `teams` | 20 commands, 6 resources | [teams.md](./teams.md) |
 | Yodeck | `yodeck` | 3 commands, 2 resources | [yodeck.md](./yodeck.md) |
+| Purview | `purview` | 2 commands, 2 resources | [purview.md](./purview.md) |
 
 ## Global Options
 

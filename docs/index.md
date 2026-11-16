@@ -11,14 +11,14 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [README](../README.md) | Quick start, examples, setup |
 | [cli.md](./cli.md) | CLI reference — usage, options, output modes |
 | [global.md](./global.md) | Global commands — 24 commands that take no provider |
-| [rmm.md](./rmm.md) | Tactical RMM — 88 commands across 21 resources |
-| [entra.md](./entra.md) | Entra ID — 134 commands across 24 resources |
-| [dokploy.md](./dokploy.md) | Dokploy — 123 commands across 25 resources |
+| [rmm.md](./rmm.md) | Tactical RMM — 89 commands across 21 resources |
+| [entra.md](./entra.md) | Entra ID — 135 commands across 24 resources |
+| [dokploy.md](./dokploy.md) | Dokploy — 125 commands across 25 resources |
 | [bw.md](./bw.md) | Bitwarden — 72 commands across 17 resources |
 | [sp.md](./sp.md) | SharePoint — 58 commands across 12 resources |
-| [unifi.md](./unifi.md) | UniFi Network — 51 commands across 17 resources |
+| [unifi.md](./unifi.md) | UniFi Network — 52 commands across 18 resources |
 | [wrike.md](./wrike.md) | Wrike — 66 commands across 17 resources |
-| [az.md](./az.md) | Azure CLI — 28 commands across 13 resources |
+| [az.md](./az.md) | Azure CLI — 30 commands across 14 resources |
 | [exo.md](./exo.md) | Exchange Online — 86 commands across 18 resources |
 | [intune.md](./intune.md) | Intune — 68 commands across 23 resources |
 | [protect.md](./protect.md) | UniFi Protect — 12 commands across 6 resources |
@@ -33,16 +33,17 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [gh.md](./gh.md) | GitHub — 6 commands across 2 resources |
 | [outlook.md](./outlook.md) | Outlook — 51 commands across 12 resources |
 | [m365.md](./m365.md) | Microsoft 365 Health — 3 commands across 2 resources |
-| [teams.md](./teams.md) | Teams — 14 commands across 4 resources |
+| [teams.md](./teams.md) | Teams — 20 commands across 6 resources |
 | [yodeck.md](./yodeck.md) | Yodeck — 3 commands across 2 resources |
+| [purview.md](./purview.md) | Purview — 2 commands across 2 resources |
 
-**24 providers** · **264 resources** · **989 commands**
+**25 providers** · **270 resources** · **1004 commands**
 
 ### [Tactical RMM](./rmm.md)
 
 | Resource | Actions | Source |
 |----------|---------|--------|
-| [agents](./rmm.md#agents) | list, stale, search, get, ping, reboot, remove, prune, run, history, notes, pending, wake, edit, refresh, eventlog | `src/providers/rmm/commands/agents.ts` |
+| [agents](./rmm.md#agents) | list, stale, search, get, ping, reboot, update, remove, prune, run, history, notes, pending, wake, edit, refresh, eventlog | `src/providers/rmm/commands/agents.ts` |
 | [dashboard](./rmm.md#dashboard) | list | `src/providers/rmm/commands/dashboard.ts` |
 | [clients](./rmm.md#clients) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
 | [sites](./rmm.md#sites) | list, create, delete | `src/providers/rmm/commands/dashboard.ts` |
@@ -87,7 +88,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [break-glass](./entra.md#break-glass) | audit | `src/providers/entra/commands/break-glass.ts` |
 | [whoami](./entra.md#whoami) | show | `src/providers/entra/commands/whoami.ts` |
 | [doctor](./entra.md#doctor) | list | `src/providers/entra/commands/doctor.ts` |
-| [apps](./entra.md#apps) | register, add-password, secrets, rotate, plan, apply, permissions, export, audit | `src/providers/entra/commands/apps.ts` |
+| [apps](./entra.md#apps) | register, add-password, secrets, rotate, plan, apply, permissions, export, audit, usage | `src/providers/entra/commands/apps.ts` |
 | [admin-bootstrap](./entra.md#admin-bootstrap) | run | `src/providers/entra/commands/admin-bootstrap.ts` |
 | [pim](./entra.md#pim) | list, activate, deactivate, assign, unassign, eligible, settings, set | `src/providers/entra/commands/pim.ts` |
 | [sync](./entra.md#sync) | status, logs, provision | `src/providers/entra/commands/sync.ts` |
@@ -98,7 +99,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | Resource | Actions | Source |
 |----------|---------|--------|
 | [projects](./dokploy.md#projects) | list, get, create, delete | `src/providers/dokploy/commands/projects.ts` |
-| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-auto-deploy, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, env-runtime, apply-env, health, env-drift, doctor, bootstrap, cert-status, deploy-url | `src/providers/dokploy/commands/apps.ts` |
+| [apps](./dokploy.md#apps) | list, get, create, delete, deploy, stop, start, restart, set-auto-deploy, set-registry, set-limits, set-source, set-build, rebuild, wait-deploy, redeploy, logs, monitoring, traefik, status, clone, shell, migrate, env-runtime, apply-env, health, env-drift, doctor, bootstrap, cert-status, deploy-url | `src/providers/dokploy/commands/apps.ts` |
 | [databases](./dokploy.md#databases) | list, url, get, sql, create, deploy, stop, update, delete | `src/providers/dokploy/commands/databases.ts` |
 | [deployments](./dokploy.md#deployments) | list, queue, kill | `src/providers/dokploy/commands/deployments.ts` |
 | [domains](./dokploy.md#domains) | list, create, check, delete | `src/providers/dokploy/commands/domains.ts` |
@@ -182,6 +183,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [rogue](./unifi.md#rogue) | list | `src/providers/unifi/commands/events.ts` |
 | [vouchers](./unifi.md#vouchers) | list, create, revoke | `src/providers/unifi/commands/vouchers.ts` |
 | [dashboard](./unifi.md#dashboard) | list | `src/providers/unifi/commands/dashboard.ts` |
+| [port-profiles](./unifi.md#port-profiles) | list | `src/providers/unifi/commands/port-profiles.ts` |
 | [audit](./unifi.md#audit) | list | `src/providers/unifi/commands/audit.ts` |
 
 ### [Wrike](./wrike.md)
@@ -223,6 +225,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [advisor](./az.md#advisor) | list | `src/providers/az/commands/advisor.ts` |
 | [role-assignments](./az.md#role-assignments) | list, create, delete | `src/providers/az/commands/roles.ts` |
 | [role-definitions](./az.md#role-definitions) | list | `src/providers/az/commands/roles.ts` |
+| [appinsights](./az.md#appinsights) | list, query | `src/providers/az/commands/appinsights.ts` |
 
 ### [Exchange Online](./exo.md)
 
@@ -413,7 +416,9 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | [chats](./teams.md#chats) | list, messages, images, send, delete-message, edit-message, react, unreact | `src/providers/teams/commands/chats.ts` |
 | [presence](./teams.md#presence) | get | `src/providers/teams/commands/chats.ts` |
 | [teams](./teams.md#teams) | list, create, delete | `src/providers/teams/commands/teams.ts` |
+| [channels](./teams.md#channels) | list, messages, replies, send, edit-message | `src/providers/teams/commands/channels.ts` |
 | [files](./teams.md#files) | list, download | `src/providers/teams/commands/files.ts` |
+| [policies](./teams.md#policies) | meeting | `src/providers/teams/commands/policies.ts` |
 
 ### [Yodeck](./yodeck.md)
 
@@ -421,6 +426,13 @@ Start here to find any command, resource, or source file in the `its` CLI.
 |----------|---------|--------|
 | [players](./yodeck.md#players) | list, get | — |
 | [doctor](./yodeck.md#doctor) | list | — |
+
+### [Purview](./purview.md)
+
+| Resource | Actions | Source |
+|----------|---------|--------|
+| [retention](./purview.md#retention) | list | — |
+| [labels](./purview.md#labels) | list | — |
 
 ## Key Source Files
 
@@ -462,6 +474,7 @@ Start here to find any command, resource, or source file in the `its` CLI.
 | `src/providers/m365health/client.ts` | Microsoft 365 Health API client |
 | `src/providers/teams/client.ts` | Teams API client |
 | `src/providers/yodeck/client.ts` | Yodeck API client |
+| `src/providers/purview/client.ts` | Purview API client |
 
 ## Command Tree
 
@@ -475,6 +488,7 @@ its
 │   │   ├── get <agent>
 │   │   ├── ping <agent>
 │   │   ├── reboot <agent>
+│   │   ├── update <agent>
 │   │   ├── remove <agent>
 │   │   ├── prune
 │   │   ├── run <agent>
@@ -706,7 +720,8 @@ its
 │   │   ├── apply
 │   │   ├── permissions <app>
 │   │   ├── export <appIds>
-│   │   └── audit
+│   │   ├── audit
+│   │   └── usage
 │   ├── admin-bootstrap run <user_id>
 │   ├── pim
 │   │   ├── (list)
@@ -743,6 +758,8 @@ its
 │   │   ├── start <applicationId>
 │   │   ├── restart <applicationId>
 │   │   ├── set-auto-deploy <app> <state>
+│   │   ├── set-registry <app> <registryId>
+│   │   ├── set-limits <app>
 │   │   ├── set-source <app>
 │   │   ├── set-build <app>
 │   │   ├── rebuild <app>
@@ -1083,6 +1100,7 @@ its
 │   │   ├── create
 │   │   └── revoke <id>
 │   ├── dashboard (list)
+│   ├── port-profiles (list)
 │   └── audit (list)
 ├── wrike
 │   ├── tickets
@@ -1196,7 +1214,10 @@ its
 │   │   ├── (list)
 │   │   ├── create
 │   │   └── delete <assignment_id>
-│   └── role-definitions (list)
+│   ├── role-definitions (list)
+│   └── appinsights
+│       ├── (list)
+│       └── query <component> <kql>
 ├── exo
 │   ├── groups
 │   │   ├── (list)
@@ -1651,14 +1672,24 @@ its
 │   │   ├── (list)
 │   │   ├── create <name>
 │   │   └── delete <teamId>
-│   └── files
-│       ├── (list) <chat_id> <message_id>
-│       └── download <chat_id> <message_id> <attachment_id>
-└── yodeck
-    ├── players
-    │   ├── (list)
-    │   └── get <id>
-    └── doctor (list)
+│   ├── channels
+│   │   ├── (list) <team>
+│   │   ├── messages <team> <channel>
+│   │   ├── replies <team> <channel> <message_id>
+│   │   ├── send <team> <channel>
+│   │   └── edit-message <team> <channel> <message_id>
+│   ├── files
+│   │   ├── (list) <chat_id> <message_id>
+│   │   └── download <chat_id> <message_id> <attachment_id>
+│   └── policies meeting
+├── yodeck
+│   ├── players
+│   │   ├── (list)
+│   │   └── get <id>
+│   └── doctor (list)
+└── purview
+    ├── retention (list)
+    └── labels (list)
 ```
 
 ## Source Tree
@@ -1680,6 +1711,7 @@ src/
 │   ├── auth.ts
 │   ├── az-broker.ts
 │   ├── cache.ts
+│   ├── client-assertion.ts
 │   ├── clipboard.ts
 │   ├── command-metadata.ts
 │   ├── completions.ts
@@ -1768,6 +1800,7 @@ src/
 │   │   ├── commands/
 │   │   │   ├── account.ts
 │   │   │   ├── advisor.ts
+│   │   │   ├── appinsights.ts
 │   │   │   ├── cost.ts
 │   │   │   ├── index.ts
 │   │   │   ├── keyvault.ts
@@ -1777,6 +1810,7 @@ src/
 │   │   │   ├── storage.ts
 │   │   │   ├── vm.ts
 │   │   │   └── webapp.ts
+│   │   ├── appinsights.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── rbac.ts
@@ -1847,6 +1881,7 @@ src/
 │   │   │   ├── schedule.ts
 │   │   │   ├── users.ts
 │   │   │   └── webhook.ts
+│   │   ├── app-settings.ts
 │   │   ├── client.ts
 │   │   ├── created-id.ts
 │   │   ├── db-sql.ts
@@ -1863,6 +1898,7 @@ src/
 │   │   │   ├── admin-bootstrap.ts
 │   │   │   ├── apps-audit.ts
 │   │   │   ├── apps-manifest.ts
+│   │   │   ├── apps-usage.ts
 │   │   │   ├── apps.ts
 │   │   │   ├── audit.ts
 │   │   │   ├── auth-methods.ts
@@ -1887,6 +1923,7 @@ src/
 │   │   │   └── xtenant.ts
 │   │   ├── apps-audit.ts
 │   │   ├── apps-manifest.ts
+│   │   ├── apps-usage.ts
 │   │   ├── auth-methods-report.ts
 │   │   ├── auth-methods.ts
 │   │   ├── client.ts
@@ -2038,6 +2075,12 @@ src/
 │   │   ├── sites.ts
 │   │   ├── stats.ts
 │   │   └── types.ts
+│   ├── purview/
+│   │   ├── commands/
+│   │   │   └── index.ts
+│   │   ├── client.ts
+│   │   ├── definition.ts
+│   │   └── parse.ts
 │   ├── rmm/
 │   │   ├── commands/
 │   │   │   ├── accounts.ts
@@ -2061,6 +2104,7 @@ src/
 │   │   │   └── updates.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── inventory.ts
 │   │   ├── readback.ts
 │   │   ├── resolve.ts
 │   │   ├── terminal-auth.ts
@@ -2089,13 +2133,16 @@ src/
 │   │   └── types.ts
 │   ├── teams/
 │   │   ├── commands/
+│   │   │   ├── channels.ts
 │   │   │   ├── chats.ts
 │   │   │   ├── files.ts
 │   │   │   ├── index.ts
+│   │   │   ├── policies.ts
 │   │   │   └── teams.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
 │   │   ├── format.ts
+│   │   ├── policies.ts
 │   │   └── types.ts
 │   ├── unifi/
 │   │   ├── commands/
@@ -2107,12 +2154,14 @@ src/
 │   │   │   ├── events.ts
 │   │   │   ├── index.ts
 │   │   │   ├── networks.ts
+│   │   │   ├── port-profiles.ts
 │   │   │   ├── portforwards.ts
 │   │   │   ├── sites.ts
 │   │   │   └── vouchers.ts
 │   │   ├── audit.ts
 │   │   ├── client.ts
 │   │   ├── definition.ts
+│   │   ├── port-vlans.ts
 │   │   └── types.ts
 │   ├── wrike/
 │   │   ├── commands/

@@ -3,7 +3,7 @@
 Microsoft Intune device management — managed devices, apps, platform scripts, remediations, compliance policies, ESP, Autopilot.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md) · [purview](./purview.md)
 
 ## Contents
 
@@ -73,8 +73,8 @@ Intune reuses the same Graph API credentials as the Entra provider — no additi
 
 | Command | Description |
 |---------|-------------|
-| `its intune devices` | List Intune-managed devices. Surfaces the most common fields; pass --json for raw shape. |
-| `its intune devices get <device>` | Get managed device details. Pass the id (or any natural identifier) as the positional arg. |
+| `its intune devices` | List Intune-managed devices, including Wi-Fi MAC addresses. Graph requires an individual devices get for Ethernet MAC addresses; list cannot return them even with $select. Pass --json for all returned fields. |
+| `its intune devices get <device>` | Get managed device details, including Ethernet and Wi-Fi MAC addresses where reported by Intune. Pass the id (or any natural identifier) as the positional arg. |
 | `its intune devices search <query>` | Search devices by name, user, or serial number. Substring match across the most relevant fields; case-insensitive. |
 | `its intune devices sync <id>` | Trigger a device sync. Force the device to sync with Intune. |
 | `its intune devices primary-user <device>` | Show a device's primary user. Resolve the device by id or name. |
@@ -88,7 +88,7 @@ Intune reuses the same Graph API credentials as the Entra provider — no additi
 
 #### `its intune devices`
 
-List Intune-managed devices. Surfaces the most common fields; pass --json for raw shape.
+List Intune-managed devices, including Wi-Fi MAC addresses. Graph requires an individual devices get for Ethernet MAC addresses; list cannot return them even with $select. Pass --json for all returned fields.
 
 **Flags:**
 
@@ -109,7 +109,7 @@ its intune devices --filter compliance=noncompliant
 
 #### `its intune devices get <device>`
 
-Get managed device details. Pass the id (or any natural identifier) as the positional arg.
+Get managed device details, including Ethernet and Wi-Fi MAC addresses where reported by Intune. Pass the id (or any natural identifier) as the positional arg.
 
 **Examples:**
 
@@ -376,7 +376,7 @@ its intune apps assign "Company Portal" --group "All Shop Tablets" --intent requ
 | Command | Description |
 |---------|-------------|
 | `its intune win32-apps` | List Win32 (.intunewin) apps with version and install command. For detection and requirement rules and return codes, run `apps get <id>`. |
-| `its intune win32-apps upload <file>` | Upload a packaged .intunewin as a new Win32 app. Detection: --detect-msi <product code> and/or --detect-file <full path> (file exists); at least one. Previews the package without --confirm (no Graph calls). Does not assign the app. If it fails part-way, the app exists with no content and the error gives its id. Reads the app back and reports verified. |
+| `its intune win32-apps upload <file>` | Upload a packaged .intunewin as a new Win32 app. Detection: --detect-msi <product code>, --detect-file <full path> (file exists) and/or --detect-registry <hive\key\|value\|operator\|comparison>; at least one. --install-as user\|system sets who runs the installer (default system); restart is suppressed. Previews the package without --confirm (no Graph calls). Does not assign the app. If it fails part-way, the app exists with no content and the error gives its id. Reads the app back and reports verified. |
 
 #### `its intune win32-apps`
 
@@ -394,7 +394,7 @@ its intune win32-apps
 
 #### `its intune win32-apps upload <file>`
 
-Upload a packaged .intunewin as a new Win32 app. Detection: --detect-msi <product code> and/or --detect-file <full path> (file exists); at least one. Previews the package without --confirm (no Graph calls). Does not assign the app. If it fails part-way, the app exists with no content and the error gives its id. Reads the app back and reports verified.
+Upload a packaged .intunewin as a new Win32 app. Detection: --detect-msi <product code>, --detect-file <full path> (file exists) and/or --detect-registry <hive\key|value|operator|comparison>; at least one. --install-as user|system sets who runs the installer (default system); restart is suppressed. Previews the package without --confirm (no Graph calls). Does not assign the app. If it fails part-way, the app exists with no content and the error gives its id. Reads the app back and reports verified.
 
 **Flags:**
 
@@ -407,6 +407,8 @@ Upload a packaged .intunewin as a new Win32 app. Detection: --detect-msi <produc
 | `--description` | `` | Description (default: the name) | — |
 | `--detect-msi` | `` | Detect by MSI product code, e.g. {GUID} | — |
 | `--detect-file` | `` | Detect by file existing, full Windows path | — |
+| `--detect-registry` | `` | Detect by registry value: '<HKCU\|HKLM>\<key>\|<value>\|<operator>\|<comparison>' (operator: equal, notEqual, greaterThan, ...); '<hive>\<key>\|<value>' alone tests it exists | — |
+| `--install-as` | `` | Run the installer as (default system; per-user HKCU packs need user) | system |
 | `--arch` | `` | Architectures (default x64) | — |
 | `--min-windows` | `` | Minimum Windows release (default 1607) | — |
 | `--confirm` | `` | Create the app and upload | — |

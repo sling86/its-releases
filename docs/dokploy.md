@@ -3,7 +3,7 @@
 Dokploy self-hosted PaaS management — projects, apps, databases, deployments, domains, registries, notifications.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md) · [purview](./purview.md)
 
 ## Contents
 
@@ -56,6 +56,7 @@ its dokploy setup --reset   # Re-run setup (overwrite config)
 | `src/providers/dokploy/client.ts` | API client methods |
 | `src/providers/dokploy/types.ts` | TypeScript interfaces |
 | `src/providers/dokploy/commands/` | Command definitions (split by resource) |
+| `src/providers/dokploy/app-settings.ts` | app settings |
 | `src/providers/dokploy/created-id.ts` | created id |
 | `src/providers/dokploy/db-sql.ts` | db sql |
 | `src/providers/dokploy/definition.ts` | definition |
@@ -165,6 +166,8 @@ its dokploy projects delete <project-id> --confirm
 | `its dokploy apps start <applicationId>` | Start a previously stopped container. Idempotent — no-op if already running. |
 | `its dokploy apps restart <applicationId>` | Stop + start in one call. Doesn't rebuild — use `dokploy apps deploy` if the image needs to change. |
 | `its dokploy apps set-auto-deploy <app> <state>` | Turn an application's Auto Deploy on or off. Sends only applicationId and autoDeploy, then reads the app back and fails if the flag did not change. |
+| `its dokploy apps set-registry <app> <registryId>` | Set or clear an application's Cluster Settings registry (registryId). With a registry set Dokploy pushes the image after pulling it; use `none` to clear. Reads the app back and fails if it did not change. |
+| `its dokploy apps set-limits <app>` | Set an application's resource limits and reservations. Memory takes 512m / 2g / bytes (Dokploy stores bytes); CPU takes cores like 0.5 (Dokploy stores nano-CPUs, 1 core = 1000000000). `none` clears one. Only the flags you pass change. Reads the app back and fails if a value did not stick. Redeploy for the swarm to pick them up. |
 | `its dokploy apps set-source <app>` | Wire an application to a source provider. --type github links a GitHub App repo; --type docker pins to a registry image. |
 | `its dokploy apps set-build <app>` | Set build type for an application (dockerfile, nixpacks, heroku_buildpacks, paketo_buildpacks, static, railpack). Dockerfile path/context configurable. |
 | `its dokploy apps rebuild <app>` | Rebuild and deploy Dokploy's last-pulled source. This maps to application.deploy and does NOT fetch a newer commit; after a git push use `apps deploy`/`apps redeploy` instead. |
@@ -347,6 +350,46 @@ Turn an application's Auto Deploy on or off. Sends only applicationId and autoDe
 its dokploy apps set-auto-deploy storefront on --confirm
 
 its dokploy apps set-auto-deploy storefront off --dry-run
+```
+
+#### `its dokploy apps set-registry <app> <registryId>`
+
+Set or clear an application's Cluster Settings registry (registryId). With a registry set Dokploy pushes the image after pulling it; use `none` to clear. Reads the app back and fails if it did not change.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--dry-run` | `` | Print the planned request without sending | — |
+
+**Examples:**
+
+```bash
+its dokploy apps set-registry storefront reg_123 --confirm
+
+its dokploy apps set-registry storefront none --confirm
+```
+
+#### `its dokploy apps set-limits <app>`
+
+Set an application's resource limits and reservations. Memory takes 512m / 2g / bytes (Dokploy stores bytes); CPU takes cores like 0.5 (Dokploy stores nano-CPUs, 1 core = 1000000000). `none` clears one. Only the flags you pass change. Reads the app back and fails if a value did not stick. Redeploy for the swarm to pick them up.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--memory-limit` | `` | Hard memory cap, e.g. 1g (or none) | — |
+| `--memory-reservation` | `` | Memory guaranteed to the app, e.g. 512m (or none) | — |
+| `--cpu-limit` | `` | Hard CPU cap in cores, e.g. 1 (or none) | — |
+| `--cpu-reservation` | `` | CPU guaranteed to the app in cores, e.g. 0.25 (or none) | — |
+| `--dry-run` | `` | Print the planned request without sending | — |
+
+**Examples:**
+
+```bash
+its dokploy apps set-limits storefront --memory-limit 1g --memory-reservation 512m --cpu-limit 1 --confirm
+
+its dokploy apps set-limits storefront --memory-limit none --confirm
 ```
 
 #### `its dokploy apps set-source <app>`

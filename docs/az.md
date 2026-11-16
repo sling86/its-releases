@@ -3,7 +3,7 @@
 Azure CLI — subscriptions, VMs, storage, Key Vault, networking, web apps, costs.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md) · [purview](./purview.md)
 
 ## Contents
 
@@ -21,6 +21,7 @@ Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.m
 - [advisor](#advisor)
 - [role-assignments](#role-assignments)
 - [role-definitions](#role-definitions)
+- [appinsights](#appinsights)
 
 ## Setup
 
@@ -44,6 +45,7 @@ Requires the Azure CLI (`az`) to be installed and logged in. No environment vari
 | `src/providers/az/client.ts` | API client methods |
 | `src/providers/az/types.ts` | TypeScript interfaces |
 | `src/providers/az/commands/` | Command definitions (split by resource) |
+| `src/providers/az/appinsights.ts` | appinsights |
 | `src/providers/az/definition.ts` | definition |
 | `src/providers/az/rbac.ts` | rbac |
 
@@ -694,6 +696,50 @@ List Azure RBAC role definitions (built-in and custom) assignable at a scope, op
 
 ```bash
 its az role-definitions list --name "OpenAI"
+```
+
+---
+
+### appinsights
+
+> Source: `src/providers/az/commands/appinsights.ts`
+
+| Command | Description |
+|---------|-------------|
+| `its az appinsights` | List Application Insights components in the selected Azure subscription. |
+| `its az appinsights query <component> <kql>` | Run read-only KQL against an Application Insights component in the selected subscription. Table output shows PrimaryResult (or the first table); --json preserves every table and API error. Partial errors are reported on stderr and kept in --json. |
+
+#### `its az appinsights`
+
+List Application Insights components in the selected Azure subscription.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--resource-group` | `` | Resource group (required when component names clash) | — |
+| `--subscription` | `` | Azure subscription name or ID (default: current subscription) | — |
+
+```bash
+its az appinsights
+```
+
+#### `its az appinsights query <component> <kql>`
+
+Run read-only KQL against an Application Insights component in the selected subscription. Table output shows PrimaryResult (or the first table); --json preserves every table and API error. Partial errors are reported on stderr and kept in --json.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--resource-group` | `` | Resource group (required when component names clash) | — |
+| `--subscription` | `` | Azure subscription name or ID (default: current subscription) | — |
+| `--since` | `` | API time window: 30m, 24h, 7d (default: 24h) | — |
+
+**Examples:**
+
+```bash
+its az appinsights query BC_App_Insights "traces | take 5" --subscription "THF - Group Business Systems" --since 24h
 ```
 
 ---

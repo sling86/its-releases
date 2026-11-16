@@ -3,7 +3,7 @@
 Microsoft Entra ID (Azure AD) identity management — users, groups, licences, roles, sign-ins, security, directory, onboarding.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
+Other providers: [rmm](./rmm.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md) · [purview](./purview.md)
 
 ## Contents
 
@@ -58,6 +58,7 @@ its entra setup --reset   # Re-run setup (overwrite config)
 | `src/providers/entra/commands/` | Command definitions (split by resource) |
 | `src/providers/entra/apps-audit.ts` | apps audit |
 | `src/providers/entra/apps-manifest.ts` | apps manifest |
+| `src/providers/entra/apps-usage.ts` | apps usage |
 | `src/providers/entra/auth-methods-report.ts` | auth methods report |
 | `src/providers/entra/auth-methods.ts` | auth methods |
 | `src/providers/entra/definition.ts` | definition |
@@ -2270,6 +2271,7 @@ its entra doctor --watch
 | `its entra apps permissions <app>` | What an app ACTUALLY holds — declared (requiredResourceAccess) and granted (appRoleAssignments / delegated consent) side by side, with permission GUIDs resolved to names. The two drift independently and in both directions, so neither alone answers "can this app do X?". |
 | `its entra apps export <appIds>` | Reverse-map live app registrations into manifest fragments — declared permission GUIDs resolve back to value names via each resource SP (unresolved ids stay as raw GUIDs with a note), owners become UPNs, redirect URIs keep their web/publicClient buckets. Paste the output into the manifest's "apps" array. Never dumps the tenant — pass explicit appIds. |
 | `its entra apps audit` | Security-posture audit across all app registrations — god-apps (app-role grant counts near the ~40-role token roles-claim overflow that broke Intune), expired and long-lived secrets, credential-less and secret-only apps, ownerless apps, stale sign-in activity (beta report, degrades gracefully), and apps missing from the manifest (when one is readable). Unused-grants is out of scope — no per-permission usage signal exists without premium logs. |
+| `its entra apps usage` | Per-app usage report for one enterprise app (name or appId): who is assigned (users, groups, disabled users; flags assignment not enforced) and sign-ins over --since, split interactive vs non-interactive, with distinct users, active days, per-resource split and weekly counts. The window is cut into 5-day slices fetched in parallel (a single long query times out); a slice that fails is named in the output and the totals are marked INCOMPLETE. TRAPS: (1) BC MCP users sign in through the shared 'Claude AI MCP Client' app, so read the resource split, not the app total. (2) Non-interactive counts are mostly token refreshes: distinct active days is the honest measure of use, not the sign-in count. Needs AuditLog.Read.All and Directory.Read.All. |
 
 #### `its entra apps register <name>`
 
@@ -2431,6 +2433,22 @@ Security-posture audit across all app registrations — god-apps (app-role grant
 
 ```bash
 its entra apps audit --severity high
+```
+
+#### `its entra apps usage`
+
+Per-app usage report for one enterprise app (name or appId): who is assigned (users, groups, disabled users; flags assignment not enforced) and sign-ins over --since, split interactive vs non-interactive, with distinct users, active days, per-resource split and weekly counts. The window is cut into 5-day slices fetched in parallel (a single long query times out); a slice that fails is named in the output and the totals are marked INCOMPLETE. TRAPS: (1) BC MCP users sign in through the shared 'Claude AI MCP Client' app, so read the resource split, not the app total. (2) Non-interactive counts are mostly token refreshes: distinct active days is the honest measure of use, not the sign-in count. Needs AuditLog.Read.All and Directory.Read.All.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--since` | `` | Look-back window (e.g. 7d, 30d) | 30d |
+
+**Examples:**
+
+```bash
+its entra apps usage 'Claude AI MCP Client' --since 30d
 ```
 
 ---

@@ -3,7 +3,7 @@
 Power BI Admin API — workspaces, reports, apps, licences, activity log.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md) · [purview](./purview.md)
 
 ## Contents
 
@@ -390,11 +390,11 @@ its pbi scan run --workspace <id> --detail schema,expressions --out ./data/scann
 
 | Command | Description |
 |---------|-------------|
-| `its pbi api get <path>` | Raw read-only GET against the Power BI REST API (api.powerbi.com): pass a /v1.0/myorg/... or /v2.0/myorg/... path. Uses the CLI's own admin token; GET only. --to-file saves the JSON (mode 0600) and prints only a count. |
+| `its pbi api get <path>` | Raw read-only GET against the Power BI REST API (api.powerbi.com): pass a /v1.0/myorg/... or /v2.0/myorg/... path. Query values (including spaces and quotes) are encoded for you. Uses the CLI's own admin token; GET only. --to-file saves the JSON (mode 0600) and prints only a count. |
 
 #### `its pbi api get <path>`
 
-Raw read-only GET against the Power BI REST API (api.powerbi.com): pass a /v1.0/myorg/... or /v2.0/myorg/... path. Uses the CLI's own admin token; GET only. --to-file saves the JSON (mode 0600) and prints only a count.
+Raw read-only GET against the Power BI REST API (api.powerbi.com): pass a /v1.0/myorg/... or /v2.0/myorg/... path. Query values (including spaces and quotes) are encoded for you. Uses the CLI's own admin token; GET only. --to-file saves the JSON (mode 0600) and prints only a count.
 
 **Flags:**
 

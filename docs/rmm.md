@@ -3,7 +3,7 @@
 Tactical RMM endpoint management — agents, live terminal, alerts, software, services, updates, scripts, checks, tasks, policies.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
+Other providers: [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [bc](./bc.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md) · [purview](./purview.md)
 
 ## Contents
 
@@ -55,6 +55,7 @@ Live terminal access additionally needs `its rmm terminal login` with a local Ta
 | `src/providers/rmm/types.ts` | TypeScript interfaces |
 | `src/providers/rmm/commands/` | Command definitions (split by resource) |
 | `src/providers/rmm/definition.ts` | definition |
+| `src/providers/rmm/inventory.ts` | inventory |
 | `src/providers/rmm/readback.ts` | readback |
 | `src/providers/rmm/resolve.ts` | resolve |
 | `src/providers/rmm/terminal-auth.ts` | terminal auth |
@@ -72,9 +73,10 @@ Live terminal access additionally needs `its rmm terminal login` with a local Ta
 | `its rmm agents` | List all RMM agents with status, hostname, OS, site. Surfaces the most common fields; pass --json for raw shape. |
 | `its rmm agents stale` | List agents overdue for 7+ days (stale/abandoned). Sorted oldest-first so the worst cases surface first. Use --days to tune the threshold. |
 | `its rmm agents search <query>` | Fuzzy substring match across hostname, client, site, and logged-in username. Case-insensitive — useful when you only know part of a name. |
-| `its rmm agents get <agent>` | Full agent detail — hardware, OS, last-seen, public IP, disks, version, maintenance state. Accepts hostname, username, or agent UUID. |
+| `its rmm agents get <agent>` | Full agent detail — hardware, serial, user, MAC addresses from Windows network inventory (including virtual adapters), OS, last-seen, public IP, disks, version, maintenance state. MACs require detail; the list endpoint does not include network inventory. Accepts hostname, username, or agent UUID. |
 | `its rmm agents ping <agent>` | Live connectivity check — synchronously waits for the agent to respond. Returns last-seen + current online state. |
 | `its rmm agents reboot <agent>` | Reboot the agent's host OS. Destructive — needs --confirm. Returns immediately; the host may take 1-3 minutes to come back. |
+| `its rmm agents update <agent>` | Update the Tactical RMM agent software itself (not Windows updates — that is `rmm updates`) on one or more agents. Takes hostnames, usernames or agent IDs. Without --confirm it only previews. The server decides the target version and skips agents already on it; the update runs in the background, so check `agents get` for the new version after a few minutes. |
 | `its rmm agents remove <agent>` | Permanently delete the agent record from RMM. Doesn't uninstall the local agent service — pair with the RMM uninstall script if the device is being decommissioned. |
 | `its rmm agents prune` | Bulk-remove stale agent records last seen before a threshold (and never-seen agents). Destructive — previews the target list by default and needs --confirm to delete. Doesn't uninstall the local agent service. Pair with `agents stale` to inspect first. |
 | `its rmm agents run <agent>` | Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell\|cmd\|bash; default timeout is 30s. |
@@ -155,7 +157,7 @@ its rmm agents search "jane.smith"
 
 #### `its rmm agents get <agent>`
 
-Full agent detail — hardware, OS, last-seen, public IP, disks, version, maintenance state. Accepts hostname, username, or agent UUID.
+Full agent detail — hardware, serial, user, MAC addresses from Windows network inventory (including virtual adapters), OS, last-seen, public IP, disks, version, maintenance state. MACs require detail; the list endpoint does not include network inventory. Accepts hostname, username, or agent UUID.
 
 **Examples:**
 
@@ -201,6 +203,26 @@ its rmm agents reboot OFFICE-PC-01 --confirm
 
 # UUID accepted in place of hostname.
 its rmm agents reboot c3e5f1a7-... --confirm
+```
+
+#### `its rmm agents update <agent>`
+
+Update the Tactical RMM agent software itself (not Windows updates — that is `rmm updates`) on one or more agents. Takes hostnames, usernames or agent IDs. Without --confirm it only previews. The server decides the target version and skips agents already on it; the update runs in the background, so check `agents get` for the new version after a few minutes.
+
+**Flags:**
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--confirm` | `` | Queue the update (without it, preview only) | — |
+
+**Examples:**
+
+```bash
+# Shows hostname and current version; changes nothing
+its rmm agents update WKS-9 WKS-10
+
+# Queues the agent self-update on the TRMM server
+its rmm agents update WKS-9 WKS-10 --confirm
 ```
 
 #### `its rmm agents remove <agent>`

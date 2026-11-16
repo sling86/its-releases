@@ -3,7 +3,7 @@
 Business Central (Dynamics 365) — companies, multi-company entity queries via OData (standard v2.0 or a custom `--api publisher/group/version` route), record get/create/update/delete and bound actions (writes need an explicit `--env` and `--confirm`), environments (list, sandbox copy/delete, operations via the Admin Centre API), installed apps (list, updates, install, uninstall, update) and BC users/permission sets. Runs app-only as a dedicated app registration (BC_CLIENT_ID/BC_CLIENT_SECRET; falls back to the shared Entra credentials). That app needs: the Business Central API roles, an entry in each environment's BC page *Microsoft Entra Applications* (registration is per environment — production and every sandbox) with a user holding D365 AUTOMATION + D365 READ (add a write permission set only to test writes), and authorisation under the Admin Centre's *Authorized Microsoft Entra apps* for environments and apps.
 
 [Index](./index.md) · [CLI Reference](./cli.md) · [README](../README.md)
-Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md)
+Other providers: [rmm](./rmm.md) · [entra](./entra.md) · [dokploy](./dokploy.md) · [bw](./bw.md) · [sp](./sp.md) · [unifi](./unifi.md) · [wrike](./wrike.md) · [az](./az.md) · [exo](./exo.md) · [intune](./intune.md) · [protect](./protect.md) · [pbi](./pbi.md) · [pa](./pa.md) · [cf](./cf.md) · [hr](./hr.md) · [attendance](./attendance.md) · [ctxc](./ctxc.md) · [docs](./docs.md) · [gh](./gh.md) · [outlook](./outlook.md) · [m365](./m365.md) · [teams](./teams.md) · [yodeck](./yodeck.md) · [purview](./purview.md)
 
 ## Contents
 
@@ -238,17 +238,18 @@ its bc extensions get platformSync --env Production
 
 | Command | Description |
 |---------|-------------|
-| `its bc query get <entity>` | Query any BC entity — OData passthrough with filter/top/select |
+| `its bc query get <entity>` | Query a BC API entity, or a published web service with --odata-v4 --company <exact name>. Supports filter/top/select and follows pages (up to 20 pages). |
 
 #### `its bc query get <entity>`
 
-Query any BC entity — OData passthrough with filter/top/select.
+Query a BC API entity, or a published web service with --odata-v4 --company <exact name>. Supports filter/top/select and follows pages (up to 20 pages).
 
 **Flags:**
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--company` | `` | Company name/id (default: first company) | — |
+| `--odata-v4` | `` | Read a published ODataV4 web service; requires --company <exact case-sensitive name>, cannot use --api | — |
+| `--company` | `` | Company name/id (default: first company); exact name required with --odata-v4 | — |
 | `--filter` | `` | OData $filter expression | — |
 | `--top` | `` | Max records (default 50) | 50 |
 | `--select` | `` | $select fields (comma-separated) | — |
